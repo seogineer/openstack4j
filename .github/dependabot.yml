@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: maven
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    labels: [ dependencies ]
+    ignore:
+      # 3.6 dropped suiteXmlFiles, which the connectors use to run the shared core-test TestNG suite
+      - dependency-name: "org.apache.maven.plugins:maven-surefire-plugin"
+        versions: [ ">=3.6.0" ]
+  - package-ecosystem: maven
+    directory: /examples/spring-boot-smoke
+    schedule:
+      interval: weekly
+    labels: [ dependencies ]
+    ignore:
+      # 스모크 대상은 Spring Boot 3 계열이다. Boot 4 지원은 별도로 결정한다.
+      - dependency-name: "org.springframework.boot:*"
+        update-types: [ "version-update:semver-major" ]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels: [ dependencies ]
