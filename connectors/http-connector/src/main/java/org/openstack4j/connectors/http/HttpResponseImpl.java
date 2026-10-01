@@ -3,10 +3,9 @@ package org.openstack4j.connectors.http;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.TreeMap;
 
 import org.openstack4j.api.exceptions.ClientResponseException;
 import org.openstack4j.core.transport.*;
@@ -110,22 +109,58 @@ public class HttpResponseImpl implements HttpResponse {
     }
 
     /**
-     * @return the a Map of Header Name to Header Value
+     * @return the a Map of Header Name to Header Value, with case-insensitive keys
      */
     public Map<String, String> headers() {
-        Map<String, String> retHeaders = new HashMap<String, String>();
+        Map<String, String> retHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
-        Set<String> keys = headers.keySet();
-
-        for (String key : keys) {
-            if (key == null) continue; // Ignore null header where HttpURLConnection stores HTTP method info
-            List<String> values = headers.get(key);
-            for (String value : values) {
-                retHeaders.put(key, value);
+        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+            if (entry.getKey() == null) continue;
+            for (String value : entry.getValue()) {
+                retHeaders.put(canonicalName(entry.getKey()), value);
             }
         }
 
         return retHeaders;
+    }
+
+    /**
+     * The JDK HttpClient lower-cases header names. Callers derive keys from them (Swift metadata, for example), so
+     * restore the usual capitalisation: "x-container-meta-year" becomes "X-Container-Meta-Year".
+     */
+    static String canonicalName(String name) {
+        StringBuilder sb = new StringBuilder(name.length());
+        boolean upper = true;
+        for (char c : name.toCharArray()) {
+            sb.append(upper ? Character.toUpperCase(c) : Character.toLowerCase(c));
+            upper = c == '-';
+        }
+        return sb.toString();
+    }
+
+    /**
+     * The JDK HttpClient does not expose the reason phrase, so map the status codes OpenStack APIs commonly return.
+     */
+    static String reasonPhrase(int status) {
+        switch (status) {
+            case 200: return "OK";
+            case 201: return "Created";
+            case 202: return "Accepted";
+            case 204: return "No Content";
+            case 300: return "Multiple Choices";
+            case 400: return "Bad Request";
+            case 401: return "Unauthorized";
+            case 403: return "Forbidden";
+            case 404: return "Not Found";
+            case 405: return "Method Not Allowed";
+            case 409: return "Conflict";
+            case 413: return "Request Entity Too Large";
+            case 415: return "Unsupported Media Type";
+            case 500: return "Internal Server Error";
+            case 501: return "Not Implemented";
+            case 503: return "Service Unavailable";
+            default: return "";
+        }
     }
 
     @Override
