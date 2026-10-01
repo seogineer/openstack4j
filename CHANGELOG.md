@@ -1,3 +1,18 @@
+## 4.0.0 (seogineer fork)
+
+첫 후속 포크 릴리스. 이전 방법은 MIGRATION.md 참고.
+
+- BREAKING: groupId `io.github.seogineer`, JDK 17 이상 필요
+- BREAKING: jersey2, resteasy connector 제거
+- BREAKING: httpclient connector 가 Apache HttpClient 5 사용
+- BREAKING: `openstack4j`(distribution) 가 core 클래스를 합치지 않고 core + httpclient 를 의존성으로 가짐
+- http-connector 를 JDK HttpClient 로 재구현 (JDK 17+ 에서 PATCH 동작)
+- okhttp connector 를 OkHttp 4.12 로 갱신, `Config.withSSLContext` 가 JDK 9+ 에서 예외를 던지던 문제 수정
+- 서버가 닫은 keep-alive 연결 때문에 다음 요청이 실패하던 문제 수정 (httpclient: 재사용 전 연결 검증, http-connector: 1회 재시도)
+- Jackson 2.22, Guava 33, SnakeYAML 2.7, SLF4J 2.0, json-patch 1.13 으로 갱신
+- POM 라이선스 표기를 Apache 2.0 으로 수정
+- Maven Central 배포를 Central Portal 로 전환, CI 를 JDK 17/21/25 와 Spring Boot 3 스모크 테스트로 확장
+
 # Change Log
 
 **Starting with 3.3, changelog has moved to [Releases page](https://github.com/openstack4j/openstack4j/releases)**
