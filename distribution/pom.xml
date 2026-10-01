@@ -27,6 +27,14 @@
         <finalName>openstack4j</finalName>
         <plugins>
             <plugin>
+                <!-- the module has no sources of its own, but Maven Central requires a sources jar for every jar artifact -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+                    <forceCreation>true</forceCreation>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <executions>
@@ -55,7 +63,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <minimizeJar>true</minimizeJar>
+                            <!-- no minimizeJar: this module has no classes of its own, so minimizing would strip openstack4j itself -->
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <!-- keep the real POM: a reduced POM would drop guava, jackson, ... from consumers -->
                             <createDependencyReducedPom>false</createDependencyReducedPom>
