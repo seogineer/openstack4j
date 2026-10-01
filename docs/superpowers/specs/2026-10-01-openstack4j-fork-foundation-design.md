@@ -1,7 +1,7 @@
 # openstack4j 후속 포크 — A. 기반 및 최신화 설계
 
 - 작성일: 2026-10-01
-- 상태: 사용자 검토 대기
+- 상태: 승인됨 (2026-10-01), 개정 1 — 기준선 빌드 결과와 http-connector 결정 반영
 - 대상 저장소: `github.com/seogineer/openstack4j` (원본 `openstack4j/openstack4j` 의 `main`, 커밋 `fe5a4cd`, 2024-05-10 에서 포크)
 
 ## 1. 배경과 목적
@@ -19,7 +19,7 @@
 |---|---|---|
 | **A** | 기반 및 최신화 (**이 문서**) | 좌표 변경, JDK 17, 의존성·connector 최신화, CI, Maven Central 배포, 4.0.0 릴리스 |
 | B | Placement 확장 | 용량·사용량 조회 보강, 쓰기 API(Inventory, Trait, Aggregate, Resource class), microversion 지원 |
-| C | 이후 과제 | JDK `HttpClient` connector, JUnit 5 전환, 원본에 남은 Issue/PR 흡수, 다른 서비스 보강 |
+| C | 이후 과제 | JUnit 5 전환, 원본에 남은 Issue/PR 흡수, 다른 서비스 보강 |
 
 B 와 C 는 각자 별도의 spec 과 plan 을 갖는다.
 
@@ -36,7 +36,9 @@ B 와 C 는 각자 별도의 spec 과 plan 을 갖는다.
 | groupId | `io.github.seogineer` (단일 groupId) | Central Portal 이 GitHub 계정으로 namespace 를 인증한다 |
 | artifactId | 원본 유지 (`openstack4j-core` 등) | 옮겨 오기 쉽다 |
 | 최소 JDK | **17** | Spring Boot 3 의 최소 요구사항이고 업무 환경과 일치한다 |
-| connector | httpclient(→ HttpClient 5), okhttp(→ 4.x), http-connector **유지** / jersey2, resteasy **제거** | javax 기반 connector 를 Jakarta 로 옮기는 비용이 사용자 수에 비해 크다 |
+| connector | httpclient(→ HttpClient 5), okhttp(→ 4.x), http-connector(→ JDK `java.net.http.HttpClient` 로 재구현) **유지** / jersey2, resteasy **제거** | javax 기반 connector 를 Jakarta 로 옮기는 비용이 사용자 수에 비해 크다. http-connector 는 JDK 17 에서 PATCH 가 동작하지 않아 재구현이 필요하다(4.3) |
+| 빌드 실행 | Maven Wrapper(`./mvnw`) 추가 | 기여자와 CI 가 같은 Maven 버전을 쓴다 |
+| distribution 기본 connector | resteasy → **httpclient** | resteasy 제거에 따른 변경 |
 | 빌드 도구 | Maven 유지 | 원본 PR 흡수가 쉽다 |
 | 단위 테스트 | TestNG 유지 | JUnit 5 전환은 C 로 미룬다 |
 | 버전 | **4.0.0** 부터 SemVer | JDK, connector, groupId 변경 모두 하위 호환이 깨지는 변경이다 |
@@ -72,9 +74,13 @@ B 와 C 는 각자 별도의 spec 과 plan 을 갖는다.
 
 ### 유지
 
-- `core`, `core-test`(TestNG 단위 테스트 152개), `connectors/{httpclient,okhttp,http-connector}`
+- `core`(단위 테스트 17개), `core-test`(TestNG 테스트 676개 — 각 connector 모듈에서 그 connector 로 실행된다), `connectors/{httpclient,okhttp,http-connector}`
 - `core-integration-test/{it-httpclient,it-okhttp}` (5.4 의 조건부)
 - `.github/release-drafter.yml`, Issue/PR 템플릿
+
+### POM 메타데이터 수정
+
+원본 parent POM 의 `<licenses>` 가 MIT 로 잘못 적혀 있다(LICENSE 파일은 Apache 2.0). Apache License 2.0 으로 고친다. `url`, `scm`, `developers` 도 포크 기준으로 바꾸고, 사라진 Google Groups `mailingLists` 는 제거한다.
 
 ## 4. 빌드와 의존성
 
@@ -106,7 +112,13 @@ core 의 `javax.*` 사용은 `javax.annotation`(jsr305)과 `javax.net.ssl`(JDK)�
 |---|---|
 | `openstack4j-httpclient` | HttpClient 4.3.6 → **HttpClient 5** (`org.apache.httpcomponents.client5:httpclient5`). API 가 달라 connector 구현을 다시 쓴다. 공개 클래스 이름과 `HttpExecutorService` SPI 등록 방식은 유지한다. |
 | `openstack4j-okhttp` | OkHttp 3.14.9 → **4.12.x**. Kotlin stdlib 이 전이 의존성으로 추가된다. |
-| `openstack4j-http-connector` | 변경 없음 (외부 의존성 없음) |
+| `openstack4j-http-connector` | `HttpURLConnection` → **JDK `java.net.http.HttpClient`** 로 재구현. 외부 의존성 없음은 유지한다. |
+
+**http-connector 재구현 이유:** `HttpURLConnection` 은 PATCH 를 지원하지 않는다. 원본은 리플렉션으로 JDK 내부 필드를 바꿔 우회했으나 JDK 16+ 의 모듈 캡슐화로 막혔다(JDK 17 에서 테스트 20개가 `InaccessibleObjectException` 으로 실패, 원본은 JDK 17+ 빌드에서 이 모듈을 아예 제외했다).
+
+**재구현 시 알려진 제약 (문서화한다):**
+- JDK `HttpClient` 는 `HostnameVerifier` 를 받지 않는다. `Config.withHostnameVerifier(...)` 는 이 connector 에서 무시되고 WARN 로그를 남긴다. `withSSLVerificationDisabled()` 는 인증서 검증만 끄며, 호스트명 검증까지 끄려면 JVM 옵션 `-Djdk.internal.httpclient.disableHostnameVerification=true` 가 필요하다.
+- `Content-Length`, `Host`, `Connection` 등 JDK 가 제한하는 헤더는 요청에서 제외한다(JDK 가 직접 설정한다).
 
 ### 4.4 테스트 의존성
 
@@ -114,7 +126,7 @@ core 의 `javax.*` 사용은 `javax.annotation`(jsr305)과 `javax.net.ssl`(JDK)�
 
 ### 4.5 통합 테스트 (조건부)
 
-현재 Groovy 2.4.21 + Spock 1.0 + Betamax 2.0.1 이다. 다음 순서로 판단한다.
+현재 Groovy 2.4.21 + Spock 1.0 + Betamax 2.0.1 이다. **기준선 확인(2026-10-01): JDK 17, 21 에서 it-httpclient·it-okhttp 각 29개가 그대로 통과했다.** JDK 25 는 미확인이다. 다음 순서로 판단한다.
 
 1. JDK 17/21 에서 그대로 통과하면 유지한다.
 2. 실패하면 Groovy 4 + Spock 2 로 올린다.
@@ -124,14 +136,16 @@ core 의 `javax.*` 사용은 `javax.annotation`(jsr305)과 `javax.net.ssl`(JDK)�
 
 ### 4.6 Spring Boot 3 스모크 검증
 
-`examples/spring-boot-smoke` — Spring Boot 3.5 BOM 을 import 하고 `openstack4j-core` + `openstack4j-httpclient` 를 의존하는 최소 프로젝트. `OSFactory.builderV3()` 로 클라이언트를 구성하는 코드가 컴파일되고 애플리케이션 컨텍스트가 뜨는지(OpenStack 호출 없이) 확인한다. 배포 대상이 아니며 CI 에서 빌드한다. 루트 `pom.xml` 의 모듈 목록에 넣되 Central 배포 대상에서는 제외한다.
+`examples/spring-boot-smoke` — `spring-boot-starter-parent` 3.5.x 를 parent 로 하고 `openstack4j-core` + `openstack4j-httpclient` 를 의존하는 최소 프로젝트. 애플리케이션 컨텍스트가 뜨는지, HttpClient connector 가 선택되는지, Boot 가 정한 Jackson 버전으로 Keystone 토큰 JSON 이 역직렬화되는지(OpenStack 호출 없이) 확인한다.
+
+루트 리액터에 넣지 **않는다**. openstack4j-parent 를 상속하면 parent 의 `dependencyManagement` 가 Boot BOM 보다 우선해서 검증 의미가 사라지기 때문이다. CI 에서 `./mvnw install` 후 `./mvnw -f examples/spring-boot-smoke verify -Dopenstack4j.version=<현재 버전>` 으로 따로 실행한다. 배포 대상이 아니다.
 
 ## 5. CI 와 배포
 
 ### 5.1 CI (`.github/workflows/ci.yaml`)
 
 - 트리거: `push`(main), `pull_request`.
-- 매트릭스: JDK 17, 21, 25 (Temurin).
+- 매트릭스: JDK 17, 21 (Temurin). JDK 25 는 통합 테스트 정비(작업 10)에서 추가한다.
 - 명령: `mvn -B --no-transfer-progress verify`.
 - `actions/setup-java` 의 `cache: maven` 사용.
 
@@ -145,7 +159,7 @@ core 의 `javax.*` 사용은 `javax.annotation`(jsr305)과 `javax.net.ssl`(JDK)�
 - 산출물: jar, sources jar, javadoc jar, GPG 서명. POM 에 name, description, url, licenses, scm, developers 를 채운다.
 - `core-test`, `examples/spring-boot-smoke` 는 배포하지 않는다.
 
-**사용자 사전 준비 (수동)**
+**사용자 사전 준비 (수동) — 2026-10-01 완료 확인** (Secrets 4개 등록, GPG 공개키 keyserver.ubuntu.com·keys.openpgp.org 등록)
 
 1. central.sonatype.com 에 GitHub 계정으로 로그인 → `io.github.seogineer` namespace 인증.
 2. GPG 키 생성, 공개키를 keyserver(keys.openpgp.org 등)에 등록.
@@ -172,19 +186,20 @@ core 의 `javax.*` 사용은 `javax.annotation`(jsr305)과 `javax.net.ssl`(JDK)�
 
 | # | PR | 내용 | 확인 |
 |---|---|---|---|
-| 1 | 포크 정리 | README 후속 포크 안내, NOTICE, `.travis.yml`·`release.sh` 제거 | 원본 상태로 CI 통과 |
-| 2 | 좌표 변경 | groupId `io.github.seogineer`, 버전 `4.0.0-SNAPSHOT`, Central 용 POM 메타데이터 | `mvn verify` |
-| 3 | jersey2·resteasy 제거 | connector 와 대응 통합 테스트 모듈 삭제 | `mvn verify` |
-| 4 | JDK 17 + 빌드 플러그인 | `release=17`, enforcer, 플러그인 갱신, CI 매트릭스 17/21/25 + PR 트리거 | CI 매트릭스 통과 |
+| 1 | jersey2·resteasy 제거 | connector 와 대응 통합 테스트 모듈 삭제, distribution 기본 connector 를 httpclient 로, connectors 의 JDK 별 profile 제거 | JDK 17 에서 `mvn verify` 통과 (원본은 it-jersey2 때문에 실패) |
+| 2 | 포크 정리 | README 후속 포크 안내, NOTICE, Maven Wrapper, `.travis.yml`·`release.sh` 제거 | `./mvnw verify` |
+| 3 | 좌표 변경 | groupId `io.github.seogineer`, 버전 `4.0.0-SNAPSHOT`, POM 메타데이터(라이선스 수정 포함) | `./mvnw verify`, 옛 groupId 잔존 0건 |
+| 4 | JDK 17 + 빌드 플러그인 + CI | `release=17`, enforcer, 플러그인 갱신, CI 매트릭스 17/21 + PR 트리거 | CI 통과 |
 | 5 | 배포 파이프라인 | Central Portal 플러그인, `release.yml`, `v4.0.0-alpha.1` 배포 | Central 에서 아티팩트 확인 |
 | 6 | core 의존성 갱신 | Jackson, Guava, SnakeYAML 2, SLF4J 2, json-patch, jsr305 | 단위 테스트 통과 |
-| 7 | HttpClient 5 전환 | `openstack4j-httpclient` 재작성 | 단위 테스트 (+ it-httpclient) |
-| 8 | OkHttp 4 전환 | okhttp, mockwebserver 갱신 | 단위 테스트 (+ it-okhttp) |
-| 9 | 통합 테스트 정비 | 4.5 의 판단 절차 수행 | CI 통과 |
-| 10 | Boot 3 스모크 + Dependabot | `examples/spring-boot-smoke`, `dependabot.yml` | CI 에서 스모크 빌드 |
-| 11 | 문서와 4.0.0 릴리스 | `MIGRATION.md`, README, CHANGELOG, `v4.0.0` tag | Central 배포, GitHub Release |
+| 7 | HttpClient 5 전환 | `openstack4j-httpclient` 재작성 | 676 + it-httpclient |
+| 8 | http-connector 재구현 | JDK `HttpClient` 기반, 리액터에 다시 포함 | 676 (PATCH 포함) |
+| 9 | OkHttp 4 전환 | okhttp, mockwebserver 갱신 | 676 + it-okhttp |
+| 10 | 통합 테스트 정비 + JDK 25 | 4.5 판단 절차, CI 매트릭스에 25 추가 | CI 통과 |
+| 11 | Boot 3 스모크 + Dependabot | `examples/spring-boot-smoke`, `dependabot.yml` | CI 에서 스모크 통과 |
+| 12 | 문서와 4.0.0 릴리스 | `MIGRATION.md`, README, CHANGELOG, `v4.0.0` tag | Central 배포, GitHub Release |
 
-7 과 8 은 서로 독립이다. 9 의 범위는 7·8 결과에 따라 정해진다.
+원본 순서(포크 정리 → 좌표 → 제거)를 바꿔 제거를 맨 앞에 둔다. 원본 main 은 JDK 17 에서 빌드가 깨져 있어서, 제거 전에는 "빌드 통과 상태로 머지" 원칙을 지킬 수 없기 때문이다. 7·8·9 는 서로 독립이다.
 
 ## 7. 완료 기준
 
@@ -197,5 +212,5 @@ core 의 `javax.*` 사용은 `javax.annotation`(jsr305)과 `javax.net.ssl`(JDK)�
 ## 8. 범위 밖
 
 - Placement 확장, microversion 지원 → B
-- JDK `HttpClient` connector, JUnit 5 전환, 원본 Issue/PR 흡수, 다른 서비스 보강, 통합 테스트 대체(4.5 의 3번 경우) → C
+- JUnit 5 전환, 원본 Issue/PR 흡수, 다른 서비스 보강, 통합 테스트 대체(4.5 의 3번 경우) → C
 - SNAPSHOT 배포, 릴리스 후 버전 자동 커밋
