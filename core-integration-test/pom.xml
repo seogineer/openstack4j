@@ -18,8 +18,6 @@
 
     <!-- dedicated module per connector to test -->
     <modules>
-        <module>it-jersey2</module>
-        <module>it-resteasy</module>
         <module>it-okhttp</module>
         <module>it-httpclient</module>
     </modules>
@@ -30,9 +28,9 @@
             <artifactId>openstack4j</artifactId>
             <version>${project.version}</version>
             <exclusions>
-                <exclusion> <!-- excluded to solve AbstractMethodError due to duplication of javax.ws.rs-api in the above mentioned modules -->
+                <exclusion> <!-- distribution 이 끌고 오는 기본 connector 를 빼서, 각 it-* 모듈이 자기 connector 로만 테스트되게 한다 -->
                     <groupId>com.github.openstack4j.core.connectors</groupId>
-                    <artifactId>openstack4j-resteasy</artifactId>
+                    <artifactId>openstack4j-httpclient</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

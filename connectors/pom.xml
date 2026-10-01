@@ -12,47 +12,11 @@
     <url>https://github.com/openstack4j/openstack4j/</url>
     <packaging>pom</packaging>
 
-    <profiles>
-        <profile>
-            <id>java-11</id>
-            <activation>
-                <jdk>11</jdk>
-            </activation>
-            <modules>
-                <module>http-connector</module>
-                <module>httpclient</module>
-                <module>jersey2</module>
-                <module>okhttp</module>
-                <module>resteasy</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>java-17</id>
-            <activation>
-                <jdk>17</jdk>
-            </activation>
-            <modules>
-                <!-- <module>http-connector</module> org.openstack4j.connectors.http.HttpCommand.setRequestMethodUsingWorkaroundForJREBug -->
-                <module>httpclient</module>
-                <!--<module>jersey2</module> https://github.com/eclipse-ee4j/jersey/issues/4825 -->
-                <module>okhttp</module>
-                <module>resteasy</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>java-21</id>
-            <activation>
-                <jdk>21</jdk>
-            </activation>
-            <modules>
-                <!-- <module>http-connector</module> org.openstack4j.connectors.http.HttpCommand.setRequestMethodUsingWorkaroundForJREBug -->
-                <module>httpclient</module>
-                <!--<module>jersey2</module> https://github.com/eclipse-ee4j/jersey/issues/4825 -->
-                <module>okhttp</module>
-                <module>resteasy</module>
-            </modules>
-        </profile>
-    </profiles>
+    <modules>
+        <module>httpclient</module>
+        <module>okhttp</module>
+        <!-- http-connector 는 JDK 17+ 에서 PATCH 가 동작하지 않아 제외. JDK HttpClient 로 재구현 후 다시 넣는다. -->
+    </modules>
 
     <dependencies>
         <dependency>
