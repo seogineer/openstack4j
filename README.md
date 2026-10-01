@@ -11,86 +11,47 @@ OpenStack4j (seogineer fork)
 
 OpenStack4j is a fluent OpenStack client that allows provisioning and control of an OpenStack deployment.   This includes support for Identity, Compute, Image, Network, Block Storage, Telemetry, Data Processing as well as many extensions (LBaaS, FWaaS, Quota-Sets, etc)
 
-## Documentation and Support
-
-* Website: [openstack4j.github.io](https://openstack4j.github.io/)
-* Documentation/Tutorials: [openstack4j.github.io/learn/](https://openstack4j.github.io/learn/)
-* Questions - Use Google Groups: [groups.google.com/group/openstack4j](http://groups.google.com/group/openstack4j)
-* Questions - [StackOverflow](http://stackoverflow.com/search?q=openstack4j)
-* Changelog: [Changelog](https://github.com/openstack4j/openstack4j/releases)
-
-## Bug Reports
-
-* GitHub Issues: [Click Here](https://github.com/openstack4j/openstack4j/issues)
-
-## Java version support
-
-| ----                                | Java 8 | Java 11 | Java 17 | Java 21 |
-|-------------------------------------|--------|---------|---------|---------|
-| OpenStack4j                         | ?      | 🟢      | 🟢      | 🟢      |
-| HttpURL Connector                   | ?      | 🟢      | *       | *       |
-| HttpComponents-HttpClient Connector | ?      | 🟢      | 🟢      | 🟢      |
-| Jersey2 Connector                   | ?      | 🟢      | *       | *       |
-| OKHttp Connector                    | ?      | 🟢      | 🟢      | 🟢      |
-| RestEasy Connector                  | ?      | 🟢      | 🟢      | 🟢      |
-
-*) Starting with Java 16, it is not possible to use HttpUrlConnection to perform PATH requests.
-Connectors depending on native JDK http stack will not work after Java 16.
-
-Maven
------
-
-#### Latest Release (Stable)
-
-OpenStack4j version 2.0.0+ is now modular.  One of the benefits to this is the ability to choose the connector that you would like to use in your environment.
-
-**Using OpenStack4j with the default Jersey2 Connector**
-```xml
-<dependency>
-    <groupId>io.github.seogineer</groupId>
-    <artifactId>openstack4j</artifactId>
-    <version>...</version>
-</dependency>
-```
-
-**Using OpenStack4j with one of our connector modules**
-
-To configure OpenStack4j to use one of our supported connectors (Jersey 2, Resteasy, Apache HttpClient, OKHttp) [see the usage guide](https://github.com/openstack4j/openstack4j/tree/master/connectors)
-
-#### Current (Master Branch)
-
-See notes above about connectors (same rules apply) to development branches.
+## 설치
 
 ```xml
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j</artifactId>
-    <version>...</version>
+    <version>4.0.0</version>
 </dependency>
 ```
 
-**A note about referencing Snapshots without Source**
+`openstack4j` 는 core 와 Apache HttpClient 5 connector 를 함께 끌어오는 아티팩트입니다. 다른 connector 를 쓰려면 [connectors/README.md](connectors/README.md) 를 보세요.
 
-Snapshots are deploys to sonatype.  We automatically deploy snapshots on every merge into the master branch.  Typically 5 - 10 snapshot releases before an official release.
+## 지원 환경
 
-You will need to add the repository to your POM or Settings file.  Releases (above) are deployed to maven central and this step is not required.
+| 구성 | JDK 17 | JDK 21 | JDK 25 |
+|---|---|---|---|
+| core | 🟢 | 🟢 | 🟢 |
+| httpclient (Apache HttpClient 5) | 🟢 | 🟢 | 🟢 |
+| okhttp (OkHttp 4) | 🟢 | 🟢 | 🟢 |
+| http-connector (JDK HttpClient) | 🟢 | 🟢 | 🟢 |
 
-Example POM based repository declaration to grab snapshots:
-```xml
-<repositories>
-    <repository>
-        <id>st-snapshots</id>
-        <name>sonatype-snapshots</name>
-        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </repository>
-</repositories>
+Spring Boot 3.5 와 함께 쓰는 구성을 CI 에서 확인합니다(`examples/spring-boot-smoke`).
+
+## 문서
+
+원본 문서([openstack4j.github.io](https://openstack4j.github.io/))와 아래 사용 예가 그대로 적용됩니다. Maven 좌표만 위의 것으로 바꾸세요.
+3.x 에서 옮겨 오는 방법은 [MIGRATION.md](MIGRATION.md), 변경 내역은 [CHANGELOG.md](CHANGELOG.md) 를 보세요.
+
+## 빌드
+
+```bash
+./mvnw verify
 ```
 
-Contributing
-------------
-If you would like to contribute please see our contributing [guidelines](https://github.com/openstack4j/openstack4j/blob/master/CONTRIBUTING.md)
+## 버그 신고와 기여
 
-The OpenStack4j project is a work of Jeremy Unruh as the original project author and the [community of contributors](https://github.com/openstack4j/openstack4j/graphs/contributors).
+[GitHub Issues](https://github.com/seogineer/openstack4j/issues) 에 남겨 주세요. 기여 방법은 [CONTRIBUTING.md](CONTRIBUTING.md) 를 보세요.
+
+## 라이선스
+
+Apache License 2.0. 원작자 Jeremy Unruh 와 [원본 openstack4j 기여자들](https://github.com/openstack4j/openstack4j/graphs/contributors)의 작업에 기반합니다([NOTICE](NOTICE)).
 
 Quick Usage Guide
 -----------------
