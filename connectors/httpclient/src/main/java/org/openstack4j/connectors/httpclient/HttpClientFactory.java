@@ -1,16 +1,24 @@
 package org.openstack4j.connectors.httpclient;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
+import org.apache.hc.client5.http.ssl.HttpsSupport;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.ssl.SSLContexts;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 import org.openstack4j.core.transport.Config;
 import org.openstack4j.core.transport.UntrustedSSL;
-import org.openstack4j.core.transport.internal.HttpExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +31,7 @@ public class HttpClientFactory {
 
     public static final HttpClientFactory INSTANCE = new HttpClientFactory();
     private static final String USER_AGENT = "OpenStack4j-Agent";
-    private static final Logger LOG = LoggerFactory.getLogger(HttpExecutor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpClientFactory.class);
     private static HttpClientConfigInterceptor INTERCEPTOR;
     private CloseableHttpClient client;
 
@@ -59,36 +67,49 @@ public class HttpClientFactory {
         if (config.getProxy() != null) {
             try {
                 URL url = new URL(config.getProxy().getHost());
-                HttpHost proxy = new HttpHost(url.getHost(), config.getProxy().getPort(), url.getProtocol());
-                cb.setProxy(proxy);
+                cb.setProxy(new HttpHost(url.getProtocol(), url.getHost(), config.getProxy().getPort()));
             } catch (MalformedURLException e) {
                 LOG.error(e.getMessage(), e);
             }
         }
 
+        PoolingHttpClientConnectionManagerBuilder cmb = PoolingHttpClientConnectionManagerBuilder.create();
+
+        SSLContext sslContext = null;
+        HostnameVerifier hostnameVerifier = null;
         if (config.isIgnoreSSLVerification()) {
-            cb.setSslcontext(UntrustedSSL.getSSLContext());
-            cb.setHostnameVerifier(new AllowAllHostnameVerifier());
+            sslContext = UntrustedSSL.getSSLContext();
+            hostnameVerifier = NoopHostnameVerifier.INSTANCE;
         }
-
         if (config.getSslContext() != null)
-            cb.setSslcontext(config.getSslContext());
-
-        if (config.getMaxConnections() > 0) {
-            cb.setMaxConnTotal(config.getMaxConnections());
+            sslContext = config.getSslContext();
+        if (config.getHostNameVerifier() != null)
+            hostnameVerifier = config.getHostNameVerifier();
+        if (sslContext != null || hostnameVerifier != null) {
+            cmb.setTlsSocketStrategy(new DefaultClientTlsStrategy(
+                    sslContext != null ? sslContext : SSLContexts.createDefault(),
+                    hostnameVerifier != null ? hostnameVerifier : HttpsSupport.getDefaultHostnameVerifier()));
         }
 
-        if (config.getMaxConnectionsPerRoute() > 0) {
-            cb.setMaxConnPerRoute(config.getMaxConnectionsPerRoute());
-        }
+        if (config.getMaxConnections() > 0)
+            cmb.setMaxConnTotal(config.getMaxConnections());
+
+        if (config.getMaxConnectionsPerRoute() > 0)
+            cmb.setMaxConnPerRoute(config.getMaxConnectionsPerRoute());
+
+        // Validate pooled connections on every lease, as HttpClient 4.3's stale check did; otherwise a connection
+        // the server (or a load balancer) already closed makes the next non-idempotent request fail
+        ConnectionConfig.Builder ccb = ConnectionConfig.custom().setValidateAfterInactivity(TimeValue.ZERO_MILLISECONDS);
+        if (config.getConnectTimeout() > 0)
+            ccb.setConnectTimeout(Timeout.ofMilliseconds(config.getConnectTimeout()));
+        cmb.setDefaultConnectionConfig(ccb.build());
 
         RequestConfig.Builder rcb = RequestConfig.custom();
 
-        if (config.getConnectTimeout() > 0)
-            rcb.setConnectTimeout(config.getConnectTimeout());
-
         if (config.getReadTimeout() > 0)
-            rcb.setSocketTimeout(config.getReadTimeout());
+            rcb.setResponseTimeout(Timeout.ofMilliseconds(config.getReadTimeout()));
+
+        cb.setConnectionManager(cmb.build());
 
         if (INTERCEPTOR != null) {
             INTERCEPTOR.onClientCreate(cb, rcb, config);

@@ -57,24 +57,10 @@
                         <configuration>
                             <minimizeJar>true</minimizeJar>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <!-- keep the real POM: a reduced POM would drop guava, jackson, ... from consumers -->
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <shadedClassifierName>withdeps</shadedClassifierName>
                             <createSourcesJar>true</createSourcesJar>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>mainartifact-shade</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <shadedArtifactAttached>false</shadedArtifactAttached>
-                            <createSourcesJar>true</createSourcesJar>
-                            <artifactSet>
-                                <includes>
-                                    <include>io.github.seogineer:*</include>
-                                </includes>
-                            </artifactSet>
                         </configuration>
                     </execution>
                 </executions>

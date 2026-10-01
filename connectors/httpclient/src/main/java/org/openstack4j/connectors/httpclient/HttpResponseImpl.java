@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.openstack4j.api.exceptions.ClientResponseException;
 import org.openstack4j.core.transport.*;
 import org.slf4j.Logger;
@@ -17,9 +17,9 @@ import org.slf4j.LoggerFactory;
 public class HttpResponseImpl implements HttpResponse {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpResponseImpl.class);
-    private CloseableHttpResponse response;
+    private ClassicHttpResponse response;
 
-    private HttpResponseImpl(CloseableHttpResponse response) {
+    private HttpResponseImpl(ClassicHttpResponse response) {
         this.response = response;
     }
 
@@ -29,7 +29,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @param response the response
      * @return the HttpResponse
      */
-    public static HttpResponseImpl wrap(CloseableHttpResponse response) {
+    public static HttpResponseImpl wrap(ClassicHttpResponse response) {
         return new HttpResponseImpl(response);
     }
 
@@ -38,7 +38,7 @@ public class HttpResponseImpl implements HttpResponse {
      *
      * @return the response
      */
-    public CloseableHttpResponse unwrap() {
+    public ClassicHttpResponse unwrap() {
         return response;
     }
 
@@ -72,7 +72,7 @@ public class HttpResponseImpl implements HttpResponse {
      * @return the status code
      */
     public int getStatus() {
-        return response.getStatusLine().getStatusCode();
+        return response.getCode();
     }
 
     /**
@@ -80,7 +80,7 @@ public class HttpResponseImpl implements HttpResponse {
      */
     @Override
     public String getStatusMessage() {
-        return response.getStatusLine().getReasonPhrase();
+        return response.getReasonPhrase();
     }
 
     /**
@@ -113,7 +113,7 @@ public class HttpResponseImpl implements HttpResponse {
      */
     public Map<String, String> headers() {
         Map<String, String> retHeaders = new HashMap<String, String>();
-        Header[] headers = response.getAllHeaders();
+        Header[] headers = response.getHeaders();
 
         for (Header h : headers) {
             retHeaders.put(h.getName(), h.getValue());
