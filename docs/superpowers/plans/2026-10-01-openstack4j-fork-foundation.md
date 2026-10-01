@@ -42,11 +42,7 @@
 ```bash
 cd ~/IdeaProjects/openstack4j
 gh repo set-default seogineer/openstack4j
-git switch docs/foundation-spec
-git add docs/superpowers
-git commit -m "docs: add fork foundation (A) implementation plan
-
-Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git switch docs/foundation-spec      # spec 과 이 계획은 이미 커밋돼 있다
 git push -u origin docs/foundation-spec
 gh pr create -R seogineer/openstack4j --base main --head docs/foundation-spec \
   --title "docs: fork foundation (A) design spec and plan" \
