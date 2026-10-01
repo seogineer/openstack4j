@@ -47,7 +47,7 @@ OpenStack4j version 2.0.0+ is now modular.  One of the benefits to this is the a
 **Using OpenStack4j with the default Jersey2 Connector**
 ```xml
 <dependency>
-    <groupId>com.github.openstack4j.core</groupId>
+    <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j</artifactId>
     <version>...</version>
 </dependency>
@@ -63,7 +63,7 @@ See notes above about connectors (same rules apply) to development branches.
 
 ```xml
 <dependency>
-    <groupId>com.github.openstack4j.core</groupId>
+    <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j</artifactId>
     <version>...</version>
 </dependency>
