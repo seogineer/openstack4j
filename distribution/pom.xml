@@ -19,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.openstack4j.core.connectors</groupId>
-            <artifactId>openstack4j-resteasy</artifactId>
+            <artifactId>openstack4j-httpclient</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
