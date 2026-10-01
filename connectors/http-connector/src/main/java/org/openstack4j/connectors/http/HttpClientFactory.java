@@ -4,8 +4,8 @@ import java.net.InetSocketAddress;
 import java.net.ProxySelector;
 import java.net.http.HttpClient;
 import java.time.Duration;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.openstack4j.core.transport.Config;
 import org.openstack4j.core.transport.UntrustedSSL;
@@ -14,17 +14,29 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Builds one JDK {@link HttpClient} per {@link Config} and reuses it, because each client owns a selector thread
- * and a connection pool.
+ * and a connection pool. The cache is a small LRU: applications that create a new {@code Config} (for example a new
+ * {@code SSLContext}) per call would otherwise keep every client alive. An evicted client is released once no
+ * request uses it any more.
  */
 final class HttpClientFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpClientFactory.class);
-    private static final Map<Config, HttpClient> CLIENTS = new ConcurrentHashMap<>();
+    static final int MAX_CACHED_CLIENTS = 16;
+    private static final Map<Config, HttpClient> CLIENTS = new LinkedHashMap<>(MAX_CACHED_CLIENTS, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Config, HttpClient> eldest) {
+            return size() > MAX_CACHED_CLIENTS;
+        }
+    };
 
     private HttpClientFactory() {
     }
 
-    static HttpClient get(Config config) {
+    static synchronized int cachedClients() {
+        return CLIENTS.size();
+    }
+
+    static synchronized HttpClient get(Config config) {
         return CLIENTS.computeIfAbsent(config != null ? config : Config.DEFAULT, HttpClientFactory::build);
     }
 

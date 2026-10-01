@@ -21,6 +21,8 @@ jobs:
           cache: maven
       - name: Build and test
         run: ./mvnw -B --no-transfer-progress install
+      - name: Verify packaged artifacts
+        run: .github/scripts/verify-artifacts.sh
       - name: Spring Boot 3 smoke test
         run: |
           VERSION=$(./mvnw -q help:evaluate -Dexpression=project.version -DforceStdout)
