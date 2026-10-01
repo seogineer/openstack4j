@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.github.openstack4j.core</groupId>
+        <groupId>io.github.seogineer</groupId>
         <artifactId>openstack4j-core-integration-test</artifactId>
-        <version>3.13-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>it-httpclient</artifactId>
     <name>OpenStack4j IntegrationTest Apache HttpClient</name>
@@ -13,13 +13,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.openstack4j.core.connectors</groupId>
+            <groupId>io.github.seogineer</groupId>
             <artifactId>openstack4j-httpclient</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.openstack4j.core</groupId>
+            <groupId>io.github.seogineer</groupId>
             <artifactId>openstack4j-core-integration-test</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
@@ -42,7 +42,7 @@
                         <inherited>false</inherited>
                         <configuration>
                             <dependenciesToScan>
-                                <dependency>com.github.openstack4j.core:openstack4j-core-integration-test</dependency>
+                                <dependency>io.github.seogineer:openstack4j-core-integration-test</dependency>
                             </dependenciesToScan>
                         </configuration>
                     </execution>

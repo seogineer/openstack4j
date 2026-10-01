@@ -9,7 +9,7 @@ Instead of depending on the normal "openstack4j" artifactId, change the dependen
 
 ```xml
 <dependency>
-    <groupId>com.github.openstack4j.core</groupId>
+    <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-core</artifactId>
     <version>...</version>
 </dependency>
@@ -20,7 +20,7 @@ Now choose a connector by adding the applicable dependency below:
 **Jersey 2**
 ```xml
 <dependency>
-    <groupId>com.github.openstack4j.core.connectors</groupId>
+    <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-jersey2</artifactId>
     <version>...</version>
 </dependency>
@@ -29,7 +29,7 @@ Now choose a connector by adding the applicable dependency below:
 **Resteasy**
 ```xml
 <dependency>
-    <groupId>com.github.openstack4j.core.connectors</groupId>
+    <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-resteasy</artifactId>
     <version>...</version>
 </dependency>
@@ -38,7 +38,7 @@ Now choose a connector by adding the applicable dependency below:
 **Apache HttpClient**
 ```xml
 <dependency>
-    <groupId>com.github.openstack4j.core.connectors</groupId>
+    <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-httpclient</artifactId>
     <version>...</version>
 </dependency>
@@ -47,7 +47,7 @@ Now choose a connector by adding the applicable dependency below:
 **OKHttp**
 ```xml
 <dependency>
-    <groupId>com.github.openstack4j.core.connectors</groupId>
+    <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-okhttp</artifactId>
     <version>...</version>
 </dependency>
