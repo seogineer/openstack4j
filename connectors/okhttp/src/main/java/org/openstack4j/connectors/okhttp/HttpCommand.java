@@ -1,14 +1,18 @@
 package org.openstack4j.connectors.okhttp;
 
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Proxy.Type;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.*;
-import okhttp3.internal.Util;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.openstack4j.core.transport.*;
 import org.openstack4j.core.transport.internal.HttpLoggingFilter;
@@ -61,7 +65,7 @@ public final class HttpCommand<R> {
         }
 
         if (config.getSslContext() != null)
-            okHttpClientBuilder.sslSocketFactory(config.getSslContext().getSocketFactory());
+            okHttpClientBuilder.sslSocketFactory(config.getSslContext().getSocketFactory(), defaultTrustManager());
 
         if (config.getHostNameVerifier() != null)
             okHttpClientBuilder.hostnameVerifier(config.getHostNameVerifier());
@@ -73,6 +77,24 @@ public final class HttpCommand<R> {
         clientReq = new Request.Builder();
         populateHeaders(request);
         populateQueryParams(request);
+    }
+
+    /**
+     * OkHttp requires a trust manager next to the socket factory on JDK 9+. It is used only for certificate chain
+     * cleaning (certificate pinning); the TLS handshake still trusts what the configured SSLContext trusts.
+     */
+    private static X509TrustManager defaultTrustManager() {
+        try {
+            TrustManagerFactory factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            factory.init((KeyStore) null);
+            for (TrustManager trustManager : factory.getTrustManagers()) {
+                if (trustManager instanceof X509TrustManager)
+                    return (X509TrustManager) trustManager;
+            }
+            throw new IllegalStateException("No X509TrustManager available from the default TrustManagerFactory");
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
@@ -97,18 +119,18 @@ public final class HttpCommand<R> {
         if (request.getEntity() != null) {
             if (InputStream.class.isAssignableFrom(request.getEntity().getClass())) {
                 byte[] content = IOUtil.readBytes((InputStream) request.getEntity());
-                body = RequestBody.create(MediaType.parse(request.getContentType()), content);
+                body = RequestBody.create(content, MediaType.parse(request.getContentType()));
             } else {
                 String content = ObjectMapperSingleton.getContext(request.getEntity().getClass()).writer().writeValueAsString(request.getEntity());
-                body = RequestBody.create(MediaType.parse(request.getContentType()), content);
+                body = RequestBody.create(content, MediaType.parse(request.getContentType()));
             }
         } else if (request.hasJson()) {
-            body = RequestBody.create(MediaType.parse(ClientConstants.CONTENT_TYPE_JSON), request.getJson());
+            body = RequestBody.create(request.getJson(), MediaType.parse(ClientConstants.CONTENT_TYPE_JSON));
         }
         //Added to address https://github.com/square/okhttp/issues/751
         //Set body as empty byte array if request is POST or PUT and body is sent as null
         if ((request.getMethod() == HttpMethod.POST || request.getMethod() == HttpMethod.PUT) && body == null) {
-            body = RequestBody.create(null, Util.EMPTY_BYTE_ARRAY);
+            body = RequestBody.create(new byte[0], null);
         }
         clientReq.method(request.getMethod().name(), body);
         Call call = client.newCall(clientReq.build());
