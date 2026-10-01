@@ -27,3 +27,4 @@ dependency-reduced-pom.xml
 
 # Maven Wrapper (the ".*" rule above would hide it)
 !.mvn/
+!.github/
