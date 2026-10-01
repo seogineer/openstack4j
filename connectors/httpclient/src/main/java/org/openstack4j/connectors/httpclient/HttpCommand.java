@@ -3,15 +3,19 @@ package org.openstack4j.connectors.httpclient;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.client.entity.EntityBuilder;
-import org.apache.http.client.methods.*;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.classic.methods.*;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.routing.RoutingSupport;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.net.URIBuilder;
 import org.openstack4j.api.exceptions.ConnectionException;
 import org.openstack4j.core.transport.HttpRequest;
 import org.openstack4j.core.transport.ObjectMapperSingleton;
@@ -23,7 +27,7 @@ import org.openstack4j.core.transport.functions.EndpointURIFromRequestFunction;
  */
 public final class HttpCommand<R> {
 
-    HttpUriRequest clientReq;
+    HttpUriRequestBase clientReq;
     private HttpRequest<R> request;
     private CloseableHttpClient client;
     private int retries;
@@ -84,27 +88,22 @@ public final class HttpCommand<R> {
      *
      * @return the response
      */
-    public CloseableHttpResponse execute() throws Exception {
-
-        EntityBuilder builder = null;
-
+    public ClassicHttpResponse execute() throws Exception {
         if (request.getEntity() != null) {
             if (InputStream.class.isAssignableFrom(request.getEntity().getClass())) {
-                InputStreamEntity ise = new InputStreamEntity((InputStream) request.getEntity(),
-                        ContentType.create(request.getContentType()));
-                ((HttpEntityEnclosingRequestBase) clientReq).setEntity(ise);
+                clientReq.setEntity(new InputStreamEntity((InputStream) request.getEntity(), -1,
+                        ContentType.parse(request.getContentType())));
             } else {
-                builder = EntityBuilder.create().setContentType(ContentType.create(request.getContentType(), "UTF-8"))
-                        .setText(ObjectMapperSingleton.getContext(request.getEntity().getClass()).writer()
-                                .writeValueAsString(request.getEntity()));
+                String json = ObjectMapperSingleton.getContext(request.getEntity().getClass()).writer()
+                        .writeValueAsString(request.getEntity());
+                clientReq.setEntity(new StringEntity(json,
+                        ContentType.parse(request.getContentType()).withCharset(StandardCharsets.UTF_8)));
             }
         } else if (request.hasJson()) {
-            builder = EntityBuilder.create().setContentType(ContentType.APPLICATION_JSON).setText(request.getJson());
+            clientReq.setEntity(new StringEntity(request.getJson(), ContentType.APPLICATION_JSON));
         }
-        if (builder != null && clientReq instanceof HttpEntityEnclosingRequestBase)
-            ((HttpEntityEnclosingRequestBase) clientReq).setEntity(builder.build());
 
-        return client.execute(clientReq);
+        return client.executeOpen(RoutingSupport.determineHost(clientReq), clientReq, null);
     }
 
     /**
@@ -155,6 +154,10 @@ public final class HttpCommand<R> {
             return;
 
         for (Map.Entry<String, Object> h : request.getHeaders().entrySet()) {
+            // HttpClient computes these from the entity and rejects requests that already carry them
+            if (HttpHeaders.CONTENT_LENGTH.equalsIgnoreCase(h.getKey())
+                    || HttpHeaders.TRANSFER_ENCODING.equalsIgnoreCase(h.getKey()))
+                continue;
             clientReq.addHeader(h.getKey(), String.valueOf(h.getValue()));
         }
     }

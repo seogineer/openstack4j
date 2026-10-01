@@ -25,6 +25,8 @@
                         <configuration>
                             <minimizeJar>true</minimizeJar>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <!-- keep the real POM: a reduced POM would drop guava, jackson, ... from consumers -->
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <createSourcesJar>true</createSourcesJar>
                             <shadedClassifierName>withdeps</shadedClassifierName>
                         </configuration>

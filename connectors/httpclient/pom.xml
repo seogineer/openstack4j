@@ -9,16 +9,12 @@
     <name>OpenStack4j HttpComponents-HttpClient Connector</name>
     <packaging>jar</packaging>
 
-    <properties>
-        <httpclient-version>4.3.1</httpclient-version>
-    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.3.6</version>
-            <type>jar</type>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.6.4</version>
         </dependency>
     </dependencies>
 

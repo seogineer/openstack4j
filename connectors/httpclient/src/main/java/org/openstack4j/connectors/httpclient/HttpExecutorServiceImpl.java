@@ -1,6 +1,6 @@
 package org.openstack4j.connectors.httpclient;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.openstack4j.api.exceptions.ConnectionException;
 import org.openstack4j.api.exceptions.ResponseException;
 import org.openstack4j.core.transport.ClientConstants;
@@ -60,9 +60,9 @@ public class HttpExecutorServiceImpl implements HttpExecutorService {
     }
 
     private <R> HttpResponse invokeRequest(HttpCommand<R> command) throws Exception {
-        CloseableHttpResponse response = command.execute();
+        ClassicHttpResponse response = command.execute();
 
-        if (command.getRetries() == 0 && response.getStatusLine().getStatusCode() == 401 && !command.getRequest().getHeaders().containsKey(ClientConstants.HEADER_OS4J_AUTH)) {
+        if (command.getRetries() == 0 && response.getCode() == 401 && !command.getRequest().getHeaders().containsKey(ClientConstants.HEADER_OS4J_AUTH)) {
             try {
                 OSAuthenticator.reAuthenticate();
                 command.getRequest().getHeaders().put(ClientConstants.HEADER_X_AUTH_TOKEN, OSClientSession.getCurrent().getTokenId());
