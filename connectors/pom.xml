@@ -12,9 +12,9 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>http-connector</module>
         <module>httpclient</module>
         <module>okhttp</module>
-        <!-- http-connector 는 JDK 17+ 에서 PATCH 가 동작하지 않아 제외. JDK HttpClient 로 재구현 후 다시 넣는다. -->
     </modules>
 
     <dependencies>

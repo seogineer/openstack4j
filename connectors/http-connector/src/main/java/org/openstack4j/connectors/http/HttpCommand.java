@@ -1,21 +1,25 @@
 package org.openstack4j.connectors.http;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.net.*;
-import java.net.Proxy.Type;
+import java.net.ConnectException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest.BodyPublisher;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.net.http.HttpTimeoutException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.openstack4j.core.transport.Config;
 import org.openstack4j.core.transport.HttpRequest;
 import org.openstack4j.core.transport.HttpResponse;
 import org.openstack4j.core.transport.ObjectMapperSingleton;
 import org.openstack4j.util.IOUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * HttpCommand is responsible for executing the actual request driven by the
@@ -23,15 +27,13 @@ import org.slf4j.LoggerFactory;
  */
 public final class HttpCommand<R> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpCommand.class);
+    /** Headers the JDK HttpClient sets itself and refuses to accept from callers. */
+    private static final Set<String> RESTRICTED_HEADERS = Set.of("connection", "content-length", "expect", "host", "upgrade");
 
     private final HttpRequest<R> request;
-    private URL connectionUrl;
-    private HttpURLConnection connection;
     private int retries;
 
     private HttpCommand(HttpRequest<R> request) {
-
         this.request = request;
     }
 
@@ -42,52 +44,7 @@ public final class HttpCommand<R> {
      * @return the command
      */
     public static <R> HttpCommand<R> create(HttpRequest<R> request) {
-        HttpCommand<R> command = new HttpCommand<>(request);
-        command.initialize();
-        return command;
-    }
-
-    /**
-     * @param httpURLConnection the HttpURLConnection
-     * @param method the methods name (GET, PUT, POST,... exception is thrown when trying to do a PATCH)
-     * @see <a href= "https://java.net/jira/browse/JERSEY-639">https://java.net/jira/browse/JERSEY-639</a>
-     */
-    private static void setRequestMethodUsingWorkaroundForJREBug(final HttpURLConnection httpURLConnection, final String method) {
-        try {
-            httpURLConnection.setRequestMethod(method);
-            // Check whether we are running on a buggy JRE
-        } catch (final ProtocolException pe) {
-            try {
-                final Class<?> httpURLConnectionClass = httpURLConnection
-                        .getClass();
-                final Class<?> parentClass = httpURLConnectionClass
-                        .getSuperclass();
-                final Field methodField;
-                // If the implementation class is an HTTPS URL Connection, we
-                // need to go up one level higher in the heirarchy to modify the
-                // 'method' field.
-                if (parentClass == HttpsURLConnection.class) {
-                    methodField = parentClass.getSuperclass().getDeclaredField(
-                            "method");
-                } else {
-                    methodField = parentClass.getDeclaredField("method");
-                }
-                methodField.setAccessible(true);
-                methodField.set(httpURLConnection, method);
-            } catch (final Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    private void initialize() {
-        try {
-
-            populateQueryParams();
-            populateHeaders();
-        } catch (Exception ex) {
-            LOG.error(ex.getMessage(), ex);
-        }
+        return new HttpCommand<>(request);
     }
 
     /**
@@ -95,58 +52,57 @@ public final class HttpCommand<R> {
      *
      * @return the response
      */
-    public HttpResponse execute() throws Exception {
-        byte[] requestBody = null;
+    public HttpResponse execute() throws IOException, InterruptedException {
+        java.net.http.HttpRequest.Builder builder = java.net.http.HttpRequest.newBuilder(URI.create(request.getUrl()))
+                .method(request.getMethod().name(), bodyPublisher());
 
-        if (request.getEntity() != null) {
-            if (InputStream.class.isAssignableFrom(request.getEntity().getClass())) {
-                requestBody = IOUtil.readBytes((InputStream) request.getEntity());
-            } else {
-                String content = ObjectMapperSingleton.getContext(request.getEntity().getClass()).writer().writeValueAsString(request.getEntity());
-                requestBody = content.getBytes();
+        Config config = request.getConfig();
+        if (config != null && config.getReadTimeout() > 0)
+            builder.timeout(Duration.ofMillis(config.getReadTimeout()));
+
+        if (request.getContentType() != null)
+            builder.setHeader("Content-Type", request.getContentType());
+        builder.setHeader("Accept", "application/json; charset=utf-8");
+
+        if (request.hasHeaders()) {
+            for (Map.Entry<String, Object> h : request.getHeaders().entrySet()) {
+                if (!RESTRICTED_HEADERS.contains(h.getKey().toLowerCase(Locale.ROOT)))
+                    builder.setHeader(h.getKey(), String.valueOf(h.getValue()));
             }
-        } else if (request.hasJson()) {
-            requestBody = request.getJson().getBytes();
         }
 
+        java.net.http.HttpResponse<byte[]> response = send(HttpClientFactory.get(config), builder.build());
+        return HttpResponseImpl.wrap(response.headers().map(), response.statusCode(),
+                HttpResponseImpl.reasonPhrase(response.statusCode()), response.body());
+    }
+
+    /**
+     * Sends once more when the first attempt fails with an I/O error, which is what a pooled keep-alive connection
+     * already closed by the server (or a load balancer) produces. The JDK client only retries idempotent methods
+     * itself; HttpURLConnection, which this connector used before, also retried POST once. Timeouts are not retried.
+     */
+    private static java.net.http.HttpResponse<byte[]> send(HttpClient client, java.net.http.HttpRequest jdkRequest)
+            throws IOException, InterruptedException {
         try {
-            //connection.setRequestMethod(request.getMethod().name());
-            setRequestMethodUsingWorkaroundForJREBug(connection, request.getMethod().name());
-
-            if (requestBody != null) {
-                connection.setDoOutput(true);
-                BufferedOutputStream out = new BufferedOutputStream(connection.getOutputStream());
-                out.write(requestBody);
-                out.flush();
-            }
-
-            int status = connection.getResponseCode();
-            byte[] data = getResponseBytes();
-            return HttpResponseImpl.wrap(connection.getHeaderFields(),
-                    status, connection.getResponseMessage(),
-                    data);
-
-        } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+            return client.send(jdkRequest, BodyHandlers.ofByteArray());
+        } catch (HttpTimeoutException | ConnectException e) {
             throw e;
-        } finally {
-            connection.disconnect();
+        } catch (IOException e) {
+            return client.send(jdkRequest, BodyHandlers.ofByteArray());
         }
     }
 
-    // https://stackoverflow.com/a/613484/2091470
-    private byte[] getResponseBytes() throws IOException {
-        InputStream is;
-        try {
-            is = connection.getInputStream();
-        } catch (IOException ex) {
-            is = connection.getErrorStream();
+    private BodyPublisher bodyPublisher() throws IOException {
+        Object entity = request.getEntity();
+        if (entity != null) {
+            if (entity instanceof InputStream)
+                return BodyPublishers.ofByteArray(IOUtil.readBytes((InputStream) entity));
+            String content = ObjectMapperSingleton.getContext(entity.getClass()).writer().writeValueAsString(entity);
+            return BodyPublishers.ofString(content, StandardCharsets.UTF_8);
         }
-
-        if (is != null) {
-            return IOUtil.readBytes(is);
-        }
-        return null;
+        if (request.hasJson())
+            return BodyPublishers.ofString(request.getJson(), StandardCharsets.UTF_8);
+        return BodyPublishers.noBody();
     }
 
     /**
@@ -164,40 +120,17 @@ public final class HttpCommand<R> {
     }
 
     /**
+     * The JDK request is rebuilt from {@link #getRequest()} on every {@link #execute()}, so updated headers
+     * (for example a refreshed auth token) are picked up without re-initialisation.
+     *
      * @return incremement's the retry count and returns self
      */
     public HttpCommand<R> incrementRetriesAndReturn() {
-        initialize();
         retries++;
         return this;
     }
 
     public HttpRequest<R> getRequest() {
         return request;
-    }
-
-    private void populateQueryParams() throws MalformedURLException {
-        connectionUrl = new URL(request.getUrl());
-    }
-
-    private void populateHeaders() throws IOException {
-
-        if (request.getConfig() != null && request.getConfig().getProxy() != null) {
-            Config config = request.getConfig();
-            Proxy proxy = new Proxy(Type.HTTP,
-                    new InetSocketAddress(config.getProxy().getRawHost(), config.getProxy().getPort()));
-            connection = (HttpURLConnection) connectionUrl.openConnection(proxy);
-        } else {
-            connection = (HttpURLConnection) connectionUrl.openConnection();
-        }
-        connection.setRequestProperty("Content-Type", request.getContentType());
-        connection.setRequestProperty("Accept", "application/json; charset=utf-8");
-
-        if (!request.hasHeaders()) {
-            return;
-        }
-        for (Map.Entry<String, Object> h : request.getHeaders().entrySet()) {
-            connection.setRequestProperty(h.getKey(), String.valueOf(h.getValue()));
-        }
     }
 }

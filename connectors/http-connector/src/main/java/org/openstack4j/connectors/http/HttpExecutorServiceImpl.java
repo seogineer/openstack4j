@@ -8,10 +8,12 @@ import org.openstack4j.core.transport.HttpRequest;
 import org.openstack4j.core.transport.HttpResponse;
 import org.openstack4j.openstack.internal.OSAuthenticator;
 import org.openstack4j.openstack.internal.OSClientSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HttpExecutor is the default implementation for HttpExecutorService which is
- * responsible for interfacing with OKHttp and mapping common status codes,
+ * responsible for interfacing with the JDK HttpClient and mapping common status codes,
  * requests and responses back to the common API
  *
  * @author Jeremy Unruh
@@ -19,6 +21,7 @@ import org.openstack4j.openstack.internal.OSClientSession;
 public class HttpExecutorServiceImpl implements HttpExecutorService {
 
     private static final String NAME = "Http URL Connector";
+    private static final Logger LOG = LoggerFactory.getLogger(HttpExecutorServiceImpl.class);
 
     /**
      * {@inheritDoc}
@@ -30,7 +33,7 @@ public class HttpExecutorServiceImpl implements HttpExecutorService {
         } catch (ResponseException re) {
             throw re;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
             return null;
         }
     }
@@ -49,8 +52,11 @@ public class HttpExecutorServiceImpl implements HttpExecutorService {
 
         try {
             return invokeRequest(command);
+        } catch (ResponseException re) {
+            throw re;
         } catch (Exception pe) {
-            pe.printStackTrace(System.err);
+            if (pe instanceof InterruptedException)
+                Thread.currentThread().interrupt();
             throw new ConnectionException(pe.getMessage(), 0, pe);
         }
     }
