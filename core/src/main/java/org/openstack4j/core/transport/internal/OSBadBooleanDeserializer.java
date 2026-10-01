@@ -56,7 +56,7 @@ public class OSBadBooleanDeserializer extends JsonDeserializer<Boolean> {
             throw ctxt.weirdStringException(text, Boolean.class, "only \"true\" or \"false\" recognized");
         }
         // Otherwise, no can do:
-        throw ctxt.mappingException(Boolean.class, t);
+        return (Boolean) ctxt.handleUnexpectedToken(Boolean.class, jp);
     }
 
     /**

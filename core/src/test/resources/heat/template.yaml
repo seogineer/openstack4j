@@ -1,0 +1,9 @@
+heat_template_version: 2018-08-31
+resources:
+  server:
+    type: OS::Nova::Server
+    properties:
+      user_data:
+        get_file: script.sh
+  nested:
+    type: nested.yaml

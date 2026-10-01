@@ -11,8 +11,8 @@
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <slf4j.version>1.7.21</slf4j.version>
-        <jackson.version>2.14.2</jackson.version>
+        <slf4j.version>2.0.20</slf4j.version>
+        <jackson.version>2.22.3</jackson.version>
         <doclint>none</doclint>
     </properties>
     <licenses>
@@ -62,7 +62,8 @@
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-            <version>2.0.0</version>
+            <version>3.0.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -70,9 +71,9 @@
             <version>${slf4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.fge</groupId>
+            <groupId>com.github.java-json-tools</groupId>
             <artifactId>json-patch</artifactId>
-            <version>1.9</version>
+            <version>1.13</version>
         </dependency>
     </dependencies>
 
@@ -185,9 +186,14 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>5.24.0</version>
+            </dependency>
+            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>7.7.0</version>
+                <version>7.12.0</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
