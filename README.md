@@ -1,11 +1,13 @@
-OpenStack4j
-===========
+OpenStack4j (seogineer fork)
+============================
 
-[![Build Status](https://github.com/openstack4j/openstack4j/actions/workflows/ci.yaml/badge.svg)](https://github.com/openstack4j/openstack4j/actions/workflows/ci.yaml)
-[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)]()
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.openstack4j.core/openstack4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.openstack4j.core/openstack4j)
-[![javadoc](https://javadoc.io/badge2/com.github.openstack4j.core/openstack4j-core/javadoc.svg)](https://javadoc.io/doc/com.github.openstack4j.core/openstack4j-core)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=openstack4j_openstack4j&metric=alert_status)](https://sonarcloud.io/dashboard?id=openstack4j_openstack4j)
+[![CI](https://github.com/seogineer/openstack4j/actions/workflows/ci.yaml/badge.svg)](https://github.com/seogineer/openstack4j/actions/workflows/ci.yaml)
+[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
+
+> **이 저장소는 [openstack4j/openstack4j](https://github.com/openstack4j/openstack4j) 의 후속 포크입니다.**
+> 원본은 2024-05 의 3.12 이후 개발이 멈췄습니다. 이 포크는 JDK 17+ / Spring Boot 3 지원과 최신 의존성을 목표로 하며,
+> Java 패키지(`org.openstack4j`)는 그대로 두고 Maven 좌표만 `io.github.seogineer` 로 바꿉니다.
+> 3.x 에서 옮겨 오는 방법은 [MIGRATION.md](MIGRATION.md) 를 보세요.
 
 OpenStack4j is a fluent OpenStack client that allows provisioning and control of an OpenStack deployment.   This includes support for Identity, Compute, Image, Network, Block Storage, Telemetry, Data Processing as well as many extensions (LBaaS, FWaaS, Quota-Sets, etc)
 
