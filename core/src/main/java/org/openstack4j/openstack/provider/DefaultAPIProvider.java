@@ -122,6 +122,7 @@ public class DefaultAPIProvider implements APIProvider {
         bind(PlacementService.class, PlacementServiceImpl.class);
         bind(ResourceProviderService.class, ResourceProviderServiceImpl.class);
         bind(org.openstack4j.api.placement.v1.VersionService.class, org.openstack4j.openstack.placement.v1.internal.VersionServiceImpl.class);
+        bind(org.openstack4j.api.placement.v1.AllocationCandidateService.class, org.openstack4j.openstack.placement.v1.internal.AllocationCandidateServiceImpl.class);
         bind(org.openstack4j.api.placement.v1.AllocationService.class, org.openstack4j.openstack.placement.v1.internal.AllocationServiceImpl.class);
         bind(org.openstack4j.api.placement.v1.UsageService.class, org.openstack4j.openstack.placement.v1.internal.UsageServiceImpl.class);
         bind(org.openstack4j.api.placement.v1.AggregateService.class, org.openstack4j.openstack.placement.v1.internal.AggregateServiceImpl.class);
