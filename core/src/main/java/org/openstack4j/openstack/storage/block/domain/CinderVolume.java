@@ -102,6 +102,22 @@ public class CinderVolume implements Volume {
     private String encryptionKeyId;
     @JsonProperty("consumes_quota")
     private Boolean consumesQuota;
+    @JsonProperty("backup_id")
+    private String backupId;
+    @JsonIgnore
+    private transient Map<String, Object> schedulerHints;
+
+    @JsonIgnore
+    @Override
+    public String getBackupId() {
+        return backupId;
+    }
+
+    @JsonIgnore
+    @Override
+    public Map<String, Object> getSchedulerHints() {
+        return schedulerHints;
+    }
 
     /** @return whether {@code bootable} was set on this request body (Cinder rejects it from 3.53) */
     @JsonIgnore
@@ -491,6 +507,36 @@ public class CinderVolume implements Volume {
         @Override
         public VolumeBuilder zone(String zone) {
             m.zone = zone;
+            return this;
+        }
+
+        @Override
+        public VolumeBuilder groupId(String groupId) {
+            m.groupId = groupId;
+            return this;
+        }
+
+        @Override
+        public VolumeBuilder backupId(String backupId) {
+            m.backupId = backupId;
+            return this;
+        }
+
+        @Override
+        public VolumeBuilder imageId(String imageId) {
+            m.imageId = imageId;
+            return this;
+        }
+
+        @Override
+        public VolumeBuilder consistencyGroupId(String consistencyGroupId) {
+            m.consistencyGroupId = consistencyGroupId;
+            return this;
+        }
+
+        @Override
+        public VolumeBuilder schedulerHints(Map<String, Object> schedulerHints) {
+            m.schedulerHints = schedulerHints;
             return this;
         }
     }

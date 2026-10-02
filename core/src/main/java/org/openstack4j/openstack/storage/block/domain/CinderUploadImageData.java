@@ -24,6 +24,10 @@ public class CinderUploadImageData implements ModelEntity {
     private DiskFormat diskFormat;
     @JsonProperty("force")
     private boolean force;
+    @JsonProperty("visibility")
+    private String visibility;
+    @JsonProperty("protected")
+    private Boolean protectedImage;
 
     public CinderUploadImageData() {
     }
@@ -34,6 +38,8 @@ public class CinderUploadImageData implements ModelEntity {
         ret.containerFormat = data.getContainerFormat();
         ret.diskFormat = data.getDiskFormat();
         ret.force = data.isForce();
+        ret.visibility = data.getVisibility();
+        ret.protectedImage = data.getProtectedImage();
         return ret;
     }
 

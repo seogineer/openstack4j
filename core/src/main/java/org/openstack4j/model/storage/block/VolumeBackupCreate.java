@@ -3,6 +3,7 @@ package org.openstack4j.model.storage.block;
 import org.openstack4j.common.Buildable;
 import org.openstack4j.model.ModelEntity;
 import org.openstack4j.model.storage.block.builder.VolumeBackupCreateBuilder;
+import java.util.Map;
 
 /**
  * Represents entity which is used for creating a volume backup
@@ -46,5 +47,8 @@ public interface VolumeBackupCreate extends ModelEntity, Buildable<VolumeBackupC
      */
     String getSnapshotId();
 
-
+    /** @return metadata (3.43+) */
+    default Map<String, String> getMetadata() { return null; }
+    /** @return availability_zone (3.51+) */
+    default String getAvailabilityZone() { return null; }
 }

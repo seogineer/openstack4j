@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.model.storage.block.VolumeBackupCreate;
 import org.openstack4j.model.storage.block.builder.VolumeBackupCreateBuilder;
+import java.util.Map;
 
 @JsonRootName("backup")
 public class CinderVolumeBackupCreate implements VolumeBackupCreate {
@@ -20,6 +21,10 @@ public class CinderVolumeBackupCreate implements VolumeBackupCreate {
     private boolean force;
     @JsonProperty("snapshot_id")
     private String snapshotId;
+    @JsonProperty("metadata")
+    private Map<String, String> metadata;
+    @JsonProperty("availability_zone")
+    private String availabilityZone;
 
     public static VolumeBackupCreateConcreteBuilder builder() {
         return new VolumeBackupCreateConcreteBuilder();
@@ -82,6 +87,16 @@ public class CinderVolumeBackupCreate implements VolumeBackupCreate {
     }
 
     @Override
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+
+    @Override
+    public String getAvailabilityZone() {
+        return availabilityZone;
+    }
+
+    @Override
     public VolumeBackupCreateBuilder toBuilder() {
         return new VolumeBackupCreateConcreteBuilder(this);
     }
@@ -96,6 +111,18 @@ public class CinderVolumeBackupCreate implements VolumeBackupCreate {
 
         public VolumeBackupCreateConcreteBuilder(CinderVolumeBackupCreate model) {
             this.model = model;
+        }
+
+        @Override
+        public VolumeBackupCreateBuilder metadata(Map<String, String> metadata) {
+            model.metadata = metadata;
+            return this;
+        }
+
+        @Override
+        public VolumeBackupCreateBuilder availabilityZone(String availabilityZone) {
+            model.availabilityZone = availabilityZone;
+            return this;
         }
 
         @Override

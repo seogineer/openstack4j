@@ -21,6 +21,15 @@ import org.openstack4j.model.storage.block.options.UploadImageData;
 import org.openstack4j.openstack.storage.block.domain.*;
 import org.openstack4j.openstack.storage.block.domain.CinderVolume.Volumes;
 import org.openstack4j.openstack.storage.block.domain.CinderVolumeType.VolumeTypes;
+import java.util.LinkedHashMap;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openstack4j.model.storage.block.VolumeSummary;
+import org.openstack4j.model.storage.block.options.BlockStorageListOptions;
+import org.openstack4j.model.storage.block.options.VolumeListOptions;
+import org.openstack4j.model.storage.block.options.VolumeUpdateOptions;
+import org.openstack4j.openstack.internal.microversion.JsonBody;
+import org.openstack4j.openstack.internal.microversion.MicroVersions;
 
 /**
  * Manages Volumes and Volume Type based operations against Block Storage (Cinder)
@@ -135,9 +144,23 @@ public class BlockVolumeServiceImpl extends BaseBlockStorageServices implements 
     @Override
     public Volume create(Volume volume) {
         Objects.requireNonNull(volume);
+        if (volume.getGroupId() != null)
+            requireMicroVersion("Volume create option group_id", V(13));
+        if (volume.getBackupId() != null)
+            requireMicroVersion("Volume create option backup_id", V(47));
         MicroVersion ceiling = volume instanceof CinderVolume && ((CinderVolume) volume).hasBootable() ? V(52) : null;   // bootable is not in the 3.53 create schema
-        return capped(post(CinderVolume.class, uri("/volumes")), ceiling).entity(volume).execute();
+        Invocation<CinderVolume> req = capped(post(CinderVolume.class, uri("/volumes")), ceiling);
+        if (volume.getSchedulerHints() != null && !volume.getSchedulerHints().isEmpty()) {
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("volume", PLAIN_MAPPER.convertValue(volume, Map.class));
+            body.put("OS-SCH-HNT:scheduler_hints", volume.getSchedulerHints());
+            return req.entity(JsonBody.of(body)).execute();
+        }
+        return req.entity(volume).execute();
     }
+
+    /** Serialises a volume as the inner object (no root), honouring the model's Jackson annotations. */
+    private static final ObjectMapper PLAIN_MAPPER = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
     /**
      * {@inheritDoc}
@@ -216,6 +239,8 @@ public class BlockVolumeServiceImpl extends BaseBlockStorageServices implements 
         Objects.requireNonNull(volumeId, "volumeId");
         Objects.requireNonNull(data, "UploadImageData");
 
+        if (data.getVisibility() != null || data.getProtectedImage() != null)
+            requireMicroVersion("Upload to image visibility/protected", V(1));
         return post(CinderVolumeUploadImage.class, uri("/volumes/%s/action", volumeId))
                 .entity(CinderUploadImageData.create(data))
                 .execute();
@@ -297,4 +322,36 @@ public class BlockVolumeServiceImpl extends BaseBlockStorageServices implements 
         return post(ActionResponse.class, uri("/volumes/%s/action", volumeId)).entity(detach).execute();
     }
 
+    @Override
+    public List<? extends Volume> list(VolumeListOptions options) {
+        Objects.requireNonNull(options);
+        requireOptions("Volume list filters", options);
+        return get(Volumes.class, uri("/volumes/detail")).params(options.toQueryParams()).execute().getList();
+    }
+
+    @Override
+    public VolumeSummary summary() {
+        requireMicroVersion("Volume summary", V(12));
+        return get(CinderVolumeSummary.class, uri("/volumes/summary")).execute();
+    }
+
+    @Override
+    public VolumeSummary summary(VolumeListOptions options) {
+        Objects.requireNonNull(options);
+        requireMicroVersion("Volume summary", V(12));
+        requireOptions("Volume summary filters", options);
+        return get(CinderVolumeSummary.class, uri("/volumes/summary")).params(options.toQueryParams()).execute();
+    }
+
+    @Override
+    public Volume update(String volumeId, VolumeUpdateOptions options) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(options);
+        return put(CinderVolume.class, uri("/volumes/%s", volumeId)).entity(JsonBody.of("volume", options.toMap())).execute();
+    }
+
+    private void requireOptions(String what, BlockStorageListOptions<?> options) {
+        if (options.getRequiredMicroVersion() != null)
+            requireMicroVersion(what + " " + options.toQueryParams().keySet(), MicroVersions.parse(options.getRequiredMicroVersion()));
+    }
 }

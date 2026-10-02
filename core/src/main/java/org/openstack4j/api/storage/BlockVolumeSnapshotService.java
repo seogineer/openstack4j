@@ -6,6 +6,7 @@ import java.util.Map;
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.storage.block.VolumeSnapshot;
+import org.openstack4j.model.storage.block.options.SnapshotListOptions;
 
 /**
  * OpenStack (Cinder) Volume Snapshot Operations API.
@@ -64,4 +65,8 @@ public interface BlockVolumeSnapshotService extends RestService {
      */
     VolumeSnapshot create(VolumeSnapshot snapshot);
 
+    /**
+     * Lists snapshots with details using typed filters ({@code GET /snapshots/detail}).
+     */
+    List<? extends VolumeSnapshot> listDetail(SnapshotListOptions options);
 }

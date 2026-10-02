@@ -1,5 +1,7 @@
 package org.openstack4j.openstack.storage.block.internal;
 
+import static org.openstack4j.openstack.storage.block.internal.BlockStorageMicroVersions.V;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -15,6 +17,8 @@ import org.openstack4j.model.storage.block.VolumeBackupRestore;
 import org.openstack4j.openstack.storage.block.domain.CinderVolumeBackup;
 import org.openstack4j.openstack.storage.block.domain.CinderVolumeBackup.VolumeBackups;
 import org.openstack4j.openstack.storage.block.domain.CinderVolumeBackupRestore;
+import org.openstack4j.model.storage.block.options.BackupListOptions;
+import org.openstack4j.openstack.internal.microversion.MicroVersions;
 
 /**
  * OpenStack (Cinder) Volume Backup Operations API Implementation.
@@ -78,6 +82,10 @@ public class BlockVolumeBackupServiceImpl extends BaseBlockStorageServices imple
     public VolumeBackup create(VolumeBackupCreate vbc) {
         Objects.requireNonNull(vbc);
         Objects.requireNonNull(vbc.getVolumeId());
+        if (vbc.getMetadata() != null)
+            requireMicroVersion("Backup create option metadata", V(43));
+        if (vbc.getAvailabilityZone() != null)
+            requireMicroVersion("Backup create option availability_zone", V(51));
         return post(CinderVolumeBackup.class, uri("/backups")).entity(vbc).execute();
     }
 
@@ -105,4 +113,11 @@ public class BlockVolumeBackupServiceImpl extends BaseBlockStorageServices imple
         }
     }
 
+    @Override
+    public List<? extends VolumeBackup> list(BackupListOptions options) {
+        Objects.requireNonNull(options);
+        if (options.getRequiredMicroVersion() != null)
+            requireMicroVersion("Backup list filters " + options.toQueryParams().keySet(), MicroVersions.parse(options.getRequiredMicroVersion()));
+        return get(VolumeBackups.class, uri("/backups/detail")).params(options.toQueryParams()).execute().getList();
+    }
 }

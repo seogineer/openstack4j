@@ -8,6 +8,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.storage.block.VolumeBackup;
 import org.openstack4j.model.storage.block.VolumeBackupCreate;
 import org.openstack4j.model.storage.block.VolumeBackupRestore;
+import org.openstack4j.model.storage.block.options.BackupListOptions;
 
 
 /**
@@ -68,5 +69,8 @@ public interface BlockVolumeBackupService extends RestService {
      */
     VolumeBackupRestore restore(String backupId, String name, String volumeId);
 
-
+    /**
+     * Lists backups with details using typed filters ({@code GET /backups/detail}).
+     */
+    List<? extends VolumeBackup> list(BackupListOptions options);
 }
