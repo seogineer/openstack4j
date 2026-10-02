@@ -30,6 +30,8 @@ import org.openstack4j.model.storage.block.options.VolumeListOptions;
 import org.openstack4j.model.storage.block.options.VolumeUpdateOptions;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.internal.microversion.MicroVersions;
+import java.util.Collections;
+import org.openstack4j.model.storage.block.options.VolumeMigrateRequest;
 
 /**
  * Manages Volumes and Volume Type based operations against Block Storage (Cinder)
@@ -353,5 +355,170 @@ public class BlockVolumeServiceImpl extends BaseBlockStorageServices implements 
     private void requireOptions(String what, BlockStorageListOptions<?> options) {
         if (options.getRequiredMicroVersion() != null)
             requireMicroVersion(what + " " + options.toQueryParams().keySet(), MicroVersions.parse(options.getRequiredMicroVersion()));
+    }
+
+    private ActionResponse action(String volumeId, String action, Map<String, ?> body) {
+        return post(ActionResponse.class, uri("/volumes/%s/action", volumeId)).entity(JsonBody.of(action, body)).execute();
+    }
+
+    @Override
+    public Map<String, String> metadata(String volumeId) {
+        Objects.requireNonNull(volumeId);
+        CinderMetadata result = get(CinderMetadata.class, uri("/volumes/%s/metadata", volumeId)).execute();
+        return result == null ? Collections.emptyMap() : result.getMetadata();
+    }
+
+    @Override
+    public Map<String, String> setMetadata(String volumeId, Map<String, String> metadata) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(metadata);
+        return post(CinderMetadata.class, uri("/volumes/%s/metadata", volumeId)).entity(JsonBody.of("metadata", metadata)).execute().getMetadata();
+    }
+
+    @Override
+    public Map<String, String> replaceMetadata(String volumeId, Map<String, String> metadata) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(metadata);
+        return put(CinderMetadata.class, uri("/volumes/%s/metadata", volumeId)).entity(JsonBody.of("metadata", metadata)).execute().getMetadata();
+    }
+
+    @Override
+    public String metadataItem(String volumeId, String key) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(key);
+        CinderMetadataItem item = get(CinderMetadataItem.class, uri("/volumes/%s/metadata/%s", volumeId, key)).execute();
+        return item == null ? null : item.value();
+    }
+
+    @Override
+    public String updateMetadataItem(String volumeId, String key, String value) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(key);
+        CinderMetadataItem item = put(CinderMetadataItem.class, uri("/volumes/%s/metadata/%s", volumeId, key))
+                .entity(JsonBody.of("meta", Collections.singletonMap(key, value))).execute();
+        return item == null ? null : item.value();
+    }
+
+    @Override
+    public ActionResponse deleteMetadataItem(String volumeId, String key) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(key);
+        return deleteWithResponse(uri("/volumes/%s/metadata/%s", volumeId, key)).execute();
+    }
+
+    @Override
+    public Map<String, String> imageMetadata(String volumeId) {
+        Objects.requireNonNull(volumeId);
+        CinderMetadata result = post(CinderMetadata.class, uri("/volumes/%s/action", volumeId))
+                .entity(JsonBody.of("os-show_image_metadata", Collections.emptyMap())).execute();
+        return result == null ? Collections.emptyMap() : result.getMetadata();
+    }
+
+    @Override
+    public Map<String, String> setImageMetadata(String volumeId, Map<String, String> metadata) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(metadata);
+        return post(CinderMetadata.class, uri("/volumes/%s/action", volumeId))
+                .entity(JsonBody.of("os-set_image_metadata", Collections.singletonMap("metadata", metadata))).execute().getMetadata();
+    }
+
+    @Override
+    public ActionResponse unsetImageMetadata(String volumeId, String key) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(key);
+        return action(volumeId, "os-unset_image_metadata", Collections.singletonMap("key", key));
+    }
+
+    @Override
+    public ActionResponse revertToSnapshot(String volumeId, String snapshotId) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(snapshotId);
+        requireMicroVersion("Revert to snapshot", V(40));
+        return action(volumeId, "revert", Collections.singletonMap("snapshot_id", snapshotId));
+    }
+
+    @Override
+    public ActionResponse reimage(String volumeId, String imageId, boolean reimageReserved) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(imageId);
+        requireMicroVersion("Reimage", V(68));
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("image_id", imageId);
+        body.put("reimage_reserved", reimageReserved);
+        return action(volumeId, "os-reimage", body);
+    }
+
+    @Override
+    public ActionResponse completeExtend(String volumeId, boolean error) {
+        Objects.requireNonNull(volumeId);
+        requireMicroVersion("Extend completion", V(71));
+        return action(volumeId, "os-extend_volume_completion", Collections.singletonMap("error", error));
+    }
+
+    @Override
+    public ActionResponse retype(String volumeId, String newType, String migrationPolicy) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(newType);
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("new_type", newType);
+        if (migrationPolicy != null)
+            body.put("migration_policy", migrationPolicy);
+        return action(volumeId, "os-retype", body);
+    }
+
+    @Override
+    public ActionResponse migrate(String volumeId, VolumeMigrateRequest request) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(request);
+        if (request.getCluster() != null)
+            requireMicroVersion("Migrate to a cluster", V(16));
+        Map<String, Object> body = new LinkedHashMap<>();
+        if (request.getHost() != null) body.put("host", request.getHost());
+        if (request.getCluster() != null) body.put("cluster", request.getCluster());
+        if (request.getForceHostCopy() != null) body.put("force_host_copy", request.getForceHostCopy());
+        if (request.getLockVolume() != null) body.put("lock_volume", request.getLockVolume());
+        return action(volumeId, "os-migrate_volume", body);
+    }
+
+    @Override
+    public ActionResponse completeMigration(String volumeId, String newVolumeId, boolean error) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(newVolumeId);
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("new_volume", newVolumeId);
+        body.put("error", error);
+        return action(volumeId, "os-migrate_volume_completion", body);
+    }
+
+    @Override public ActionResponse unmanage(String volumeId) { return action(Objects.requireNonNull(volumeId), "os-unmanage", Collections.emptyMap()); }
+    @Override public ActionResponse reserve(String volumeId) { return action(Objects.requireNonNull(volumeId), "os-reserve", Collections.emptyMap()); }
+    @Override public ActionResponse unreserve(String volumeId) { return action(Objects.requireNonNull(volumeId), "os-unreserve", Collections.emptyMap()); }
+    @Override public ActionResponse beginDetaching(String volumeId) { return action(Objects.requireNonNull(volumeId), "os-begin_detaching", Collections.emptyMap()); }
+    @Override public ActionResponse rollDetaching(String volumeId) { return action(Objects.requireNonNull(volumeId), "os-roll_detaching", Collections.emptyMap()); }
+
+    @Override
+    public Map<String, Object> initializeConnection(String volumeId, Map<String, Object> connector) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(connector);
+        CinderConnectionInfo info = post(CinderConnectionInfo.class, uri("/volumes/%s/action", volumeId))
+                .entity(JsonBody.of("os-initialize_connection", Collections.singletonMap("connector", connector))).execute();
+        return info == null ? Collections.emptyMap() : info.getConnectionInfo();
+    }
+
+    @Override
+    public ActionResponse terminateConnection(String volumeId, Map<String, Object> connector) {
+        Objects.requireNonNull(volumeId);
+        Objects.requireNonNull(connector);
+        return action(volumeId, "os-terminate_connection", Collections.singletonMap("connector", connector));
+    }
+
+    @Override
+    public ActionResponse setStatus(String volumeId, String status, String attachStatus, String migrationStatus) {
+        Objects.requireNonNull(volumeId);
+        Map<String, Object> body = new LinkedHashMap<>();
+        if (status != null) body.put("status", status);
+        if (attachStatus != null) body.put("attach_status", attachStatus);
+        if (migrationStatus != null) body.put("migration_status", migrationStatus);
+        return action(volumeId, "os-reset_status", body);
     }
 }
