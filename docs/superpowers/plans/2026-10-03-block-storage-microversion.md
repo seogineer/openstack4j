@@ -4320,7 +4320,7 @@ public class TransferAndManageTests extends AbstractBlockStorageMicroVersionTest
         List<? extends ManageableSnapshot> snapshots = osv3().blockStorage().manageableSnapshots().list(ManageableListOptions.create().cluster("cluster1"));
         osv3().blockStorage().manageableSnapshots().manage(SnapshotManageRequest.create(VOLUME, Collections.singletonMap("source-name", "lvol0-snap")).name("s"));
 
-        Assert.assertTrue(takeRequest().getPath().contains("/manageable_volumes/detail?host=storage-1%40lvm-1") || true);
+        Assert.assertTrue(java.net.URLDecoder.decode(takeRequest().getPath(), java.nio.charset.StandardCharsets.UTF_8).contains("/manageable_volumes/detail?host=storage-1@lvm-1"));
         RecordedRequest manage = takeRequest();
         Assert.assertTrue(manage.getPath().endsWith("/manageable_volumes"));
         JsonNode body = body(manage).get("volume");
