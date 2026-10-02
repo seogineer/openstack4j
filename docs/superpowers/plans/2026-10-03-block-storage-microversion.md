@@ -4093,7 +4093,7 @@ public class AdminServiceTests extends AbstractBlockStorageMicroVersionTest {
         Assert.assertEquals(body(work).get("cluster_name").asText(), "test");
         Assert.assertTrue(body(work).get("is_up").asBoolean());
         Assert.assertTrue(takeRequest().getPath().endsWith("/os-hosts"));
-        Assert.assertTrue(takeRequest().getPath().endsWith("/os-hosts/storage-1%40lvm") || takeRequest().getPath().endsWith("/os-hosts/storage-1@lvm"));
+        Assert.assertTrue(java.net.URLDecoder.decode(takeRequest().getPath(), java.nio.charset.StandardCharsets.UTF_8).endsWith("/os-hosts/storage-1@lvm"));
         Assert.assertTrue(takeRequest().getPath().contains("/capabilities/storage-1"));
         Assert.assertTrue(takeRequest().getPath().endsWith("/resource_filters?resource=volume"));
         Assert.assertTrue(takeRequest().getPath().endsWith("/extensions"));

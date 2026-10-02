@@ -5,6 +5,9 @@ import java.util.List;
 import org.openstack4j.api.storage.SchedulerStatsGetPoolService;
 import org.openstack4j.openstack.storage.block.domain.CinderBackendStoragePool;
 import org.openstack4j.openstack.storage.block.domain.VolumeBackendPool;
+import java.util.Objects;
+import org.openstack4j.model.storage.block.options.PoolListOptions;
+import org.openstack4j.openstack.internal.microversion.MicroVersions;
 
 public class SchedulerStatsGetPoolServiceImpl extends BaseBlockStorageServices implements SchedulerStatsGetPoolService {
 
@@ -21,6 +24,27 @@ public class SchedulerStatsGetPoolServiceImpl extends BaseBlockStorageServices i
     private List<? extends VolumeBackendPool> list(boolean detail) {
         return get(CinderBackendStoragePool.VolumeBackendPools.class, uri("/scheduler-stats/get_pools"))
                 .param("detail", detail)
+                .execute()
+                .getList();
+    }
+
+    @Override
+    public List<? extends VolumeBackendPool> pools(PoolListOptions options) {
+        return list(false, options);
+    }
+
+    @Override
+    public List<? extends VolumeBackendPool> poolsDetail(PoolListOptions options) {
+        return list(true, options);
+    }
+
+    private List<? extends VolumeBackendPool> list(boolean detail, PoolListOptions options) {
+        Objects.requireNonNull(options);
+        if (options.getRequiredMicroVersion() != null)
+            requireMicroVersion("Pool filters " + options.toQueryParams().keySet(), MicroVersions.parse(options.getRequiredMicroVersion()));
+        return get(CinderBackendStoragePool.VolumeBackendPools.class, uri("/scheduler-stats/get_pools"))
+                .param("detail", detail)
+                .params(options.toQueryParams())
                 .execute()
                 .getList();
     }
