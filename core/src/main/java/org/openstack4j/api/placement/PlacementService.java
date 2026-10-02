@@ -61,4 +61,9 @@ public interface PlacementService extends RestService {
      */
     org.openstack4j.api.placement.v1.UsageService usages();
 
+    /**
+     * Allocations of consumers against resource providers.
+     */
+    org.openstack4j.api.placement.v1.AllocationService allocations();
+
 }

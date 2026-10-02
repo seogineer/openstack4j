@@ -1,0 +1,6 @@
+{
+  "allocations": {
+    "96a38bed-26b5-410b-8cef-1913a2e0e0b8": {"resources": {"MEMORY_MB": 1024, "VCPU": 1}, "consumer_generation": 1}
+  },
+  "resource_provider_generation": 557
+}
