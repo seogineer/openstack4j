@@ -765,4 +765,38 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
                 .entity(JsonBody.of("server", server))
                 .execute();
     }
+
+    @Override
+    public List<? extends ServerMigration> migrations(String serverId) {
+        Objects.requireNonNull(serverId);
+        requireMicroVersion("Listing server migrations", V(23));
+        return get(NovaServerMigration.NovaServerMigrations.class, uri("/servers/%s/migrations", serverId)).execute().getList();
+    }
+
+    @Override
+    public ServerMigration migration(String serverId, String migrationId) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(migrationId);
+        requireMicroVersion("Showing a server migration", V(23));
+        return get(NovaServerMigration.class, uri("/servers/%s/migrations/%s", serverId, migrationId)).execute();
+    }
+
+    @Override
+    public ActionResponse forceCompleteMigration(String serverId, String migrationId) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(migrationId);
+        requireMicroVersion("Force-completing a live migration", V(22));
+        return ToActionResponseFunction.INSTANCE.apply(
+                post(Void.class, uri("/servers/%s/migrations/%s/action", serverId, migrationId))
+                        .entity(JsonBody.of(Collections.singletonMap("force_complete", null)))
+                        .executeWithResponse());
+    }
+
+    @Override
+    public ActionResponse abortMigration(String serverId, String migrationId) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(migrationId);
+        requireMicroVersion("Aborting a live migration", V(24));
+        return ToActionResponseFunction.INSTANCE.apply(delete(Void.class, uri("/servers/%s/migrations/%s", serverId, migrationId)).executeWithResponse());
+    }
 }

@@ -1,5 +1,10 @@
 package org.openstack4j.openstack.compute.internal.ext;
 
+import java.util.Objects;
+
+import org.openstack4j.model.compute.ext.MigrationListOptions;
+import org.openstack4j.openstack.internal.microversion.MicroVersions;
+
 import java.util.List;
 
 import org.openstack4j.api.compute.ext.MigrationService;
@@ -20,7 +25,7 @@ public class MigrationServiceImpl extends BaseComputeServices implements Migrati
      */
     @Override
     public List<? extends Migration> list() {
-        return list(null);
+        return list((MigrationsFilter) null);
     }
 
     /**
@@ -35,4 +40,11 @@ public class MigrationServiceImpl extends BaseComputeServices implements Migrati
         return inv.execute().getList();
     }
 
+    @Override
+    public List<? extends Migration> list(MigrationListOptions options) {
+        Objects.requireNonNull(options);
+        if (options.getRequiredMicroVersion() != null)
+            requireMicroVersion("Migration list filters " + options.toQueryParams().keySet(), MicroVersions.parse(options.getRequiredMicroVersion()));
+        return get(Migrations.class, uri("/os-migrations")).params(options.toQueryParams()).execute().getList();
+    }
 }

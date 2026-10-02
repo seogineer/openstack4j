@@ -450,4 +450,24 @@ public interface ServerService {
      * Pins the server to an availability zone, or unpins it with {@code null} (2.104+).
      */
     Server updatePinnedAvailabilityZone(String serverId, String availabilityZone);
+
+    /**
+     * In-progress live migrations of a server (2.23+).
+     */
+    List<? extends ServerMigration> migrations(String serverId);
+
+    /**
+     * One in-progress live migration of a server (2.23+).
+     */
+    ServerMigration migration(String serverId, String migrationId);
+
+    /**
+     * Forces an in-progress live migration to complete (2.22+).
+     */
+    ActionResponse forceCompleteMigration(String serverId, String migrationId);
+
+    /**
+     * Aborts an in-progress live migration (2.24+).
+     */
+    ActionResponse abortMigration(String serverId, String migrationId);
 }
