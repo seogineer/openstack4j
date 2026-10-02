@@ -22,4 +22,10 @@ public interface VolumeTypeBuilder extends Builder<VolumeTypeBuilder, VolumeType
      * @return VolumeTypeBuilder
      */
     VolumeTypeBuilder extraSpecs(Map<String, String> extraSpecs);
+
+    /** Description of the type. */
+    VolumeTypeBuilder description(String description);
+
+    /** Whether the type is public ({@code os-volume-type-access:is_public}); private types need project access. */
+    VolumeTypeBuilder isPublic(boolean isPublic);
 }

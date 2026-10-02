@@ -85,6 +85,21 @@ public class BlockStorageServiceImpl extends BaseBlockStorageServices implements
     }
 
     @Override
+    public BlockVolumeTypeService volumeTypes() {
+        return Apis.get(BlockVolumeTypeService.class);
+    }
+
+    @Override
+    public BlockDefaultTypeService defaultTypes() {
+        return Apis.get(BlockDefaultTypeService.class);
+    }
+
+    @Override
+    public BlockQosSpecService qosSpecs() {
+        return Apis.get(BlockQosSpecService.class);
+    }
+
+    @Override
     public BlockStorageServiceService services() {
         return Apis.get(BlockStorageServiceService.class);
     }
