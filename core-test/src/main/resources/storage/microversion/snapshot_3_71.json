@@ -1,0 +1,18 @@
+{
+  "snapshot": {
+    "id": "8e53384c-dd0e-410d-94a6-8cd5bf21a5bf",
+    "created_at": "2026-10-02T17:24:01.000000",
+    "updated_at": "2026-10-02T17:24:03.000000",
+    "name": "os4j-snap",
+    "description": null,
+    "volume_id": "4b699b6d-1fe8-41f9-9dbf-65a2cc4927c2",
+    "status": "available",
+    "size": 1,
+    "metadata": {"k": "v"},
+    "group_snapshot_id": null,
+    "user_id": "e365357fdf4d4a37a07fde3209cac4aa",
+    "consumes_quota": true,
+    "os-extended-snapshot-attributes:project_id": "2580a7b51d564c1d848ee27fda2db713",
+    "os-extended-snapshot-attributes:progress": "100%"
+  }
+}

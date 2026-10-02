@@ -34,6 +34,14 @@ public class CinderBlockQuotaSet implements BlockQuotaSet {
     private int gigabytes;
 
     private Map<String, Integer> volumeTypesQuotas = new HashMap<>();
+    @JsonProperty("backups")
+    private Integer backups;
+    @JsonProperty("backup_gigabytes")
+    private Integer backupGigabytes;
+    @JsonProperty("per_volume_gigabytes")
+    private Integer perVolumeGigabytes;
+    @JsonProperty("groups")
+    private Integer groups;
 
     public static BlockQuotaSetBuilder builder() {
         return new BlockQuotaSetConcreteBuilder();
@@ -62,6 +70,26 @@ public class CinderBlockQuotaSet implements BlockQuotaSet {
     @Override
     public int getGigabytes() {
         return gigabytes;
+    }
+
+    @Override
+    public Integer getBackups() {
+        return backups;
+    }
+
+    @Override
+    public Integer getBackupGigabytes() {
+        return backupGigabytes;
+    }
+
+    @Override
+    public Integer getPerVolumeGigabytes() {
+        return perVolumeGigabytes;
+    }
+
+    @Override
+    public Integer getGroups() {
+        return groups;
     }
 
     @Override
@@ -112,6 +140,30 @@ public class CinderBlockQuotaSet implements BlockQuotaSet {
         @Override
         public BlockQuotaSetBuilder snapshots(int snapshots) {
             model.snapshots = snapshots;
+            return this;
+        }
+
+        @Override
+        public BlockQuotaSetBuilder backups(int backups) {
+            model.backups = backups;
+            return this;
+        }
+
+        @Override
+        public BlockQuotaSetBuilder backupGigabytes(int backupGigabytes) {
+            model.backupGigabytes = backupGigabytes;
+            return this;
+        }
+
+        @Override
+        public BlockQuotaSetBuilder perVolumeGigabytes(int perVolumeGigabytes) {
+            model.perVolumeGigabytes = perVolumeGigabytes;
+            return this;
+        }
+
+        @Override
+        public BlockQuotaSetBuilder groups(int groups) {
+            model.groups = groups;
             return this;
         }
 

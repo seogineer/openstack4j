@@ -33,6 +33,16 @@ public class ExtService implements Service {
     private Date updatedAt;
 
     private String zone;
+    @JsonProperty("cluster")
+    private String cluster;
+    @JsonProperty("replication_status")
+    private String replicationStatus;
+    @JsonProperty("active_backend_id")
+    private String activeBackendId;
+    @JsonProperty("frozen")
+    private Boolean frozen;
+    @JsonProperty("backend_state")
+    private String backendState;
 
     @Override
     public String getBinary() {
@@ -72,6 +82,31 @@ public class ExtService implements Service {
     @Override
     public String getZone() {
         return zone;
+    }
+
+    @Override
+    public String getCluster() {
+        return cluster;
+    }
+
+    @Override
+    public String getReplicationStatus() {
+        return replicationStatus;
+    }
+
+    @Override
+    public String getActiveBackendId() {
+        return activeBackendId;
+    }
+
+    @Override
+    public Boolean getFrozen() {
+        return frozen;
+    }
+
+    @Override
+    public String getBackendState() {
+        return backendState;
     }
 
     @Override

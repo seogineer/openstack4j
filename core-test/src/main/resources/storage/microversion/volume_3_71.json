@@ -1,0 +1,40 @@
+{
+  "volume": {
+    "id": "4b699b6d-1fe8-41f9-9dbf-65a2cc4927c2",
+    "status": "available",
+    "size": 1,
+    "availability_zone": "nova",
+    "created_at": "2026-10-02T17:23:52.000000",
+    "updated_at": "2026-10-02T17:23:54.000000",
+    "name": "os4j-fixture",
+    "description": "fixture capture",
+    "volume_type": "__DEFAULT__",
+    "snapshot_id": null,
+    "source_volid": null,
+    "metadata": {"purpose": "fixture"},
+    "links": [
+      {"rel": "self", "href": "http://10.0.0.1:8776/v3/volumes/4b699b6d-1fe8-41f9-9dbf-65a2cc4927c2"},
+      {"rel": "bookmark", "href": "http://10.0.0.1:8776/volumes/4b699b6d-1fe8-41f9-9dbf-65a2cc4927c2"}
+    ],
+    "user_id": "e365357fdf4d4a37a07fde3209cac4aa",
+    "bootable": "false",
+    "encrypted": false,
+    "replication_status": null,
+    "consistencygroup_id": null,
+    "multiattach": false,
+    "attachments": [],
+    "migration_status": null,
+    "group_id": "0b1c9f2e-6a7b-4d8e-9f00-1a2b3c4d5e6f",
+    "provider_id": null,
+    "shared_targets": null,
+    "service_uuid": "1afa4698-dd4e-4467-a7bf-5f891f03b634",
+    "cluster_name": null,
+    "volume_type_id": "c23142c0-9883-4224-beb8-06d7c231be75",
+    "encryption_key_id": null,
+    "consumes_quota": true,
+    "os-vol-tenant-attr:tenant_id": "2580a7b51d564c1d848ee27fda2db713",
+    "os-vol-mig-status-attr:migstat": null,
+    "os-vol-mig-status-attr:name_id": null,
+    "os-vol-host-attr:host": "storage-1@lvm-1#lvm-1"
+  }
+}

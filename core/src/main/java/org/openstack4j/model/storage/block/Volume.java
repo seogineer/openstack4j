@@ -11,6 +11,7 @@ import org.openstack4j.common.Buildable;
 import org.openstack4j.model.ModelEntity;
 import org.openstack4j.model.storage.block.builder.VolumeBuilder;
 import org.slf4j.LoggerFactory;
+import org.openstack4j.model.common.Link;
 
 /**
  * An OpenStack Volume
@@ -176,4 +177,35 @@ public interface Volume extends ModelEntity, Buildable<VolumeBuilder> {
             return value();
         }
     }
+
+    /** @return user_id */
+    default String getUserId() { return null; }
+    /** @return updated_at */
+    default Date getUpdatedAt() { return null; }
+    /** @return replication_status */
+    default String getReplicationStatus() { return null; }
+    /** @return consistencygroup_id */
+    default String getConsistencyGroupId() { return null; }
+    /** @return migration_status as text (see {@link #getMigrateStatus()} for the typed os-vol-mig-status-attr value) */
+    default String getMigrationStatus() { return null; }
+    /** @return os-vol-mig-status-attr:name_id */
+    default String getNameId() { return null; }
+    /** @return links */
+    default List<? extends Link> getLinks() { return null; }
+    /** @return group_id (3.13+) */
+    default String getGroupId() { return null; }
+    /** @return provider_id (3.21+, admin) */
+    default String getProviderId() { return null; }
+    /** @return shared_targets (3.48+; {@code null} from 3.69 means forced locking) */
+    default Boolean getSharedTargets() { return null; }
+    /** @return service_uuid (3.48+) */
+    default String getServiceUuid() { return null; }
+    /** @return cluster_name (3.61+, admin) */
+    default String getClusterName() { return null; }
+    /** @return volume_type_id (3.63+) */
+    default String getVolumeTypeId() { return null; }
+    /** @return encryption_key_id (3.64+) */
+    default String getEncryptionKeyId() { return null; }
+    /** @return consumes_quota (3.65+) */
+    default Boolean getConsumesQuota() { return null; }
 }

@@ -9,6 +9,7 @@ import org.openstack4j.util.ToStringHelper;
 import org.openstack4j.model.storage.block.VolumeType;
 import org.openstack4j.model.storage.block.builder.VolumeTypeBuilder;
 import org.openstack4j.openstack.common.ListResult;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * The volume type defines the characteristics of a volume. It usually maps to a set of capabilities
@@ -27,6 +28,14 @@ public class CinderVolumeType implements VolumeType {
 
     @JsonProperty("extra_specs")
     private Map<String, String> extraSpecs;
+    @JsonProperty("description")
+    private String description;
+    @JsonProperty("is_public")
+    private Boolean isPublic;
+    @JsonProperty("os-volume-type-access:is_public")
+    private Boolean accessIsPublic;
+    @JsonProperty("qos_specs_id")
+    private String qosSpecsId;
 
     /**
      * @return the Volume Type Builder
@@ -57,6 +66,27 @@ public class CinderVolumeType implements VolumeType {
     @Override
     public Map<String, String> getExtraSpecs() {
         return extraSpecs;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public Boolean getAccessIsPublic() {
+        return accessIsPublic;
+    }
+
+    @Override
+    public String getQosSpecsId() {
+        return qosSpecsId;
+    }
+
+    @JsonIgnore
+    @Override
+    public Boolean isPublic() {
+        return isPublic;
     }
 
     @Override

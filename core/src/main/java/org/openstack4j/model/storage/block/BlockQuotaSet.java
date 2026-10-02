@@ -34,4 +34,13 @@ public interface BlockQuotaSet extends ModelEntity, Buildable<BlockQuotaSetBuild
     int getGigabytes();
 
     Map<String, Integer> getVolumeTypesQuotas();
+
+    /** @return backups */
+    default Integer getBackups() { return null; }
+    /** @return backup_gigabytes */
+    default Integer getBackupGigabytes() { return null; }
+    /** @return per_volume_gigabytes */
+    default Integer getPerVolumeGigabytes() { return null; }
+    /** @return groups */
+    default Integer getGroups() { return null; }
 }

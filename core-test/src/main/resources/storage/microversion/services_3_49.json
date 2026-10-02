@@ -1,0 +1,6 @@
+{
+  "services": [
+    {"binary": "cinder-scheduler", "cluster": null, "disabled_reason": null, "host": "storage-1", "state": "up", "status": "enabled", "updated_at": "2026-10-02T17:20:00.000000", "zone": "nova"},
+    {"active_backend_id": null, "backend_state": "up", "binary": "cinder-volume", "cluster": "cluster1", "disabled_reason": "maintenance", "frozen": false, "host": "storage-1@lvm-1", "replication_status": "disabled", "state": "up", "status": "disabled", "updated_at": "2026-10-02T17:20:05.000000", "zone": "nova"}
+  ]
+}

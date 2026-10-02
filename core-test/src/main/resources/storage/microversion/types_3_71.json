@@ -1,0 +1,13 @@
+{
+  "volume_types": [
+    {
+      "id": "c23142c0-9883-4224-beb8-06d7c231be75",
+      "name": "__DEFAULT__",
+      "is_public": true,
+      "description": "Default Volume Type",
+      "extra_specs": {},
+      "qos_specs_id": null,
+      "os-volume-type-access:is_public": true
+    }
+  ]
+}

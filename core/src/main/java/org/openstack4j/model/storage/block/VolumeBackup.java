@@ -6,6 +6,9 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.openstack4j.model.ModelEntity;
+import java.util.List;
+import java.util.Map;
+import org.openstack4j.model.common.Link;
 
 public interface VolumeBackup extends ModelEntity {
 
@@ -102,4 +105,20 @@ public interface VolumeBackup extends ModelEntity {
         }
     }
 
+    /** @return updated_at */
+    default Date getUpdatedAt() { return null; }
+    /** @return data_timestamp */
+    default Date getDataTimestamp() { return null; }
+    /** @return links */
+    default List<? extends Link> getLinks() { return null; }
+    /** @return os-backup-project-attr:project_id (3.18+) */
+    default String getProjectId() { return null; }
+    /** @return metadata (3.43+) */
+    default Map<String, String> getMetadata() { return null; }
+    /** @return user_id (3.56+) */
+    default String getUserId() { return null; }
+    /** @return encryption_key_id (3.64+) */
+    default String getEncryptionKeyId() { return null; }
+    /** @return has_dependent_backups */
+    default Boolean getHasDependentBackups() { return null; }
 }

@@ -39,4 +39,12 @@ public interface BlockQuotaSetBuilder extends Builder<BlockQuotaSetBuilder, Bloc
      * @return volume types quota limits configured in the Block Storage.
      */
     BlockQuotaSetBuilder volumeTypesQuotas(Map<String, Integer> volumeTypesQuotas);
+
+    BlockQuotaSetBuilder backups(int backups);
+
+    BlockQuotaSetBuilder backupGigabytes(int backupGigabytes);
+
+    BlockQuotaSetBuilder perVolumeGigabytes(int perVolumeGigabytes);
+
+    BlockQuotaSetBuilder groups(int groups);
 }
