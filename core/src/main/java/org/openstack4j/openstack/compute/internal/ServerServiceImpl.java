@@ -799,4 +799,39 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
         requireMicroVersion("Aborting a live migration", V(24));
         return ToActionResponseFunction.INSTANCE.apply(delete(Void.class, uri("/servers/%s/migrations/%s", serverId, migrationId)).executeWithResponse());
     }
+
+    @Override
+    public List<? extends ServerShare> shares(String serverId) {
+        Objects.requireNonNull(serverId);
+        requireMicroVersion("Server shares", V(97));
+        return get(NovaServerShare.NovaServerShares.class, uri("/servers/%s/shares", serverId)).execute().getList();
+    }
+
+    @Override
+    public ServerShare share(String serverId, String shareId) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(shareId);
+        requireMicroVersion("Server shares", V(97));
+        return get(NovaServerShare.class, uri("/servers/%s/shares/%s", serverId, shareId)).execute();
+    }
+
+    @Override
+    public ServerShare attachShare(String serverId, String shareId, String tag) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(shareId);
+        requireMicroVersion("Server shares", V(97));
+        Map<String, Object> share = new LinkedHashMap<>();
+        share.put("share_id", shareId);
+        if (tag != null)
+            share.put("tag", tag);
+        return post(NovaServerShare.class, uri("/servers/%s/shares", serverId)).entity(JsonBody.of("share", share)).execute();
+    }
+
+    @Override
+    public ActionResponse detachShare(String serverId, String shareId) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(shareId);
+        requireMicroVersion("Server shares", V(97));
+        return ToActionResponseFunction.INSTANCE.apply(delete(Void.class, uri("/servers/%s/shares/%s", serverId, shareId)).executeWithResponse());
+    }
 }
