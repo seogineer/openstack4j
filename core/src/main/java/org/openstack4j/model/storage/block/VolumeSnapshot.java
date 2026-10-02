@@ -70,4 +70,17 @@ public interface VolumeSnapshot extends ModelEntity, Buildable<VolumeSnapshotBui
      * @return extended meta data information. key value pair of String key, String value
      */
     Map<String, String> getMetaData();
+
+    /** @return updated_at */
+    default Date getUpdatedAt() { return null; }
+    /** @return os-extended-snapshot-attributes:project_id */
+    default String getProjectId() { return null; }
+    /** @return os-extended-snapshot-attributes:progress */
+    default String getProgress() { return null; }
+    /** @return group_snapshot_id (3.14+) */
+    default String getGroupSnapshotId() { return null; }
+    /** @return user_id (3.41+) */
+    default String getUserId() { return null; }
+    /** @return consumes_quota (3.65+) */
+    default Boolean getConsumesQuota() { return null; }
 }

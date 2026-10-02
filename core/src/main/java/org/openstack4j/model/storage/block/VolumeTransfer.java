@@ -43,5 +43,12 @@ public interface VolumeTransfer extends ModelEntity {
      **/
     List<? extends Link> getLinks();
 
-
+    /** @return source_project_id (3.57+) */
+    default String getSourceProjectId() { return null; }
+    /** @return destination_project_id (3.57+) */
+    default String getDestinationProjectId() { return null; }
+    /** @return accepted (3.57+) */
+    default Boolean getAccepted() { return null; }
+    /** @return no_snapshots (3.55+) */
+    default Boolean getNoSnapshots() { return null; }
 }

@@ -32,6 +32,14 @@ public class CinderVolumeTransfer implements VolumeTransfer {
     private Date createdAt;
     @JsonProperty
     private List<GenericLink> links;
+    @JsonProperty("source_project_id")
+    private String sourceProjectId;
+    @JsonProperty("destination_project_id")
+    private String destinationProjectId;
+    @JsonProperty("accepted")
+    private Boolean accepted;
+    @JsonProperty("no_snapshots")
+    private Boolean noSnapshots;
 
     public static CinderVolumeTransfer create(String volumeId, String name) {
         CinderVolumeTransfer r = new CinderVolumeTransfer();
@@ -68,6 +76,26 @@ public class CinderVolumeTransfer implements VolumeTransfer {
     @Override
     public List<? extends Link> getLinks() {
         return links;
+    }
+
+    @Override
+    public String getSourceProjectId() {
+        return sourceProjectId;
+    }
+
+    @Override
+    public String getDestinationProjectId() {
+        return destinationProjectId;
+    }
+
+    @Override
+    public Boolean getAccepted() {
+        return accepted;
+    }
+
+    @Override
+    public Boolean getNoSnapshots() {
+        return noSnapshots;
     }
 
     @Override

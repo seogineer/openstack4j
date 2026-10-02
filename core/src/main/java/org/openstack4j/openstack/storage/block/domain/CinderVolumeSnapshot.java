@@ -46,6 +46,18 @@ public class CinderVolumeSnapshot implements VolumeSnapshot {
     private Boolean force;
     @JsonProperty("metadata")
     private Map<String, String> metadata;
+    @JsonProperty("updated_at")
+    private Date updatedAt;
+    @JsonProperty("os-extended-snapshot-attributes:project_id")
+    private String projectId;
+    @JsonProperty("os-extended-snapshot-attributes:progress")
+    private String progress;
+    @JsonProperty("group_snapshot_id")
+    private String groupSnapshotId;
+    @JsonProperty("user_id")
+    private String userId;
+    @JsonProperty("consumes_quota")
+    private Boolean consumesQuota;
 
     /**
      * @return a new Volume Snapshot builder
@@ -153,6 +165,36 @@ public class CinderVolumeSnapshot implements VolumeSnapshot {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @Override
+    public String getProjectId() {
+        return projectId;
+    }
+
+    @Override
+    public String getProgress() {
+        return progress;
+    }
+
+    @Override
+    public String getGroupSnapshotId() {
+        return groupSnapshotId;
+    }
+
+    @Override
+    public String getUserId() {
+        return userId;
+    }
+
+    @Override
+    public Boolean getConsumesQuota() {
+        return consumesQuota;
+    }
+
     @Override
     public String toString() {
         return new ToStringHelper(this)

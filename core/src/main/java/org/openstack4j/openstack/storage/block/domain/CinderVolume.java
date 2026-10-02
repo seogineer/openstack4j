@@ -14,6 +14,8 @@ import org.openstack4j.model.storage.block.Volume;
 import org.openstack4j.model.storage.block.VolumeAttachment;
 import org.openstack4j.model.storage.block.builder.VolumeBuilder;
 import org.openstack4j.openstack.common.ListResult;
+import org.openstack4j.openstack.common.GenericLink;
+import org.openstack4j.model.common.Link;
 
 /**
  * An OpenStack Volume
@@ -70,6 +72,36 @@ public class CinderVolume implements Volume {
     private Boolean encrypted;
     @JsonProperty("os-vol-host-attr:host")
     private String host;
+    @JsonProperty("user_id")
+    private String userId;
+    @JsonProperty("updated_at")
+    private Date updatedAt;
+    @JsonProperty("replication_status")
+    private String replicationStatus;
+    @JsonProperty("consistencygroup_id")
+    private String consistencyGroupId;
+    @JsonProperty("migration_status")
+    private String migrationStatus;
+    @JsonProperty("os-vol-mig-status-attr:name_id")
+    private String nameId;
+    @JsonProperty("links")
+    private List<GenericLink> links;
+    @JsonProperty("group_id")
+    private String groupId;
+    @JsonProperty("provider_id")
+    private String providerId;
+    @JsonProperty("shared_targets")
+    private Boolean sharedTargets;
+    @JsonProperty("service_uuid")
+    private String serviceUuid;
+    @JsonProperty("cluster_name")
+    private String clusterName;
+    @JsonProperty("volume_type_id")
+    private String volumeTypeId;
+    @JsonProperty("encryption_key_id")
+    private String encryptionKeyId;
+    @JsonProperty("consumes_quota")
+    private Boolean consumesQuota;
 
     /** @return whether {@code bootable} was set on this request body (Cinder rejects it from 3.53) */
     @JsonIgnore
@@ -272,6 +304,81 @@ public class CinderVolume implements Volume {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public String getUserId() {
+        return userId;
+    }
+
+    @Override
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @Override
+    public String getReplicationStatus() {
+        return replicationStatus;
+    }
+
+    @Override
+    public String getConsistencyGroupId() {
+        return consistencyGroupId;
+    }
+
+    @Override
+    public String getMigrationStatus() {
+        return migrationStatus;
+    }
+
+    @Override
+    public String getNameId() {
+        return nameId;
+    }
+
+    @Override
+    public List<GenericLink> getLinks() {
+        return links;
+    }
+
+    @Override
+    public String getGroupId() {
+        return groupId;
+    }
+
+    @Override
+    public String getProviderId() {
+        return providerId;
+    }
+
+    @Override
+    public Boolean getSharedTargets() {
+        return sharedTargets;
+    }
+
+    @Override
+    public String getServiceUuid() {
+        return serviceUuid;
+    }
+
+    @Override
+    public String getClusterName() {
+        return clusterName;
+    }
+
+    @Override
+    public String getVolumeTypeId() {
+        return volumeTypeId;
+    }
+
+    @Override
+    public String getEncryptionKeyId() {
+        return encryptionKeyId;
+    }
+
+    @Override
+    public Boolean getConsumesQuota() {
+        return consumesQuota;
+    }
+
     @Override
     public String toString() {
         return new ToStringHelper(this)

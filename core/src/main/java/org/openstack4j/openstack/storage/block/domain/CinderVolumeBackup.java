@@ -8,6 +8,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.model.storage.block.VolumeBackup;
 import org.openstack4j.openstack.common.ListResult;
+import java.util.Map;
+import org.openstack4j.openstack.common.GenericLink;
+import org.openstack4j.model.common.Link;
 
 @JsonRootName("backup")
 public class CinderVolumeBackup implements VolumeBackup {
@@ -48,6 +51,20 @@ public class CinderVolumeBackup implements VolumeBackup {
     @JsonProperty("snapshot_id")
     @Nullable
     private String snapshotId;
+    @JsonProperty("updated_at")
+    private Date updatedAt;
+    @JsonProperty("data_timestamp")
+    private Date dataTimestamp;
+    @JsonProperty("links")
+    private List<GenericLink> links;
+    @JsonProperty("os-backup-project-attr:project_id")
+    private String projectId;
+    @JsonProperty("metadata")
+    private Map<String, String> metadata;
+    @JsonProperty("user_id")
+    private String userId;
+    @JsonProperty("encryption_key_id")
+    private String encryptionKeyId;
 
     /**
      * {@inheritDoc}
@@ -161,6 +178,46 @@ public class CinderVolumeBackup implements VolumeBackup {
         return snapshotId;
     }
 
+
+    @Override
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @Override
+    public Date getDataTimestamp() {
+        return dataTimestamp;
+    }
+
+    @Override
+    public List<GenericLink> getLinks() {
+        return links;
+    }
+
+    @Override
+    public String getProjectId() {
+        return projectId;
+    }
+
+    @Override
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+
+    @Override
+    public String getUserId() {
+        return userId;
+    }
+
+    @Override
+    public String getEncryptionKeyId() {
+        return encryptionKeyId;
+    }
+
+    @Override
+    public Boolean getHasDependentBackups() {
+        return hasDependent;
+    }
 
     public static class VolumeBackups extends ListResult<CinderVolumeBackup> {
 

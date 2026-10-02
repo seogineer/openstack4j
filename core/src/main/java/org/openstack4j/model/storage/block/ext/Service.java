@@ -89,4 +89,14 @@ public interface Service extends ModelEntity {
         }
     }
 
+    /** @return cluster (3.7+) */
+    default String getCluster() { return null; }
+    /** @return replication_status */
+    default String getReplicationStatus() { return null; }
+    /** @return active_backend_id */
+    default String getActiveBackendId() { return null; }
+    /** @return frozen (3.26+) */
+    default Boolean getFrozen() { return null; }
+    /** @return backend_state (3.49+) */
+    default String getBackendState() { return null; }
 }
