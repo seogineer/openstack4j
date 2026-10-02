@@ -51,4 +51,9 @@ public interface PlacementService extends RestService {
      */
     org.openstack4j.api.placement.v1.TraitService traits();
 
+    /**
+     * Aggregate membership of resource providers.
+     */
+    org.openstack4j.api.placement.v1.AggregateService aggregates();
+
 }
