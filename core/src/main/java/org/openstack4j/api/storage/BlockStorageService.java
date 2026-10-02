@@ -62,4 +62,10 @@ public interface BlockStorageService extends RestService {
      * @return the block storage microversion service
      */
     BlockStorageMicroVersionService microVersions();
+
+    /** @return volume attachments service (3.27+) */
+    BlockAttachmentService attachments();
+
+    /** @return user messages service (3.3+) */
+    BlockMessageService messages();
 }

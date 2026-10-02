@@ -151,6 +151,8 @@ public class DefaultAPIProvider implements APIProvider {
         bind(ImageService.class, ImageServiceImpl.class);
         bind(BlockStorageService.class, BlockStorageServiceImpl.class);
         bind(BlockStorageMicroVersionService.class, BlockStorageMicroVersionServiceImpl.class);
+        bind(BlockAttachmentService.class, BlockAttachmentServiceImpl.class);
+        bind(BlockMessageService.class, BlockMessageServiceImpl.class);
         bind(BlockVolumeService.class, BlockVolumeServiceImpl.class);
         bind(BlockVolumeSnapshotService.class, BlockVolumeSnapshotServiceImpl.class);
         bind(BlockVolumeBackupService.class, BlockVolumeBackupServiceImpl.class);

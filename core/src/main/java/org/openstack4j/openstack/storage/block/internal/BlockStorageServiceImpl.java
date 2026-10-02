@@ -75,6 +75,16 @@ public class BlockStorageServiceImpl extends BaseBlockStorageServices implements
     }
 
     @Override
+    public BlockAttachmentService attachments() {
+        return Apis.get(BlockAttachmentService.class);
+    }
+
+    @Override
+    public BlockMessageService messages() {
+        return Apis.get(BlockMessageService.class);
+    }
+
+    @Override
     public BlockStorageServiceService services() {
         return Apis.get(BlockStorageServiceService.class);
     }
