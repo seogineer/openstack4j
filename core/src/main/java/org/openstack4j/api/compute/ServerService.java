@@ -11,6 +11,11 @@ import org.openstack4j.model.compute.*;
 import org.openstack4j.model.compute.Server.Status;
 import org.openstack4j.model.compute.VNCConsole.Type;
 import org.openstack4j.model.compute.actions.BackupOptions;
+import org.openstack4j.model.compute.actions.UnshelveRequest;
+import org.openstack4j.model.compute.actions.RescueRequest;
+import org.openstack4j.model.compute.actions.RebuildRequest;
+import org.openstack4j.model.compute.actions.LiveMigrateRequest;
+import org.openstack4j.model.compute.actions.EvacuateRequest;
 import org.openstack4j.model.compute.actions.EvacuateOptions;
 import org.openstack4j.model.compute.actions.LiveMigrateOptions;
 import org.openstack4j.model.compute.actions.RebuildOptions;
@@ -362,4 +367,46 @@ public interface ServerService {
      * request when the session does not send it.
      */
     List<? extends Server> list(ServerListOptions options);
+
+    /**
+     * Locks a server with a reason (2.73+).
+     */
+    ActionResponse lock(String serverId, String reason);
+
+    /**
+     * Cold-migrates a server to a host checked by the scheduler (2.56+).
+     */
+    ActionResponse migrateServer(String serverId, String host);
+
+    /**
+     * Live-migrates a server. {@code blockMigrationAuto()} needs 2.25, {@code force} 2.30 - 2.67 and
+     * {@code diskOverCommit} is sent at 2.24 or lower. Without a block migration choice, {@code "auto"} is sent from 2.25.
+     */
+    ActionResponse liveMigrate(String serverId, LiveMigrateRequest request);
+
+    /**
+     * Evacuates a server. {@code onSharedStorage} is sent at 2.13 or lower, {@code force} needs 2.29 - 2.67.
+     */
+    ActionResponse evacuate(String serverId, EvacuateRequest request);
+
+    /**
+     * Rebuilds a server. description needs 2.19, key_name 2.54, user_data 2.57, trusted certificates 2.63 and
+     * hostname 2.90.
+     */
+    ActionResponse rebuild(String serverId, RebuildRequest request);
+
+    /**
+     * Unshelves a server to an availability zone (2.77+) or host (2.91+), or unpins its zone (2.91+).
+     */
+    ActionResponse unshelve(String serverId, UnshelveRequest request);
+
+    /**
+     * Rescues a server, optionally with a rescue image.
+     */
+    ActionResponse rescue(String serverId, RescueRequest request);
+
+    /**
+     * Creates a backup and returns the new image id (from the Location header, or the response body from 2.45).
+     */
+    String createBackup(String serverId, BackupOptions options);
 }

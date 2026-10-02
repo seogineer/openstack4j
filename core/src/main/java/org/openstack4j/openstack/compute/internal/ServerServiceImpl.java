@@ -1,6 +1,7 @@
 package org.openstack4j.openstack.compute.internal;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,6 +21,11 @@ import org.openstack4j.model.compute.*;
 import org.openstack4j.model.compute.Server.Status;
 import org.openstack4j.model.compute.VNCConsole.Type;
 import org.openstack4j.model.compute.actions.BackupOptions;
+import org.openstack4j.model.compute.actions.EvacuateRequest;
+import org.openstack4j.model.compute.actions.LiveMigrateRequest;
+import org.openstack4j.model.compute.actions.RebuildRequest;
+import org.openstack4j.model.compute.actions.RescueRequest;
+import org.openstack4j.model.compute.actions.UnshelveRequest;
 import org.openstack4j.model.compute.actions.EvacuateOptions;
 import org.openstack4j.model.compute.actions.LiveMigrateOptions;
 import org.openstack4j.model.compute.actions.RebuildOptions;
@@ -535,5 +541,159 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
         return capped(post(AdminPass.class, uri("/servers/%s/action", serverId)), V(13))
                 .entity(EvacuateAction.create(options))
                 .execute();
+    }
+
+    private ActionResponse invokeMapAction(String serverId, String action, Map<String, ?> body, MicroVersion ceiling) {
+        HttpResponse response = capped(post(Void.class, uri("/servers/%s/action", serverId)), ceiling)
+                .entity(JsonBody.of(action, body))
+                .executeWithResponse();
+        return ToActionResponseFunction.INSTANCE.apply(response, action);
+    }
+
+    private static MicroVersion lower(MicroVersion a, MicroVersion b) {
+        return a == null ? b : b == null ? a : MicroVersions.min(a, b);
+    }
+
+    @Override
+    public ActionResponse lock(String serverId, String reason) {
+        Objects.requireNonNull(serverId);
+        requireMicroVersion("Lock with a reason", V(73));
+        return invokeMapAction(serverId, "lock", Collections.singletonMap("locked_reason", reason), null);
+    }
+
+    @Override
+    public ActionResponse migrateServer(String serverId, String host) {
+        Objects.requireNonNull(serverId);
+        requireMicroVersion("Cold migration to a host", V(56));
+        return invokeMapAction(serverId, "migrate", Collections.singletonMap("host", host), null);
+    }
+
+    @Override
+    public ActionResponse liveMigrate(String serverId, LiveMigrateRequest request) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(request);
+        MicroVersion ceiling = null;
+        if (request.isBlockMigrationAuto())
+            requireMicroVersion("block_migration \"auto\"", V(25));
+        if (Boolean.TRUE.equals(request.getForce())) {
+            requireMicroVersion("Forced live migration", V(30));
+            ceiling = V(67);
+        }
+        if (request.getDiskOverCommit() != null) {
+            if (request.isBlockMigrationAuto() || Boolean.TRUE.equals(request.getForce()))
+                throw new MicroVersionException("disk_over_commit (2.24 or lower) cannot be combined with block_migration \"auto\" or force");
+            ceiling = lower(ceiling, V(24));
+        }
+        MicroVersion effective = effectiveMicroVersion(ceiling);
+        boolean modern = effective != null && effective.compareTo(V(25)) >= 0;
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("host", request.getHost());
+        if (request.isBlockMigrationAuto())
+            body.put("block_migration", "auto");
+        else if (request.getBlockMigration() != null)
+            body.put("block_migration", request.getBlockMigration());
+        else
+            body.put("block_migration", modern ? "auto" : false);
+        if (!modern)
+            body.put("disk_over_commit", request.getDiskOverCommit() != null ? request.getDiskOverCommit() : false);
+        if (request.getForce() != null)
+            body.put("force", request.getForce());
+        return invokeMapAction(serverId, "os-migrateLive", body, ceiling);
+    }
+
+    @Override
+    public ActionResponse evacuate(String serverId, EvacuateRequest request) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(request);
+        MicroVersion ceiling = null;
+        if (Boolean.TRUE.equals(request.getForce())) {
+            requireMicroVersion("Forced evacuate", V(29));
+            ceiling = V(67);
+        }
+        if (request.getOnSharedStorage() != null) {
+            if (request.getForce() != null)
+                throw new MicroVersionException("onSharedStorage (2.13 or lower) cannot be combined with force (2.29+)");
+            ceiling = lower(ceiling, V(13));
+        }
+        Map<String, Object> body = new LinkedHashMap<>();
+        if (request.getHost() != null) body.put("host", request.getHost());
+        if (request.getAdminPass() != null) body.put("adminPass", request.getAdminPass());
+        if (request.getOnSharedStorage() != null) body.put("onSharedStorage", request.getOnSharedStorage());
+        if (request.getForce() != null) body.put("force", request.getForce());
+        return invokeMapAction(serverId, "evacuate", body, ceiling);
+    }
+
+    @Override
+    public ActionResponse rebuild(String serverId, RebuildRequest request) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(request);
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("imageRef", request.getImageRef());
+        if (request.getName() != null) body.put("name", request.getName());
+        if (request.getAdminPass() != null) body.put("adminPass", request.getAdminPass());
+        if (request.getMetadata() != null) body.put("metadata", request.getMetadata());
+        if (request.getPreserveEphemeral() != null) body.put("preserve_ephemeral", request.getPreserveEphemeral());
+        if (request.getAccessIPv4() != null) body.put("accessIPv4", request.getAccessIPv4());
+        if (request.getAccessIPv6() != null) body.put("accessIPv6", request.getAccessIPv6());
+        if (request.getDescription() != null) {
+            requireMicroVersion("Rebuild description", V(19));
+            body.put("description", request.getDescription());
+        }
+        if (request.getKeyName() != null || request.isRemoveKeyName()) {
+            requireMicroVersion("Rebuild key_name", V(54));
+            body.put("key_name", request.getKeyName());
+        }
+        if (request.getUserData() != null) {
+            requireMicroVersion("Rebuild user_data", V(57));
+            body.put("user_data", request.getUserData());
+        }
+        if (request.getTrustedImageCertificates() != null) {
+            requireMicroVersion("Rebuild trusted_image_certificates", V(63));
+            body.put("trusted_image_certificates", request.getTrustedImageCertificates());
+        }
+        if (request.getHostname() != null) {
+            requireMicroVersion("Rebuild hostname", V(90));
+            body.put("hostname", request.getHostname());
+        }
+        return invokeMapAction(serverId, "rebuild", body, null);
+    }
+
+    @Override
+    public ActionResponse unshelve(String serverId, UnshelveRequest request) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(request);
+        Map<String, Object> body = new LinkedHashMap<>();
+        if (request.getAvailabilityZone() != null) {
+            requireMicroVersion("Unshelve to an availability zone", V(77));
+            body.put("availability_zone", request.getAvailabilityZone());
+        }
+        if (request.isUnpinAvailabilityZone()) {
+            requireMicroVersion("Unshelve unpinning the availability zone", V(91));
+            body.put("availability_zone", null);
+        }
+        if (request.getHost() != null) {
+            requireMicroVersion("Unshelve to a host", V(91));
+            body.put("host", request.getHost());
+        }
+        if (body.isEmpty())
+            requireMicroVersion("Unshelve with a request body", V(77));
+        return invokeMapAction(serverId, "unshelve", body, null);
+    }
+
+    @Override
+    public ActionResponse rescue(String serverId, RescueRequest request) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(request);
+        Map<String, Object> body = new LinkedHashMap<>();
+        if (request.getAdminPass() != null) body.put("adminPass", request.getAdminPass());
+        if (request.getRescueImageRef() != null) body.put("rescue_image_ref", request.getRescueImageRef());
+        return invokeMapAction(serverId, "rescue", body, null);
+    }
+
+    @Override
+    public String createBackup(String serverId, BackupOptions options) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(options);
+        return imageIdFrom(invokeActionWithResponse(serverId, BackupAction.create(options)));
     }
 }
