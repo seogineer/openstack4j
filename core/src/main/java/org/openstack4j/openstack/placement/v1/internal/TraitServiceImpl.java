@@ -32,7 +32,7 @@ public class TraitServiceImpl extends BasePlacementV1Service implements TraitSer
     @Override
     public boolean exists(String trait) {
         requireName("trait", trait);
-        return executeAction(placement(HttpMethod.GET, ActionResponse.class, uri("/traits/%s", trait))).isSuccess();
+        return existsByStatus(placement(HttpMethod.GET, ActionResponse.class, uri("/traits/%s", trait)));
     }
 
     @Override

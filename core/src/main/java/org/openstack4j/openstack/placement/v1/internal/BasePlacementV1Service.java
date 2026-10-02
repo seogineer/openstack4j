@@ -2,10 +2,13 @@ package org.openstack4j.openstack.placement.v1.internal;
 
 import java.util.regex.Pattern;
 
+import org.openstack4j.api.placement.v1.exceptions.PlacementException;
 import org.openstack4j.api.placement.v1.exceptions.PlacementMicroVersionException;
 import org.openstack4j.api.types.ServiceType;
+import org.openstack4j.core.transport.ClientConstants;
 import org.openstack4j.core.transport.ExecutionOptions;
 import org.openstack4j.core.transport.HttpMethod;
+import org.openstack4j.core.transport.HttpResponse;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.placement.v1.PlacementMicroVersions;
 import org.openstack4j.openstack.internal.BaseOpenStackService;
@@ -72,8 +75,46 @@ public abstract class BasePlacementV1Service extends BaseOpenStackService {
         return invocation.execute(ExecutionOptions.create(PlacementErrors.THROW_ALL));
     }
 
+    /**
+     * Runs a request whose outcome is reported as an {@link ActionResponse}. Failures carry the Placement error code
+     * and detail in {@link ActionResponse#getFault()} (openstack4j's default parser only understands map-shaped
+     * error bodies, not Placement's {@code errors} list).
+     */
     protected ActionResponse executeAction(Invocation<ActionResponse> invocation) {
-        return invocation.execute();
+        HttpResponse response = invocation.header(ClientConstants.HEADER_USER_AGENT, ClientConstants.USER_AGENT).executeWithResponse();
+        try {
+            if (response.getStatus() < 400)
+                return ActionResponse.actionSuccess(response.getStatus());
+            PlacementException failure = PlacementErrors.toException(response);
+            return ActionResponse.actionFailed(failure.getMessage(), failure.getStatus());
+        } finally {
+            closeQuietly(response);
+        }
+    }
+
+    /**
+     * Existence check by status: 2xx is {@code true}, 404 is {@code false}; any other error throws
+     * {@link PlacementException} instead of hiding it behind {@code false}.
+     */
+    protected boolean existsByStatus(Invocation<ActionResponse> invocation) {
+        HttpResponse response = invocation.header(ClientConstants.HEADER_USER_AGENT, ClientConstants.USER_AGENT).executeWithResponse();
+        try {
+            if (response.getStatus() < 400)
+                return true;
+            if (response.getStatus() == 404)
+                return false;
+            throw PlacementErrors.toException(response);
+        } finally {
+            closeQuietly(response);
+        }
+    }
+
+    private static void closeQuietly(HttpResponse response) {
+        try {
+            response.close();
+        } catch (java.io.IOException ignored) {
+            // nothing useful to do once the status has been read
+        }
     }
 
     /** Placement names (resource classes, traits) are upper case letters, digits and underscores. */
