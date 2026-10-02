@@ -4489,47 +4489,42 @@ public class BlockStorageLiveTests {
 
     public void temporaryVolumeLifecycle() throws Exception {
         String name = "os4j-live-" + UUID.randomUUID().toString().substring(0, 8);
-        Volume volume = null;
-        VolumeSnapshot snapshot = null;
-        VolumeAttachmentRecord attachment = null;
+        Volume created = os.blockStorage().volumes().create(Builders.volume().name(name).size(1).description("os4j live test")
+                .metadata(Collections.singletonMap("purpose", "live-test")).build());
+        final String volumeId = created.getId();
         try {
-            volume = os.blockStorage().volumes().create(Builders.volume().name(name).size(1).description("os4j live test")
-                    .metadata(Collections.singletonMap("purpose", "live-test")).build());
-            waitFor(() -> os.blockStorage().volumes().get(volume0(volume).getId()).getStatus() == Volume.Status.AVAILABLE, "volume available");
-            Volume shown = os.blockStorage().volumes().get(volume.getId());
+            waitFor(() -> os.blockStorage().volumes().get(volumeId).getStatus() == Volume.Status.AVAILABLE, "volume available");
+            Volume shown = os.blockStorage().volumes().get(volumeId);
             Assert.assertEquals(shown.getConsumesQuota(), Boolean.TRUE);
             Assert.assertNotNull(shown.getVolumeTypeId());
-            Map<String, String> metadata = os.blockStorage().volumes().setMetadata(volume.getId(), Collections.singletonMap("k", "v"));
+            Map<String, String> metadata = os.blockStorage().volumes().setMetadata(volumeId, Collections.singletonMap("k", "v"));
             Assert.assertEquals(metadata.get("k"), "v");
-            Assert.assertEquals(os.blockStorage().volumes().metadataItem(volume.getId(), "purpose"), "live-test");
+            Assert.assertEquals(os.blockStorage().volumes().metadataItem(volumeId, "purpose"), "live-test");
 
-            snapshot = os.blockStorage().snapshots().create(Builders.volumeSnapshot().name(name).volume(volume.getId()).build());
-            waitFor(() -> os.blockStorage().snapshots().get(snapshot0(snapshot).getId()).getStatus() == VolumeSnapshot.Status.AVAILABLE, "snapshot available");
-            Assert.assertNotNull(os.blockStorage().snapshots().get(snapshot.getId()).getUserId());
-            Assert.assertTrue(os.blockStorage().snapshots().metadata(snapshot.getId()).isEmpty());
+            VolumeSnapshot snapshot = os.blockStorage().snapshots().create(Builders.volumeSnapshot().name(name).volume(volumeId).build());
+            final String snapshotId = snapshot.getId();
+            try {
+                waitFor(() -> os.blockStorage().snapshots().get(snapshotId).getStatus() == Volume.Status.AVAILABLE, "snapshot available");
+                Assert.assertNotNull(os.blockStorage().snapshots().get(snapshotId).getUserId());
+                Assert.assertTrue(os.blockStorage().snapshots().metadata(snapshotId).isEmpty());
 
-            attachment = os.blockStorage().attachments().create(volume.getId(), null, null, null);
-            Assert.assertEquals(attachment.getStatus(), "reserved");
-            Assert.assertEquals(os.blockStorage().attachments().get(attachment.getId()).getVolumeId(), volume.getId());
-            os.blockStorage().attachments().delete(attachment.getId());
-            attachment = null;
-            waitFor(() -> os.blockStorage().volumes().get(volume0(volume).getId()).getStatus() == Volume.Status.AVAILABLE, "volume available after detach");
+                VolumeAttachmentRecord attachment = os.blockStorage().attachments().create(volumeId, null, null, null);
+                try {
+                    Assert.assertEquals(attachment.getStatus(), "reserved");
+                    Assert.assertEquals(os.blockStorage().attachments().get(attachment.getId()).getVolumeId(), volumeId);
+                } finally {
+                    os.blockStorage().attachments().delete(attachment.getId());
+                }
+                waitFor(() -> os.blockStorage().volumes().get(volumeId).getStatus() == Volume.Status.AVAILABLE, "volume available after detach");
+            } finally {
+                os.blockStorage().snapshots().delete(snapshotId);
+                waitForGone(() -> os.blockStorage().snapshots().get(snapshotId));
+            }
         } finally {
-            if (attachment != null)
-                os.blockStorage().attachments().delete(attachment.getId());
-            if (snapshot != null) {
-                os.blockStorage().snapshots().delete(snapshot.getId());
-                waitForGone(() -> os.blockStorage().snapshots().get(snapshot0(snapshot).getId()));
-            }
-            if (volume != null) {
-                os.blockStorage().volumes().delete(volume.getId());
-                waitForGone(() -> os.blockStorage().volumes().get(volume0(volume).getId()));
-            }
+            os.blockStorage().volumes().delete(volumeId);
+            waitForGone(() -> os.blockStorage().volumes().get(volumeId));
         }
     }
-
-    private static Volume volume0(Volume v) { return v; }
-    private static VolumeSnapshot snapshot0(VolumeSnapshot s) { return s; }
 
     private static void waitFor(java.util.function.BooleanSupplier condition, String what) throws InterruptedException {
         for (int i = 0; i < 60; i++) {
@@ -4551,7 +4546,7 @@ public class BlockStorageLiveTests {
     }
 }
 ```
-(`VolumeSnapshot.Status.AVAILABLE` 등 enum 이름은 실제 모델에 맞춘다. `volume0/snapshot0` 는 람다에서 effectively-final 제약을 피하기 위한 보조 메서드다 — 구현 때 지역 final 복사본으로 바꿔도 된다. 기존 `volumes().get()` 이 404 에서 `null` 을 돌려주는지 예외를 던지는지는 connector 에 따라 다르므로 둘 다 "사라짐"으로 본다.)
+(`Volume.Status.AVAILABLE` 등 enum 이름은 실제 모델에 맞춘다. `volume0/snapshot0` 는 람다에서 effectively-final 제약을 피하기 위한 보조 메서드다 — 구현 때 지역 final 복사본으로 바꿔도 된다. 기존 `volumes().get()` 이 404 에서 `null` 을 돌려주는지 예외를 던지는지는 connector 에 따라 다르므로 둘 다 "사라짐"으로 본다.)
 
 - [ ] **Step 2: 개발용 OpenStack 에서 세 connector 로 실행**
 

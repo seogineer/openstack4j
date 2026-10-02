@@ -1,3 +1,17 @@
+## 4.3.0
+
+- 공용 microversion 프레임워크: `MicroVersionSupport`(내부), 공개 `MicroVersionService<V>`/`MicroVersionInfo`. compute 는 내부만 위임(공개 API 불변)
+- Cinder v3 microversion 선택적 지원: `os.blockStorage().microVersions()` 의 `negotiate()`/`use()`/`clear()`, 3.0~3.71. 기본값은 꺼짐(요청 불변)
+- 레거시 호출 보호: `bootable` 을 설정한 볼륨 생성은 3.52, `force=false` 스냅샷 생성은 3.65 로 전송
+- 응답 모델 필드: volume(user_id, updated_at, group_id 3.13, provider_id 3.21, shared_targets 3.48/3.69, service_uuid 3.48, cluster_name 3.61, volume_type_id 3.63, encryption_key_id 3.64, consumes_quota 3.65 등), snapshot(3.14/3.41/3.65), backup(3.18/3.43/3.56/3.64), type(description/is_public/qos_specs_id), transfer(3.55/3.57), service(3.7/3.26/3.49), quota(backups/backup_gigabytes/per_volume_gigabytes/groups)
+- 목록 옵션 `VolumeListOptions`/`SnapshotListOptions`/`BackupListOptions`(3.4/3.10/3.22/3.34/3.45/3.60/3.65), `volumes().summary()`(3.12), `update(VolumeUpdateOptions)`
+- 생성 옵션: volume `groupId`(3.13)/`backupId`(3.47)/`imageId`/`consistencyGroupId`/`schedulerHints`, backup `metadata`(3.43)/`availabilityZone`(3.51), upload image `visibility`/`protected`(3.1)
+- volume 액션: metadata CRUD, image metadata, revert(3.40), reimage(3.68), extend completion(3.71), retype, migrate(host/cluster 3.16), migration completion, unmanage, reserve/unreserve, begin/roll detaching, initialize/terminate connection, reset status
+- snapshots: metadata CRUD, reset/force-delete/update status, unmanage; backups: update(3.9, metadata 3.43), export/import record, force-delete, reset status
+- 새 서비스: `attachments()`(3.27; complete 3.44, mode 3.54), `messages()`(3.3), `volumeTypes()`(extra specs, access, encryption, default), `defaultTypes()`(3.62), `qosSpecs()`, `groups()`(3.13; replication 3.38), `groupTypes()`(3.11), `groupSnapshots()`(3.14), `clusters()`(3.7), `workers()`(3.24), `hosts()`, `capabilities()`, `resourceFilters()`(3.33), `extensions()`, `volumeTransfers()`(3.55), `manageableVolumes()`/`manageableSnapshots()`(3.8)
+- `services()` 액션(enable/disable/disable-log-reason/freeze/thaw/failover_host/failover 3.26/get-log·set-log 3.32), `getLimits(projectId)`(3.39), quota classes, pools 옵션(3.28/3.35), `Builders.volumeTypeEncryption()`
+- 테스트: `AbstractTest.adjustTokenJson` hook, `BlockStorageLiveTests`(개발용 Cinder 3.71 에서 세 connector 통과)
+
 ## 4.2.0
 
 - Nova microversion 선택적 지원: `os.compute().microVersions()` 의 `negotiate()`/`use()`/`clear()`, 2.1~2.104. 기본값은 꺼짐(요청 불변)

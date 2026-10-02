@@ -88,6 +88,28 @@ os.compute().servers().boot(Builders.server().name("vm").flavor(f).image(i)
 - 새 기능은 필요한 최소 microversion 을 요청 전에 검사하고, 세션이 그 버전을 보내지 않으면(또는 꺼져 있으면) `MicroVersionException` 을 던집니다.
 - 선택한 버전은 클라이언트 세션과 compute endpoint 별로 유지됩니다.
 
+## Block storage microversion
+
+4.3.0 부터 Cinder v3 microversion(3.0~3.71)을 선택적으로 켤 수 있습니다. 기본값은 꺼짐이라, 켜지 않으면 요청에 microversion 헤더가 붙지 않고(Cinder 는 3.0 으로 처리) 기존 코드는 그대로 동작합니다.
+
+```java
+BlockStorageVersion v = os.blockStorage().microVersions().negotiate();   // min(3.71, 서버 최대)
+os.blockStorage().microVersions().use("3.50");                            // 또는 버전 고정
+os.blockStorage().microVersions().clear();                                // 다시 헤더 없음
+
+Volume volume = os.blockStorage().volumes().get(id);
+volume.getVolumeTypeId();                                                 // 3.63+
+volume.getConsumesQuota();                                                // 3.65+
+
+os.blockStorage().volumes().list(VolumeListOptions.create().status("available").withCount(true));   // 3.45+
+os.blockStorage().attachments().create(volumeId, serverId, null, "rw");   // 3.27+, mode 3.54+
+os.blockStorage().groups().create(GroupCreate.create("g", groupTypeId, List.of(typeId)));         // 3.13+
+```
+
+- Cinder 가 3.53 부터 거부하는 생성 본문의 `bootable`, 3.66 부터 거부하는 스냅샷 `force=false` 는 각각 3.52/3.65 로 보내므로 기존 호출이 `negotiate()` 후에도 계속 동작합니다. 그 밖의 기존 메서드는 3.71 까지 형식이 같습니다.
+- 새 기능은 필요한 최소 microversion 을 요청 전에 검사하고, 세션이 그 버전을 보내지 않으면(또는 꺼져 있으면) `MicroVersionException` 을 던집니다.
+- compute 와 block storage 의 microversion 상태는 서로 독립이며, 클라이언트 세션과 endpoint 별로 유지됩니다.
+
 ## 빌드
 
 ```bash
