@@ -1,5 +1,9 @@
 package org.openstack4j.openstack.compute.internal.ext;
 
+import org.openstack4j.openstack.internal.microversion.MicroVersions;
+
+import org.openstack4j.model.compute.ext.HypervisorListOptions;
+
 import static org.openstack4j.openstack.compute.internal.ComputeMicroVersions.V;
 
 import java.util.List;
@@ -45,5 +49,13 @@ public class HypervisorServiceImpl extends BaseComputeServices implements Hyperv
     public Hypervisor get(String hypervisorId) {
         Objects.requireNonNull(hypervisorId);
         return get(ExtHypervisor.class, uri("/os-hypervisors/%s", hypervisorId)).execute();
+    }
+
+    @Override
+    public List<? extends Hypervisor> list(HypervisorListOptions options) {
+        Objects.requireNonNull(options);
+        if (options.getRequiredMicroVersion() != null)
+            requireMicroVersion("Hypervisor list filters " + options.toQueryParams().keySet(), MicroVersions.parse(options.getRequiredMicroVersion()));
+        return get(Hypervisors.class, "/os-hypervisors/detail").params(options.toQueryParams()).execute().getList();
     }
 }

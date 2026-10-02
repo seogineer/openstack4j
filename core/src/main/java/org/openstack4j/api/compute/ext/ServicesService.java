@@ -1,5 +1,9 @@
 package org.openstack4j.api.compute.ext;
 
+import org.openstack4j.model.compute.ext.ServiceUpdate;
+
+import org.openstack4j.model.common.ActionResponse;
+
 import java.util.List;
 import java.util.Map;
 
@@ -68,4 +72,18 @@ public interface ServicesService {
      */
     ExtService forceUpService(String binary, String host);
 
+    /**
+     * Updates a service by id ({@code PUT /os-services/{id}}, 2.53+).
+     */
+    Service update(String serviceId, ServiceUpdate update);
+
+    /**
+     * Deletes a compute service record ({@code DELETE /os-services/{id}}; the id is a UUID from 2.53).
+     */
+    ActionResponse delete(String serviceId);
+
+    /**
+     * Disables a service with a reason ({@code PUT /os-services/disable-log-reason}, sent at 2.52 or lower).
+     */
+    ExtService disableWithReason(String binary, String host, String reason);
 }

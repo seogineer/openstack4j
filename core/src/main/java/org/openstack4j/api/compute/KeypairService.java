@@ -1,5 +1,7 @@
 package org.openstack4j.api.compute;
 
+import org.openstack4j.model.compute.KeypairListOptions;
+
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -46,4 +48,16 @@ public interface KeypairService extends RestService {
      */
     Keypair create(String name, @Nullable String publicKey);
 
+    /**
+     * Lists key pairs with typed filters ({@code user_id} 2.10+, {@code limit}/{@code marker} 2.35+).
+     */
+    List<? extends Keypair> list(KeypairListOptions options);
+
+    /**
+     * Creates or imports a key pair of a type (2.2+).
+     *
+     * @param publicKey the public key to import, or {@code null} to let Nova generate one (sent at 2.91 or lower)
+     * @param type      ssh or x509
+     */
+    Keypair create(String name, @Nullable String publicKey, String type);
 }

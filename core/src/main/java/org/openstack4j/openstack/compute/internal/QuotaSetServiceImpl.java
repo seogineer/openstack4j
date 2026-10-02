@@ -129,4 +129,10 @@ public class QuotaSetServiceImpl extends BaseComputeServices implements QuotaSet
                 .param("detailed", "1")
                 .execute();
     }
+
+    @Override
+    public QuotaSet defaults(String tenantId) {
+        Objects.requireNonNull(tenantId);
+        return get(NovaQuotaSet.class, uri("/os-quota-sets/%s/defaults", tenantId)).execute();
+    }
 }

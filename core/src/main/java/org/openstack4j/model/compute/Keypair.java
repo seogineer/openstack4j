@@ -68,4 +68,6 @@ public interface Keypair extends ModelEntity {
      */
     Integer getId();
 
+    /** @return ssh or x509 (2.2+) */
+    default String getType() { return null; }
 }

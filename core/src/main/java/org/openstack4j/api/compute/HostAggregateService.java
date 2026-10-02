@@ -85,4 +85,9 @@ public interface HostAggregateService extends RestService {
      * @return HostAggregate
      */
     HostAggregate removeHost(String hostAggregateId, String host);
+
+    /**
+     * Requests image pre-caching on the aggregate's hosts ({@code POST /os-aggregates/{id}/images}, 2.81+).
+     */
+    ActionResponse cacheImages(String aggregateId, List<String> imageIds);
 }

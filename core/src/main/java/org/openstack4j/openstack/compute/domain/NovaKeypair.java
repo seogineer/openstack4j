@@ -37,6 +37,7 @@ public class NovaKeypair implements Keypair {
     @JsonProperty("deleted_at")
     private Date deletedAt;
     private Integer id;
+    private String type;
 
     /**
      * Used internally by the domain side of the API to create a new Keypair on an OpenStack server
@@ -45,6 +46,17 @@ public class NovaKeypair implements Keypair {
      * @param publicKey the public key or null to have OS generated one
      * @return NovaKeypair
      */
+    public static NovaKeypair create(String name, String publicKey, String type) {
+        NovaKeypair kp = create(name, publicKey);
+        kp.type = type;
+        return kp;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
     public static NovaKeypair create(String name, String publicKey) {
         NovaKeypair kp = new NovaKeypair();
         kp.name = name;
