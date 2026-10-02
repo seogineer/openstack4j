@@ -91,3 +91,11 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - `negotiate()` 후에는 Nova 2.47+ 가 flavor 를 내장해 서버의 `getFlavorId()` 가 `null` 입니다. `getFlavorSummary()` 를 쓰세요.
 - `negotiate()` 후에는 2.88 에서 사라진 하이퍼바이저 통계 필드가 `0` 으로 읽힙니다. Placement inventory 를 쓰세요.
 
+# 4.2 → 4.3
+
+런타임 동작을 바꾸는 변경은 없습니다. block storage microversion 은 선택 사항(`os.blockStorage().microVersions().negotiate()`)이고, 켜지 않으면 요청은 4.2 와 같습니다.
+
+- `ComputeMicroVersionService` 는 이제 공용 `org.openstack4j.common.MicroVersionService<ComputeVersion>` 을, `ComputeVersion` 은 `org.openstack4j.model.common.MicroVersionInfo` 를 상속합니다. 메서드는 그대로라 기존 코드는 변경 없이 컴파일됩니다.
+- 모델 인터페이스(`Volume`, `VolumeSnapshot`, `VolumeBackup`, `VolumeType`, `VolumeTransfer`, `BlockQuotaSet`, block storage `Service`)에 `default` getter 가 추가되었습니다. 라이브러리 밖의 구현체도 그대로 컴파일됩니다. 다만 빌더 인터페이스(`VolumeBuilder`, `VolumeTypeBuilder`, `VolumeBackupCreateBuilder`, `BlockQuotaSetBuilder`)와 서비스 인터페이스(`BlockStorageService`, `BlockVolumeService`, `BlockVolumeSnapshotService`, `BlockVolumeBackupService`, `BlockQuotaSetService`, `BlockStorageServiceService`, `SchedulerStatsGetPoolService`)에는 추상 메서드가 추가되었습니다. 테스트용 가짜 구현처럼 이 인터페이스를 직접 구현했다면 새 메서드를 구현해야 합니다.
+- `negotiate()` 후 Cinder 3.53+ 는 생성 본문의 알 수 없는 필드를 거부합니다. 라이브러리는 `bootable` 을 설정한 생성 요청을 3.52 로 보내 이를 피합니다.
+- `volumes().create()` 에 `multiattach` 를 설정하면 Cinder 는 버전과 무관하게 400 을 돌려줍니다(멀티어태치는 volume type 으로 지정). 이는 4.2 와 같습니다.
