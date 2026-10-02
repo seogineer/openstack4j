@@ -26,6 +26,8 @@ public final class ComputeMicroVersions {
 
     /** @return this session's compute state, or {@code null} when microversions were never turned on */
     public static MicroVersionState currentState() {
+        if (!MicroVersionStore.hasAny())
+            return null;    // nobody turned microversions on: no catalog lookup, no lock
         OSClientSession<?, ?> session = OSClientSession.getCurrent();
         return session == null ? null : MicroVersionStore.get(session, key(session));
     }

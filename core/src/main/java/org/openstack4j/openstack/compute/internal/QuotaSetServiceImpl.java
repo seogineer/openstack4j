@@ -1,5 +1,10 @@
 package org.openstack4j.openstack.compute.internal;
 
+import org.openstack4j.openstack.compute.domain.NovaQuotaSetUpdate;
+import org.openstack4j.openstack.internal.MicroVersion;
+
+import static org.openstack4j.openstack.compute.internal.ComputeMicroVersions.V;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -61,7 +66,8 @@ public class QuotaSetServiceImpl extends BaseComputeServices implements QuotaSet
         Objects.requireNonNull(classId);
         Objects.requireNonNull(qs);
 
-        return put(NovaQuotaSetClass.class, uri("/os-quota-class-sets/%s", classId)).entity(NovaQuotaSetUpdateClass.from(qs)).execute();
+        NovaQuotaSetUpdateClass update = NovaQuotaSetUpdateClass.from(qs);
+        return capped(put(NovaQuotaSetClass.class, uri("/os-quota-class-sets/%s", classId)), quotaCeiling(update)).entity(update).execute();
     }
 
     /**
@@ -72,7 +78,8 @@ public class QuotaSetServiceImpl extends BaseComputeServices implements QuotaSet
         Objects.requireNonNull(tenantId);
         Objects.requireNonNull(qs);
 
-        return put(NovaQuotaSet.class, uri("/os-quota-sets/%s", tenantId)).entity(NovaQuotaSetUpdateTenant.from(qs)).execute();
+        NovaQuotaSetUpdateTenant update = NovaQuotaSetUpdateTenant.from(qs);
+        return capped(put(NovaQuotaSet.class, uri("/os-quota-sets/%s", tenantId)), quotaCeiling(update)).entity(update).execute();
     }
 
     /**
@@ -123,7 +130,8 @@ public class QuotaSetServiceImpl extends BaseComputeServices implements QuotaSet
         Objects.requireNonNull(tenantId);
         Objects.requireNonNull(startTime);
         Objects.requireNonNull(endTime);
-        return get(NovaSimpleTenantUsage.class, uri("/os-simple-tenant-usage/%s", tenantId))
+        // the show query rejects "detailed" from 2.75
+        return capped(get(NovaSimpleTenantUsage.class, uri("/os-simple-tenant-usage/%s", tenantId)), V(74))
                 .param("start", startTime)
                 .param("end", endTime)
                 .param("detailed", "1")
@@ -134,5 +142,14 @@ public class QuotaSetServiceImpl extends BaseComputeServices implements QuotaSet
     public QuotaSet defaults(String tenantId) {
         Objects.requireNonNull(tenantId);
         return get(NovaQuotaSet.class, uri("/os-quota-sets/%s/defaults", tenantId)).execute();
+    }
+
+    /** Network quotas were removed in 2.36 and injected-file quotas in 2.57. */
+    private static MicroVersion quotaCeiling(NovaQuotaSetUpdate update) {
+        if (update.hasNetworkQuotas())
+            return V(35);
+        if (update.hasInjectedFileQuotas())
+            return V(56);
+        return null;
     }
 }
