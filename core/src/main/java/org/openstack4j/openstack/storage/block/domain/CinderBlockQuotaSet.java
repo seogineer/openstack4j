@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.model.storage.block.BlockQuotaSet;
 import org.openstack4j.model.storage.block.builder.BlockQuotaSetBuilder;
 import org.openstack4j.util.ToStringHelper;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * An OpenStack Quota-Set
@@ -27,11 +28,11 @@ public class CinderBlockQuotaSet implements BlockQuotaSet {
     @JsonProperty
     private String id;
     @JsonProperty
-    private int snapshots;
+    private Integer snapshots;
     @JsonProperty
-    private int volumes;
+    private Integer volumes;
     @JsonProperty
-    private int gigabytes;
+    private Integer gigabytes;
 
     private Map<String, Integer> volumeTypesQuotas = new HashMap<>();
     @JsonProperty("backups")
@@ -57,19 +58,22 @@ public class CinderBlockQuotaSet implements BlockQuotaSet {
         return id;
     }
 
+    @JsonIgnore
     @Override
     public int getSnapshots() {
-        return snapshots;
+        return snapshots == null ? 0 : snapshots;
     }
 
+    @JsonIgnore
     @Override
     public int getVolumes() {
-        return volumes;
+        return volumes == null ? 0 : volumes;
     }
 
+    @JsonIgnore
     @Override
     public int getGigabytes() {
-        return gigabytes;
+        return gigabytes == null ? 0 : gigabytes;
     }
 
     @Override

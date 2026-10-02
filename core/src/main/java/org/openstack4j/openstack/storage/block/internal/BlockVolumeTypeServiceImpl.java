@@ -57,8 +57,9 @@ public class BlockVolumeTypeServiceImpl extends BaseBlockStorageServices impleme
 
     @Override
     public Map<String, String> setExtraSpecs(String id, Map<String, String> specs) {
-        return post(CinderExtraSpecs.class, uri("/types/%s/extra_specs", Objects.requireNonNull(id)))
-                .entity(JsonBody.of("extra_specs", Objects.requireNonNull(specs))).execute().getExtraSpecs();
+        CinderExtraSpecs result = post(CinderExtraSpecs.class, uri("/types/%s/extra_specs", Objects.requireNonNull(id)))
+                .entity(JsonBody.of("extra_specs", Objects.requireNonNull(specs))).execute();
+        return result == null || result.getExtraSpecs() == null ? Collections.emptyMap() : result.getExtraSpecs();
     }
 
     @Override

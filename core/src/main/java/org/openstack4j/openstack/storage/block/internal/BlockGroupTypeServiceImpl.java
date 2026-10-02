@@ -76,8 +76,9 @@ public class BlockGroupTypeServiceImpl extends BaseBlockStorageServices implemen
     @Override
     public Map<String, String> setGroupSpecs(String groupTypeId, Map<String, String> groupSpecs) {
         requireMicroVersion("Group types", V(11));
-        return post(CinderGroupSpecs.class, uri("/group_types/%s/group_specs", Objects.requireNonNull(groupTypeId)))
-                .entity(JsonBody.of("group_specs", Objects.requireNonNull(groupSpecs))).execute().getGroupSpecs();
+        CinderGroupSpecs result = post(CinderGroupSpecs.class, uri("/group_types/%s/group_specs", Objects.requireNonNull(groupTypeId)))
+                .entity(JsonBody.of("group_specs", Objects.requireNonNull(groupSpecs))).execute();
+        return result == null || result.getGroupSpecs() == null ? Collections.emptyMap() : result.getGroupSpecs();
     }
 
     @Override

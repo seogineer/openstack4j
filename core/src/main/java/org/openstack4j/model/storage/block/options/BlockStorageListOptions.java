@@ -44,7 +44,12 @@ public abstract class BlockStorageListOptions<T extends BlockStorageListOptions<
     /** Cinder expects dict-style metadata filters: {@code {'key': 'value'}}. */
     protected static String dict(Map<String, String> metadata) {
         StringBuilder sb = new StringBuilder("{");
-        metadata.forEach((k, v) -> sb.append(sb.length() > 1 ? ", " : "").append('\'').append(k).append("': '").append(v).append('\''));
+        metadata.forEach((k, v) -> sb.append(sb.length() > 1 ? ", " : "").append('\'').append(quote(k)).append("': '").append(quote(v)).append('\''));
         return sb.append('}').toString();
+    }
+
+    /** Escapes a value for a Python-style single-quoted literal (Cinder parses the filter with literal_eval). */
+    private static String quote(String value) {
+        return value == null ? "" : value.replace("\\", "\\\\").replace("'", "\\'");
     }
 }
