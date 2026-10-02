@@ -89,4 +89,15 @@ public class TraitTests extends AbstractPlacementTest {
         Assert.assertEquals(replaced.getResourceProviderGeneration(), 557L);
         Assert.assertTrue(cleared.isSuccess());
     }
+
+    @Test(expectedExceptions = org.openstack4j.api.placement.v1.exceptions.PlacementException.class)
+    public void existsThrowsOnServerErrorInsteadOfReturningFalse() throws Exception {
+        respondWithVersions("1.39");
+        respondWithError(500, "placement.undefined_code"); // not 503: HttpClient 5 retries 503 once by default
+        try {
+            osv3().placement().traits().exists("HW_CPU_X86_AVX");
+        } finally {
+            takeVersionAndRequest();
+        }
+    }
 }

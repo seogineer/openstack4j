@@ -19,7 +19,10 @@ public final class AllocationRequest implements ModelEntity {
     private final String consumerType;
 
     private AllocationRequest(Builder b) {
-        this.allocations = Collections.unmodifiableMap(b.allocations);
+        // deep copy: the builder may be reused for another request
+        Map<String, Map<String, Long>> copy = new LinkedHashMap<>();
+        b.allocations.forEach((rp, resources) -> copy.put(rp, Collections.unmodifiableMap(new LinkedHashMap<>(resources))));
+        this.allocations = Collections.unmodifiableMap(copy);
         this.projectId = Objects.requireNonNull(b.projectId, "projectId");
         this.userId = Objects.requireNonNull(b.userId, "userId");
         this.consumerGeneration = b.consumerGeneration;

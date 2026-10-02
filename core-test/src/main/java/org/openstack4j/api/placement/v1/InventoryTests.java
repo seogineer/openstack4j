@@ -118,5 +118,6 @@ public class InventoryTests extends AbstractPlacementTest {
         takeVersionAndRequest();
         Assert.assertFalse(response.isSuccess());
         Assert.assertEquals(response.getCode(), 409);
+        Assert.assertTrue(response.getFault().contains("placement.inventory.inuse"), "fault must carry the Placement code: " + response.getFault());
     }
 }
