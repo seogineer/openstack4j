@@ -16,6 +16,11 @@ import org.openstack4j.openstack.storage.block.domain.CinderVolumeSnapshot;
 import org.openstack4j.openstack.storage.block.domain.CinderVolumeSnapshot.VolumeSnapshots;
 import org.openstack4j.model.storage.block.options.SnapshotListOptions;
 import org.openstack4j.openstack.internal.microversion.MicroVersions;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import org.openstack4j.openstack.internal.microversion.JsonBody;
+import org.openstack4j.openstack.storage.block.domain.CinderMetadata;
+import org.openstack4j.openstack.storage.block.domain.CinderMetadataItem;
 
 /**
  * OpenStack (Cinder) Volume Snapshot Operations API Implementation.
@@ -102,5 +107,80 @@ public class BlockVolumeSnapshotServiceImpl extends BaseBlockStorageServices imp
         if (options.getRequiredMicroVersion() != null)
             requireMicroVersion("Snapshot list filters " + options.toQueryParams().keySet(), MicroVersions.parse(options.getRequiredMicroVersion()));
         return get(VolumeSnapshots.class, uri("/snapshots/detail")).params(options.toQueryParams()).execute().getList();
+    }
+
+    private ActionResponse action(String snapshotId, String action, Map<String, ?> body) {
+        return post(ActionResponse.class, uri("/snapshots/%s/action", snapshotId)).entity(JsonBody.of(action, body)).execute();
+    }
+
+    @Override
+    public Map<String, String> metadata(String snapshotId) {
+        Objects.requireNonNull(snapshotId);
+        CinderMetadata result = get(CinderMetadata.class, uri("/snapshots/%s/metadata", snapshotId)).execute();
+        return result == null || result.getMetadata() == null ? Collections.emptyMap() : result.getMetadata();
+    }
+
+    @Override
+    public Map<String, String> setMetadata(String snapshotId, Map<String, String> metadata) {
+        Objects.requireNonNull(snapshotId);
+        Objects.requireNonNull(metadata);
+        return post(CinderMetadata.class, uri("/snapshots/%s/metadata", snapshotId)).entity(JsonBody.of("metadata", metadata)).execute().getMetadata();
+    }
+
+    @Override
+    public Map<String, String> replaceMetadata(String snapshotId, Map<String, String> metadata) {
+        Objects.requireNonNull(snapshotId);
+        Objects.requireNonNull(metadata);
+        return put(CinderMetadata.class, uri("/snapshots/%s/metadata", snapshotId)).entity(JsonBody.of("metadata", metadata)).execute().getMetadata();
+    }
+
+    @Override
+    public String metadataItem(String snapshotId, String key) {
+        Objects.requireNonNull(snapshotId);
+        Objects.requireNonNull(key);
+        CinderMetadataItem item = get(CinderMetadataItem.class, uri("/snapshots/%s/metadata/%s", snapshotId, key)).execute();
+        return item == null ? null : item.value();
+    }
+
+    @Override
+    public String updateMetadataItem(String snapshotId, String key, String value) {
+        Objects.requireNonNull(snapshotId);
+        Objects.requireNonNull(key);
+        CinderMetadataItem item = put(CinderMetadataItem.class, uri("/snapshots/%s/metadata/%s", snapshotId, key))
+                .entity(JsonBody.of("meta", Collections.singletonMap(key, value))).execute();
+        return item == null ? null : item.value();
+    }
+
+    @Override
+    public ActionResponse deleteMetadataItem(String snapshotId, String key) {
+        Objects.requireNonNull(snapshotId);
+        Objects.requireNonNull(key);
+        return deleteWithResponse(uri("/snapshots/%s/metadata/%s", snapshotId, key)).execute();
+    }
+
+    @Override
+    public ActionResponse resetStatus(String snapshotId, String status) {
+        return action(Objects.requireNonNull(snapshotId), "os-reset_status", Collections.singletonMap("status", Objects.requireNonNull(status)));
+    }
+
+    @Override
+    public ActionResponse forceDelete(String snapshotId) {
+        return action(Objects.requireNonNull(snapshotId), "os-force_delete", Collections.emptyMap());
+    }
+
+    @Override
+    public ActionResponse unmanage(String snapshotId) {
+        return action(Objects.requireNonNull(snapshotId), "os-unmanage", Collections.emptyMap());
+    }
+
+    @Override
+    public ActionResponse updateStatus(String snapshotId, String status, String progress) {
+        Objects.requireNonNull(snapshotId);
+        Objects.requireNonNull(status);
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", status);
+        if (progress != null)
+            body.put("progress", progress);
+        return action(snapshotId, "os-update_snapshot_status", body);
     }
 }

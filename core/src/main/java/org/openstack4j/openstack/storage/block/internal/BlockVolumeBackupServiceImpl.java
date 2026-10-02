@@ -19,6 +19,11 @@ import org.openstack4j.openstack.storage.block.domain.CinderVolumeBackup.VolumeB
 import org.openstack4j.openstack.storage.block.domain.CinderVolumeBackupRestore;
 import org.openstack4j.model.storage.block.options.BackupListOptions;
 import org.openstack4j.openstack.internal.microversion.MicroVersions;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import org.openstack4j.model.storage.block.BackupRecord;
+import org.openstack4j.openstack.internal.microversion.JsonBody;
+import org.openstack4j.openstack.storage.block.domain.CinderBackupRecord;
 
 /**
  * OpenStack (Cinder) Volume Backup Operations API Implementation.
@@ -119,5 +124,43 @@ public class BlockVolumeBackupServiceImpl extends BaseBlockStorageServices imple
         if (options.getRequiredMicroVersion() != null)
             requireMicroVersion("Backup list filters " + options.toQueryParams().keySet(), MicroVersions.parse(options.getRequiredMicroVersion()));
         return get(VolumeBackups.class, uri("/backups/detail")).params(options.toQueryParams()).execute().getList();
+    }
+
+    @Override
+    public VolumeBackup update(String backupId, String name, String description) {
+        return update(backupId, name, description, null);
+    }
+
+    @Override
+    public VolumeBackup update(String backupId, String name, String description, Map<String, String> metadata) {
+        Objects.requireNonNull(backupId);
+        requireMicroVersion("Backup update", V(9));
+        if (metadata != null)
+            requireMicroVersion("Backup metadata update", V(43));
+        Map<String, Object> body = new LinkedHashMap<>();
+        if (name != null) body.put("name", name);
+        if (description != null) body.put("description", description);
+        if (metadata != null) body.put("metadata", metadata);
+        return put(CinderVolumeBackup.class, uri("/backups/%s", backupId)).entity(JsonBody.of("backup", body)).execute();
+    }
+
+    @Override
+    public BackupRecord exportRecord(String backupId) {
+        Objects.requireNonNull(backupId);
+        return get(CinderBackupRecord.class, uri("/backups/%s/export_record", backupId)).execute();
+    }
+
+    @Override
+    public VolumeBackup importRecord(String backupService, String backupUrl) {
+        Objects.requireNonNull(backupService);
+        Objects.requireNonNull(backupUrl);
+        return post(CinderVolumeBackup.class, uri("/backups/import_record")).entity(new CinderBackupRecord(backupService, backupUrl)).execute();
+    }
+
+    @Override public ActionResponse forceDelete(String backupId) { return action(Objects.requireNonNull(backupId), "os-force_delete", Collections.emptyMap()); }
+    @Override public ActionResponse resetStatus(String backupId, String status) { return action(Objects.requireNonNull(backupId), "os-reset_status", Collections.singletonMap("status", Objects.requireNonNull(status))); }
+
+    private ActionResponse action(String backupId, String action, Map<String, ?> body) {
+        return post(ActionResponse.class, uri("/backups/%s/action", backupId)).entity(JsonBody.of(action, body)).execute();
     }
 }
