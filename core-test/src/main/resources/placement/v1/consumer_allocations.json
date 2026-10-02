@@ -1,0 +1,9 @@
+{
+  "allocations": {
+    "3626308f-38dd-4da8-8f0f-6697b05d8f6c": {"resources": {"VCPU": 1, "MEMORY_MB": 1024}, "generation": 557}
+  },
+  "project_id": "2580a7b51d564c1d848ee27fda2db713",
+  "user_id": "e365357fdf4d4a37a07fde3209cac4aa",
+  "consumer_generation": 1,
+  "consumer_type": "INSTANCE"
+}
