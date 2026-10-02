@@ -1,0 +1,8 @@
+{
+  "resource_provider_generation": 557,
+  "inventories": {
+    "VCPU": {"total": 12, "reserved": 0, "min_unit": 1, "max_unit": 12, "step_size": 1, "allocation_ratio": 4.0},
+    "MEMORY_MB": {"total": 15584, "reserved": 512, "min_unit": 1, "max_unit": 15584, "step_size": 1, "allocation_ratio": 1.0},
+    "DISK_GB": {"total": 467, "reserved": 0, "min_unit": 1, "max_unit": 467, "step_size": 1, "allocation_ratio": 1.0}
+  }
+}
