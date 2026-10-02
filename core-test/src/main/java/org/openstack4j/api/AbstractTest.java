@@ -212,6 +212,14 @@ public abstract class AbstractTest {
         return osv2;
     }
 
+    /**
+     * Lets a test class rewrite the v3 token JSON (for example to point a service at another API version) before
+     * the client is built. The default keeps it unchanged.
+     */
+    protected String adjustTokenJson(String json) {
+        return json;
+    }
+
     protected OSClientV3 osv3() {
         if (osv3 == null) {
             ObjectMapper mapper = getObjectMapper();
@@ -220,6 +228,7 @@ public abstract class AbstractTest {
                 String json = getResource(JSON_TOKEN);
                 LOG.info(getClass().getName());
                 json = json.replaceAll("devstack.openstack.stack", getHost());
+                json = adjustTokenJson(json);
                 KeystoneToken token = mapper.readValue(json, KeystoneToken.class);
                 token.setId(TOKEN_ID);
                 token.applyContext(authURL("/v3"),

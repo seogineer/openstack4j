@@ -1,5 +1,9 @@
 package org.openstack4j.openstack.storage.block.internal;
 
+import org.openstack4j.openstack.internal.MicroVersion;
+
+import static org.openstack4j.openstack.storage.block.internal.BlockStorageMicroVersions.V;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -74,7 +78,8 @@ public class BlockVolumeSnapshotServiceImpl extends BaseBlockStorageServices imp
     public VolumeSnapshot create(VolumeSnapshot snapshot) {
         Objects.requireNonNull(snapshot);
         Objects.requireNonNull(snapshot.getVolumeId());
-        return post(CinderVolumeSnapshot.class, uri("/snapshots")).entity(snapshot).execute();
+        MicroVersion ceiling = snapshot instanceof CinderVolumeSnapshot && Boolean.FALSE.equals(((CinderVolumeSnapshot) snapshot).getForce()) ? V(65) : null;   // 3.66 rejects force=false
+        return capped(post(CinderVolumeSnapshot.class, uri("/snapshots")), ceiling).entity(snapshot).execute();
     }
 
     private Invocation<VolumeSnapshots> buildInvocation(Map<String, String> filteringParams) {

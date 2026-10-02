@@ -71,6 +71,12 @@ public class CinderVolume implements Volume {
     @JsonProperty("os-vol-host-attr:host")
     private String host;
 
+    /** @return whether {@code bootable} was set on this request body (Cinder rejects it from 3.53) */
+    @JsonIgnore
+    public boolean hasBootable() {
+        return bootable != null;
+    }
+
     /**
      * @return the Volume Builder
      */

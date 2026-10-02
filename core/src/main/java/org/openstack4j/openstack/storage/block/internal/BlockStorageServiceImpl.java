@@ -70,6 +70,11 @@ public class BlockStorageServiceImpl extends BaseBlockStorageServices implements
      * {@inheritDoc}
      */
     @Override
+    public BlockStorageMicroVersionService microVersions() {
+        return Apis.get(BlockStorageMicroVersionService.class);
+    }
+
+    @Override
     public BlockStorageServiceService services() {
         return Apis.get(BlockStorageServiceService.class);
     }
