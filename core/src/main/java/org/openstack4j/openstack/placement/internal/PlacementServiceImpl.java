@@ -49,4 +49,9 @@ public class PlacementServiceImpl extends BasePlacementServices implements Place
         return Apis.get(org.openstack4j.api.placement.v1.TraitService.class);
     }
 
+    @Override
+    public org.openstack4j.api.placement.v1.AggregateService aggregates() {
+        return Apis.get(org.openstack4j.api.placement.v1.AggregateService.class);
+    }
+
 }
