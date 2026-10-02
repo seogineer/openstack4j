@@ -168,5 +168,16 @@ public interface ServerCreate extends ModelEntity, Buildable<ServerCreateBuilder
      */
     void addNetworkPort(String id);
 
-
+    /** @return tags to set at creation (2.52+) */
+    default List<String> getTags() { return null; }
+    /** @return trusted image certificate ids (2.63+) */
+    default List<String> getTrustedImageCertificates() { return null; }
+    /** @return hostname (2.90+) */
+    default String getHostname() { return null; }
+    /** @return description (2.19+) */
+    default String getDescription() { return null; }
+    /** @return {@code "auto"} or {@code "none"} when networks were chosen that way (2.37+), otherwise {@code null} */
+    default String getNetworksMode() { return null; }
+    /** @return block device mappings, or {@code null} */
+    default List<? extends BlockDeviceMappingCreate> getBlockDeviceMapping() { return null; }
 }

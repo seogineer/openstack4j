@@ -2,6 +2,7 @@ package org.openstack4j.openstack.compute.domain;
 
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -51,6 +52,17 @@ public class NovaServerCreate implements ServerCreate {
 
     @JsonProperty("block_device_mapping_v2")
     private List<BlockDeviceMappingCreate> blockDeviceMapping;
+
+    @JsonProperty("tags")
+    private List<String> tags;
+    @JsonProperty("trusted_image_certificates")
+    private List<String> trustedImageCertificates;
+    @JsonProperty("hostname")
+    private String hostname;
+    @JsonProperty("description")
+    private String description;
+    @JsonIgnore
+    private String networksMode;
 
     public static ServerCreateBuilder builder() {
         return new ServerCreateConcreteBuilder();
@@ -192,6 +204,49 @@ public class NovaServerCreate implements ServerCreate {
         networks.add(new NovaNetworkCreate(null, null, id));
     }
 
+    @JsonIgnore
+    @Override
+    public List<? extends BlockDeviceMappingCreate> getBlockDeviceMapping() {
+        return blockDeviceMapping;
+    }
+
+    @Override
+    public List<String> getTags() {
+        return tags;
+    }
+
+    @Override
+    public List<String> getTrustedImageCertificates() {
+        return trustedImageCertificates;
+    }
+
+    @Override
+    public String getHostname() {
+        return hostname;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @JsonIgnore
+    @Override
+    public String getNetworksMode() {
+        return networksMode;
+    }
+
+    /** Sends {@code "networks": "auto" | "none"} (2.37+); the networks list is null in that case. */
+    @JsonAnyGetter
+    Map<String, Object> networksModeProperty() {
+        return networksMode == null ? Collections.emptyMap() : Collections.singletonMap("networks", networksMode);
+    }
+
+    public void addTaggedNetwork(String id, String tag) {
+        initNetworks();
+        networks.add(new NovaNetworkCreate(id, null, null, tag));
+    }
+
     private void initNetworks() {
         if (networks == null)
             networks = new ArrayList<>();
@@ -225,6 +280,51 @@ public class NovaServerCreate implements ServerCreate {
 
         ServerCreateConcreteBuilder(NovaServerCreate m) {
             this.m = m;
+        }
+
+        @Override
+        public ServerCreateBuilder tags(List<String> tags) {
+            m.tags = tags;
+            return this;
+        }
+
+        @Override
+        public ServerCreateBuilder trustedImageCertificates(List<String> certificateIds) {
+            m.trustedImageCertificates = certificateIds;
+            return this;
+        }
+
+        @Override
+        public ServerCreateBuilder hostname(String hostname) {
+            m.hostname = hostname;
+            return this;
+        }
+
+        @Override
+        public ServerCreateBuilder description(String description) {
+            m.description = description;
+            return this;
+        }
+
+        @Override
+        public ServerCreateBuilder autoAllocateNetwork() {
+            m.networks = null;
+            m.networksMode = "auto";
+            return this;
+        }
+
+        @Override
+        public ServerCreateBuilder noNetwork() {
+            m.networks = null;
+            m.networksMode = "none";
+            return this;
+        }
+
+        @Override
+        public ServerCreateBuilder addTaggedNetwork(String networkId, String tag) {
+            m.networksMode = null;
+            m.addTaggedNetwork(networkId, tag);
+            return this;
         }
 
         @Override

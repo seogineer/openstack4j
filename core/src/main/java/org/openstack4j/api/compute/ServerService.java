@@ -356,4 +356,10 @@ public interface ServerService {
      * @return an administrative password to access the evacuated or rebuilt instance.
      */
     ServerPassword evacuate(String serverId, EvacuateOptions options);
+
+    /**
+     * Lists servers with details using typed filters. Filters that need a newer compute microversion fail before the
+     * request when the session does not send it.
+     */
+    List<? extends Server> list(ServerListOptions options);
 }

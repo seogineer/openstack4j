@@ -2,6 +2,7 @@ package org.openstack4j.openstack.compute.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openstack4j.model.compute.BDMDestType;
 import org.openstack4j.model.compute.BDMSourceType;
@@ -37,6 +38,21 @@ public class NovaBlockDeviceMappingCreate implements BlockDeviceMappingCreate {
 
     @JsonProperty("volume_type")
     public String volumeType;
+
+    @JsonProperty("tag")
+    public String tag;
+
+    @JsonIgnore
+    @Override
+    public String getTag() {
+        return tag;
+    }
+
+    @JsonIgnore
+    @Override
+    public String getVolumeType() {
+        return volumeType;
+    }
 
     public static NovaBlockDeviceMappingBuilder builder() {
         return new NovaBlockDeviceMappingBuilder(new NovaBlockDeviceMappingCreate());
@@ -119,6 +135,12 @@ public class NovaBlockDeviceMappingCreate implements BlockDeviceMappingCreate {
         @Override
         public BlockDeviceMappingBuilder deviceType(String deviceType) {
             create.deviceType = deviceType;
+            return this;
+        }
+
+        @Override
+        public BlockDeviceMappingBuilder tag(String tag) {
+            create.tag = tag;
             return this;
         }
 
