@@ -470,4 +470,26 @@ public interface ServerService {
      * Aborts an in-progress live migration (2.24+).
      */
     ActionResponse abortMigration(String serverId, String migrationId);
+
+    /**
+     * Manila shares attached to a server (2.97+).
+     */
+    List<? extends ServerShare> shares(String serverId);
+
+    /**
+     * One share attached to a server (2.97+).
+     */
+    ServerShare share(String serverId, String shareId);
+
+    /**
+     * Attaches a Manila share to a stopped server (2.97+).
+     *
+     * @param tag optional mount tag, {@code null} to use the share id
+     */
+    ServerShare attachShare(String serverId, String shareId, String tag);
+
+    /**
+     * Detaches a share from a stopped server (2.97+).
+     */
+    ActionResponse detachShare(String serverId, String shareId);
 }
