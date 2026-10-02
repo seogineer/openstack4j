@@ -50,6 +50,12 @@ public class CinderVolumeSnapshot implements VolumeSnapshot {
     /**
      * @return a new Volume Snapshot builder
      */
+    /** @return the force flag as set on this request body, or {@code null} */
+    @JsonIgnore
+    public Boolean getForce() {
+        return force;
+    }
+
     public static VolumeSnapshotBuilder builder() {
         return new ConcreteVolumeSnapshotBuilder();
     }

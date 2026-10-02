@@ -150,6 +150,7 @@ public class DefaultAPIProvider implements APIProvider {
         bind(org.openstack4j.api.octavia.HealthMonitorV2Service.class, org.openstack4j.openstack.octavia.internal.HealthMonitorV2ServiceImpl.class);
         bind(ImageService.class, ImageServiceImpl.class);
         bind(BlockStorageService.class, BlockStorageServiceImpl.class);
+        bind(BlockStorageMicroVersionService.class, BlockStorageMicroVersionServiceImpl.class);
         bind(BlockVolumeService.class, BlockVolumeServiceImpl.class);
         bind(BlockVolumeSnapshotService.class, BlockVolumeSnapshotServiceImpl.class);
         bind(BlockVolumeBackupService.class, BlockVolumeBackupServiceImpl.class);

@@ -55,4 +55,11 @@ public interface BlockStorageService extends RestService {
      * @return ServiceService
      */
     BlockStorageServiceService services();
+
+    /**
+     * Opt-in block storage microversions (3.0 - 3.71); off by default.
+     *
+     * @return the block storage microversion service
+     */
+    BlockStorageMicroVersionService microVersions();
 }

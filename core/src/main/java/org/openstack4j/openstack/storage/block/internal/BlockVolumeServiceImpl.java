@@ -1,5 +1,9 @@
 package org.openstack4j.openstack.storage.block.internal;
 
+import org.openstack4j.openstack.internal.MicroVersion;
+
+import static org.openstack4j.openstack.storage.block.internal.BlockStorageMicroVersions.V;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -131,7 +135,8 @@ public class BlockVolumeServiceImpl extends BaseBlockStorageServices implements 
     @Override
     public Volume create(Volume volume) {
         Objects.requireNonNull(volume);
-        return post(CinderVolume.class, uri("/volumes")).entity(volume).execute();
+        MicroVersion ceiling = volume instanceof CinderVolume && ((CinderVolume) volume).hasBootable() ? V(52) : null;   // bootable is not in the 3.53 create schema
+        return capped(post(CinderVolume.class, uri("/volumes")), ceiling).entity(volume).execute();
     }
 
     /**

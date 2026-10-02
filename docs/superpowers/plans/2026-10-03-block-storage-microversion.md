@@ -837,7 +837,7 @@ public class BlockStorageLegacyCeilingTests extends AbstractBlockStorageMicroVer
         osv3().blockStorage().volumes().list(Collections.singletonMap("status", "available"));
         osv3().blockStorage().snapshots().list();
         osv3().blockStorage().backups().list();
-        osv3().blockStorage().transfer().list();
+        osv3().blockStorage().volumes().transfer().list();
         osv3().blockStorage().services().list();
 
         for (int i = 0; i < 5; i++)
@@ -1463,7 +1463,7 @@ public class BlockStorageModelTests extends AbstractBlockStorageMicroVersionTest
         negotiate("3.71");
         respondWith("/storage/microversion/transfer_3_57.json");
 
-        VolumeTransfer transfer = osv3().blockStorage().transfer().get("94bae1a0-83fb-496c-9cd2-800d8237ab0d");
+        VolumeTransfer transfer = osv3().blockStorage().volumes().transfer().get("94bae1a0-83fb-496c-9cd2-800d8237ab0d");
         takeRequest();
 
         Assert.assertEquals(transfer.getAccepted(), Boolean.FALSE);
@@ -4300,7 +4300,7 @@ public class TransferAndManageTests extends AbstractBlockStorageMicroVersionTest
     public void legacyTransferApiUnchanged() throws Exception {
         negotiate("3.71");
         respondWith(200, "{\"transfers\": []}");
-        osv3().blockStorage().transfer().list(true);
+        osv3().blockStorage().volumes().transfer().list(true);
         RecordedRequest request = takeRequest();
         Assert.assertTrue(request.getPath().endsWith("/os-volume-transfer/detail"));
         assertVersionHeader(request, "3.71");
@@ -4481,7 +4481,7 @@ public class BlockStorageLiveTests {
         os.blockStorage().volumes().list();
         os.blockStorage().snapshots().list();
         os.blockStorage().backups().list();
-        os.blockStorage().transfer().list();
+        os.blockStorage().volumes().transfer().list();
         os.blockStorage().volumes().listVolumeTypes();
         os.blockStorage().zones().list();
     }
