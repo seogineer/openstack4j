@@ -107,4 +107,13 @@ public interface BlockStorageService extends RestService {
 
     /** @return API extensions */
     BlockExtensionService extensions();
+
+    /** @return the 3.55+ volume transfers API (the legacy one stays at {@code volumes().transfer()}) */
+    BlockVolumeTransferV3Service volumeTransfers();
+
+    /** @return manageable volumes (3.8+; admin) */
+    BlockManageableVolumeService manageableVolumes();
+
+    /** @return manageable snapshots (3.8+; admin) */
+    BlockManageableSnapshotService manageableSnapshots();
 }

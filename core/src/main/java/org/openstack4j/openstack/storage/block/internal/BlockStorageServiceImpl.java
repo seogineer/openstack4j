@@ -152,6 +152,21 @@ public class BlockStorageServiceImpl extends BaseBlockStorageServices implements
     }
 
     @Override
+    public BlockVolumeTransferV3Service volumeTransfers() {
+        return Apis.get(BlockVolumeTransferV3Service.class);
+    }
+
+    @Override
+    public BlockManageableVolumeService manageableVolumes() {
+        return Apis.get(BlockManageableVolumeService.class);
+    }
+
+    @Override
+    public BlockManageableSnapshotService manageableSnapshots() {
+        return Apis.get(BlockManageableSnapshotService.class);
+    }
+
+    @Override
     public BlockStorageServiceService services() {
         return Apis.get(BlockStorageServiceService.class);
     }
