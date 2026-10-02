@@ -17,4 +17,18 @@ public interface PlacementService extends RestService {
      */
     ResourceProviderService resourceProviders();
 
+    /**
+     * @return the Placement microversion range of the server and the version this session uses
+     */
+    org.openstack4j.api.placement.v1.VersionService versions();
+
+    /**
+     * Pins the Placement microversion used by the {@code v1} services for this session, or returns to automatic
+     * negotiation when {@code version} is {@code null}.
+     *
+     * @throws org.openstack4j.api.placement.v1.exceptions.PlacementMicroVersionException if the version is outside
+     *         the range supported by both the library and the server
+     */
+    void useMicroVersion(String version);
+
 }

@@ -121,6 +121,7 @@ public class DefaultAPIProvider implements APIProvider {
         bind(NetworkingService.class, NetworkingServiceImpl.class);
         bind(PlacementService.class, PlacementServiceImpl.class);
         bind(ResourceProviderService.class, ResourceProviderServiceImpl.class);
+        bind(org.openstack4j.api.placement.v1.VersionService.class, org.openstack4j.openstack.placement.v1.internal.VersionServiceImpl.class);
         bind(NetworkService.class, NetworkServiceImpl.class);
         bind(ServiceFunctionChainService.class, ServiceFunctionChainServiceImpl.class);
         bind(FlowClassifierService.class, FlowClassifierServiceImpl.class);
