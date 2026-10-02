@@ -34,4 +34,13 @@ public interface ServerActionEvent extends ModelEntity, Buildable<ServerActionEv
      * @return traceback or null
      */
     public String getTraceback();
+
+    /** @return host name, if policy allows (2.62+) */
+    default String getHost() { return null; }
+
+    /** @return obfuscated host id (2.62+) */
+    default String getHostId() { return null; }
+
+    /** @return failure details (2.84+) */
+    default String getDetails() { return null; }
 }

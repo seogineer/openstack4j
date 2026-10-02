@@ -67,4 +67,6 @@ public interface HostAggregate extends ModelEntity {
      */
     Date getUpdatedAt();
 
+    /** @return uuid (2.41+) */
+    default String getUuid() { return null; }
 }

@@ -20,6 +20,7 @@ public interface Hypervisor extends ModelEntity {
      * Gets the current workload.
      *
      * @return the current workload
+     * <p>Always 0 from compute microversion 2.88; use Placement inventories instead.</p>
      */
     int getCurrentWorkload();
 
@@ -27,6 +28,7 @@ public interface Hypervisor extends ModelEntity {
      * Gets the least disk available.
      *
      * @return the least disk available
+     * <p>Always 0 from compute microversion 2.88; use Placement inventories instead.</p>
      */
     int getLeastDiskAvailable();
 
@@ -34,6 +36,7 @@ public interface Hypervisor extends ModelEntity {
      * Gets free disk space in GB
      *
      * @return the free disk in GB
+     * <p>Always 0 from compute microversion 2.88; use Placement inventories instead.</p>
      */
     int getFreeDisk();
 
@@ -41,6 +44,7 @@ public interface Hypervisor extends ModelEntity {
      * Gets the free RAM in MB
      *
      * @return the free RAM in MB
+     * <p>Always 0 from compute microversion 2.88; use Placement inventories instead.</p>
      */
     int getFreeRam();
 
@@ -76,6 +80,7 @@ public interface Hypervisor extends ModelEntity {
      * Gets the running vm.
      *
      * @return the running vm
+     * <p>Always 0 from compute microversion 2.88; use Placement inventories instead.</p>
      */
     int getRunningVM();
 
@@ -83,6 +88,7 @@ public interface Hypervisor extends ModelEntity {
      * Gets the virtual cpu.
      *
      * @return the virtual cpu
+     * <p>Always 0 from compute microversion 2.88; use Placement inventories instead.</p>
      */
     int getVirtualCPU();
 
@@ -90,6 +96,7 @@ public interface Hypervisor extends ModelEntity {
      * Gets the virtual used cpu.
      *
      * @return the virtual used cpu
+     * <p>Always 0 from compute microversion 2.88; use Placement inventories instead.</p>
      */
     int getVirtualUsedCPU();
 
@@ -97,6 +104,7 @@ public interface Hypervisor extends ModelEntity {
      * Gets the local disk.
      *
      * @return the local disk
+     * <p>Always 0 from compute microversion 2.88; use Placement inventories instead.</p>
      */
     int getLocalDisk();
 
@@ -104,6 +112,7 @@ public interface Hypervisor extends ModelEntity {
      * Gets the local disk used.
      *
      * @return the local disk used
+     * <p>Always 0 from compute microversion 2.88; use Placement inventories instead.</p>
      */
     int getLocalDiskUsed();
 
@@ -111,6 +120,7 @@ public interface Hypervisor extends ModelEntity {
      * Gets the local memory.
      *
      * @return the local memory
+     * <p>Always 0 from compute microversion 2.88; use Placement inventories instead.</p>
      */
     int getLocalMemory();
 
@@ -118,6 +128,7 @@ public interface Hypervisor extends ModelEntity {
      * Gets the local memory used.
      *
      * @return the local memory used
+     * <p>Always 0 from compute microversion 2.88; use Placement inventories instead.</p>
      */
     int getLocalMemoryUsed();
 
@@ -219,5 +230,17 @@ public interface Hypervisor extends ModelEntity {
          * @return socket count
          */
         int getSockets();
+    }
+
+    /** @return servers on the hypervisor when listed with with_servers (2.53+) */
+    default List<? extends HypervisorServer> getServers() { return null; }
+
+    /** @return uptime text (2.88+ in hypervisor detail) */
+    default String getUptime() { return null; }
+
+    interface HypervisorServer extends ModelEntity {
+        String getUuid();
+
+        String getName();
     }
 }

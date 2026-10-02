@@ -32,6 +32,7 @@ public class NovaHostAggregate implements HostAggregate {
     public String id;
     public Map<String, String> metadata;
     public String name;
+    public String uuid;
     @JsonProperty("updated_at")
     public Date updatedAt;
 
@@ -140,6 +141,11 @@ public class NovaHostAggregate implements HostAggregate {
      *
      * @author liujunpeng
      */
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
     public static class NovaHostAggregates extends ListResult<NovaHostAggregate> {
 
         private static final long serialVersionUID = 1L;

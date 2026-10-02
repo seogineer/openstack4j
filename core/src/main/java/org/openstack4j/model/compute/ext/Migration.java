@@ -90,5 +90,16 @@ public interface Migration extends ModelEntity {
             return Status.MIGRATING;
         }
     }
-}
 
+    /** @return evacuation, live-migration, migration or resize (2.23+) */
+    default String getMigrationType() { return null; }
+
+    /** @return uuid (2.59+) */
+    default String getUuid() { return null; }
+
+    /** @return user_id (2.80+) */
+    default String getUserId() { return null; }
+
+    /** @return project_id (2.80+) */
+    default String getProjectId() { return null; }
+}
