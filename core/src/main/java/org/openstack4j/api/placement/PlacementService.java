@@ -41,4 +41,9 @@ public interface PlacementService extends RestService {
      */
     org.openstack4j.api.placement.v1.InventoryService inventories();
 
+    /**
+     * Resource classes (standard and CUSTOM_*).
+     */
+    org.openstack4j.api.placement.v1.ResourceClassService resourceClasses();
+
 }

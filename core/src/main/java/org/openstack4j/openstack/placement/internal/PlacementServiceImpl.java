@@ -39,4 +39,9 @@ public class PlacementServiceImpl extends BasePlacementServices implements Place
         return Apis.get(org.openstack4j.api.placement.v1.InventoryService.class);
     }
 
+    @Override
+    public org.openstack4j.api.placement.v1.ResourceClassService resourceClasses() {
+        return Apis.get(org.openstack4j.api.placement.v1.ResourceClassService.class);
+    }
+
 }

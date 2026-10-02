@@ -1,0 +1,8 @@
+{
+  "resource_classes": [
+    {"name": "VCPU", "links": [{"rel": "self", "href": "/resource_classes/VCPU"}]},
+    {"name": "MEMORY_MB", "links": [{"rel": "self", "href": "/resource_classes/MEMORY_MB"}]},
+    {"name": "DISK_GB", "links": [{"rel": "self", "href": "/resource_classes/DISK_GB"}]},
+    {"name": "CUSTOM_GPU", "links": [{"rel": "self", "href": "/resource_classes/CUSTOM_GPU"}]}
+  ]
+}
