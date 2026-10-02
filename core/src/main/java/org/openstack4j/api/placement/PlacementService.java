@@ -46,4 +46,9 @@ public interface PlacementService extends RestService {
      */
     org.openstack4j.api.placement.v1.ResourceClassService resourceClasses();
 
+    /**
+     * Traits, globally and per resource provider.
+     */
+    org.openstack4j.api.placement.v1.TraitService traits();
+
 }
