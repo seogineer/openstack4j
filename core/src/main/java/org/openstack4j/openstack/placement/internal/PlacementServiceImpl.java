@@ -29,4 +29,9 @@ public class PlacementServiceImpl extends BasePlacementServices implements Place
         new org.openstack4j.openstack.placement.v1.internal.VersionServiceImpl().pin(version);
     }
 
+    @Override
+    public org.openstack4j.api.placement.v1.ResourceProviderService providers() {
+        return Apis.get(org.openstack4j.api.placement.v1.ResourceProviderService.class);
+    }
+
 }
