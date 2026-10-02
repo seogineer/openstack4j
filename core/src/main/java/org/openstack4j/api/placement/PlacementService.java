@@ -31,4 +31,9 @@ public interface PlacementService extends RestService {
      */
     void useMicroVersion(String version);
 
+    /**
+     * Placement resource providers with the full v1 API; see also the older {@link #resourceProviders()}.
+     */
+    org.openstack4j.api.placement.v1.ResourceProviderService providers();
+
 }

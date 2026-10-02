@@ -1,0 +1,20 @@
+{
+  "resource_providers": [
+    {
+      "uuid": "3626308f-38dd-4da8-8f0f-6697b05d8f6c",
+      "name": "compute-1",
+      "generation": 557,
+      "links": [{"rel": "self", "href": "/resource_providers/3626308f-38dd-4da8-8f0f-6697b05d8f6c"}],
+      "parent_provider_uuid": null,
+      "root_provider_uuid": "3626308f-38dd-4da8-8f0f-6697b05d8f6c"
+    },
+    {
+      "uuid": "7b0c4d61-1d6b-4a3e-9d3b-8c1f2e5a9b11",
+      "name": "compute-1_NET_AGENT",
+      "generation": 3,
+      "links": [{"rel": "self", "href": "/resource_providers/7b0c4d61-1d6b-4a3e-9d3b-8c1f2e5a9b11"}],
+      "parent_provider_uuid": "3626308f-38dd-4da8-8f0f-6697b05d8f6c",
+      "root_provider_uuid": "3626308f-38dd-4da8-8f0f-6697b05d8f6c"
+    }
+  ]
+}

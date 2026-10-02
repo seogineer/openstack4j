@@ -45,7 +45,8 @@ public abstract class AbstractPlacementTest extends AbstractTest {
     }
 
     protected JsonNode body(RecordedRequest request) throws IOException {
-        return new ObjectMapper().readTree(request.getBody().readUtf8());
+        // clone: reading the buffer is destructive and tests call body(request) more than once
+        return new ObjectMapper().readTree(request.getBody().clone().readUtf8());
     }
 
     protected void assertNoMoreRequests() throws InterruptedException {
