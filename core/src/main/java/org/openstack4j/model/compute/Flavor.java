@@ -3,6 +3,8 @@
  */
 package org.openstack4j.model.compute;
 
+import java.util.Map;
+
 import java.util.List;
 
 import org.openstack4j.common.Buildable;
@@ -94,4 +96,10 @@ public interface Flavor extends ModelEntity, Buildable<FlavorBuilder> {
      */
     List<? extends Link> getLinks();
 
+    /** @return original_name of a flavor embedded in a server (2.47+) */
+    default String getOriginalName() { return null; }
+    /** @return extra specs embedded in the flavor (2.47 server flavor, 2.61+ flavor API) */
+    default Map<String, String> getExtraSpecs() { return null; }
+    /** @return description (2.55+) */
+    default String getDescription() { return null; }
 }

@@ -36,4 +36,13 @@ public interface VolumeAttachment extends ModelEntity {
      * @return the id
      */
     String getVolumeId();
+
+    /** @return attachment_id (2.89+) */
+    default String getAttachmentId() { return null; }
+    /** @return bdm_uuid (2.89+) */
+    default String getBdmUuid() { return null; }
+    /** @return tag (2.70+) */
+    default String getTag() { return null; }
+    /** @return delete_on_termination (2.79+) */
+    default Boolean getDeleteOnTermination() { return null; }
 }

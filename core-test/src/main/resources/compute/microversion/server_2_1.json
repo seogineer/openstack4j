@@ -1,0 +1,17 @@
+{
+  "server": {
+    "id": "96a38bed-26b5-410b-8cef-1913a2e0e0b8",
+    "name": "vm-1",
+    "status": "ACTIVE",
+    "tenant_id": "2580a7b51d564c1d848ee27fda2db713",
+    "user_id": "e365357fdf4d4a37a07fde3209cac4aa",
+    "metadata": {},
+    "image": {"id": "777afa04-f596-42b1-86ac-7e5881b7d46c", "links": []},
+    "flavor": {"id": "m1.tiny", "links": [{"rel": "bookmark", "href": "http://10.0.0.1:8774/flavors/m1.tiny"}]},
+    "created": "2026-09-22T08:02:43Z",
+    "updated": "2026-09-22T08:02:55Z",
+    "addresses": {},
+    "links": [],
+    "OS-EXT-STS:vm_state": "active"
+  }
+}

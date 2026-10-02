@@ -28,6 +28,13 @@ public class NovaVolumeAttachment implements VolumeAttachment {
 
     @JsonProperty
     private String volumeId;
+    @JsonProperty("attachment_id")
+    private String attachmentId;
+    @JsonProperty("bdm_uuid")
+    private String bdmUuid;
+    private String tag;
+    @JsonProperty("delete_on_termination")
+    private Boolean deleteOnTermination;
 
     public NovaVolumeAttachment() {
     }
@@ -35,6 +42,26 @@ public class NovaVolumeAttachment implements VolumeAttachment {
     private NovaVolumeAttachment(String volumeId, String device) {
         this.volumeId = volumeId;
         this.device = device;
+    }
+
+    @Override
+    public String getAttachmentId() {
+        return attachmentId;
+    }
+
+    @Override
+    public String getBdmUuid() {
+        return bdmUuid;
+    }
+
+    @Override
+    public String getTag() {
+        return tag;
+    }
+
+    @Override
+    public Boolean getDeleteOnTermination() {
+        return deleteOnTermination;
     }
 
     public static NovaVolumeAttachment create(String volumeId, String device) {
