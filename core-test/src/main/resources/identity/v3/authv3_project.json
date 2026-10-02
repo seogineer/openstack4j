@@ -429,6 +429,27 @@
                 "endpoints": [
                     {
                         "region_id": "RegionOne",
+                        "url": "http://127.0.0.1:8780",
+                        "region": "RegionOne",
+                        "interface": "public",
+                        "id": "a3e6f0f0c1d64c4f9d0e3c3b2e8f8780"
+                    },
+                    {
+                        "region_id": "RegionOne",
+                        "url": "http://127.0.0.1:8780",
+                        "region": "RegionOne",
+                        "interface": "internal",
+                        "id": "b3e6f0f0c1d64c4f9d0e3c3b2e8f8780"
+                    }
+                ],
+                "type": "placement",
+                "id": "c3e6f0f0c1d64c4f9d0e3c3b2e8f8780",
+                "name": "placement"
+            },
+            {
+                "endpoints": [
+                    {
+                        "region_id": "RegionOne",
                         "url": "http://127.0.0.1:8800",
                         "region": "RegionOne",
                         "interface": "public",

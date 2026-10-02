@@ -19,4 +19,14 @@ public class PlacementServiceImpl extends BasePlacementServices implements Place
         return Apis.get(ResourceProviderService.class);
     }
 
+    @Override
+    public org.openstack4j.api.placement.v1.VersionService versions() {
+        return Apis.get(org.openstack4j.api.placement.v1.VersionService.class);
+    }
+
+    @Override
+    public void useMicroVersion(String version) {
+        new org.openstack4j.openstack.placement.v1.internal.VersionServiceImpl().pin(version);
+    }
+
 }
