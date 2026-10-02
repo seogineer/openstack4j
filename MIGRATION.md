@@ -80,3 +80,14 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 ## 5. 그 밖의 제거
 
 - OSGi Karaf `features.xml` 부가 아티팩트(2014년 이후 갱신되지 않았음). 번들 manifest 는 그대로 있습니다.
+
+# 4.1 → 4.2
+
+호환을 깨는 변경은 없습니다. compute microversion 은 선택 사항(`os.compute().microVersions().negotiate()`)이고, 켜지 않으면 요청은 4.1 과 같습니다.
+
+- `PlacementMicroVersionException` 의 부모가 새 `org.openstack4j.api.exceptions.MicroVersionException`(여전히 `OS4JException`)으로 바뀌었습니다. 기존 `catch` 는 그대로 동작합니다.
+- `Server`, `Flavor`, `Keypair`, `ServerGroup` 같은 모델 인터페이스에 `default` getter 가 추가되었습니다. 라이브러리 밖에서 이 인터페이스를 구현한 클래스도 그대로 컴파일됩니다. 다만 `ServerCreateBuilder`, `BlockDeviceMappingBuilder` 에는 추상 메서드가 추가되어, 이 빌더를 직접 구현했다면 새 메서드를 구현해야 합니다.
+- `servers().list(...)`, `migrations().list(...)` 등에 타입 있는 옵션 오버로드가 생겨 `list(null)` 처럼 `null` 리터럴을 넘기면 컴파일 오류(모호함)가 납니다. `list()` 를 쓰거나 `(Map<String, String>) null` 처럼 캐스트하세요. 바이너리 호환은 유지됩니다.
+- `negotiate()` 후에는 Nova 2.47+ 가 flavor 를 내장해 서버의 `getFlavorId()` 가 `null` 입니다. `getFlavorSummary()` 를 쓰세요.
+- `negotiate()` 후에는 2.88 에서 사라진 하이퍼바이저 통계 필드가 `0` 으로 읽힙니다. Placement inventory 를 쓰세요.
+

@@ -1,3 +1,15 @@
+## 4.2.0
+
+- Nova microversion 선택적 지원: `os.compute().microVersions()` 의 `negotiate()`/`use()`/`clear()`, 2.1~2.104. 기본값은 꺼짐(요청 불변)
+- Nova 가 제거한 API 를 쓰는 기존 메서드에 상한 적용(프록시 API 2.35, os-hosts 2.42, VNC 콘솔 2.5, diagnostics 2.47, 서비스 enable/disable 2.52, 공개키 없는 키페어 2.91, 하이퍼바이저 통계 2.87, attachVolume 2.100, 플레이버 생성 2.101 등)
+- 서버 응답 필드(2.3~2.100), 2.47 내장 flavor(`getFlavorSummary()`), 2.98 image properties, 2.89 볼륨 attachment 필드
+- 서버 생성 옵션(tags 2.52, trusted certs 2.63, hostname 2.90, description 2.19, networks auto/none 2.37, 네트워크·BDM tag 2.42, volume_type 2.67)과 `ServerListOptions`(2.26/2.66/2.73/2.83 필터)
+- 서버 액션: lock 사유(2.73), migrate host(2.56), live-migrate(2.25/2.30), evacuate(2.29), rebuild(2.54/2.57/2.63/2.90), unshelve(2.77/2.91), rescue, `createBackup` 이미지 id(2.45)
+- 서버 하위 리소스: topology(2.78), ips, remote-consoles(2.6/2.8/2.99), 표준 diagnostics(2.48), 서버 마이그레이션(2.22~2.24), shares(2.97), 비동기 볼륨 연결(2.101), pinned AZ 수정(2.104)
+- 하이퍼바이저·서비스·집계·quota·키페어·서버 그룹 보강(2.2/2.10/2.33/2.35/2.53/2.64/2.81), `MigrationListOptions`(2.59/2.66/2.80)
+- 새 서비스: `serverExternalEvents()`, `assistedVolumeSnapshots()`, `consoleAuthTokens()`, `instanceUsageAuditLogs()`
+- 공용 `MicroVersionException` 추가, `PlacementMicroVersionException` 이 이를 상속
+
 ## 4.1.0
 
 - Placement API 전체 지원 (`os.placement().providers()/inventories()/resourceClasses()/traits()/aggregates()/allocations()/allocationCandidates()/usages()/reshaper()/versions()`), microversion 1.28~1.39 자동 협상과 `useMicroVersion` 고정
