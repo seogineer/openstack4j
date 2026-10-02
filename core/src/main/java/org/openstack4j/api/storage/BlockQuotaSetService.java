@@ -62,4 +62,9 @@ public interface BlockQuotaSetService extends RestService {
      */
     BlockQuotaSetUsage usageForUser(String tenantId, String userId);
 
+    /** A quota class ({@code GET /os-quota-class-sets/{class}}; admin). */
+    BlockQuotaSet quotaClass(String className);
+
+    /** Updates a quota class ({@code PUT /os-quota-class-sets/{class}}; admin). */
+    BlockQuotaSet updateQuotaClass(String className, BlockQuotaSet quota);
 }

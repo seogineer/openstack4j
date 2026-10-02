@@ -86,4 +86,25 @@ public interface BlockStorageService extends RestService {
 
     /** @return group snapshots (3.14+) */
     BlockGroupSnapshotService groupSnapshots();
+
+    /** Limits of another project ({@code GET /limits?project_id=}, 3.39+; admin). */
+    BlockLimits getLimits(String projectId);
+
+    /** @return clusters (3.7+; admin) */
+    BlockClusterService clusters();
+
+    /** @return worker cleanup (3.24+; admin) */
+    BlockWorkerService workers();
+
+    /** @return hosts (admin) */
+    BlockHostService hosts();
+
+    /** @return backend capabilities (admin) */
+    BlockCapabilityService capabilities();
+
+    /** @return resource filters (3.33+) */
+    BlockResourceFilterService resourceFilters();
+
+    /** @return API extensions */
+    BlockExtensionService extensions();
 }

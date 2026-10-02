@@ -37,6 +37,13 @@ public class BlockStorageServiceImpl extends BaseBlockStorageServices implements
         return get(CinderBlockLimits.class, "/limits").execute();
     }
 
+    @Override
+    public BlockLimits getLimits(String projectId) {
+        java.util.Objects.requireNonNull(projectId);
+        requireMicroVersion("Limits by project", BlockStorageMicroVersions.V(39));
+        return get(CinderBlockLimits.class, "/limits").param("project_id", projectId).execute();
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -112,6 +119,36 @@ public class BlockStorageServiceImpl extends BaseBlockStorageServices implements
     @Override
     public BlockGroupSnapshotService groupSnapshots() {
         return Apis.get(BlockGroupSnapshotService.class);
+    }
+
+    @Override
+    public BlockClusterService clusters() {
+        return Apis.get(BlockClusterService.class);
+    }
+
+    @Override
+    public BlockWorkerService workers() {
+        return Apis.get(BlockWorkerService.class);
+    }
+
+    @Override
+    public BlockHostService hosts() {
+        return Apis.get(BlockHostService.class);
+    }
+
+    @Override
+    public BlockCapabilityService capabilities() {
+        return Apis.get(BlockCapabilityService.class);
+    }
+
+    @Override
+    public BlockResourceFilterService resourceFilters() {
+        return Apis.get(BlockResourceFilterService.class);
+    }
+
+    @Override
+    public BlockExtensionService extensions() {
+        return Apis.get(BlockExtensionService.class);
     }
 
     @Override

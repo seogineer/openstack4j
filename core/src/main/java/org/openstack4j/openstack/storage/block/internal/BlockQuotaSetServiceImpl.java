@@ -8,6 +8,7 @@ import org.openstack4j.openstack.storage.block.domain.CinderBlockQuotaSet;
 import org.openstack4j.openstack.storage.block.domain.CinderBlockQuotaSetUsage;
 
 import java.util.Objects;
+import org.openstack4j.openstack.storage.block.domain.CinderBlockQuotaSetClass;
 
 /**
  * Quota-Set Extension API for Block Storage
@@ -72,4 +73,16 @@ public class BlockQuotaSetServiceImpl extends BaseBlockStorageServices implement
                 .execute();
     }
 
+    @Override
+    public BlockQuotaSet quotaClass(String className) {
+        Objects.requireNonNull(className, "Quota class cannot be null");
+        return get(CinderBlockQuotaSetClass.class, uri("/os-quota-class-sets/%s", className)).execute();
+    }
+
+    @Override
+    public BlockQuotaSet updateQuotaClass(String className, BlockQuotaSet quota) {
+        Objects.requireNonNull(className, "Quota class cannot be null");
+        Objects.requireNonNull(quota, "Quota cannot be null");
+        return put(CinderBlockQuotaSetClass.class, uri("/os-quota-class-sets/%s", className)).entity(CinderBlockQuotaSetClass.from(quota)).execute();
+    }
 }
