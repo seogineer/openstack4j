@@ -145,6 +145,13 @@ public interface ComputeService extends RestService {
     ServerTagService serverTags();
 
     /**
+     * Opt-in compute microversions. Off by default: requests carry no microversion header (Nova treats them as 2.1).
+     *
+     * @return the compute microversion service
+     */
+    ComputeMicroVersionService microVersions();
+
+    /**
      * Compute services service
      *
      * @return ServicesService

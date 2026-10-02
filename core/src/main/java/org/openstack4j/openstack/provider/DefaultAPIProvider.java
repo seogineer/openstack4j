@@ -280,6 +280,7 @@ public class DefaultAPIProvider implements APIProvider {
         bind(TaskService.class, TaskServiceImpl.class);
         bind(TaskService.class, TaskServiceImpl.class);
         bind(ServerTagService.class, ServerTagServiceImpl.class);
+        bind(ComputeMicroVersionService.class, ComputeMicroVersionServiceImpl.class);
         bind(TelemetryAodhService.class, TelemetryAodhServiceImpl.class);
         bind(AlarmAodhService.class, AlarmAodhServiceImpl.class);
         bind(ServicesService.class, ServicesServiceImpl.class);

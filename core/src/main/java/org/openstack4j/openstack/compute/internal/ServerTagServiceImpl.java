@@ -1,5 +1,7 @@
 package org.openstack4j.openstack.compute.internal;
 
+import static org.openstack4j.openstack.compute.internal.ComputeMicroVersions.V;
+
 import org.openstack4j.api.compute.ServerTagService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.compute.domain.NovaServerTag;
@@ -15,12 +17,14 @@ public class ServerTagServiceImpl extends BaseComputeServices implements ServerT
 
     @Override
     public NovaServerTag list(String serverId) {
+        requireTagMicroVersion();
         Objects.requireNonNull(serverId);
         return this.get(NovaServerTag.class, this.uri("/servers/%s/tags", serverId)).execute();
     }
 
     @Override
     public NovaServerTag replace(String serverId, NovaServerTag tags) {
+        requireTagMicroVersion();
         Objects.requireNonNull(serverId);
         Objects.requireNonNull(tags);
         return this.put(NovaServerTag.class, this.uri("/servers/%s/tags", serverId)).entity(tags).execute();
@@ -28,6 +32,7 @@ public class ServerTagServiceImpl extends BaseComputeServices implements ServerT
 
     @Override
     public ActionResponse deleteAll(String serverId) {
+        requireTagMicroVersion();
         Objects.requireNonNull(serverId);
         return ToActionResponseFunction.INSTANCE.apply(
                 this.delete(Void.class, this.uri("/servers/%s/tags", serverId)).executeWithResponse());
@@ -35,6 +40,7 @@ public class ServerTagServiceImpl extends BaseComputeServices implements ServerT
 
     @Override
     public ActionResponse delete(String serverId, String tag) {
+        requireTagMicroVersion();
         Objects.requireNonNull(serverId);
         Objects.requireNonNull(tag);
         return ToActionResponseFunction.INSTANCE.apply(
@@ -43,6 +49,7 @@ public class ServerTagServiceImpl extends BaseComputeServices implements ServerT
 
     @Override
     public ActionResponse check(String serverId, String tag) {
+        requireTagMicroVersion();
         Objects.requireNonNull(serverId);
         Objects.requireNonNull(tag);
         return ToActionResponseFunction.INSTANCE.apply(
@@ -51,10 +58,17 @@ public class ServerTagServiceImpl extends BaseComputeServices implements ServerT
 
     @Override
     public ActionResponse addSingle(String serverId, String tag) {
+        requireTagMicroVersion();
         Objects.requireNonNull(serverId);
         Objects.requireNonNull(tag);
         return ToActionResponseFunction.INSTANCE.apply(
                 this.put(ActionResponse.class, this.uri("/servers/%s/tags/%s", serverId, tag)).executeWithResponse());
     }
 
+
+    /** Server tags need 2.26; without microversions the request is sent as before. */
+    private void requireTagMicroVersion() {
+        if (effectiveMicroVersion(null) != null)
+            requireMicroVersion("Server tags", V(26));
+    }
 }

@@ -1,5 +1,7 @@
 package org.openstack4j.openstack.compute.internal;
 
+import static org.openstack4j.openstack.compute.internal.ComputeMicroVersions.V;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -31,7 +33,7 @@ public class ServerGroupServiceImpl extends BaseComputeServices implements Serve
     @Override
     public ServerGroup create(String name, String policy) {
         NovaServerGroup nsg = NovaServerGroup.create(name, policy);
-        return post(NovaServerGroup.class, uri("/os-server-groups")).entity(nsg).execute();
+        return capped(post(NovaServerGroup.class, uri("/os-server-groups")), V(63)).entity(nsg).execute();    // policies replaced by policy in 2.64
     }
 
 }
