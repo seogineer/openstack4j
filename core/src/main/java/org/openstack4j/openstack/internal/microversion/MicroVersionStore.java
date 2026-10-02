@@ -11,6 +11,8 @@ import java.util.WeakHashMap;
 public final class MicroVersionStore {
 
     private static final Map<Object, Map<String, MicroVersionState>> STATES = new WeakHashMap<>();
+    /** Lets callers skip the lock when no session ever turned microversions on. */
+    private static volatile boolean any;
 
     private MicroVersionStore() {
     }
@@ -21,11 +23,18 @@ public final class MicroVersionStore {
     }
 
     public static synchronized MicroVersionState putIfAbsent(Object session, String key, MicroVersionState state) {
+        any = true;
         return STATES.computeIfAbsent(session, s -> new HashMap<>()).merge(key, state, (existing, ignored) -> existing);
     }
 
     /** Forgets all state. Intended for tests. */
     public static synchronized void clearAll() {
         STATES.clear();
+        any = false;
+    }
+
+    /** @return whether any state was ever stored (since the last {@link #clearAll()}); cheap and lock-free */
+    public static boolean hasAny() {
+        return any;
     }
 }

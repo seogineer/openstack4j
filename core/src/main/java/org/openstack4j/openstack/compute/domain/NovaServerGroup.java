@@ -1,10 +1,12 @@
 package org.openstack4j.openstack.compute.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.util.ToStringHelper;
@@ -21,6 +23,7 @@ public class NovaServerGroup implements ServerGroup {
     private String name;
     private List<String> members;
     private Map<String, String> metadata;
+    @JsonProperty("policies")
     private List<String> policies;
     private String policy;
     private Map<String, Object> rules;
@@ -96,7 +99,10 @@ public class NovaServerGroup implements ServerGroup {
     }
 
     @Override
+    @JsonIgnore
     public List<String> getPolicies() {
+        if (policies == null && policy != null)
+            return Collections.singletonList(policy);    // 2.64+ returns a single policy
         return policies;
     }
 

@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.compute.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.model.compute.QuotaSetUpdate;
@@ -74,6 +75,18 @@ public class NovaQuotaSetUpdate implements QuotaSetUpdate {
     @Override
     public QuotaSetUpdateBuilder toBuilder() {
         return new QuotaSetUpdateConcreteBuilder(this);
+    }
+
+    /** @return whether a network quota removed in compute microversion 2.36 is set */
+    @JsonIgnore
+    public boolean hasNetworkQuotas() {
+        return floatingIps != null || securityGroups != null || securityGroupRules != null;
+    }
+
+    /** @return whether an injected-file quota removed in compute microversion 2.57 is set */
+    @JsonIgnore
+    public boolean hasInjectedFileQuotas() {
+        return injectedFiles != null || injectedFileContentBytes != null || injectedFilePathBytes != null;
     }
 
     public static class QuotaSetUpdateConcreteBuilder implements QuotaSetUpdateBuilder {

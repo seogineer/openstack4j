@@ -596,8 +596,8 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
             body.put("block_migration", modern ? "auto" : false);
         if (!modern)
             body.put("disk_over_commit", request.getDiskOverCommit() != null ? request.getDiskOverCommit() : false);
-        if (request.getForce() != null)
-            body.put("force", request.getForce());
+        if (Boolean.TRUE.equals(request.getForce()))    // false is Nova's default and is rejected outside 2.30 - 2.67
+            body.put("force", true);
         return invokeMapAction(serverId, "os-migrateLive", body, ceiling);
     }
 
@@ -611,15 +611,17 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
             ceiling = V(67);
         }
         if (request.getOnSharedStorage() != null) {
-            if (request.getForce() != null)
+            if (Boolean.TRUE.equals(request.getForce()))
                 throw new MicroVersionException("onSharedStorage (2.13 or lower) cannot be combined with force (2.29+)");
             ceiling = lower(ceiling, V(13));
+        } else {
+            requireMicroVersion("Evacuate without onSharedStorage", V(14));    // required before 2.14
         }
         Map<String, Object> body = new LinkedHashMap<>();
         if (request.getHost() != null) body.put("host", request.getHost());
         if (request.getAdminPass() != null) body.put("adminPass", request.getAdminPass());
         if (request.getOnSharedStorage() != null) body.put("onSharedStorage", request.getOnSharedStorage());
-        if (request.getForce() != null) body.put("force", request.getForce());
+        if (Boolean.TRUE.equals(request.getForce())) body.put("force", true);    // false is the default
         return invokeMapAction(serverId, "evacuate", body, ceiling);
     }
 
