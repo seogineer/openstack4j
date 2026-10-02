@@ -100,6 +100,21 @@ public class BlockStorageServiceImpl extends BaseBlockStorageServices implements
     }
 
     @Override
+    public BlockGroupService groups() {
+        return Apis.get(BlockGroupService.class);
+    }
+
+    @Override
+    public BlockGroupTypeService groupTypes() {
+        return Apis.get(BlockGroupTypeService.class);
+    }
+
+    @Override
+    public BlockGroupSnapshotService groupSnapshots() {
+        return Apis.get(BlockGroupSnapshotService.class);
+    }
+
+    @Override
     public BlockStorageServiceService services() {
         return Apis.get(BlockStorageServiceService.class);
     }

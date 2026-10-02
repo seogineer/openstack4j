@@ -77,4 +77,13 @@ public interface BlockStorageService extends RestService {
 
     /** @return QoS specifications service */
     BlockQosSpecService qosSpecs();
+
+    /** @return generic volume groups (3.13+) */
+    BlockGroupService groups();
+
+    /** @return group types (3.11+) */
+    BlockGroupTypeService groupTypes();
+
+    /** @return group snapshots (3.14+) */
+    BlockGroupSnapshotService groupSnapshots();
 }
