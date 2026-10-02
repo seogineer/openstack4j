@@ -138,6 +138,26 @@ public class ComputeServiceImpl extends BaseComputeServices implements ComputeSe
     }
 
     @Override
+    public ServerExternalEventService serverExternalEvents() {
+        return Apis.get(ServerExternalEventService.class);
+    }
+
+    @Override
+    public AssistedVolumeSnapshotService assistedVolumeSnapshots() {
+        return Apis.get(AssistedVolumeSnapshotService.class);
+    }
+
+    @Override
+    public ConsoleAuthTokenService consoleAuthTokens() {
+        return Apis.get(ConsoleAuthTokenService.class);
+    }
+
+    @Override
+    public InstanceUsageAuditLogService instanceUsageAuditLogs() {
+        return Apis.get(InstanceUsageAuditLogService.class);
+    }
+
+    @Override
     public ServicesService services() {
         return Apis.get(ServicesService.class);
     }

@@ -281,6 +281,10 @@ public class DefaultAPIProvider implements APIProvider {
         bind(TaskService.class, TaskServiceImpl.class);
         bind(ServerTagService.class, ServerTagServiceImpl.class);
         bind(ComputeMicroVersionService.class, ComputeMicroVersionServiceImpl.class);
+        bind(ServerExternalEventService.class, ServerExternalEventServiceImpl.class);
+        bind(AssistedVolumeSnapshotService.class, AssistedVolumeSnapshotServiceImpl.class);
+        bind(ConsoleAuthTokenService.class, ConsoleAuthTokenServiceImpl.class);
+        bind(InstanceUsageAuditLogService.class, InstanceUsageAuditLogServiceImpl.class);
         bind(TelemetryAodhService.class, TelemetryAodhServiceImpl.class);
         bind(AlarmAodhService.class, AlarmAodhServiceImpl.class);
         bind(ServicesService.class, ServicesServiceImpl.class);
