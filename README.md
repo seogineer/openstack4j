@@ -65,6 +65,29 @@ placement.allocationCandidates().list(AllocationCandidatesQuery.builder()
 
 기존 `placement().resourceProviders()` 는 그대로 동작합니다. 1.28 보다 오래된 서버에서는 새 API 가 `PlacementMicroVersionException` 을 던집니다.
 
+## Compute microversion
+
+4.2.0 부터 Nova microversion(2.1~2.104)을 선택적으로 켤 수 있습니다. 기본값은 꺼짐이라, 켜지 않으면 요청에 microversion 헤더가 붙지 않고(Nova 는 2.1 로 처리) 기존 코드는 그대로 동작합니다.
+
+```java
+ComputeVersion v = os.compute().microVersions().negotiate();   // min(2.104, 서버 최대)
+os.compute().microVersions().use("2.79");                      // 또는 버전 고정
+os.compute().microVersions().clear();                          // 다시 헤더 없음
+
+Server server = os.compute().servers().get(id);
+server.getFlavorSummary().getOriginalName();                   // 2.47+ 내장 flavor
+server.getTags();                                              // 2.26+
+
+os.compute().servers().lock(id, "maintenance");                // 2.73+
+os.compute().servers().list(ServerListOptions.create().locked(true).tags("web"));
+os.compute().servers().boot(Builders.server().name("vm").flavor(f).image(i)
+        .autoAllocateNetwork().hostname("vm-01").build());     // 2.37+, 2.90+
+```
+
+- Nova 가 이후 microversion 에서 없앤 API 를 쓰는 기존 메서드(`floatingIps()`, `securityGroups()`, `images()`, `host()` 같은 프록시 API, 기존 `getVNCConsole`, `diagnostics`, 공개키 없는 키페어 생성 등)는 지원하는 가장 높은 microversion 으로 보내므로 `negotiate()` 후에도 계속 동작합니다.
+- 새 기능은 필요한 최소 microversion 을 요청 전에 검사하고, 세션이 그 버전을 보내지 않으면(또는 꺼져 있으면) `MicroVersionException` 을 던집니다.
+- 선택한 버전은 클라이언트 세션과 compute endpoint 별로 유지됩니다.
+
 ## 빌드
 
 ```bash
