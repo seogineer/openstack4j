@@ -2,6 +2,7 @@ package org.openstack4j.openstack.compute.internal;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,6 +32,7 @@ import org.openstack4j.openstack.compute.domain.actions.ServerAction;
 import org.openstack4j.openstack.compute.domain.actions.BasicActions.*;
 import org.openstack4j.openstack.compute.functions.ToActionResponseFunction;
 import org.openstack4j.openstack.compute.functions.WrapServerIfApplicableFunction;
+import org.openstack4j.api.exceptions.MicroVersionException;
 import org.openstack4j.openstack.internal.MicroVersion;
 import org.openstack4j.openstack.internal.microversion.MicroVersions;
 import org.slf4j.Logger;
@@ -105,17 +107,62 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
     /**
      * {@inheritDoc}
      */
-    @Override
+@Override
     public Server boot(ServerCreate server) {
         Objects.requireNonNull(server);
-        MicroVersion ceiling = null;
-        if (server.getPersonality() != null && !server.getPersonality().isEmpty())
-            ceiling = V(56);           // personality removed in 2.57
-        if (server.getNetworks() == null || server.getNetworks().isEmpty())
-            ceiling = ceiling == null ? V(36) : MicroVersions.min(ceiling, V(36)); // networks required from 2.37
-        return capped(post(NovaServer.class, uri("/servers")), ceiling)
+        return capped(post(NovaServer.class, uri("/servers")), bootCeiling(server))
                 .entity(WrapServerIfApplicableFunction.INSTANCE.apply(server))
                 .execute();
+    }
+
+    /** Checks the floors of the options used and returns the highest microversion the request can be sent at. */
+    private MicroVersion bootCeiling(ServerCreate server) {
+        MicroVersion floor = null;
+        String floorFeature = null;
+        Map<String, MicroVersion> used = new LinkedHashMap<>();
+        if (server.getDescription() != null) used.put("description", V(19));
+        if (server.getNetworksMode() != null) used.put("networks \"" + server.getNetworksMode() + "\"", V(37));
+        if (server.getNetworks() != null && server.getNetworks().stream().anyMatch(n -> n.getTag() != null)) used.put("network tag", V(42));
+        if (server.getBlockDeviceMapping() != null && server.getBlockDeviceMapping().stream().anyMatch(b -> b.getTag() != null)) used.put("block device tag", V(42));
+        if (server.getTags() != null) used.put("tags", V(52));
+        if (server.getTrustedImageCertificates() != null) used.put("trusted image certificates", V(63));
+        if (server.getHostname() != null) used.put("hostname", V(90));
+        if (effectiveMicroVersion(null) != null) {
+            if (server.getHost() != null || server.getHypervisorHostName() != null) used.put("host / hypervisor_hostname", V(74));
+            if (server.getBlockDeviceMapping() != null && server.getBlockDeviceMapping().stream().anyMatch(b -> b.getVolumeType() != null)) used.put("block device volume_type", V(67));
+        }
+        for (Map.Entry<String, MicroVersion> e : used.entrySet()) {
+            requireMicroVersion("Server create option " + e.getKey(), e.getValue());
+            if (floor == null || e.getValue().compareTo(floor) > 0) {
+                floor = e.getValue();
+                floorFeature = e.getKey();
+            }
+        }
+        MicroVersion ceiling = null;
+        String ceilingReason = null;
+        if (server.getPersonality() != null && !server.getPersonality().isEmpty()) {
+            ceiling = V(56);
+            ceilingReason = "personality (removed in 2.57)";
+        }
+        if (server.getNetworksMode() == null && (server.getNetworks() == null || server.getNetworks().isEmpty())
+                && (ceiling == null || V(36).compareTo(ceiling) < 0)) {
+            ceiling = V(36);
+            ceilingReason = "no networks (required from 2.37; use autoAllocateNetwork() or noNetwork())";
+        }
+        if (floor != null && ceiling != null && floor.compareTo(ceiling) > 0)
+            throw new MicroVersionException("Server create option " + floorFeature + " needs " + floor + " and cannot be combined with "
+                    + ceilingReason + ", which needs " + ceiling + " or lower");
+        return ceiling;
+    }
+
+    @Override
+    public List<? extends Server> list(ServerListOptions options) {
+        Objects.requireNonNull(options);
+        if (options.getRequiredMicroVersion() != null)
+            requireMicroVersion("Server list filters " + options.toQueryParams().keySet(), MicroVersions.parse(options.getRequiredMicroVersion()));
+        Invocation<Servers> req = get(Servers.class, uri("/servers/detail"));
+        options.toQueryParams().forEach(req::param);
+        return req.execute().getList();
     }
 
     /**

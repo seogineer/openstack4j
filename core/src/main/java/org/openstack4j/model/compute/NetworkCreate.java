@@ -24,4 +24,6 @@ public interface NetworkCreate extends ModelEntity {
      */
     String getPort();
 
+    /** @return device tag (2.42+) */
+    default String getTag() { return null; }
 }

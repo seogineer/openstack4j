@@ -173,4 +173,24 @@ public interface ServerCreateBuilder extends Buildable.Builder<ServerCreateBuild
 
     ServerCreateBuilder configDrive(boolean configDrive);
 
+    /** Tags set at creation (2.52+). */
+    ServerCreateBuilder tags(List<String> tags);
+
+    /** Trusted image certificate ids (2.63+). */
+    ServerCreateBuilder trustedImageCertificates(List<String> certificateIds);
+
+    /** Hostname (2.90+). */
+    ServerCreateBuilder hostname(String hostname);
+
+    /** Description (2.19+). */
+    ServerCreateBuilder description(String description);
+
+    /** {@code "networks": "auto"} (2.37+); replaces any networks added before. */
+    ServerCreateBuilder autoAllocateNetwork();
+
+    /** {@code "networks": "none"} (2.37+); replaces any networks added before. */
+    ServerCreateBuilder noNetwork();
+
+    /** Adds a network with a device tag (2.42+). */
+    ServerCreateBuilder addTaggedNetwork(String networkId, String tag);
 }

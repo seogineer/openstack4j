@@ -106,4 +106,10 @@ public interface BlockDeviceMappingBuilder extends Buildable.Builder<BlockDevice
      * @return BlockDeviceMappingBuilder
      */
     BlockDeviceMappingBuilder volumeType(String volumeType);
+
+    /**
+     * @param tag device tag (2.42+)
+     * @return the builder
+     */
+    BlockDeviceMappingBuilder tag(String tag);
 }

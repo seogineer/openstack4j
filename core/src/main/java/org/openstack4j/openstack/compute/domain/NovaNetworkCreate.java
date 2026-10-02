@@ -14,12 +14,20 @@ public class NovaNetworkCreate implements NetworkCreate {
 
     private String port;
 
+    @JsonProperty("tag")
+    private String tag;
+
     public NovaNetworkCreate() {
     }
 
     public NovaNetworkCreate(String id, String fixedIp) {
         this.id = id;
         this.fixedIp = fixedIp;
+    }
+
+    public NovaNetworkCreate(String id, String fixedIp, String port, String tag) {
+        this(id, fixedIp, port);
+        this.tag = tag;
     }
 
     public NovaNetworkCreate(String id, String fixedIp, String port) {
@@ -54,4 +62,9 @@ public class NovaNetworkCreate implements NetworkCreate {
         this.port = port;
     }
 
+
+    @Override
+    public String getTag() {
+        return tag;
+    }
 }
