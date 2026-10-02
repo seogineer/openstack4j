@@ -14,6 +14,8 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.storage.block.VolumeSnapshot;
 import org.openstack4j.openstack.storage.block.domain.CinderVolumeSnapshot;
 import org.openstack4j.openstack.storage.block.domain.CinderVolumeSnapshot.VolumeSnapshots;
+import org.openstack4j.model.storage.block.options.SnapshotListOptions;
+import org.openstack4j.openstack.internal.microversion.MicroVersions;
 
 /**
  * OpenStack (Cinder) Volume Snapshot Operations API Implementation.
@@ -94,4 +96,11 @@ public class BlockVolumeSnapshotServiceImpl extends BaseBlockStorageServices imp
         return volumeInvocation;
     }
 
+    @Override
+    public List<? extends VolumeSnapshot> listDetail(SnapshotListOptions options) {
+        Objects.requireNonNull(options);
+        if (options.getRequiredMicroVersion() != null)
+            requireMicroVersion("Snapshot list filters " + options.toQueryParams().keySet(), MicroVersions.parse(options.getRequiredMicroVersion()));
+        return get(VolumeSnapshots.class, uri("/snapshots/detail")).params(options.toQueryParams()).execute().getList();
+    }
 }

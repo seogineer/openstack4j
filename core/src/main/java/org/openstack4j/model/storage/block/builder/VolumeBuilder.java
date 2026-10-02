@@ -100,4 +100,18 @@ public interface VolumeBuilder extends Builder<VolumeBuilder, Volume> {
      */
     VolumeBuilder zone(String zone);
 
+    /** Group to create the volume in (3.13+). */
+    VolumeBuilder groupId(String groupId);
+
+    /** Backup to create the volume from (3.47+). */
+    VolumeBuilder backupId(String backupId);
+
+    /** Image to create the volume from, by id ({@code image_id}). */
+    VolumeBuilder imageId(String imageId);
+
+    /** Consistency group to create the volume in ({@code consistencygroup_id}). */
+    VolumeBuilder consistencyGroupId(String consistencyGroupId);
+
+    /** Scheduler hints, sent as {@code OS-SCH-HNT:scheduler_hints} next to the volume object. */
+    VolumeBuilder schedulerHints(Map<String, Object> schedulerHints);
 }

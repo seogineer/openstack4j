@@ -10,6 +10,9 @@ import org.openstack4j.model.storage.block.VolumeType;
 import org.openstack4j.model.storage.block.VolumeTypeEncryption;
 import org.openstack4j.model.storage.block.VolumeUploadImage;
 import org.openstack4j.model.storage.block.options.UploadImageData;
+import org.openstack4j.model.storage.block.VolumeSummary;
+import org.openstack4j.model.storage.block.options.VolumeListOptions;
+import org.openstack4j.model.storage.block.options.VolumeUpdateOptions;
 
 /**
  * Manages Volumes and Volume Type based operations against Block Storage (Cinder)
@@ -210,4 +213,25 @@ public interface BlockVolumeService extends RestService {
      * @return the action response
      */
     ActionResponse bootable(String volumeId, Boolean bootable);
+
+    /**
+     * Lists volumes with details using typed filters. Filters that need a newer block storage microversion fail before
+     * the request when the session does not send it.
+     */
+    List<? extends Volume> list(VolumeListOptions options);
+
+    /**
+     * Volume summary of the project ({@code GET /volumes/summary}, 3.12+; metadata 3.36+).
+     */
+    VolumeSummary summary();
+
+    /**
+     * Volume summary with filters (3.12+).
+     */
+    VolumeSummary summary(VolumeListOptions options);
+
+    /**
+     * Updates name, description and/or metadata ({@code PUT /volumes/{id}}) and returns the updated volume.
+     */
+    Volume update(String volumeId, VolumeUpdateOptions options);
 }

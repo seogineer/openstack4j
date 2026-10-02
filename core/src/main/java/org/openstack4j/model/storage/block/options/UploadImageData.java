@@ -14,6 +14,8 @@ public class UploadImageData {
     private ContainerFormat containerFormat = ContainerFormat.BARE;
     private DiskFormat diskFormat = DiskFormat.RAW;
     private boolean force;
+    private String visibility;
+    private Boolean protectedImage;
 
     private UploadImageData(String imageName) {
         this.imageName = imageName;
@@ -65,6 +67,26 @@ public class UploadImageData {
     public UploadImageData imageName(String imageName) {
         this.imageName = imageName;
         return this;
+    }
+
+    /** Image visibility such as {@code private} or {@code public} (3.1+). */
+    public UploadImageData visibility(String visibility) {
+        this.visibility = visibility;
+        return this;
+    }
+
+    /** Whether the image is protected from deletion (3.1+). */
+    public UploadImageData protectedImage(boolean protectedImage) {
+        this.protectedImage = protectedImage;
+        return this;
+    }
+
+    public String getVisibility() {
+        return visibility;
+    }
+
+    public Boolean getProtectedImage() {
+        return protectedImage;
     }
 
     public String getImageName() {

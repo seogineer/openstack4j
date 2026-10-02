@@ -208,4 +208,9 @@ public interface Volume extends ModelEntity, Buildable<VolumeBuilder> {
     default String getEncryptionKeyId() { return null; }
     /** @return consumes_quota (3.65+) */
     default Boolean getConsumesQuota() { return null; }
+
+    /** @return backup_id to create from (3.47+) */
+    default String getBackupId() { return null; }
+    /** @return scheduler hints sent as {@code OS-SCH-HNT:scheduler_hints} next to the volume */
+    default Map<String, Object> getSchedulerHints() { return null; }
 }
