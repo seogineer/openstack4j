@@ -1,6 +1,5 @@
 package org.openstack4j.openstack.compute.internal;
 
-import org.openstack4j.api.exceptions.MicroVersionException;
 import org.openstack4j.api.types.ServiceType;
 import org.openstack4j.core.transport.HttpResponse;
 import org.openstack4j.model.common.ActionResponse;
@@ -8,8 +7,6 @@ import org.openstack4j.openstack.compute.domain.actions.ServerAction;
 import org.openstack4j.openstack.compute.functions.ToActionResponseFunction;
 import org.openstack4j.openstack.internal.BaseOpenStackService;
 import org.openstack4j.openstack.internal.MicroVersion;
-import org.openstack4j.openstack.internal.microversion.MicroVersionState;
-import org.openstack4j.openstack.internal.microversion.MicroVersions;
 
 /**
  * Base class for Computer / Nova services. Adds compute microversion headers when the session turned microversions on.
@@ -17,9 +14,6 @@ import org.openstack4j.openstack.internal.microversion.MicroVersions;
  * @author Jeremy Unruh
  */
 public class BaseComputeServices extends BaseOpenStackService {
-
-    static final String API_VERSION_HEADER = "OpenStack-API-Version";
-    static final String NOVA_VERSION_HEADER = "X-OpenStack-Nova-API-Version";
 
     protected BaseComputeServices() {
         super(ServiceType.COMPUTE);
@@ -32,33 +26,18 @@ public class BaseComputeServices extends BaseOpenStackService {
 
     @Override
     protected <R> Invocation<R> decorate(Invocation<R> invocation) {
-        MicroVersion version = effectiveMicroVersion(null);
-        if (version != null)
-            setVersionHeaders(invocation, version);
-        return invocation;
+        return capped(invocation, null);
     }
 
-    /** Sends this request at no more than {@code ceiling}. */
     protected <R> Invocation<R> capped(Invocation<R> invocation, MicroVersion ceiling) {
         MicroVersion version = effectiveMicroVersion(ceiling);
         if (version != null)
-            setVersionHeaders(invocation, version);
+            ComputeMicroVersions.SUPPORT.headers(version).forEach(invocation::header);
         return invocation;
     }
 
-    /** @return the microversion a request with {@code ceiling} would carry, or {@code null} when microversions are off */
     protected MicroVersion effectiveMicroVersion(MicroVersion ceiling) {
-        MicroVersionState state = ComputeMicroVersions.currentState();
-        if (state == null || !state.isEnabled())
-            return null;
-        MicroVersion version = state.getPinned() != null ? state.getPinned()
-                : MicroVersions.min(ComputeMicroVersions.LATEST, state.getServerMax());
-        MicroVersion classCeiling = classCeiling();
-        if (classCeiling != null)
-            version = MicroVersions.min(version, classCeiling);
-        if (ceiling != null)
-            version = MicroVersions.min(version, ceiling);
-        return version;
+        return ComputeMicroVersions.SUPPORT.effective(classCeiling(), ceiling);
     }
 
     protected boolean isMicroVersionAtLeast(MicroVersion version) {
@@ -66,18 +45,8 @@ public class BaseComputeServices extends BaseOpenStackService {
         return effective != null && effective.compareTo(version) >= 0;
     }
 
-    /** Fails before any request when {@code feature} needs a microversion the session does not send. */
     protected void requireMicroVersion(String feature, MicroVersion floor) {
-        MicroVersion effective = effectiveMicroVersion(null);
-        if (effective == null)
-            throw new MicroVersionException(feature + " requires compute microversion " + floor
-                    + "; turn microversions on with os.compute().microVersions().negotiate()");
-        if (effective.compareTo(floor) < 0) {
-            MicroVersionState state = ComputeMicroVersions.currentState();
-            throw new MicroVersionException(String.format(
-                    "%s requires compute microversion %s, but the session sends %s (server max %s)",
-                    feature, floor, effective, state == null ? "?" : state.getServerMax()));
-        }
+        ComputeMicroVersions.SUPPORT.require(feature, floor, effectiveMicroVersion(null));
     }
 
     protected ActionResponse invokeAction(String serverId, ServerAction action) {
@@ -96,10 +65,5 @@ public class BaseComputeServices extends BaseOpenStackService {
         return capped(post(Void.class, uri("/servers/%s/action", serverId)), ceiling)
                 .entity(action)
                 .executeWithResponse();
-    }
-
-    private static <R> void setVersionHeaders(Invocation<R> invocation, MicroVersion version) {
-        invocation.header(API_VERSION_HEADER, "compute " + version);
-        invocation.header(NOVA_VERSION_HEADER, version.toString());
     }
 }

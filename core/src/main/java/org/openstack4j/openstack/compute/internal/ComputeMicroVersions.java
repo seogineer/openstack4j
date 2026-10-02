@@ -1,16 +1,21 @@
 package org.openstack4j.openstack.compute.internal;
 
+import java.util.List;
+
 import org.openstack4j.api.types.ServiceType;
 import org.openstack4j.openstack.internal.MicroVersion;
-import org.openstack4j.openstack.internal.OSClientSession;
 import org.openstack4j.openstack.internal.microversion.MicroVersionState;
-import org.openstack4j.openstack.internal.microversion.MicroVersionStore;
+import org.openstack4j.openstack.internal.microversion.MicroVersionSupport;
 
 /** Compute microversion constants and session state lookup. */
 public final class ComputeMicroVersions {
 
     public static final MicroVersion MINIMUM = new MicroVersion(2, 1);
     public static final MicroVersion LATEST = new MicroVersion(2, 104);
+
+    /** Shared policy: both Nova headers, state keyed by the compute endpoint. */
+    public static final MicroVersionSupport SUPPORT = new MicroVersionSupport(ServiceType.COMPUTE, "compute", MINIMUM, LATEST,
+            "compute", List.of("X-OpenStack-Nova-API-Version"), "os.compute().microVersions().negotiate()");
 
     private ComputeMicroVersions() {
     }
@@ -20,16 +25,9 @@ public final class ComputeMicroVersions {
         return new MicroVersion(2, minor);
     }
 
-    static String key(OSClientSession<?, ?> session) {
-        return "compute|" + session.getEndpoint(ServiceType.COMPUTE);
-    }
-
     /** @return this session's compute state, or {@code null} when microversions were never turned on */
     public static MicroVersionState currentState() {
-        if (!MicroVersionStore.hasAny())
-            return null;    // nobody turned microversions on: no catalog lookup, no lock
-        OSClientSession<?, ?> session = OSClientSession.getCurrent();
-        return session == null ? null : MicroVersionStore.get(session, key(session));
+        return SUPPORT.currentState();
     }
 
     /** Strips the {@code /v2[.1]} segment and anything after it (such as a tenant id) from a compute endpoint. */

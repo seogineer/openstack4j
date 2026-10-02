@@ -1,6 +1,6 @@
 package org.openstack4j.api.compute;
 
-import org.openstack4j.common.RestService;
+import org.openstack4j.common.MicroVersionService;
 import org.openstack4j.model.compute.ComputeVersion;
 
 /**
@@ -8,7 +8,7 @@ import org.openstack4j.model.compute.ComputeVersion;
  * Once turned on, methods whose API Nova removed in later microversions keep working because they are sent at the
  * highest microversion they support.
  */
-public interface ComputeMicroVersionService extends RestService {
+public interface ComputeMicroVersionService extends MicroVersionService<ComputeVersion> {
 
     /** Turns microversions on at min(library latest, server max). */
     ComputeVersion negotiate();
