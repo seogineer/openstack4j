@@ -409,4 +409,45 @@ public interface ServerService {
      * Creates a backup and returns the new image id (from the Location header, or the response body from 2.45).
      */
     String createBackup(String serverId, BackupOptions options);
+
+    /**
+     * NUMA topology of a server ({@code GET /servers/{id}/topology}, 2.78+).
+     */
+    ServerTopology topology(String serverId);
+
+    /**
+     * All IP addresses of a server ({@code GET /servers/{id}/ips}).
+     */
+    Addresses ips(String serverId);
+
+    /**
+     * IP addresses of a server on one network ({@code GET /servers/{id}/ips/{label}}).
+     */
+    List<? extends Address> ips(String serverId, String networkLabel);
+
+    /**
+     * Creates a remote console URL ({@code POST /servers/{id}/remote-consoles}, 2.6+; protocol mks 2.8+, type
+     * spice-direct 2.99+).
+     *
+     * @param protocol vnc, spice, rdp, serial or mks
+     * @param type     novnc, xvpvnc, spice-html5, spice-direct, rdp-html5, serial or webmks
+     */
+    RemoteConsole remoteConsole(String serverId, String protocol, String type);
+
+    /**
+     * Standardised diagnostics ({@code GET /servers/{id}/diagnostics}, 2.48+).
+     */
+    ServerDiagnosticsStandard diagnosticsStandard(String serverId);
+
+    /**
+     * Attaches a volume without waiting for the device name (2.101+, answered with 202).
+     *
+     * @param device optional device name, {@code null} to let Nova choose
+     */
+    ActionResponse attachVolumeAsync(String serverId, String volumeId, String device);
+
+    /**
+     * Pins the server to an availability zone, or unpins it with {@code null} (2.104+).
+     */
+    Server updatePinnedAvailabilityZone(String serverId, String availabilityZone);
 }

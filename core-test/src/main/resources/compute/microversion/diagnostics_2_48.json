@@ -1,0 +1,16 @@
+{
+  "state": "running",
+  "driver": "libvirt",
+  "hypervisor": "kvm",
+  "hypervisor_os": "linux",
+  "uptime": 858833,
+  "config_drive": false,
+  "num_cpus": 1,
+  "num_nics": 1,
+  "num_disks": 1,
+  "disk_details": [{"read_bytes": 8446494208, "read_requests": 97087, "write_bytes": 7967033344, "write_requests": 38855, "errors_count": -1}],
+  "cpu_details": [{"id": 0, "time": 10897320000000, "utilisation": null}],
+  "nic_details": [{"mac_address": "fa:16:3e:ee:08:6f", "rx_octets": 8769411449, "rx_errors": 0, "rx_drop": 0, "rx_packets": 6227321, "rx_rate": null,
+                   "tx_octets": 50291014, "tx_errors": 0, "tx_drop": 0, "tx_packets": 465870, "tx_rate": null}],
+  "memory_details": {"maximum": 1048576, "used": 1048576}
+}

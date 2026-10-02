@@ -696,4 +696,73 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
         Objects.requireNonNull(options);
         return imageIdFrom(invokeActionWithResponse(serverId, BackupAction.create(options)));
     }
+
+    @Override
+    public ServerTopology topology(String serverId) {
+        Objects.requireNonNull(serverId);
+        requireMicroVersion("Server topology", V(78));
+        return get(NovaServerTopology.class, uri("/servers/%s/topology", serverId)).execute();
+    }
+
+    @Override
+    public Addresses ips(String serverId) {
+        Objects.requireNonNull(serverId);
+        return get(NovaAddresses.class, uri("/servers/%s/ips", serverId)).execute();
+    }
+
+    @Override
+    public List<? extends Address> ips(String serverId, String networkLabel) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(networkLabel);
+        NovaNetworkIps ips = get(NovaNetworkIps.class, uri("/servers/%s/ips/%s", serverId, networkLabel)).execute();
+        return ips == null ? Collections.emptyList() : ips.get(networkLabel);
+    }
+
+    @Override
+    public RemoteConsole remoteConsole(String serverId, String protocol, String type) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(protocol);
+        Objects.requireNonNull(type);
+        requireMicroVersion("Remote consoles", V(6));
+        if ("mks".equals(protocol))
+            requireMicroVersion("MKS remote console", V(8));
+        if ("spice-direct".equals(type))
+            requireMicroVersion("spice-direct remote console", V(99));
+        return post(NovaRemoteConsole.class, uri("/servers/%s/remote-consoles", serverId))
+                .entity(new NovaRemoteConsole(protocol, type))
+                .execute();
+    }
+
+    @Override
+    public ServerDiagnosticsStandard diagnosticsStandard(String serverId) {
+        Objects.requireNonNull(serverId);
+        requireMicroVersion("Standard server diagnostics", V(48));
+        return get(NovaServerDiagnosticsStandard.class, uri("/servers/%s/diagnostics", serverId)).execute();
+    }
+
+    @Override
+    public ActionResponse attachVolumeAsync(String serverId, String volumeId, String device) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(volumeId);
+        requireMicroVersion("Asynchronous volume attach", V(101));
+        Map<String, Object> attachment = new LinkedHashMap<>();
+        attachment.put("volumeId", volumeId);
+        if (device != null)
+            attachment.put("device", device);
+        return ToActionResponseFunction.INSTANCE.apply(
+                post(Void.class, uri("/servers/%s/os-volume_attachments", serverId))
+                        .entity(JsonBody.of("volumeAttachment", attachment))
+                        .executeWithResponse());
+    }
+
+    @Override
+    public Server updatePinnedAvailabilityZone(String serverId, String availabilityZone) {
+        Objects.requireNonNull(serverId);
+        requireMicroVersion("Updating pinned_availability_zone", V(104));
+        Map<String, Object> server = new HashMap<>();
+        server.put("pinned_availability_zone", availabilityZone);
+        return put(NovaServer.class, uri("/servers/%s", serverId))
+                .entity(JsonBody.of("server", server))
+                .execute();
+    }
 }
