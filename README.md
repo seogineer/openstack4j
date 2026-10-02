@@ -39,6 +39,32 @@ Spring Boot 3.5 와 함께 쓰는 구성을 CI 에서 확인합니다(`examples/
 원본 문서([openstack4j.github.io](https://openstack4j.github.io/))와 아래 사용 예가 그대로 적용됩니다. Maven 좌표만 위의 것으로 바꾸세요.
 3.x 에서 옮겨 오는 방법은 [MIGRATION.md](MIGRATION.md), 변경 내역은 [CHANGELOG.md](CHANGELOG.md) 를 보세요.
 
+## Placement
+
+4.1.0 부터 Placement API 전체(microversion 1.28~1.39)를 지원합니다. 서버의 microversion 범위를 자동으로 협상하고, 원하면 고정할 수 있습니다.
+
+```java
+PlacementService placement = os.placement();
+placement.versions().get();                      // 서버 범위와 협상된 버전
+placement.useMicroVersion("1.36");               // 선택: 버전 고정
+
+// 용량 조회
+Map<String, ResourceCapacity> capacity = placement.usages().capacity(rpUuid);
+
+// inventory 수정 (generation 충돌 시 재시도)
+Placement.retryOnConcurrentUpdate(3, () -> {
+    ResourceProviderInventories inv = placement.inventories().list(rpUuid);
+    return placement.inventories().update(rpUuid, inv.getResourceProviderGeneration(), "VCPU",
+            Inventory.builder().total(64).allocationRatio(4.0f).build());
+});
+
+// 스케줄링 후보
+placement.allocationCandidates().list(AllocationCandidatesQuery.builder()
+        .resources("VCPU", 2).resources("MEMORY_MB", 2048).required("HW_CPU_X86_AVX2").limit(10).build());
+```
+
+기존 `placement().resourceProviders()` 는 그대로 동작합니다. 1.28 보다 오래된 서버에서는 새 API 가 `PlacementMicroVersionException` 을 던집니다.
+
 ## 빌드
 
 ```bash

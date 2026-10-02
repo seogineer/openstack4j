@@ -1,3 +1,10 @@
+## 4.1.0
+
+- Placement API 전체 지원 (`os.placement().providers()/inventories()/resourceClasses()/traits()/aggregates()/allocations()/allocationCandidates()/usages()/reshaper()/versions()`), microversion 1.28~1.39 자동 협상과 `useMicroVersion` 고정
+- Placement 오류를 `PlacementException`/`PlacementConcurrentUpdateException` 으로 매핑, `Placement.retryOnConcurrentUpdate` 도우미
+- `usages().capacity()` 로 provider 별 자원 용량·사용량·여유량 계산
+- 기존 `placement().resourceProviders()` 는 변경 없음
+
 ## 4.0.0 (seogineer fork)
 
 첫 후속 포크 릴리스. 이전 방법은 MIGRATION.md 참고.
