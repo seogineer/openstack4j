@@ -152,6 +152,26 @@ public interface ComputeService extends RestService {
     ComputeMicroVersionService microVersions();
 
     /**
+     * @return server external events service (admin)
+     */
+    ServerExternalEventService serverExternalEvents();
+
+    /**
+     * @return assisted volume snapshots service (admin)
+     */
+    AssistedVolumeSnapshotService assistedVolumeSnapshots();
+
+    /**
+     * @return console auth tokens service (admin)
+     */
+    ConsoleAuthTokenService consoleAuthTokens();
+
+    /**
+     * @return instance usage audit logs service (admin)
+     */
+    InstanceUsageAuditLogService instanceUsageAuditLogs();
+
+    /**
      * Compute services service
      *
      * @return ServicesService
