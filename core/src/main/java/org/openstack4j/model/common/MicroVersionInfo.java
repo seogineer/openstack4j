@@ -1,9 +1,9 @@
-package org.openstack4j.model.compute;
+package org.openstack4j.model.common;
 
-import org.openstack4j.model.common.MicroVersionInfo;
+import org.openstack4j.model.ModelEntity;
 
-/** The compute microversion range of the server and the microversion this session sends. */
-public interface ComputeVersion extends MicroVersionInfo {
+/** The microversion range of a service endpoint and the microversion this session sends to it. */
+public interface MicroVersionInfo extends ModelEntity {
 
     /** @return the server's minimum microversion, or {@code null} before any discovery */
     String getServerMinVersion();
