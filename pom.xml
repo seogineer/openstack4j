@@ -244,7 +244,8 @@
                         <configuration>
                             <publishingServerId>central</publishingServerId>
                             <autoPublish>true</autoPublish>
-                            <waitUntil>published</waitUntil>
+                            <!-- wait for Central validation only; publishing can take over 30 min and then finishes on its own -->
+                            <waitUntil>validated</waitUntil>
                             <excludeArtifacts>
                                 <artifact>openstack4j-core-test</artifact>
                                 <artifact>openstack4j-core-integration-test</artifact>
