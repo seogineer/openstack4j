@@ -1,5 +1,7 @@
 package org.openstack4j.api.compute;
 
+import java.util.Map;
+
 import java.util.List;
 
 import org.openstack4j.common.RestService;
@@ -40,4 +42,10 @@ public interface ServerGroupService extends RestService {
      */
     ServerGroup create(String name, String policy);
 
+    /**
+     * Creates a server group with a single policy and optional rules (2.64+).
+     *
+     * @param rules optional rules such as {@code max_server_per_host}, or {@code null}
+     */
+    ServerGroup create(String name, String policy, Map<String, Object> rules);
 }

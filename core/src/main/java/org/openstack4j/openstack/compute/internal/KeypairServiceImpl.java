@@ -1,5 +1,9 @@
 package org.openstack4j.openstack.compute.internal;
 
+import org.openstack4j.openstack.internal.microversion.MicroVersions;
+
+import org.openstack4j.model.compute.KeypairListOptions;
+
 import static org.openstack4j.openstack.compute.internal.ComputeMicroVersions.V;
 
 import javax.annotation.Nullable;
@@ -57,4 +61,22 @@ public class KeypairServiceImpl extends BaseComputeServices implements KeypairSe
         return req.entity(NovaKeypair.create(name, publicKey)).execute();
     }
 
+    @Override
+    public List<? extends Keypair> list(KeypairListOptions options) {
+        Objects.requireNonNull(options);
+        if (options.getRequiredMicroVersion() != null)
+            requireMicroVersion("Key pair list filters " + options.toQueryParams().keySet(), MicroVersions.parse(options.getRequiredMicroVersion()));
+        return get(Keypairs.class, uri("/os-keypairs")).params(options.toQueryParams()).execute().getList();
+    }
+
+    @Override
+    public Keypair create(String name, @Nullable String publicKey, String type) {
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(type);
+        requireMicroVersion("Key pair type", V(2));
+        Invocation<NovaKeypair> req = post(NovaKeypair.class, uri("/os-keypairs"));
+        if (publicKey == null)
+            capped(req, V(91));    // key generation removed in 2.92
+        return req.entity(NovaKeypair.create(name, publicKey, type)).execute();
+    }
 }

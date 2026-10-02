@@ -100,4 +100,8 @@ public interface QuotaSetService extends RestService {
      */
     SimpleTenantUsage getTenantUsage(String tenantId, String startTime, String endTime);
 
+    /**
+     * Default quotas for a project ({@code GET /os-quota-sets/{id}/defaults}).
+     */
+    QuotaSet defaults(String tenantId);
 }

@@ -1,5 +1,13 @@
 package org.openstack4j.openstack.compute.internal;
 
+import static org.openstack4j.openstack.compute.internal.ComputeMicroVersions.V;
+
+import org.openstack4j.openstack.compute.domain.JsonBody;
+
+import java.util.stream.Collectors;
+
+import java.util.Collections;
+
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
@@ -118,5 +126,15 @@ public class HostAggregateServiceImpl extends BaseComputeServices implements
         return post(NovaHostAggregate.class, uri("/os-aggregates/%s/action", hostAggregateId)).entity(new AggregateRemoveHost(host)).execute();
     }
 
-
+    @Override
+    public ActionResponse cacheImages(String aggregateId, List<String> imageIds) {
+        Objects.requireNonNull(aggregateId);
+        Objects.requireNonNull(imageIds);
+        requireMicroVersion("Aggregate image caching", V(81));
+        List<Map<String, String>> cache = imageIds.stream().map(id -> Collections.singletonMap("id", id)).collect(Collectors.toList());
+        return ToActionResponseFunction.INSTANCE.apply(
+                post(Void.class, uri("/os-aggregates/%s/images", aggregateId))
+                        .entity(JsonBody.of(Collections.singletonMap("cache", cache)))
+                        .executeWithResponse());
+    }
 }

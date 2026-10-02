@@ -22,6 +22,40 @@ public class NovaServerGroup implements ServerGroup {
     private List<String> members;
     private Map<String, String> metadata;
     private List<String> policies;
+    private String policy;
+    private Map<String, Object> rules;
+    @JsonProperty("project_id")
+    private String projectId;
+    @JsonProperty("user_id")
+    private String userId;
+
+    public static NovaServerGroup create(String name, String policy, Map<String, Object> rules) {
+        NovaServerGroup ns = new NovaServerGroup();
+        ns.name = name;
+        ns.policy = policy;
+        ns.rules = rules;
+        return ns;
+    }
+
+    @Override
+    public String getPolicy() {
+        return policy;
+    }
+
+    @Override
+    public Map<String, Object> getRules() {
+        return rules;
+    }
+
+    @Override
+    public String getProjectId() {
+        return projectId;
+    }
+
+    @Override
+    public String getUserId() {
+        return userId;
+    }
 
     public static NovaServerGroup create(String name, String policy) {
         NovaServerGroup ns = new NovaServerGroup();

@@ -1,5 +1,7 @@
 package org.openstack4j.api.compute.ext;
 
+import org.openstack4j.model.compute.ext.HypervisorListOptions;
+
 import java.util.List;
 
 import org.openstack4j.common.RestService;
@@ -40,4 +42,9 @@ public interface HypervisorService extends RestService {
      * @return the Hypervisor or null if not found
      */
     Hypervisor get(String hypervisorId);
+
+    /**
+     * Lists hypervisors with details using typed filters ({@code GET /os-hypervisors/detail}).
+     */
+    List<? extends Hypervisor> list(HypervisorListOptions options);
 }

@@ -1,5 +1,15 @@
 package org.openstack4j.openstack.compute.internal;
 
+import org.openstack4j.openstack.compute.functions.ToActionResponseFunction;
+
+import org.openstack4j.openstack.compute.domain.JsonBody;
+
+import org.openstack4j.model.compute.ext.ServiceUpdate;
+
+import org.openstack4j.model.common.ActionResponse;
+
+import java.util.LinkedHashMap;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -105,5 +115,31 @@ public class ServicesServiceImpl extends BaseComputeServices implements Services
             capped(invocation, V(52));    // binary/host body replaced by PUT /os-services/{id} in 2.53
         }
         return invocation;
+    }
+
+    @Override
+    public Service update(String serviceId, ServiceUpdate update) {
+        Objects.requireNonNull(serviceId);
+        Objects.requireNonNull(update);
+        requireMicroVersion("Updating a service by id", V(53));
+        return put(ExtService.class, uri("/os-services/%s", serviceId)).entity(JsonBody.of(update.toMap())).execute();
+    }
+
+    @Override
+    public ActionResponse delete(String serviceId) {
+        Objects.requireNonNull(serviceId);
+        return ToActionResponseFunction.INSTANCE.apply(delete(Void.class, uri("/os-services/%s", serviceId)).executeWithResponse());
+    }
+
+    @Override
+    public ExtService disableWithReason(String binary, String host, String reason) {
+        Objects.requireNonNull(binary);
+        Objects.requireNonNull(host);
+        Objects.requireNonNull(reason);
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("binary", binary);
+        body.put("host", host);
+        body.put("disabled_reason", reason);
+        return capped(put(ExtService.class, uri("/os-services/disable-log-reason")), V(52)).entity(JsonBody.of(body)).execute();
     }
 }

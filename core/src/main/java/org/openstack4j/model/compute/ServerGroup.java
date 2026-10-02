@@ -36,4 +36,13 @@ public interface ServerGroup extends ModelEntity {
      * @return the polices of this group
      */
     List<String> getPolicies();
+
+    /** @return the single policy (2.64+) */
+    default String getPolicy() { return null; }
+    /** @return policy rules such as max_server_per_host (2.64+) */
+    default Map<String, Object> getRules() { return null; }
+    /** @return project_id (2.13+) */
+    default String getProjectId() { return null; }
+    /** @return user_id (2.13+) */
+    default String getUserId() { return null; }
 }
