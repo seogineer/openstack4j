@@ -56,4 +56,9 @@ public interface PlacementService extends RestService {
      */
     org.openstack4j.api.placement.v1.AggregateService aggregates();
 
+    /**
+     * Usages per provider or project, and computed capacity.
+     */
+    org.openstack4j.api.placement.v1.UsageService usages();
+
 }
