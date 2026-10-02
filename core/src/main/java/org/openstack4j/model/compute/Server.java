@@ -319,4 +319,40 @@ public interface Server extends ModelEntity {
         }
     }
 
+    /** @return the flavor exactly as embedded in the server (2.47+: original_name, vcpus, ram, ...; before: id and links), without any lookup */
+    default Flavor getFlavorSummary() { return null; }
+    /** @return image properties embedded in the server (2.98+) */
+    default Map<String, String> getImageProperties() { return null; }
+    /** @return OS-EXT-SRV-ATTR:hostname (2.3+, all users from 2.90) */
+    default String getHostname() { return null; }
+    /** @return OS-EXT-SRV-ATTR:reservation_id (2.3+) */
+    default String getReservationId() { return null; }
+    /** @return OS-EXT-SRV-ATTR:launch_index (2.3+) */
+    default Integer getLaunchIndex() { return null; }
+    /** @return OS-EXT-SRV-ATTR:kernel_id (2.3+) */
+    default String getKernelId() { return null; }
+    /** @return OS-EXT-SRV-ATTR:ramdisk_id (2.3+) */
+    default String getRamdiskId() { return null; }
+    /** @return OS-EXT-SRV-ATTR:root_device_name (2.3+) */
+    default String getRootDeviceName() { return null; }
+    /** @return OS-EXT-SRV-ATTR:user_data, base64 (2.3+) */
+    default String getUserData() { return null; }
+    /** @return whether the server is locked (2.9+) */
+    default Boolean getLocked() { return null; }
+    /** @return host_status (2.16+) */
+    default String getHostStatus() { return null; }
+    /** @return description (2.19+) */
+    default String getDescription() { return null; }
+    /** @return tags (2.26+) */
+    default List<String> getTags() { return null; }
+    /** @return trusted image certificate ids (2.63+) */
+    default List<String> getTrustedImageCertificates() { return null; }
+    /** @return ids of the server groups the server belongs to (2.71+) */
+    default List<String> getServerGroups() { return null; }
+    /** @return locked_reason (2.73+) */
+    default String getLockedReason() { return null; }
+    /** @return pinned_availability_zone (2.96+) */
+    default String getPinnedAvailabilityZone() { return null; }
+    /** @return scheduler hints given at creation (2.100+) */
+    default Map<String, Object> getSchedulerHints() { return null; }
 }

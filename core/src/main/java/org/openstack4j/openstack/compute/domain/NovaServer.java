@@ -72,6 +72,35 @@ public class NovaServer implements Server {
     private List<IdResourceEntity> osExtendedVolumesAttached;
     private String uuid;
     private String adminPass;
+    @JsonProperty("OS-EXT-SRV-ATTR:hostname")
+    private String hostname;
+    @JsonProperty("OS-EXT-SRV-ATTR:reservation_id")
+    private String reservationId;
+    @JsonProperty("OS-EXT-SRV-ATTR:launch_index")
+    private Integer launchIndex;
+    @JsonProperty("OS-EXT-SRV-ATTR:kernel_id")
+    private String kernelId;
+    @JsonProperty("OS-EXT-SRV-ATTR:ramdisk_id")
+    private String ramdiskId;
+    @JsonProperty("OS-EXT-SRV-ATTR:root_device_name")
+    private String rootDeviceName;
+    @JsonProperty("OS-EXT-SRV-ATTR:user_data")
+    private String userData;
+    private Boolean locked;
+    @JsonProperty("host_status")
+    private String hostStatus;
+    private String description;
+    private List<String> tags;
+    @JsonProperty("trusted_image_certificates")
+    private List<String> trustedImageCertificates;
+    @JsonProperty("server_groups")
+    private List<String> serverGroups;
+    @JsonProperty("locked_reason")
+    private String lockedReason;
+    @JsonProperty("pinned_availability_zone")
+    private String pinnedAvailabilityZone;
+    @JsonProperty("scheduler_hints")
+    private Map<String, Object> schedulerHints;
 
     @Override
     public String getId() {
@@ -128,9 +157,28 @@ public class NovaServer implements Server {
 
     @Override
     public Flavor getFlavor() {
-        if (flavor != null && flavor.getName() == null)
+        // 2.47+ embeds the flavor without an id; nothing to look up
+        if (flavor != null && flavor.getName() == null && flavor.getId() != null)
             flavor = (NovaFlavor) Apis.getComputeServices().flavors().get(flavor.getId());
         return flavor;
+    }
+
+    @JsonIgnore
+    @Override
+    public Flavor getFlavorSummary() {
+        return flavor;
+    }
+
+    @JsonIgnore
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<String, String> getImageProperties() {
+        if (image instanceof Map) {
+            Object properties = ((Map<String, Object>) image).get("properties");
+            if (properties instanceof Map)
+                return (Map<String, String>) properties;
+        }
+        return null;
     }
 
     @Override
@@ -270,6 +318,86 @@ public class NovaServer implements Server {
     @Override
     public String getAdminPass() {
         return adminPass;
+    }
+
+    @Override
+    public String getHostname() {
+        return hostname;
+    }
+
+    @Override
+    public String getReservationId() {
+        return reservationId;
+    }
+
+    @Override
+    public Integer getLaunchIndex() {
+        return launchIndex;
+    }
+
+    @Override
+    public String getKernelId() {
+        return kernelId;
+    }
+
+    @Override
+    public String getRamdiskId() {
+        return ramdiskId;
+    }
+
+    @Override
+    public String getRootDeviceName() {
+        return rootDeviceName;
+    }
+
+    @Override
+    public String getUserData() {
+        return userData;
+    }
+
+    @Override
+    public Boolean getLocked() {
+        return locked;
+    }
+
+    @Override
+    public String getHostStatus() {
+        return hostStatus;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public List<String> getTags() {
+        return tags;
+    }
+
+    @Override
+    public List<String> getTrustedImageCertificates() {
+        return trustedImageCertificates;
+    }
+
+    @Override
+    public List<String> getServerGroups() {
+        return serverGroups;
+    }
+
+    @Override
+    public String getLockedReason() {
+        return lockedReason;
+    }
+
+    @Override
+    public String getPinnedAvailabilityZone() {
+        return pinnedAvailabilityZone;
+    }
+
+    @Override
+    public Map<String, Object> getSchedulerHints() {
+        return schedulerHints;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.openstack4j.openstack.compute.domain;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.*;
 import org.openstack4j.util.ToStringHelper;
@@ -27,6 +28,7 @@ public class NovaFlavor implements Flavor {
     private Integer vcpus;
     private Integer disk;
     @JsonProperty("OS-FLV-EXT-DATA:ephemeral")
+    @JsonAlias("ephemeral")
     private int ephemeral;
     private int swap;
     @JsonProperty("rxtx_factor")
@@ -42,6 +44,11 @@ public class NovaFlavor implements Flavor {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Boolean isPublic;
     private List<GenericLink> links;
+    @JsonProperty("original_name")
+    private String originalName;
+    @JsonProperty("extra_specs")
+    private Map<String, String> extraSpecs;
+    private String description;
 
     public static FlavorBuilder builder() {
         return new FlavorConcreteBuilder();
@@ -171,6 +178,21 @@ public class NovaFlavor implements Flavor {
                 .add("rxtx_quota", rxtxQuota).add("rxtx_cap", rxtxCap).add("is_public", isPublic)
                 .add("links", links).addValue("\n")
                 .toString();
+    }
+
+    @Override
+    public String getOriginalName() {
+        return originalName;
+    }
+
+    @Override
+    public Map<String, String> getExtraSpecs() {
+        return extraSpecs;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     public static class Flavors extends ListResult<NovaFlavor> {
