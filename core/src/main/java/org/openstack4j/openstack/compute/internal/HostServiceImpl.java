@@ -1,5 +1,7 @@
 package org.openstack4j.openstack.compute.internal;
 
+import org.openstack4j.openstack.internal.MicroVersion;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -16,6 +18,11 @@ import org.openstack4j.openstack.compute.domain.NovaHostResource.NovaHostResourc
  */
 @Deprecated
 public class HostServiceImpl extends BaseComputeServices implements HostService {
+
+    @Override
+    protected MicroVersion classCeiling() {
+        return ComputeMicroVersions.V(42);   // os-hosts removed in 2.43
+    }
 
     @Override
     public List<? extends HostResource> hostDescribe(String hostName) {

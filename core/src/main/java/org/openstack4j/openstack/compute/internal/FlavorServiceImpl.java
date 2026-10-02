@@ -1,5 +1,7 @@
 package org.openstack4j.openstack.compute.internal;
 
+import static org.openstack4j.openstack.compute.internal.ComputeMicroVersions.V;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +88,8 @@ public class FlavorServiceImpl extends BaseComputeServices implements FlavorServ
     @Override
     public Flavor create(Flavor flavor) {
         Objects.requireNonNull(flavor);
-        return post(NovaFlavor.class, uri("/flavors"))
+        // NovaFlavor always sends rxtx_factor, rejected from 2.102
+        return capped(post(NovaFlavor.class, uri("/flavors")), V(101))
                 .entity(flavor)
                 .execute();
     }

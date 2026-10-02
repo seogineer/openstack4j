@@ -1,5 +1,7 @@
 package org.openstack4j.openstack.compute.internal;
 
+import org.openstack4j.openstack.internal.MicroVersion;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -20,6 +22,11 @@ import org.openstack4j.openstack.compute.domain.NovaSecGroupExtension.SecurityGr
  */
 @Deprecated
 public class ComputeSecurityGroupServiceImpl extends BaseComputeServices implements ComputeSecurityGroupService {
+
+    @Override
+    protected MicroVersion classCeiling() {
+        return ComputeMicroVersions.V(35);   // Nova removed this proxy API in 2.36
+    }
 
     /**
      * {@inheritDoc}

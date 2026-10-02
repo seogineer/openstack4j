@@ -1,5 +1,7 @@
 package org.openstack4j.openstack.compute.internal;
 
+import static org.openstack4j.openstack.compute.internal.ComputeMicroVersions.V;
+
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
@@ -49,7 +51,10 @@ public class KeypairServiceImpl extends BaseComputeServices implements KeypairSe
     @Override
     public Keypair create(String name, @Nullable String publicKey) {
         Objects.requireNonNull(name);
-        return post(NovaKeypair.class, uri("/os-keypairs")).entity(NovaKeypair.create(name, publicKey)).execute();
+        Invocation<NovaKeypair> req = post(NovaKeypair.class, uri("/os-keypairs"));
+        if (publicKey == null)
+            capped(req, V(91));    // key generation removed in 2.92
+        return req.entity(NovaKeypair.create(name, publicKey)).execute();
     }
 
 }

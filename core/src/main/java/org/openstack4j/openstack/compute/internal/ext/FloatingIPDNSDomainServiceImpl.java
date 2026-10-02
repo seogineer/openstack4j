@@ -1,5 +1,8 @@
 package org.openstack4j.openstack.compute.internal.ext;
 
+import org.openstack4j.openstack.internal.MicroVersion;
+import org.openstack4j.openstack.compute.internal.ComputeMicroVersions;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -18,6 +21,11 @@ import org.openstack4j.openstack.compute.internal.BaseComputeServices;
  */
 @Deprecated
 public class FloatingIPDNSDomainServiceImpl extends BaseComputeServices implements FloatingIPDNSDomainService {
+
+    @Override
+    protected MicroVersion classCeiling() {
+        return ComputeMicroVersions.V(35);   // Nova removed this proxy API in 2.36
+    }
 
     @Override
     public List<? extends DomainEntry> list() {

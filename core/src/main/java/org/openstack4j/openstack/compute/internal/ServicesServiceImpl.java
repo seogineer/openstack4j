@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.openstack4j.openstack.compute.internal.ComputeMicroVersions.V;
+
 import org.openstack4j.api.compute.ext.ServicesService;
 import org.openstack4j.model.compute.ext.Service;
 import org.openstack4j.openstack.compute.domain.ext.ExtService;
@@ -56,7 +58,7 @@ public class ServicesServiceImpl extends BaseComputeServices implements Services
         Objects.requireNonNull(binary);
         Objects.requireNonNull(host);
 
-        return put(ExtService.class, uri("/os-services/enable")).entity(ServiceAction.enable(binary, host)).execute();
+        return capped(put(ExtService.class, uri("/os-services/enable")), V(52)).entity(ServiceAction.enable(binary, host)).execute();
     }
 
     /**
@@ -71,7 +73,7 @@ public class ServicesServiceImpl extends BaseComputeServices implements Services
         Objects.requireNonNull(binary);
         Objects.requireNonNull(host);
 
-        return put(ExtService.class, uri("/os-services/disable")).entity(ServiceAction.disable(binary, host)).execute();
+        return capped(put(ExtService.class, uri("/os-services/disable")), V(52)).entity(ServiceAction.disable(binary, host)).execute();
     }
 
     /**
@@ -81,8 +83,7 @@ public class ServicesServiceImpl extends BaseComputeServices implements Services
     public ExtService forceDownService(String binary, String host) {
         Objects.requireNonNull(binary);
         Objects.requireNonNull(host);
-        return put(ExtService.class, uri("/os-services/force-down")).header("x-openstack-nova-api-version", "2.11")
-                .entity(ServiceActions.forceDown(binary, host)).execute();
+        return forceDownInvocation().entity(ServiceActions.forceDown(binary, host)).execute();
     }
 
     /**
@@ -92,7 +93,17 @@ public class ServicesServiceImpl extends BaseComputeServices implements Services
     public ExtService forceUpService(String binary, String host) {
         Objects.requireNonNull(binary);
         Objects.requireNonNull(host);
-        return put(ExtService.class, uri("/os-services/force-down")).header("x-openstack-nova-api-version", "2.11")
-                .entity(ServiceActions.forceUp(binary, host)).execute();
+        return forceDownInvocation().entity(ServiceActions.forceUp(binary, host)).execute();
+    }
+
+    private Invocation<ExtService> forceDownInvocation() {
+        Invocation<ExtService> invocation = put(ExtService.class, uri("/os-services/force-down"));
+        if (effectiveMicroVersion(null) == null) {
+            invocation.header("x-openstack-nova-api-version", "2.11");    // legacy behaviour
+        } else {
+            requireMicroVersion("Forcing a service down or up", V(11));
+            capped(invocation, V(52));    // binary/host body replaced by PUT /os-services/{id} in 2.53
+        }
+        return invocation;
     }
 }

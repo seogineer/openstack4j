@@ -133,6 +133,11 @@ public class ComputeServiceImpl extends BaseComputeServices implements ComputeSe
     }
 
     @Override
+    public ComputeMicroVersionService microVersions() {
+        return Apis.get(ComputeMicroVersionService.class);
+    }
+
+    @Override
     public ServicesService services() {
         return Apis.get(ServicesService.class);
     }

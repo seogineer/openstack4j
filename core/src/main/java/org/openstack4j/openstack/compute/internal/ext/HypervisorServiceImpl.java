@@ -1,5 +1,7 @@
 package org.openstack4j.openstack.compute.internal.ext;
 
+import static org.openstack4j.openstack.compute.internal.ComputeMicroVersions.V;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -29,7 +31,7 @@ public class HypervisorServiceImpl extends BaseComputeServices implements Hyperv
      */
     @Override
     public HypervisorStatistics statistics() {
-        return get(ExtHypervisorStatistics.class, "/os-hypervisors/statistics").execute();
+        return capped(get(ExtHypervisorStatistics.class, "/os-hypervisors/statistics"), V(87)).execute();    // removed in 2.88
     }
 
     /**

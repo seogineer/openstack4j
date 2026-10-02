@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.compute.internal;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +31,13 @@ import org.openstack4j.openstack.compute.domain.actions.ServerAction;
 import org.openstack4j.openstack.compute.domain.actions.BasicActions.*;
 import org.openstack4j.openstack.compute.functions.ToActionResponseFunction;
 import org.openstack4j.openstack.compute.functions.WrapServerIfApplicableFunction;
+import org.openstack4j.openstack.internal.MicroVersion;
+import org.openstack4j.openstack.internal.microversion.MicroVersions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.openstack4j.openstack.compute.domain.actions.CreateSnapshotAction.create;
+import static org.openstack4j.openstack.compute.internal.ComputeMicroVersions.V;
 
 /**
  * Server Operation API implementation
@@ -104,7 +108,12 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
     @Override
     public Server boot(ServerCreate server) {
         Objects.requireNonNull(server);
-        return post(NovaServer.class, uri("/servers"))
+        MicroVersion ceiling = null;
+        if (server.getPersonality() != null && !server.getPersonality().isEmpty())
+            ceiling = V(56);           // personality removed in 2.57
+        if (server.getNetworks() == null || server.getNetworks().isEmpty())
+            ceiling = ceiling == null ? V(36) : MicroVersions.min(ceiling, V(36)); // networks required from 2.37
+        return capped(post(NovaServer.class, uri("/servers")), ceiling)
                 .entity(WrapServerIfApplicableFunction.INSTANCE.apply(server))
                 .execute();
     }
@@ -162,17 +171,34 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
         Objects.requireNonNull(serverId);
         Objects.requireNonNull(snapshotName);
         CreateSnapshotAction createSnapshotAction = metadata != null && !metadata.isEmpty() ? create(snapshotName, metadata): create(snapshotName);
-        HttpResponse response = invokeActionWithResponse(serverId, createSnapshotAction);
-        String id = null;
-        if (response.getStatus() == 202) {
+        return imageIdFrom(invokeActionWithResponse(serverId, createSnapshotAction));
+    }
+
+    /** Image id of a createImage/createBackup response: the Location header (before 2.45) or {"image_id"} (2.45+). */
+    private static String imageIdFrom(HttpResponse response) {
+        if (response.getStatus() != 202) {
+            response.getEntity(Void.class);    // propagates errors as before
+            return null;
+        }
+        try {
             String location = response.header("location");
             if (location != null && location.contains("/")) {
                 String[] s = location.split("/");
-                id = s[s.length - 1];
+                return s[s.length - 1];
+            }
+            try {
+                Map<?, ?> body = response.readEntity(HashMap.class);
+                return body == null || body.get("image_id") == null ? null : String.valueOf(body.get("image_id"));
+            } catch (RuntimeException e) {
+                return null;                   // empty or non-JSON body
+            }
+        } finally {
+            try {
+                response.close();
+            } catch (IOException ignored) {
+                // the connection is released either way
             }
         }
-        response.getEntity(Void.class);
-        return id;
     }
 
     /**
@@ -190,7 +216,7 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
     @Override
     public ActionResponse rebuild(String serverId, RebuildOptions options) {
         Objects.requireNonNull(serverId);
-        return invokeAction(serverId, RebuildAction.create(options));
+        return invokeAction(serverId, RebuildAction.create(options), V(56));    // personality removed in 2.57
     }
 
     /**
@@ -270,7 +296,7 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
         if (type == null)
             type = Type.NOVNC;
 
-        return post(NovaVNCConsole.class, uri("/servers/%s/action", serverId))
+        return capped(post(NovaVNCConsole.class, uri("/servers/%s/action", serverId)), V(5))
                 .entity(NovaVNCConsole.getConsoleForType(type))
                 .execute();
     }
@@ -281,7 +307,8 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
     @SuppressWarnings("unchecked")
     @Override
     public Map<String, ? extends Number> diagnostics(String serverId) {
-        return get(HashMap.class, uri("/servers/%s/diagnostics", serverId)).execute();
+        // 2.48 returns a structured document; see diagnosticsStandard
+        return capped(get(HashMap.class, uri("/servers/%s/diagnostics", serverId)), V(47)).execute();
     }
 
     /**
@@ -297,7 +324,8 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
      */
     @Override
     public VolumeAttachment attachVolume(String serverId, String volumeId, String device) {
-        return post(NovaVolumeAttachment.class, uri("/servers/%s/os-volume_attachments", serverId))
+        // 2.101 answers 202 without a body; see attachVolumeAsync
+        return capped(post(NovaVolumeAttachment.class, uri("/servers/%s/os-volume_attachments", serverId)), V(100))
                 .entity(NovaVolumeAttachment.create(volumeId, device))
                 .execute(ExecutionOptions.<NovaVolumeAttachment>create(PropagateOnStatus.on(404)));
     }
@@ -329,7 +357,7 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
         Objects.requireNonNull(serverId);
         if (options == null)
             options = LiveMigrateOptions.create();
-        return invokeAction(serverId, LiveMigrationAction.create(options));
+        return invokeAction(serverId, LiveMigrationAction.create(options), V(24));    // disk_over_commit removed in 2.25
     }
 
     /**
@@ -456,7 +484,8 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
     public ServerPassword evacuate(String serverId, EvacuateOptions options) {
         Objects.requireNonNull(serverId);
 
-        return post(AdminPass.class, uri("/servers/%s/action", serverId))
+        // onSharedStorage removed and adminPass no longer returned from 2.14
+        return capped(post(AdminPass.class, uri("/servers/%s/action", serverId)), V(13))
                 .entity(EvacuateAction.create(options))
                 .execute();
     }
