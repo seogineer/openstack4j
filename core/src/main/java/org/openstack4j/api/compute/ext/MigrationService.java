@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.compute.ext.Migration;
+import org.openstack4j.model.compute.ext.MigrationListOptions;
 import org.openstack4j.model.compute.ext.MigrationsFilter;
 
 /**
@@ -27,4 +28,10 @@ public interface MigrationService extends RestService {
      * @return in-progress migrations or empty list
      */
     List<? extends Migration> list(MigrationsFilter filter);
+
+    /**
+     * Lists migrations with typed filters ({@code GET /os-migrations}). Filters that need a newer compute
+     * microversion fail before the request when the session does not send it.
+     */
+    List<? extends Migration> list(MigrationListOptions options);
 }
