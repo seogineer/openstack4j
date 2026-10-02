@@ -152,6 +152,18 @@ public class CinderVolumeType implements VolumeType {
             m.extraSpecs = extraSpecs;
             return this;
         }
+
+        @Override
+        public VolumeTypeBuilder description(String description) {
+            m.description = description;
+            return this;
+        }
+
+        @Override
+        public VolumeTypeBuilder isPublic(boolean isPublic) {
+            m.accessIsPublic = isPublic;
+            return this;
+        }
     }
 
 }

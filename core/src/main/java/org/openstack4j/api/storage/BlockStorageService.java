@@ -68,4 +68,13 @@ public interface BlockStorageService extends RestService {
 
     /** @return user messages service (3.3+) */
     BlockMessageService messages();
+
+    /** @return volume types service (CRUD, extra specs, access, encryption) */
+    BlockVolumeTypeService volumeTypes();
+
+    /** @return per-project default volume types (3.62+) */
+    BlockDefaultTypeService defaultTypes();
+
+    /** @return QoS specifications service */
+    BlockQosSpecService qosSpecs();
 }

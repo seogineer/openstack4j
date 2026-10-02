@@ -3338,6 +3338,7 @@ public class VolumeTypeAndQosTests extends AbstractBlockStorageMicroVersionTest 
         Assert.assertEquals(update.getMethod(), "PUT");
         Assert.assertTrue(update.getPath().endsWith("/encryption/e1"));
         Assert.assertEquals(body(update).get("encryption").get("key_size").asInt(), 64);
+        Assert.assertEquals(takeRequest().getMethod(), "DELETE");
         Assert.assertEquals(cipher, "aes-xts-plain64");
         Assert.assertTrue(deleted);
     }

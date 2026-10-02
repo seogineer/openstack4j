@@ -70,6 +70,8 @@ import org.openstack4j.openstack.telemetry.builder.CeilometerBuilders;
 import org.openstack4j.openstack.telemetry.domain.CeilometerAlarm;
 import org.openstack4j.openstack.trove.builder.TroveBuilders;
 import org.openstack4j.openstack.workflow.builder.MistralBuilders;
+import org.openstack4j.model.storage.block.builder.VolumeTypeEncryptionBuilder;
+import org.openstack4j.openstack.storage.block.domain.CinderVolumeTypeEncryption;
 
 /**
  * A utility class to quickly access available Builders within the OpenStack API
@@ -228,6 +230,15 @@ public class Builders {
      */
     public static VolumeTypeBuilder volumeType() {
         return CinderVolumeType.builder();
+    }
+
+    /**
+     * The builder to create a Volume Type Encryption
+     *
+     * @return the volume type encryption builder
+     */
+    public static VolumeTypeEncryptionBuilder volumeTypeEncryption() {
+        return CinderVolumeTypeEncryption.builder();
     }
 
     /**
