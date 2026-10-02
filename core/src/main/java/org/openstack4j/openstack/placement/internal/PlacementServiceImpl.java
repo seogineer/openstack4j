@@ -69,4 +69,9 @@ public class PlacementServiceImpl extends BasePlacementServices implements Place
         return Apis.get(org.openstack4j.api.placement.v1.AllocationCandidateService.class);
     }
 
+    @Override
+    public org.openstack4j.api.placement.v1.ReshaperService reshaper() {
+        return Apis.get(org.openstack4j.api.placement.v1.ReshaperService.class);
+    }
+
 }
