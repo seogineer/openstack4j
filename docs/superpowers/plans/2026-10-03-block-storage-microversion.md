@@ -1688,9 +1688,9 @@ public class BlockStorageListOptionsTests extends AbstractBlockStorageMicroVersi
 
         RecordedRequest request = takeRequest();
         assertVersionHeader(request, "3.71");
-        String path = request.getPath();
+        String path = java.net.URLDecoder.decode(request.getPath(), java.nio.charset.StandardCharsets.UTF_8);   // connectors encode ~ and spaces differently
         Assert.assertTrue(path.matches("/v3/\\p{XDigit}+/volumes/detail\\?.*"), path);
-        for (String part : new String[] {"status=available", "name~=web", "with_count=true", "created_at=gt%3A2026-10-01T00%3A00%3A00",
+        for (String part : new String[] {"status=available", "name~=web", "with_count=true", "created_at=gt:2026-10-01T00:00:00",
                 "consumes_quota=true", "limit=5", "sort_key=created_at", "sort_dir=desc", "all_tenants=true"})
             Assert.assertTrue(path.contains(part), path + " lacks " + part);
         Assert.assertEquals(VolumeListOptions.create().withCount(true).getRequiredMicroVersion(), "3.45");
@@ -1717,10 +1717,10 @@ public class BlockStorageListOptionsTests extends AbstractBlockStorageMicroVersi
         osv3().blockStorage().snapshots().listDetail(SnapshotListOptions.create().volumeId(VOLUME).metadata(Collections.singletonMap("k", "v")));
         osv3().blockStorage().backups().list(BackupListOptions.create().status("available").sortKey("name"));
 
-        String snapshots = takeRequest().getPath();
+        String snapshots = java.net.URLDecoder.decode(takeRequest().getPath(), java.nio.charset.StandardCharsets.UTF_8);
         Assert.assertTrue(snapshots.contains("/snapshots/detail?"), snapshots);
         Assert.assertTrue(snapshots.contains("volume_id=" + VOLUME), snapshots);
-        Assert.assertTrue(snapshots.contains("metadata=%7B%27k%27%3A+%27v%27%7D") || snapshots.contains("metadata=%7B%22k%22%3A%22v%22%7D"), snapshots);
+        Assert.assertTrue(snapshots.contains("metadata={'k': 'v'}"), snapshots);
         String backups = takeRequest().getPath();
         Assert.assertTrue(backups.contains("/backups/detail?") && backups.contains("sort_key=name"), backups);
         Assert.assertEquals(SnapshotListOptions.create().metadata(Map.of("a", "b")).getRequiredMicroVersion(), "3.22");
