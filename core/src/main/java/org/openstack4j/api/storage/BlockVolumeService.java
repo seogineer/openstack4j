@@ -13,6 +13,7 @@ import org.openstack4j.model.storage.block.options.UploadImageData;
 import org.openstack4j.model.storage.block.VolumeSummary;
 import org.openstack4j.model.storage.block.options.VolumeListOptions;
 import org.openstack4j.model.storage.block.options.VolumeUpdateOptions;
+import org.openstack4j.model.storage.block.options.VolumeMigrateRequest;
 
 /**
  * Manages Volumes and Volume Type based operations against Block Storage (Cinder)
@@ -234,4 +235,83 @@ public interface BlockVolumeService extends RestService {
      * Updates name, description and/or metadata ({@code PUT /volumes/{id}}) and returns the updated volume.
      */
     Volume update(String volumeId, VolumeUpdateOptions options);
+
+    // --- metadata -------------------------------------------------------------------------------------------------
+
+    /** All metadata of a volume ({@code GET /volumes/{id}/metadata}). */
+    Map<String, String> metadata(String volumeId);
+
+    /** Adds or updates metadata keys ({@code POST /volumes/{id}/metadata}); other keys are kept. */
+    Map<String, String> setMetadata(String volumeId, Map<String, String> metadata);
+
+    /** Replaces all metadata ({@code PUT /volumes/{id}/metadata}). */
+    Map<String, String> replaceMetadata(String volumeId, Map<String, String> metadata);
+
+    /** One metadata value ({@code GET /volumes/{id}/metadata/{key}}), or {@code null}. */
+    String metadataItem(String volumeId, String key);
+
+    /** Sets one metadata value ({@code PUT /volumes/{id}/metadata/{key}}). */
+    String updateMetadataItem(String volumeId, String key, String value);
+
+    /** Deletes one metadata key ({@code DELETE /volumes/{id}/metadata/{key}}). */
+    ActionResponse deleteMetadataItem(String volumeId, String key);
+
+    /** Image metadata of a volume ({@code os-show_image_metadata}). */
+    Map<String, String> imageMetadata(String volumeId);
+
+    /** Sets image metadata ({@code os-set_image_metadata}) and returns the resulting metadata. */
+    Map<String, String> setImageMetadata(String volumeId, Map<String, String> metadata);
+
+    /** Removes one image metadata key ({@code os-unset_image_metadata}). */
+    ActionResponse unsetImageMetadata(String volumeId, String key);
+
+    // --- actions (3.x) ------------------------------------------------------------------------------------------------
+
+    /** Reverts the volume to its latest snapshot ({@code revert}, 3.40+). */
+    ActionResponse revertToSnapshot(String volumeId, String snapshotId);
+
+    /** Re-images the volume ({@code os-reimage}, 3.68+). */
+    ActionResponse reimage(String volumeId, String imageId, boolean reimageReserved);
+
+    /** Tells Cinder that Nova finished (or failed) handling a volume extension ({@code os-extend_volume_completion}, 3.71+). */
+    ActionResponse completeExtend(String volumeId, boolean error);
+
+    /**
+     * Changes the volume type ({@code os-retype}).
+     *
+     * @param migrationPolicy {@code never} or {@code on-demand}, or {@code null} for the default
+     */
+    ActionResponse retype(String volumeId, String newType, String migrationPolicy);
+
+    /** Migrates the volume to a host or, from 3.16, a cluster ({@code os-migrate_volume}; admin). */
+    ActionResponse migrate(String volumeId, VolumeMigrateRequest request);
+
+    /** Completes a migration ({@code os-migrate_volume_completion}; admin). */
+    ActionResponse completeMigration(String volumeId, String newVolumeId, boolean error);
+
+    /** Removes the volume from Cinder without deleting it on the backend ({@code os-unmanage}; admin). */
+    ActionResponse unmanage(String volumeId);
+
+    /** {@code os-reserve} */
+    ActionResponse reserve(String volumeId);
+
+    /** {@code os-unreserve} */
+    ActionResponse unreserve(String volumeId);
+
+    /** {@code os-begin_detaching} */
+    ActionResponse beginDetaching(String volumeId);
+
+    /** {@code os-roll_detaching} */
+    ActionResponse rollDetaching(String volumeId);
+
+    /** Initialises a connection for the given connector ({@code os-initialize_connection}) and returns the connection info. */
+    Map<String, Object> initializeConnection(String volumeId, Map<String, Object> connector);
+
+    /** {@code os-terminate_connection} */
+    ActionResponse terminateConnection(String volumeId, Map<String, Object> connector);
+
+    /**
+     * Resets status fields ({@code os-reset_status}; admin). Each argument may be {@code null} to leave it unchanged.
+     */
+    ActionResponse setStatus(String volumeId, String status, String attachStatus, String migrationStatus);
 }
