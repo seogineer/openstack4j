@@ -71,4 +71,9 @@ public interface PlacementService extends RestService {
      */
     org.openstack4j.api.placement.v1.AllocationCandidateService allocationCandidates();
 
+    /**
+     * Atomic inventory and allocation migration (placement 1.30).
+     */
+    org.openstack4j.api.placement.v1.ReshaperService reshaper();
+
 }
