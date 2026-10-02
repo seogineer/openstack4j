@@ -15,7 +15,7 @@
 
     <properties>
         <java.version>17</java.version>
-        <openstack4j.version>4.3.0-SNAPSHOT</openstack4j.version>
+        <openstack4j.version>4.4.0-SNAPSHOT</openstack4j.version>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
