@@ -124,14 +124,18 @@ public class BlockVolumeSnapshotServiceImpl extends BaseBlockStorageServices imp
     public Map<String, String> setMetadata(String snapshotId, Map<String, String> metadata) {
         Objects.requireNonNull(snapshotId);
         Objects.requireNonNull(metadata);
-        return post(CinderMetadata.class, uri("/snapshots/%s/metadata", snapshotId)).entity(JsonBody.of("metadata", metadata)).execute().getMetadata();
+        return metadataOf(post(CinderMetadata.class, uri("/snapshots/%s/metadata", snapshotId)).entity(JsonBody.of("metadata", metadata)).execute());
     }
 
     @Override
     public Map<String, String> replaceMetadata(String snapshotId, Map<String, String> metadata) {
         Objects.requireNonNull(snapshotId);
         Objects.requireNonNull(metadata);
-        return put(CinderMetadata.class, uri("/snapshots/%s/metadata", snapshotId)).entity(JsonBody.of("metadata", metadata)).execute().getMetadata();
+        return metadataOf(put(CinderMetadata.class, uri("/snapshots/%s/metadata", snapshotId)).entity(JsonBody.of("metadata", metadata)).execute());
+    }
+
+    private static Map<String, String> metadataOf(CinderMetadata result) {
+        return result == null || result.getMetadata() == null ? Collections.emptyMap() : result.getMetadata();
     }
 
     @Override

@@ -8,6 +8,9 @@ import org.openstack4j.openstack.internal.microversion.MicroVersions;
 import org.openstack4j.openstack.internal.microversion.VersionRange;
 import org.openstack4j.openstack.storage.block.domain.CinderBlockStorageVersion;
 import org.openstack4j.openstack.storage.block.domain.CinderVersions;
+import org.openstack4j.api.exceptions.MicroVersionException;
+import org.openstack4j.api.types.ServiceType;
+import org.openstack4j.openstack.internal.OSClientSession;
 
 public class BlockStorageMicroVersionServiceImpl extends BaseBlockStorageServices implements BlockStorageMicroVersionService {
 
@@ -40,6 +43,10 @@ public class BlockStorageMicroVersionServiceImpl extends BaseBlockStorageService
 
     /** @return the v3 range from the Cinder root document, or {@code null} when the server has none */
     private static VersionRange discover() {
+        String endpoint = OSClientSession.getCurrent().getEndpoint(ServiceType.BLOCK_STORAGE);
+        if (endpoint == null || !endpoint.matches(".*/v3(/.*)?$"))
+            throw new MicroVersionException("Block storage microversions need a v3 endpoint, but the catalog resolved " + endpoint
+                    + " (type volume/volumev2). Use a cloud or endpoint resolver that offers volumev3.");
         CinderVersions.Entry v3 = new BlockStorageVersionDiscovery().fetch().v3();
         if (v3 == null || v3.version == null || v3.version.isEmpty())
             return null;

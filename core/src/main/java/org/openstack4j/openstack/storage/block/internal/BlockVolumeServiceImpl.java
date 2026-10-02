@@ -372,14 +372,19 @@ public class BlockVolumeServiceImpl extends BaseBlockStorageServices implements 
     public Map<String, String> setMetadata(String volumeId, Map<String, String> metadata) {
         Objects.requireNonNull(volumeId);
         Objects.requireNonNull(metadata);
-        return post(CinderMetadata.class, uri("/volumes/%s/metadata", volumeId)).entity(JsonBody.of("metadata", metadata)).execute().getMetadata();
+        return metadataOf(post(CinderMetadata.class, uri("/volumes/%s/metadata", volumeId)).entity(JsonBody.of("metadata", metadata)).execute());
     }
 
     @Override
     public Map<String, String> replaceMetadata(String volumeId, Map<String, String> metadata) {
         Objects.requireNonNull(volumeId);
         Objects.requireNonNull(metadata);
-        return put(CinderMetadata.class, uri("/volumes/%s/metadata", volumeId)).entity(JsonBody.of("metadata", metadata)).execute().getMetadata();
+        return metadataOf(put(CinderMetadata.class, uri("/volumes/%s/metadata", volumeId)).entity(JsonBody.of("metadata", metadata)).execute());
+    }
+
+    /** @return the metadata of a response, or an empty map when the resource was not found (404 reads as null) */
+    private static Map<String, String> metadataOf(CinderMetadata result) {
+        return result == null || result.getMetadata() == null ? Collections.emptyMap() : result.getMetadata();
     }
 
     @Override
@@ -418,8 +423,8 @@ public class BlockVolumeServiceImpl extends BaseBlockStorageServices implements 
     public Map<String, String> setImageMetadata(String volumeId, Map<String, String> metadata) {
         Objects.requireNonNull(volumeId);
         Objects.requireNonNull(metadata);
-        return post(CinderMetadata.class, uri("/volumes/%s/action", volumeId))
-                .entity(JsonBody.of("os-set_image_metadata", Collections.singletonMap("metadata", metadata))).execute().getMetadata();
+        return metadataOf(post(CinderMetadata.class, uri("/volumes/%s/action", volumeId))
+                .entity(JsonBody.of("os-set_image_metadata", Collections.singletonMap("metadata", metadata))).execute());
     }
 
     @Override
