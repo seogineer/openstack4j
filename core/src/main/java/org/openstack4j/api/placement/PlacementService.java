@@ -66,4 +66,9 @@ public interface PlacementService extends RestService {
      */
     org.openstack4j.api.placement.v1.AllocationService allocations();
 
+    /**
+     * Scheduling candidates for a set of resource requests.
+     */
+    org.openstack4j.api.placement.v1.AllocationCandidateService allocationCandidates();
+
 }
