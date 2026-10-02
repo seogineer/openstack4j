@@ -69,4 +69,38 @@ public interface BlockVolumeSnapshotService extends RestService {
      * Lists snapshots with details using typed filters ({@code GET /snapshots/detail}).
      */
     List<? extends VolumeSnapshot> listDetail(SnapshotListOptions options);
+
+    /** All metadata of a snapshot ({@code GET /snapshots/{id}/metadata}). */
+    Map<String, String> metadata(String snapshotId);
+
+    /** Adds or updates metadata keys ({@code POST /snapshots/{id}/metadata}). */
+    Map<String, String> setMetadata(String snapshotId, Map<String, String> metadata);
+
+    /** Replaces all metadata ({@code PUT /snapshots/{id}/metadata}). */
+    Map<String, String> replaceMetadata(String snapshotId, Map<String, String> metadata);
+
+    /** One metadata value ({@code GET /snapshots/{id}/metadata/{key}}), or {@code null}. */
+    String metadataItem(String snapshotId, String key);
+
+    /** Sets one metadata value ({@code PUT /snapshots/{id}/metadata/{key}}). */
+    String updateMetadataItem(String snapshotId, String key, String value);
+
+    /** Deletes one metadata key ({@code DELETE /snapshots/{id}/metadata/{key}}). */
+    ActionResponse deleteMetadataItem(String snapshotId, String key);
+
+    /** Resets the status ({@code os-reset_status}; admin). */
+    ActionResponse resetStatus(String snapshotId, String status);
+
+    /** Force-deletes the snapshot ({@code os-force_delete}; admin). */
+    ActionResponse forceDelete(String snapshotId);
+
+    /**
+     * Updates status and progress ({@code os-update_snapshot_status}).
+     *
+     * @param progress optional progress such as {@code 80%}, or {@code null}
+     */
+    ActionResponse updateStatus(String snapshotId, String status, String progress);
+
+    /** Removes the snapshot from Cinder without deleting it on the backend ({@code os-unmanage}; admin). */
+    ActionResponse unmanage(String snapshotId);
 }

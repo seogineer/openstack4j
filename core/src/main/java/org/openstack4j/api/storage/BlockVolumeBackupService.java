@@ -9,6 +9,7 @@ import org.openstack4j.model.storage.block.VolumeBackup;
 import org.openstack4j.model.storage.block.VolumeBackupCreate;
 import org.openstack4j.model.storage.block.VolumeBackupRestore;
 import org.openstack4j.model.storage.block.options.BackupListOptions;
+import org.openstack4j.model.storage.block.BackupRecord;
 
 
 /**
@@ -73,4 +74,22 @@ public interface BlockVolumeBackupService extends RestService {
      * Lists backups with details using typed filters ({@code GET /backups/detail}).
      */
     List<? extends VolumeBackup> list(BackupListOptions options);
+
+    /** Updates name and/or description ({@code PUT /backups/{id}}, 3.9+). */
+    VolumeBackup update(String backupId, String name, String description);
+
+    /** Updates name, description and/or metadata ({@code PUT /backups/{id}}; metadata 3.43+). */
+    VolumeBackup update(String backupId, String name, String description, Map<String, String> metadata);
+
+    /** Exports the backup record for import on another deployment ({@code GET /backups/{id}/export_record}; admin). */
+    BackupRecord exportRecord(String backupId);
+
+    /** Imports a backup record ({@code POST /backups/import_record}; admin). */
+    VolumeBackup importRecord(String backupService, String backupUrl);
+
+    /** Force-deletes the backup ({@code os-force_delete}; admin). */
+    ActionResponse forceDelete(String backupId);
+
+    /** Resets the status ({@code os-reset_status}; admin). */
+    ActionResponse resetStatus(String backupId, String status);
 }
