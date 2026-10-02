@@ -1,6 +1,8 @@
 package org.openstack4j.openstack.compute.domain;
 
 import java.util.Date;
+
+import org.openstack4j.openstack.compute.internal.NovaServerActionEvent;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,6 +28,10 @@ public class NovaInstanceAction implements InstanceAction {
     private Date startTime;
     @JsonProperty("user_id")
     private String userId;
+    @JsonProperty("updated_at")
+    private Date updatedAt;
+    @JsonProperty("events")
+    private List<NovaServerActionEvent> events;
 
     public NovaInstanceAction() {
 
@@ -71,6 +77,16 @@ public class NovaInstanceAction implements InstanceAction {
         return new ToStringHelper(this).add("action", action).add("instance_uuid", instanceUuid)
                 .add("message", message).add("project_id", projectId).add("request_id", requestId)
                 .add("start_time", startTime).add("user_id", userId).toString();
+    }
+
+    @Override
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @Override
+    public List<NovaServerActionEvent> getEvents() {
+        return events;
     }
 
     public static class NovaInstanceActions extends ListResult<NovaInstanceAction> {

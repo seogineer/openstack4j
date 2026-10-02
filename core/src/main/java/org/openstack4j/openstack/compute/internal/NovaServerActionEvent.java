@@ -23,6 +23,12 @@ public class NovaServerActionEvent implements ServerActionEvent {
     private String result;
     @JsonProperty("traceback")
     private String traceback;
+    @JsonProperty("host")
+    private String host;
+    @JsonProperty("hostId")
+    private String hostId;
+    @JsonProperty("details")
+    private String details;
 
     public NovaServerActionEvent(String finish_time, String start_time, String traceback, String event, String result) {
         this.start_time = start_time;
@@ -76,6 +82,21 @@ public class NovaServerActionEvent implements ServerActionEvent {
     @Override
     public ServerActionEventBuilder toBuilder() {
         return new EventConcreteBuilder(this);
+    }
+
+    @Override
+    public String getHost() {
+        return host;
+    }
+
+    @Override
+    public String getHostId() {
+        return hostId;
+    }
+
+    @Override
+    public String getDetails() {
+        return details;
     }
 
     public static class EventConcreteBuilder implements ServerActionEventBuilder {

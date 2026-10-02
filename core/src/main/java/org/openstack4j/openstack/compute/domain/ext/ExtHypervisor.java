@@ -3,6 +3,7 @@ package org.openstack4j.openstack.compute.domain.ext;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.util.ToStringHelper;
@@ -48,6 +49,10 @@ public class ExtHypervisor implements Hypervisor {
     private int localMemoryUsed;
     @JsonProperty("service")
     private HypervisorService service;
+    @JsonProperty("servers")
+    private List<HypervisorServerImpl> servers;
+    @JsonProperty("uptime")
+    private String uptime;
 
     @JsonProperty("cpu_info")
     private HypervisorCPUInfo cpuInfo;
@@ -176,6 +181,33 @@ public class ExtHypervisor implements Hypervisor {
                 .add("status", status)
                 .add("state", state)
                 .toString();
+    }
+
+    @Override
+    public List<HypervisorServerImpl> getServers() {
+        return servers;
+    }
+
+    @Override
+    public String getUptime() {
+        return uptime;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class HypervisorServerImpl implements HypervisorServer {
+        private static final long serialVersionUID = 1L;
+        private String uuid;
+        private String name;
+
+        @Override
+        public String getUuid() {
+            return uuid;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
     }
 
     @JsonRootName("service")

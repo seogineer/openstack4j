@@ -43,6 +43,14 @@ public class ExtMigration implements Migration {
     String newInstanceTypeId;
     @JsonProperty("old_instance_type_id")
     String oldInstanceTypeId;
+    @JsonProperty("migration_type")
+    String migrationType;
+    @JsonProperty("uuid")
+    String uuid;
+    @JsonProperty("user_id")
+    String userId;
+    @JsonProperty("project_id")
+    String projectId;
 
     @Override
     public String getId() {
@@ -112,6 +120,26 @@ public class ExtMigration implements Migration {
                 .add("destNode", destNode).add("sourceCompute", sourceCompute).add("sourceNode", sourceNode)
                 .add("newInstanceTypeId at", newInstanceTypeId).add("oldInstanceTypeId", oldInstanceTypeId)
                 .toString();
+    }
+
+    @Override
+    public String getMigrationType() {
+        return migrationType;
+    }
+
+    @Override
+    public String getUuid() {
+        return uuid;
+    }
+
+    @Override
+    public String getUserId() {
+        return userId;
+    }
+
+    @Override
+    public String getProjectId() {
+        return projectId;
     }
 
     public static class Migrations extends ListResult<ExtMigration> {
