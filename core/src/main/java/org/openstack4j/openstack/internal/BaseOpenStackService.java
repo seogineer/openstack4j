@@ -106,10 +106,18 @@ public class BaseOpenStackService {
                 .method(method).path(path);
         Map<String, String> headers = ses.getHeaders();
         if (headers != null && headers.size() > 0) {
-            return new Invocation<>(req, serviceType, endpointFunc).headers(headers);
+            return decorate(new Invocation<>(req, serviceType, endpointFunc).headers(headers));
         } else {
-            return new Invocation<>(req, serviceType, endpointFunc);
+            return decorate(new Invocation<>(req, serviceType, endpointFunc));
         }
+    }
+
+    /**
+     * Hook for subclasses to adjust every request this service builds (for example to add microversion headers).
+     * The default returns the invocation unchanged.
+     */
+    protected <R> Invocation<R> decorate(Invocation<R> invocation) {
+        return invocation;
     }
 
     protected int getServiceVersion() {
