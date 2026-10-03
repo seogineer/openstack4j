@@ -94,4 +94,14 @@ public class IdentityServiceImpl extends BaseIdentityServices implements Identit
     public EndpointPolicyService endpointPolicies() {
         return Apis.get(EndpointPolicyService.class);
     }
+
+    @Override
+    public RegisteredLimitService registeredLimits() {
+        return Apis.get(RegisteredLimitService.class);
+    }
+
+    @Override
+    public LimitService limits() {
+        return Apis.get(LimitService.class);
+    }
 }
