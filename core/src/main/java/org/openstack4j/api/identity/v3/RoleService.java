@@ -1,5 +1,6 @@
 package org.openstack4j.api.identity.v3;
 
+import org.openstack4j.model.identity.v3.RoleInference;
 import java.util.List;
 
 import org.openstack4j.common.RestService;
@@ -195,4 +196,163 @@ public interface RoleService extends RestService {
      * @return the ActionResponse
      */
     ActionResponse checkDomainGroupRole(String domainId, String groupId, String roleId);
+
+    /**
+     * Grants a role on the domain that every project in its subtree inherits (OS-INHERIT).
+     *
+     * @param domainId the domain
+     * @param userId  the user
+     * @param roleId the role
+     * @return the action response
+     */
+    ActionResponse grantInheritedRoleToUserOnDomain(String domainId, String userId, String roleId);
+
+    /**
+     * @param domainId the domain
+     * @param userId  the user
+     * @param roleId the role
+     * @return the action response
+     */
+    ActionResponse revokeInheritedRoleFromUserOnDomain(String domainId, String userId, String roleId);
+
+    /**
+     * @param domainId the domain
+     * @param userId  the user
+     * @param roleId the role
+     * @return success when the inherited assignment exists
+     */
+    ActionResponse checkInheritedRoleOfUserOnDomain(String domainId, String userId, String roleId);
+
+    /**
+     * @param domainId the domain
+     * @param userId   the user
+     * @return the roles the user has on the domain's projects through inheritance
+     */
+    List<? extends Role> listInheritedRolesOfUserOnDomain(String domainId, String userId);
+
+    /**
+     * Grants a role on the domain that every project in its subtree inherits (OS-INHERIT).
+     *
+     * @param domainId the domain
+     * @param groupId  the group
+     * @param roleId the role
+     * @return the action response
+     */
+    ActionResponse grantInheritedRoleToGroupOnDomain(String domainId, String groupId, String roleId);
+
+    /**
+     * @param domainId the domain
+     * @param groupId  the group
+     * @param roleId the role
+     * @return the action response
+     */
+    ActionResponse revokeInheritedRoleFromGroupOnDomain(String domainId, String groupId, String roleId);
+
+    /**
+     * @param domainId the domain
+     * @param groupId  the group
+     * @param roleId the role
+     * @return success when the inherited assignment exists
+     */
+    ActionResponse checkInheritedRoleOfGroupOnDomain(String domainId, String groupId, String roleId);
+
+    /**
+     * @param domainId the domain
+     * @param groupId   the group
+     * @return the roles the group has on the domain's projects through inheritance
+     */
+    List<? extends Role> listInheritedRolesOfGroupOnDomain(String domainId, String groupId);
+
+    /**
+     * Grants a role on the project that every project in its subtree inherits (OS-INHERIT).
+     *
+     * @param projectId the project
+     * @param userId  the user
+     * @param roleId the role
+     * @return the action response
+     */
+    ActionResponse grantInheritedRoleToUserOnProject(String projectId, String userId, String roleId);
+
+    /**
+     * @param projectId the project
+     * @param userId  the user
+     * @param roleId the role
+     * @return the action response
+     */
+    ActionResponse revokeInheritedRoleFromUserOnProject(String projectId, String userId, String roleId);
+
+    /**
+     * @param projectId the project
+     * @param userId  the user
+     * @param roleId the role
+     * @return success when the inherited assignment exists
+     */
+    ActionResponse checkInheritedRoleOfUserOnProject(String projectId, String userId, String roleId);
+
+    /**
+     * Grants a role on the project that every project in its subtree inherits (OS-INHERIT).
+     *
+     * @param projectId the project
+     * @param groupId  the group
+     * @param roleId the role
+     * @return the action response
+     */
+    ActionResponse grantInheritedRoleToGroupOnProject(String projectId, String groupId, String roleId);
+
+    /**
+     * @param projectId the project
+     * @param groupId  the group
+     * @param roleId the role
+     * @return the action response
+     */
+    ActionResponse revokeInheritedRoleFromGroupOnProject(String projectId, String groupId, String roleId);
+
+    /**
+     * @param projectId the project
+     * @param groupId  the group
+     * @param roleId the role
+     * @return success when the inherited assignment exists
+     */
+    ActionResponse checkInheritedRoleOfGroupOnProject(String projectId, String groupId, String roleId);
+
+    /**
+     * @param priorRoleId the prior role
+     * @return the roles the prior role implies ({@code GET /roles/{id}/implies}); one inference with all implied roles
+     */
+    List<? extends RoleInference> listImpliedRoles(String priorRoleId);
+
+    /**
+     * @param priorRoleId   the prior role
+     * @param impliedRoleId the implied role
+     * @return the inference rule
+     */
+    RoleInference getImpliedRole(String priorRoleId, String impliedRoleId);
+
+    /**
+     * @param priorRoleId   the prior role
+     * @param impliedRoleId the implied role
+     * @return success when the rule exists
+     */
+    ActionResponse checkImpliedRole(String priorRoleId, String impliedRoleId);
+
+    /**
+     * Makes the prior role imply another role.
+     *
+     * @param priorRoleId   the prior role
+     * @param impliedRoleId the implied role
+     * @return the created inference rule
+     */
+    RoleInference createImpliedRole(String priorRoleId, String impliedRoleId);
+
+    /**
+     * @param priorRoleId   the prior role
+     * @param impliedRoleId the implied role
+     * @return the action response
+     */
+    ActionResponse deleteImpliedRole(String priorRoleId, String impliedRoleId);
+
+    /**
+     * @return every inference rule ({@code GET /role_inferences})
+     */
+    List<? extends RoleInference> listRoleInferences();
 }
