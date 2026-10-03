@@ -124,4 +124,18 @@ public interface IdentityService extends RestService {
      * @return the EndpointPolicyService
      */
     EndpointPolicyService endpointPolicies();
+
+    /**
+     * Unified limits: registered limits.
+     *
+     * @return the RegisteredLimitService
+     */
+    RegisteredLimitService registeredLimits();
+
+    /**
+     * Unified limits: project/domain limits and the enforcement model.
+     *
+     * @return the LimitService
+     */
+    LimitService limits();
 }
