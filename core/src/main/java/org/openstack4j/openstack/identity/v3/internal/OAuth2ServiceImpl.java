@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.identity.v3.internal;
 
+import org.openstack4j.core.transport.ClientConstants;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -18,6 +19,7 @@ public class OAuth2ServiceImpl extends BaseIdentityServices implements OAuth2Ser
                 .getBytes(StandardCharsets.UTF_8));
         byte[] form = "grant_type=client_credentials".getBytes(StandardCharsets.UTF_8);
         return post(KeystoneOAuth2AccessToken.class, "/OS-OAUTH2/token")
+                .header(ClientConstants.HEADER_OS4J_AUTH, IdentityResponses.NO_REAUTH)
                 .header("Authorization", "Basic " + basic)
                 // entity(Payload) resets the content type to octet-stream, so set the form type after it
                 .entity(Payloads.create(new ByteArrayInputStream(form)))

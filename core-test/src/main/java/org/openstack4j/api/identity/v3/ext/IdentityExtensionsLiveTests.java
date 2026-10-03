@@ -178,5 +178,7 @@ public class IdentityExtensionsLiveTests {
         Assert.assertNotNull(client.identity().limits().model().getName());
         Assert.assertNotNull(client.identity().revocationEvents().list());
         Assert.assertFalse(client.identity().domains().defaultConfig().isEmpty());
+        Assert.assertNotNull(client.identity().domains().defaultConfigOption("identity", "driver"));
+        Assert.assertTrue(client.identity().domains().defaultConfigGroup("ldap").containsKey("url"));
     }
 }

@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.identity.v3.internal;
 
+import org.openstack4j.core.transport.ClientConstants;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -59,7 +60,7 @@ public class OAuth1ServiceImpl extends BaseIdentityServices implements OAuth1Ser
 
     /** Signs against the exact URL the request goes to, then sends it with an empty body. */
     private OAuth1Token signedPost(String path, Map<String, String> params, String consumerSecret, String tokenSecret, String projectId) {
-        BaseOpenStackService.Invocation<Void> invocation = post(Void.class, path);
+        BaseOpenStackService.Invocation<Void> invocation = post(Void.class, path).header(ClientConstants.HEADER_OS4J_AUTH, IdentityResponses.NO_REAUTH);
         String url = invocation.getRequest().getUrl();
         invocation.header("Authorization", OAuth1Signer.header(params, OAuth1Signer.signature("POST", url, params, consumerSecret, tokenSecret)));
         if (projectId != null)

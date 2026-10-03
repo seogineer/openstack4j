@@ -10,6 +10,13 @@ import org.openstack4j.core.transport.HttpResponse;
 /** Reads Keystone responses that are not JSON (SAML XML, OAuth1 form bodies). */
 final class IdentityResponses {
 
+    /**
+     * Value of {@link org.openstack4j.core.transport.ClientConstants#HEADER_OS4J_AUTH}: the connectors do not re-authenticate the
+     * session on a 401 for requests carrying it. Delegated-auth endpoints answer 401 for their own credentials (consumer secret,
+     * client secret, assertion token), which must reach the caller instead of triggering a session re-authentication.
+     */
+    static final String NO_REAUTH = "Delegated";
+
     private IdentityResponses() {
     }
 

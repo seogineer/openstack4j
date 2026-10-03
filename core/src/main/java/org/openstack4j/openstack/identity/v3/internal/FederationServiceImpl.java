@@ -30,23 +30,23 @@ public class FederationServiceImpl extends BaseIdentityServices implements Feder
 
     @Override
     public String saml2Metadata() {
-        return IdentityResponses.text(get(Void.class, "/OS-FEDERATION/saml2/metadata").executeWithResponse());
+        return IdentityResponses.text(get(Void.class, "/OS-FEDERATION/saml2/metadata").header(ClientConstants.HEADER_OS4J_AUTH, IdentityResponses.NO_REAUTH).executeWithResponse());
     }
 
     @Override
     public String saml2Assertion(String tokenId, String serviceProviderId) {
-        return IdentityResponses.text(post(Void.class, "/auth/OS-FEDERATION/saml2").entity(assertionRequest(tokenId, serviceProviderId)).executeWithResponse());
+        return IdentityResponses.text(post(Void.class, "/auth/OS-FEDERATION/saml2").header(ClientConstants.HEADER_OS4J_AUTH, IdentityResponses.NO_REAUTH).entity(assertionRequest(tokenId, serviceProviderId)).executeWithResponse());
     }
 
     @Override
     public String ecpAssertion(String tokenId, String serviceProviderId) {
-        return IdentityResponses.text(post(Void.class, "/auth/OS-FEDERATION/saml2/ecp").entity(assertionRequest(tokenId, serviceProviderId)).executeWithResponse());
+        return IdentityResponses.text(post(Void.class, "/auth/OS-FEDERATION/saml2/ecp").header(ClientConstants.HEADER_OS4J_AUTH, IdentityResponses.NO_REAUTH).entity(assertionRequest(tokenId, serviceProviderId)).executeWithResponse());
     }
 
     @Override
     public Token federatedToken(String idpId, String protocolId, Map<String, String> headers) {
         HttpResponse response = get(Void.class, "/OS-FEDERATION/identity_providers/", Objects.requireNonNull(idpId), "/protocols/",
-                Objects.requireNonNull(protocolId), "/auth").headers(headers == null ? Map.of() : headers).executeWithResponse();
+                Objects.requireNonNull(protocolId), "/auth").header(ClientConstants.HEADER_OS4J_AUTH, IdentityResponses.NO_REAUTH).headers(headers == null ? Map.of() : headers).executeWithResponse();
         KeystoneToken token = response.getEntity(KeystoneToken.class);
         if (token != null)
             token.setId(response.header(ClientConstants.HEADER_X_SUBJECT_TOKEN));
