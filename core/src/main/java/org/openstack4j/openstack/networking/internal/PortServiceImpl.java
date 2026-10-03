@@ -1,5 +1,10 @@
 package org.openstack4j.openstack.networking.internal;
 
+import org.openstack4j.openstack.internal.microversion.JsonBody;
+import org.openstack4j.openstack.networking.domain.ext.NeutronPortBinding.PortBindings;
+import org.openstack4j.openstack.networking.domain.ext.NeutronPortBinding;
+import org.openstack4j.model.network.options.PortBindingOptions;
+import org.openstack4j.model.network.ext.PortBinding;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -102,4 +107,9 @@ public class PortServiceImpl extends BaseNetworkingServices implements PortServi
         port.setId(null);
         return portId;
     }
+
+    @Override public List<? extends PortBinding> listBindings(String portId) { return get(PortBindings.class, uri("/ports/%s/bindings", Objects.requireNonNull(portId))).execute().getList(); }
+    @Override public PortBinding createBinding(String portId, PortBindingOptions options) { return post(NeutronPortBinding.class, uri("/ports/%s/bindings/", Objects.requireNonNull(portId))).entity(JsonBody.of("binding", options.toMap())).execute(); }
+    @Override public PortBinding activateBinding(String portId, String host) { return put(NeutronPortBinding.class, uri("/ports/%s/bindings/%s/activate", Objects.requireNonNull(portId), Objects.requireNonNull(host))).execute(); }
+    @Override public ActionResponse deleteBinding(String portId, String host) { return deleteWithResponse(uri("/ports/%s/bindings/%s", Objects.requireNonNull(portId), Objects.requireNonNull(host))).execute(); }
 }

@@ -1,5 +1,11 @@
 package org.openstack4j.openstack.networking.internal.ext;
 
+import org.openstack4j.openstack.internal.microversion.JsonBody;
+import org.openstack4j.openstack.networking.domain.NeutronRouter.Routers;
+import org.openstack4j.openstack.networking.domain.NeutronNetwork.Networks;
+import org.openstack4j.model.network.Router;
+import org.openstack4j.model.network.Network;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,4 +56,21 @@ public class AgentServiceImpl extends BaseNetworkingServices implements AgentSer
         Objects.requireNonNull(agentId);
         return deleteWithResponse(uri("/agents/%s/dhcp-networks/%s", agentId, networkId)).execute(ExecutionOptions.<ActionResponse>create(PropagateOnStatus.on(404)));
     }
+
+    @Override public ActionResponse delete(String agentId) { return deleteWithResponse(uri("/agents/%s", Objects.requireNonNull(agentId))).execute(); }
+    @Override public List<? extends Network> listDhcpNetworks(String agentId) { return get(Networks.class, uri("/agents/%s/dhcp-networks", Objects.requireNonNull(agentId))).execute().getList(); }
+    @Override public List<? extends Router> listL3Routers(String agentId) { return get(Routers.class, uri("/agents/%s/l3-routers", Objects.requireNonNull(agentId))).execute().getList(); }
+
+    @Override
+    public ActionResponse addRouterToL3Agent(String agentId, String routerId) {
+        return postWithResponse(uri("/agents/%s/l3-routers", Objects.requireNonNull(agentId)))
+                .entity(JsonBody.of(Collections.singletonMap("router_id", Objects.requireNonNull(routerId)))).execute();
+    }
+
+    @Override
+    public ActionResponse removeRouterFromL3Agent(String agentId, String routerId) {
+        return deleteWithResponse(uri("/agents/%s/l3-routers/%s", Objects.requireNonNull(agentId), Objects.requireNonNull(routerId))).execute();
+    }
+
+    @Override public List<? extends Agent> listDhcpAgentsHostingNetwork(String networkId) { return get(Agents.class, uri("/networks/%s/dhcp-agents", Objects.requireNonNull(networkId))).execute().getList(); }
 }
