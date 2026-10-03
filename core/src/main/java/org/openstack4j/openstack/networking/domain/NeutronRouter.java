@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.networking.domain;
 
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,9 @@ public class NeutronRouter implements Router {
 
     @JsonProperty("distributed")
     private Boolean distributed;
+
+    @JsonProperty(value = "external_gateways", access = JsonProperty.Access.WRITE_ONLY)
+    private List<Map<String, Object>> externalGateways;
 
     public static RouterBuilder builder() {
         return new RouterConcreteBuilder();
@@ -313,5 +317,10 @@ public class NeutronRouter implements Router {
             m.distributed = distributed;
             return this;
         }
+    }
+
+    @Override
+    public List<Map<String, Object>> getExternalGateways() {
+        return externalGateways;
     }
 }

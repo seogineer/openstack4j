@@ -1,5 +1,6 @@
 package org.openstack4j.model.network;
 
+import java.util.Map;
 import java.util.List;
 
 import org.openstack4j.common.Buildable;
@@ -45,4 +46,9 @@ public interface Router extends Resource, Buildable<RouterBuilder> {
      * true indicates a distributed router. It is available when dvr extension is enabled.
      */
     Boolean getDistributed();
+
+    /** @return the gateways of a multi-homed router (external-gateway-multihoming); null if the server did not send them */
+    default List<Map<String, Object>> getExternalGateways() {
+        return null;
+    }
 }
