@@ -123,4 +123,11 @@ public interface NetworkingService extends RestService {
      * @return the AutoAllocatedTopologyService
      */
     org.openstack4j.api.networking.ext.AutoAllocatedTopologyService autoAllocatedTopology();
+
+    /**
+     * QoS rule types and DSCP/minimum bandwidth/packet rate rules, including alias rules.
+     *
+     * @return the QosRuleService
+     */
+    org.openstack4j.api.networking.ext.QosRuleService qosRules();
 }
