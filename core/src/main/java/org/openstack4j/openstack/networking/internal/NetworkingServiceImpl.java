@@ -195,4 +195,14 @@ public class NetworkingServiceImpl implements NetworkingService {
     public org.openstack4j.api.networking.ext.RbacPolicyService rbacPolicies() {
         return Apis.get(org.openstack4j.api.networking.ext.RbacPolicyService.class);
     }
+
+    @Override
+    public org.openstack4j.api.networking.ext.DefaultSecurityGroupRuleService defaultSecurityGroupRules() {
+        return Apis.get(org.openstack4j.api.networking.ext.DefaultSecurityGroupRuleService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.SecurityGroupDefaultStatefulnessService securityGroupDefaultStatefulness() {
+        return Apis.get(org.openstack4j.api.networking.ext.SecurityGroupDefaultStatefulnessService.class);
+    }
 }
