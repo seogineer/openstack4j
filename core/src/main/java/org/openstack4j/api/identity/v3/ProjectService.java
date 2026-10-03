@@ -87,4 +87,46 @@ public interface ProjectService extends RestService {
      */
     List<? extends Project> list(ProjectListOptions options);
 
+
+    /**
+     * @param projectId the project
+     * @return the project's tags ({@code GET /projects/{id}/tags})
+     */
+    List<String> tags(String projectId);
+
+    /**
+     * @param projectId the project
+     * @param tag       the tag
+     * @return success when the project has the tag, failure (404) otherwise
+     */
+    ActionResponse hasTag(String projectId, String tag);
+
+    /**
+     * @param projectId the project
+     * @param tag       the tag to add; may contain spaces and other characters, which are encoded in the path
+     * @return the action response
+     */
+    ActionResponse addTag(String projectId, String tag);
+
+    /**
+     * Replaces all tags of the project.
+     *
+     * @param projectId the project
+     * @param tags      the new tags
+     * @return the project's tags after the update
+     */
+    List<String> replaceTags(String projectId, List<String> tags);
+
+    /**
+     * @param projectId the project
+     * @param tag       the tag to remove
+     * @return the action response
+     */
+    ActionResponse removeTag(String projectId, String tag);
+
+    /**
+     * @param projectId the project
+     * @return the action response
+     */
+    ActionResponse removeAllTags(String projectId);
 }

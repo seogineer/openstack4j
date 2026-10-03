@@ -1,5 +1,8 @@
 package org.openstack4j.openstack.identity.v3.internal;
 
+import org.openstack4j.openstack.identity.v3.domain.KeystoneSystemScopes;
+import java.util.Collections;
+import java.util.Map;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,4 +61,10 @@ public class TokenServiceImpl extends BaseIdentityServices implements TokenServi
         return get(Domains.class, uri(PATH_DOMAIN_SCOPES)).header(HEADER_X_SUBJECT_TOKEN, tokenId).execute().getList();
     }
 
+
+    @Override
+    public List<Map<String, Object>> getSystemScopes(String tokenId) {
+        KeystoneSystemScopes scopes = get(KeystoneSystemScopes.class, uri("/auth/system")).header(HEADER_X_SUBJECT_TOKEN, tokenId).execute();
+        return scopes == null || scopes.getSystem() == null ? Collections.emptyList() : scopes.getSystem();
+    }
 }
