@@ -1,5 +1,7 @@
 package org.openstack4j.api.networking.ext;
 
+import org.openstack4j.model.network.Router;
+import org.openstack4j.model.network.Network;
 import java.util.List;
 
 import org.openstack4j.common.RestService;
@@ -55,4 +57,42 @@ public interface AgentService extends RestService {
      */
     ActionResponse detachNetworkToDhcpAgent(String agentId, String networkId);
 
+
+    /**
+     * @param agentId the agent
+     * @return the action response
+     */
+    ActionResponse delete(String agentId);
+
+    /**
+     * @param agentId the DHCP agent
+     * @return the networks the agent hosts (dhcp_agent_scheduler)
+     */
+    List<? extends Network> listDhcpNetworks(String agentId);
+
+    /**
+     * @param agentId the L3 agent
+     * @return the routers the agent hosts (l3_agent_scheduler)
+     */
+    List<? extends Router> listL3Routers(String agentId);
+
+    /**
+     * @param agentId  the L3 agent
+     * @param routerId the router to schedule on it
+     * @return the action response
+     */
+    ActionResponse addRouterToL3Agent(String agentId, String routerId);
+
+    /**
+     * @param agentId  the L3 agent
+     * @param routerId the router to remove from it
+     * @return the action response
+     */
+    ActionResponse removeRouterFromL3Agent(String agentId, String routerId);
+
+    /**
+     * @param networkId the network
+     * @return the DHCP agents hosting the network
+     */
+    List<? extends Agent> listDhcpAgentsHostingNetwork(String networkId);
 }

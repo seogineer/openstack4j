@@ -1,5 +1,7 @@
 package org.openstack4j.api.networking;
 
+import org.openstack4j.model.network.options.PortBindingOptions;
+import org.openstack4j.model.network.ext.PortBinding;
 import java.util.List;
 import java.util.Map;
 
@@ -78,4 +80,33 @@ public interface PortService extends RestService {
      * @return the updated port
      */
     Port update(Port port);
+
+    /**
+     * @param portId the port
+     * @return the bindings of the port (binding-extended)
+     */
+    List<? extends PortBinding> listBindings(String portId);
+
+    /**
+     * Creates an inactive binding on another host, as during live migration.
+     *
+     * @param portId  the port
+     * @param options the binding (host, vnic_type, profile)
+     * @return the created binding
+     */
+    PortBinding createBinding(String portId, PortBindingOptions options);
+
+    /**
+     * @param portId the port
+     * @param host   the host whose binding becomes active
+     * @return the activated binding
+     */
+    PortBinding activateBinding(String portId, String host);
+
+    /**
+     * @param portId the port
+     * @param host   the host of the binding to delete
+     * @return the action response
+     */
+    ActionResponse deleteBinding(String portId, String host);
 }
