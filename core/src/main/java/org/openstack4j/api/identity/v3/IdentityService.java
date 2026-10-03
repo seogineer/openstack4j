@@ -110,4 +110,18 @@ public interface IdentityService extends RestService {
      * @return the TrustService
      */
     TrustService trusts();
+
+    /**
+     * OS-EP-FILTER endpoint groups and project-endpoint associations.
+     *
+     * @return the EndpointFilterService
+     */
+    EndpointFilterService endpointFilter();
+
+    /**
+     * OS-ENDPOINT-POLICY policy associations.
+     *
+     * @return the EndpointPolicyService
+     */
+    EndpointPolicyService endpointPolicies();
 }
