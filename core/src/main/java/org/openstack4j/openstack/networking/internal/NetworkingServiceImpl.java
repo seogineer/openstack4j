@@ -170,4 +170,9 @@ public class NetworkingServiceImpl implements NetworkingService {
     public org.openstack4j.api.networking.ext.AutoAllocatedTopologyService autoAllocatedTopology() {
         return Apis.get(org.openstack4j.api.networking.ext.AutoAllocatedTopologyService.class);
     }
+
+    @Override
+    public org.openstack4j.api.networking.ext.QosRuleService qosRules() {
+        return Apis.get(org.openstack4j.api.networking.ext.QosRuleService.class);
+    }
 }
