@@ -1,5 +1,11 @@
 package org.openstack4j.openstack.identity.v3.internal;
 
+import org.openstack4j.openstack.internal.microversion.JsonBody;
+import org.openstack4j.openstack.identity.v3.domain.KeystoneDomainConfig;
+import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -56,4 +62,66 @@ public class DomainServiceImpl extends BaseIdentityServices implements DomainSer
         return get(Domains.class, uri(PATH_DOMAINS)).execute().getList();
     }
 
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Map<String, Object>> groups(KeystoneDomainConfig result) {
+        if (result == null || result.getConfig() == null)
+            return Collections.emptyMap();
+        Map<String, Map<String, Object>> out = new LinkedHashMap<>();
+        result.getConfig().forEach((k, v) -> out.put(k, v instanceof Map ? (Map<String, Object>) v : Collections.emptyMap()));
+        return out;
+    }
+
+    private static Map<String, Object> options(KeystoneDomainConfig result) {
+        return result == null || result.getConfig() == null ? Collections.emptyMap() : result.getConfig();
+    }
+
+    /** A single option comes back as {@code {"<option>": value}}. */
+    @SuppressWarnings("unchecked")
+    private static Object single(Map<String, Object> response, String option) {
+        return response == null ? null : response.get(option);
+    }
+
+    @Override public Map<String, Map<String, Object>> config(String domainId) { return groups(get(KeystoneDomainConfig.class, uri("/domains/%s/config", domainId)).execute()); }
+    @Override public Map<String, Object> configGroup(String domainId, String group) { return options(get(KeystoneDomainConfig.class, uri("/domains/%s/config/%s", domainId, group)).execute()); }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Object configOption(String domainId, String group, String option) {
+        return single(get(HashMap.class, uri("/domains/%s/config/%s/%s", domainId, group, option)).execute(), option);
+    }
+
+    @Override
+    public Map<String, Map<String, Object>> createConfig(String domainId, Map<String, Map<String, Object>> config) {
+        return groups(put(KeystoneDomainConfig.class, uri("/domains/%s/config", domainId)).entity(JsonBody.of("config", config)).execute());
+    }
+
+    @Override
+    public Map<String, Map<String, Object>> updateConfig(String domainId, Map<String, Map<String, Object>> config) {
+        return groups(patch(KeystoneDomainConfig.class, uri("/domains/%s/config", domainId)).entity(JsonBody.of("config", config)).execute());
+    }
+
+    @Override
+    public Map<String, Object> updateConfigGroup(String domainId, String group, Map<String, Object> options) {
+        return options(patch(KeystoneDomainConfig.class, uri("/domains/%s/config/%s", domainId, group)).entity(JsonBody.of("config", options)).execute());
+    }
+
+    @Override
+    public Object updateConfigOption(String domainId, String group, String option, Object value) {
+        Map<String, Object> body = new HashMap<>();
+        body.put(option, value);
+        return options(patch(KeystoneDomainConfig.class, uri("/domains/%s/config/%s/%s", domainId, group, option)).entity(JsonBody.of("config", body)).execute()).get(option);
+    }
+
+    @Override public ActionResponse deleteConfig(String domainId) { return deleteWithResponse(uri("/domains/%s/config", domainId)).execute(); }
+    @Override public ActionResponse deleteConfigGroup(String domainId, String group) { return deleteWithResponse(uri("/domains/%s/config/%s", domainId, group)).execute(); }
+    @Override public ActionResponse deleteConfigOption(String domainId, String group, String option) { return deleteWithResponse(uri("/domains/%s/config/%s/%s", domainId, group, option)).execute(); }
+    @Override public Map<String, Map<String, Object>> defaultConfig() { return groups(get(KeystoneDomainConfig.class, uri("/domains/config/default")).execute()); }
+    @Override public Map<String, Object> defaultConfigGroup(String group) { return options(get(KeystoneDomainConfig.class, uri("/domains/config/%s/default", group)).execute()); }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Object defaultConfigOption(String group, String option) {
+        return single(get(HashMap.class, uri("/domains/config/%s/%s/default", group, option)).execute(), option);
+    }
 }
