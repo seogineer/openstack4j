@@ -235,4 +235,14 @@ public class NetworkingServiceImpl implements NetworkingService {
     public org.openstack4j.api.networking.ext.NeutronServiceProfileService serviceProfiles() {
         return Apis.get(org.openstack4j.api.networking.ext.NeutronServiceProfileService.class);
     }
+
+    @Override
+    public org.openstack4j.api.networking.ext.MeteringService metering() {
+        return Apis.get(org.openstack4j.api.networking.ext.MeteringService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.NetworkLoggingService logging() {
+        return Apis.get(org.openstack4j.api.networking.ext.NetworkLoggingService.class);
+    }
 }
