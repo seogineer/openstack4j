@@ -205,4 +205,14 @@ public class NetworkingServiceImpl implements NetworkingService {
     public org.openstack4j.api.networking.ext.SecurityGroupDefaultStatefulnessService securityGroupDefaultStatefulness() {
         return Apis.get(org.openstack4j.api.networking.ext.SecurityGroupDefaultStatefulnessService.class);
     }
+
+    @Override
+    public org.openstack4j.api.networking.ext.SegmentService segments() {
+        return Apis.get(org.openstack4j.api.networking.ext.SegmentService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.NetworkSegmentRangeService networkSegmentRanges() {
+        return Apis.get(org.openstack4j.api.networking.ext.NetworkSegmentRangeService.class);
+    }
 }

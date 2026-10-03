@@ -172,4 +172,18 @@ public interface NetworkingService extends RestService {
      * @return the SecurityGroupDefaultStatefulnessService
      */
     org.openstack4j.api.networking.ext.SecurityGroupDefaultStatefulnessService securityGroupDefaultStatefulness();
+
+    /**
+     * Network segments.
+     *
+     * @return the SegmentService
+     */
+    org.openstack4j.api.networking.ext.SegmentService segments();
+
+    /**
+     * Network segment ranges.
+     *
+     * @return the NetworkSegmentRangeService
+     */
+    org.openstack4j.api.networking.ext.NetworkSegmentRangeService networkSegmentRanges();
 }
