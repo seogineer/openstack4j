@@ -1,5 +1,8 @@
 package org.openstack4j.openstack.networking.internal.ext;
 
+import org.openstack4j.openstack.internal.microversion.JsonBody;
+import org.openstack4j.model.network.options.PortForwardingUpdate;
+import java.util.Objects;
 import java.util.List;
 import java.util.Map;
 
@@ -58,5 +61,11 @@ public class PortForwardingServiceImpl extends BaseNetworkingServices implements
     @Override
     public PortForwarding create(String floatingIpId, PortForwarding portForwarding) {
         return post(FloatingIPPortForwarding.class, uri("/floatingips/%s/port_forwardings", floatingIpId)).entity(portForwarding).execute();
+    }
+
+    @Override
+    public PortForwarding update(String floatingIpId, String id, PortForwardingUpdate update) {
+        return put(FloatingIPPortForwarding.class, uri("/floatingips/%s/port_forwardings/%s", Objects.requireNonNull(floatingIpId), Objects.requireNonNull(id)))
+                .entity(JsonBody.of("port_forwarding", Objects.requireNonNull(update).toMap())).execute();
     }
 }

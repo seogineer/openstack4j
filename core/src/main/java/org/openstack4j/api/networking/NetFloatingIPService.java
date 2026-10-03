@@ -1,5 +1,6 @@
 package org.openstack4j.api.networking;
 
+import org.openstack4j.model.network.ext.FloatingIPPool;
 import java.util.List;
 import java.util.Map;
 
@@ -74,4 +75,9 @@ public interface NetFloatingIPService extends RestService {
      * @return the port forwarding Service API
      */
     PortForwardingService portForwarding();
+
+    /**
+     * @return the subnets floating IPs can be allocated from ({@code GET /floatingip_pools}, floatingip-pools)
+     */
+    List<? extends FloatingIPPool> listPools();
 }

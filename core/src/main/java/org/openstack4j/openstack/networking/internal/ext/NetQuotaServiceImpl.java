@@ -1,5 +1,9 @@
 package org.openstack4j.openstack.networking.internal.ext;
 
+import org.openstack4j.openstack.networking.domain.ext.NeutronQuotaDetails;
+import org.openstack4j.model.network.ext.QuotaDetail;
+import java.util.Collections;
+import java.util.Map;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,4 +56,15 @@ public class NetQuotaServiceImpl extends BaseNetworkingServices implements NetQu
         return deleteWithResponse(uri("/quotas/%s", tenantId)).execute();
     }
 
+
+    @Override
+    public NetQuota getDefault(String projectId) {
+        return get(NeutronNetQuota.class, uri("/quotas/%s/default", Objects.requireNonNull(projectId))).execute();
+    }
+
+    @Override
+    public Map<String, ? extends QuotaDetail> getDetails(String projectId) {
+        NeutronQuotaDetails details = get(NeutronQuotaDetails.class, uri("/quotas/%s/details.json", Objects.requireNonNull(projectId))).execute();
+        return details == null || details.getQuota() == null ? Collections.emptyMap() : details.getQuota();
+    }
 }

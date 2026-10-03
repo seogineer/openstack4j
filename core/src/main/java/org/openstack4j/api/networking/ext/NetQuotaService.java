@@ -1,5 +1,7 @@
 package org.openstack4j.api.networking.ext;
 
+import org.openstack4j.model.network.ext.QuotaDetail;
+import java.util.Map;
 import java.util.List;
 
 import org.openstack4j.common.RestService;
@@ -62,4 +64,16 @@ public interface NetQuotaService extends RestService {
      * @return the action response
      */
     ActionResponse reset(String tenantId);
+
+    /**
+     * @param projectId the project
+     * @return the default quotas a project gets ({@code GET /quotas/{id}/default})
+     */
+    NetQuota getDefault(String projectId);
+
+    /**
+     * @param projectId the project
+     * @return limit, used and reserved per resource ({@code GET /quotas/{id}/details.json}, quota_details)
+     */
+    Map<String, ? extends QuotaDetail> getDetails(String projectId);
 }
