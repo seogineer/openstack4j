@@ -214,4 +214,18 @@ public interface NetworkingService extends RestService {
      * @return the NeutronServiceProfileService
      */
     org.openstack4j.api.networking.ext.NeutronServiceProfileService serviceProfiles();
+
+    /**
+     * Metering labels and rules.
+     *
+     * @return the MeteringService
+     */
+    org.openstack4j.api.networking.ext.MeteringService metering();
+
+    /**
+     * Network logs.
+     *
+     * @return the NetworkLoggingService
+     */
+    org.openstack4j.api.networking.ext.NetworkLoggingService logging();
 }
