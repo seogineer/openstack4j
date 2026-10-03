@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.identity.v3.domain;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,6 +39,12 @@ public class KeystoneUser implements User {
     private String defaultProjectId;
     private Map<String, String> links;
     private Boolean enabled = true;
+    @JsonProperty(value = "options", access = JsonProperty.Access.WRITE_ONLY)
+    private Map<String, Object> options;
+    @JsonProperty(value = "password_expires_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date passwordExpiresAt;
+    @JsonProperty(value = "federated", access = JsonProperty.Access.WRITE_ONLY)
+    private List<Map<String, Object>> federated;
 
     /**
      * @return the user builder
@@ -86,6 +93,21 @@ public class KeystoneUser implements User {
     /**
      * @return the description of the user
      */
+    @Override
+    public Map<String, Object> getOptions() {
+        return options;
+    }
+
+    @Override
+    public Date getPasswordExpiresAt() {
+        return passwordExpiresAt;
+    }
+
+    @Override
+    public List<Map<String, Object>> getFederated() {
+        return federated;
+    }
+
     @Override
     public String getDescription() {
         return description;

@@ -1,5 +1,6 @@
 package org.openstack4j.api.identity.v3;
 
+import org.openstack4j.model.identity.v3.options.UserListOptions;
 import java.util.List;
 
 import org.openstack4j.common.RestService;
@@ -119,6 +120,14 @@ public interface UserService extends RestService {
      * @return list of users
      */
     List<? extends User> list();
+
+    /**
+     * Lists users matching the filters ({@code GET /v3/users?...}).
+     *
+     * @param options the filters
+     * @return the matching users
+     */
+    List<? extends User> list(UserListOptions options);
 
     /**
      * change password for user.

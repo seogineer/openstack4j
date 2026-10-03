@@ -42,6 +42,8 @@ public class KeystoneProject implements Project {
     private String parents;
     private Boolean enabled = true;
     private List<String> tags = new ArrayList<>();
+    @JsonProperty(value = "is_domain", access = JsonProperty.Access.WRITE_ONLY)
+    private Boolean isDomain;
 
     /**
      * Extra API properties served
@@ -173,6 +175,11 @@ public class KeystoneProject implements Project {
         return extra.get(key);
     }
 
+    @Override
+    public Boolean getIsDomain() {
+        return isDomain;
+    }
+
     @JsonAnyGetter
     public Map<String, String> getExtra() {
         return extra;
@@ -180,8 +187,7 @@ public class KeystoneProject implements Project {
 
     @JsonAnySetter
     public void setExtra(String key, String value) {
-        // is_domain is not necessary
-        // if we don't ignore this, this will be set into extra field.
+        // is_domain is a declared property now; kept here so a stray copy never lands in extra
         if (Objects.equals(key, "is_domain")) {
             return;
         }

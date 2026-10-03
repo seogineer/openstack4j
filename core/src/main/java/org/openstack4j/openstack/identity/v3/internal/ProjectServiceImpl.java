@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.identity.v3.internal;
 
+import org.openstack4j.model.identity.v3.options.ProjectListOptions;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,6 +63,11 @@ public class ProjectServiceImpl extends BaseIdentityServices implements ProjectS
     @Override
     public List<? extends Project> list() {
         return get(Projects.class, uri(PATH_PROJECTS)).execute().getList();
+    }
+
+    @Override
+    public List<? extends Project> list(ProjectListOptions options) {
+        return get(Projects.class, uri(PATH_PROJECTS)).params(Objects.requireNonNull(options).toQueryParams()).execute().getList();
     }
 
 }

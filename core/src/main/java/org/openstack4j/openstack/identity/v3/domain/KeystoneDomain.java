@@ -25,6 +25,8 @@ public class KeystoneDomain implements Domain {
     private String description;
     private Map<String, String> options = new HashMap<>();
     private Map<String, String> links;
+    @JsonProperty(value = "tags", access = JsonProperty.Access.WRITE_ONLY)
+    private List<String> tags;
     private boolean enabled;
 
     /**
@@ -61,6 +63,11 @@ public class KeystoneDomain implements Domain {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public List<String> getTags() {
+        return tags;
     }
 
     @Override

@@ -28,6 +28,8 @@ public class KeystoneRole implements Role {
     private String domainId;
     private Map<String, String> links;
     private Map<String, String> options = new HashMap<>();
+    @JsonProperty(value = "description", access = JsonProperty.Access.WRITE_ONLY)
+    private String description;
 
     public static RoleBuilder builder() {
         return new RoleConcreteBuilder();
@@ -60,6 +62,11 @@ public class KeystoneRole implements Role {
     @Override
     public String getDomainId() {
         return domainId;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     @Override

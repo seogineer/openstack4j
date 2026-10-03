@@ -80,4 +80,9 @@ public interface Project extends ModelEntity, Buildable<ProjectBuilder> {
      * @return list of tags
      */
     List<String> getTags();
+
+    /** @return whether the project acts as a domain; null if the server did not say */
+    default Boolean getIsDomain() {
+        return null;
+    }
 }
