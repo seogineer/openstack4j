@@ -1,5 +1,6 @@
 package org.openstack4j.api.networking.ext;
 
+import org.openstack4j.model.network.options.PortForwardingUpdate;
 import java.util.List;
 import java.util.Map;
 
@@ -57,4 +58,14 @@ public interface PortForwardingService extends RestService {
      * @return the floating IP port forwarding
      */
     PortForwarding create(String floatingIpId, PortForwarding portForwarding);
+
+    /**
+     * Updates a port forwarding; only the fields set in the update are sent.
+     *
+     * @param floatingIpId the floating IP
+     * @param id           the port forwarding
+     * @param update       the fields to change
+     * @return the updated port forwarding
+     */
+    PortForwarding update(String floatingIpId, String id, PortForwardingUpdate update);
 }

@@ -155,4 +155,19 @@ public class NetworkingServiceImpl implements NetworkingService {
         return Apis.get(NetQosPolicyBLRuleService.class);
     }
 
+
+    @Override
+    public org.openstack4j.api.networking.ext.NeutronExtensionService extensions() {
+        return Apis.get(org.openstack4j.api.networking.ext.NeutronExtensionService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.ServiceProviderService serviceProviders() {
+        return Apis.get(org.openstack4j.api.networking.ext.ServiceProviderService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.AutoAllocatedTopologyService autoAllocatedTopology() {
+        return Apis.get(org.openstack4j.api.networking.ext.AutoAllocatedTopologyService.class);
+    }
 }

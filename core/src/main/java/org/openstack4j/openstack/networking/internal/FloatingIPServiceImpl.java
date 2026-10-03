@@ -1,5 +1,7 @@
 package org.openstack4j.openstack.networking.internal;
 
+import org.openstack4j.openstack.networking.domain.ext.NeutronFloatingIPPool.FloatingIPPools;
+import org.openstack4j.model.network.ext.FloatingIPPool;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -102,5 +104,10 @@ public class FloatingIPServiceImpl extends BaseNetworkingServices implements Net
     @Override
     public PortForwardingService portForwarding() {
         return Apis.get(PortForwardingService.class);
+    }
+
+    @Override
+    public List<? extends FloatingIPPool> listPools() {
+        return get(FloatingIPPools.class, uri("/floatingip_pools")).execute().getList();
     }
 }

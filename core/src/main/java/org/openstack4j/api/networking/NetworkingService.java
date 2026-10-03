@@ -102,4 +102,25 @@ public interface NetworkingService extends RestService {
      */
     NetQosPolicyBLRuleService netQosPolicyBandwidthLimitRule();
 
+
+    /**
+     * Neutron API extensions: list, get, isEnabled.
+     *
+     * @return the NeutronExtensionService
+     */
+    org.openstack4j.api.networking.ext.NeutronExtensionService extensions();
+
+    /**
+     * Neutron service providers.
+     *
+     * @return the ServiceProviderService
+     */
+    org.openstack4j.api.networking.ext.ServiceProviderService serviceProviders();
+
+    /**
+     * Auto-allocated topology (get-me-a-network).
+     *
+     * @return the AutoAllocatedTopologyService
+     */
+    org.openstack4j.api.networking.ext.AutoAllocatedTopologyService autoAllocatedTopology();
 }
