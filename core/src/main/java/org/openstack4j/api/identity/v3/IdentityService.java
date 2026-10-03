@@ -138,4 +138,11 @@ public interface IdentityService extends RestService {
      * @return the LimitService
      */
     LimitService limits();
+
+    /**
+     * OS-FEDERATION: identity providers, protocols, mappings, service providers, SAML2 and federated tokens.
+     *
+     * @return the FederationService
+     */
+    FederationService federation();
 }

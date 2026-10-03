@@ -105,6 +105,10 @@ public class DefaultAPIProvider implements APIProvider {
         bind(ServiceEndpointService.class, ServiceEndpointServiceImpl.class);
         bind(CredentialService.class, CredentialServiceImpl.class);
         bind(UserService.class, UserServiceImpl.class);
+        bind(org.openstack4j.api.identity.v3.FederationService.class, org.openstack4j.openstack.identity.v3.internal.FederationServiceImpl.class);
+        bind(org.openstack4j.api.identity.v3.ServiceProviderService.class, org.openstack4j.openstack.identity.v3.internal.ServiceProviderServiceImpl.class);
+        bind(org.openstack4j.api.identity.v3.MappingService.class, org.openstack4j.openstack.identity.v3.internal.MappingServiceImpl.class);
+        bind(org.openstack4j.api.identity.v3.IdentityProviderService.class, org.openstack4j.openstack.identity.v3.internal.IdentityProviderServiceImpl.class);
         bind(org.openstack4j.api.identity.v3.LimitService.class, org.openstack4j.openstack.identity.v3.internal.LimitServiceImpl.class);
         bind(org.openstack4j.api.identity.v3.RegisteredLimitService.class, org.openstack4j.openstack.identity.v3.internal.RegisteredLimitServiceImpl.class);
         bind(org.openstack4j.api.identity.v3.EndpointPolicyService.class, org.openstack4j.openstack.identity.v3.internal.EndpointPolicyServiceImpl.class);

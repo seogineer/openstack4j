@@ -104,4 +104,9 @@ public class IdentityServiceImpl extends BaseIdentityServices implements Identit
     public LimitService limits() {
         return Apis.get(LimitService.class);
     }
+
+    @Override
+    public FederationService federation() {
+        return Apis.get(FederationService.class);
+    }
 }
