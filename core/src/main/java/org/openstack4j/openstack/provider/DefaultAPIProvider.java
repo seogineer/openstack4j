@@ -105,6 +105,7 @@ public class DefaultAPIProvider implements APIProvider {
         bind(ServiceEndpointService.class, ServiceEndpointServiceImpl.class);
         bind(CredentialService.class, CredentialServiceImpl.class);
         bind(UserService.class, UserServiceImpl.class);
+        bind(org.openstack4j.api.identity.v3.ApplicationCredentialService.class, org.openstack4j.openstack.identity.v3.internal.ApplicationCredentialServiceImpl.class);
         bind(ProjectService.class, ProjectServiceImpl.class);
         bind(RoleService.class, RoleServiceImpl.class);
         bind(DomainService.class, DomainServiceImpl.class);
