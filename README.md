@@ -110,6 +110,32 @@ os.blockStorage().groups().create(GroupCreate.create("g", groupTypeId, List.of(t
 - 새 기능은 필요한 최소 microversion 을 요청 전에 검사하고, 세션이 그 버전을 보내지 않으면(또는 꺼져 있으면) `MicroVersionException` 을 던집니다.
 - compute 와 block storage 의 microversion 상태는 서로 독립이며, 클라이언트 세션과 endpoint 별로 유지됩니다.
 
+## Identity v3 확장
+
+4.4.0 부터 Keystone 의 인증 방식과 확장 API(OS-*)를 지원합니다. 기존 인증 본문과 메서드는 바뀌지 않습니다.
+
+```java
+// application credential (scope 없이 — credential 자체가 project 에 묶여 있음)
+OSClientV3 os = OSFactory.builderV3().endpoint(url).applicationCredential(credentialId, secret).authenticate();
+
+// MFA(password + TOTP), system scope, trust scope
+OSFactory.builderV3().endpoint(url).credentials("alice", password, Identifier.byName("Default")).passcode("123456").authenticate();
+OSFactory.builderV3().endpoint(url).credentials("admin", password, Identifier.byName("Default")).scopeToSystem().authenticate();
+OSFactory.builderV3().endpoint(url).token(trusteeToken).scopeToTrust(trustId).authenticate();
+
+os.identity().applicationCredentials().create(userId, ApplicationCredentialCreate.create("ci").roleNames("member"));
+os.identity().projects().addTag(projectId, "prod");
+os.identity().projects().list(ProjectListOptions.create().tags("prod"));
+os.identity().trusts().create(TrustCreate.create(trustorId, trusteeId, false).projectId(projectId).roleNames("member"));
+os.identity().registeredLimits().create(List.of(RegisteredLimitCreate.create(computeServiceId, "cores", 20)));
+os.identity().federation().identityProviders().list();
+```
+
+- 새 accessor: `applicationCredentials()`, `trusts()`, `endpointFilter()`, `endpointPolicies()`, `limits()`, `registeredLimits()`, `federation()`, `oauth1()`(HMAC-SHA1 서명 포함), `oauth2()`, `revocationEvents()`, `systemRoles()`
+- 기존 서비스 보강: project tags, OS-INHERIT 상속 역할, implied roles·role inferences, domain configuration, access rules, `UserListOptions`/`ProjectListOptions`
+- TOTP 세션은 passcode 가 일회용이라 토큰이 만료되면 자동 재인증할 수 없습니다. 새 passcode 로 다시 `authenticate()` 하세요.
+- 같은 스레드에서 `authenticate()` 를 다시 하면 그 클라이언트가 현재 세션이 됩니다. 이전 클라이언트로 돌아가려면 `OSFactory.clientFromToken(token)` 을 쓰세요.
+
 ## 빌드
 
 ```bash

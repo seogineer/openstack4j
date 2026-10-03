@@ -1,3 +1,11 @@
+## 4.4.0
+
+- 인증: application credential(id 또는 name+user), TOTP(`passcode`, password+TOTP MFA), `scopeToSystem()`, `scopeToTrust()`; 토큰 `getSystem()`/`getApplicationCredential()`/`getTrust()`; application credential 세션의 재인증; trust/system scope 토큰의 세션 컨텍스트 NPE 수정
+- 모델 필드: user options/password_expires_at/federated, project is_domain, domain tags, role description; `UserListOptions`, `ProjectListOptions`(tags, tags-any, not-tags, not-tags-any)
+- 새 서비스: `applicationCredentials()`, `trusts()`, `endpointFilter()`, `endpointPolicies()`, `limits()`/`registeredLimits()`(unified limits), `federation()`(IdP·protocol·mapping·service provider, SAML2 metadata/assertion/ECP, federated token), `oauth1()`(RFC 5849 HMAC-SHA1 서명), `oauth2()`(client credentials), `revocationEvents()`, `systemRoles()`
+- 기존 서비스 보강: users access rules, project tags, `tokens().getSystemScopes()`, OS-INHERIT 14개, implied roles·role inferences, domain configuration 13개
+- 테스트: `IdentityExtensionsLiveTests`(개발용 Keystone 3.14 에서 9/9, `OS_TOKEN` 또는 password)
+
 ## 4.3.0
 
 - 공용 microversion 프레임워크: `MicroVersionSupport`(내부), 공개 `MicroVersionService<V>`/`MicroVersionInfo`. compute 는 내부만 위임(공개 API 불변)
