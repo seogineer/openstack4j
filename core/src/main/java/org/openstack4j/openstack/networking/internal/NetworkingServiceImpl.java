@@ -215,4 +215,14 @@ public class NetworkingServiceImpl implements NetworkingService {
     public org.openstack4j.api.networking.ext.NetworkSegmentRangeService networkSegmentRanges() {
         return Apis.get(org.openstack4j.api.networking.ext.NetworkSegmentRangeService.class);
     }
+
+    @Override
+    public org.openstack4j.api.networking.ext.LocalIpService localIps() {
+        return Apis.get(org.openstack4j.api.networking.ext.LocalIpService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.NdpProxyService ndpProxies() {
+        return Apis.get(org.openstack4j.api.networking.ext.NdpProxyService.class);
+    }
 }

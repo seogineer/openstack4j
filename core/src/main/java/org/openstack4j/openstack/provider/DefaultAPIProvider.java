@@ -133,6 +133,8 @@ public class DefaultAPIProvider implements APIProvider {
         bind(QuotaSetService.class, QuotaSetServiceImpl.class);
         bind(HostService.class, HostServiceImpl.class);
         bind(NetworkingService.class, NetworkingServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.NdpProxyService.class, org.openstack4j.openstack.networking.internal.ext.NdpProxyServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.LocalIpService.class, org.openstack4j.openstack.networking.internal.ext.LocalIpServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.NetworkSegmentRangeService.class, org.openstack4j.openstack.networking.internal.ext.NetworkSegmentRangeServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.SegmentService.class, org.openstack4j.openstack.networking.internal.ext.SegmentServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.SecurityGroupDefaultStatefulnessService.class, org.openstack4j.openstack.networking.internal.ext.SecurityGroupDefaultStatefulnessServiceImpl.class);
