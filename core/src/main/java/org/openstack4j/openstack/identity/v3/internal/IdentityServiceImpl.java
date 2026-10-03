@@ -84,4 +84,14 @@ public class IdentityServiceImpl extends BaseIdentityServices implements Identit
     public TrustService trusts() {
         return Apis.get(TrustService.class);
     }
+
+    @Override
+    public EndpointFilterService endpointFilter() {
+        return Apis.get(EndpointFilterService.class);
+    }
+
+    @Override
+    public EndpointPolicyService endpointPolicies() {
+        return Apis.get(EndpointPolicyService.class);
+    }
 }
