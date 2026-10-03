@@ -225,4 +225,14 @@ public class NetworkingServiceImpl implements NetworkingService {
     public org.openstack4j.api.networking.ext.NdpProxyService ndpProxies() {
         return Apis.get(org.openstack4j.api.networking.ext.NdpProxyService.class);
     }
+
+    @Override
+    public org.openstack4j.api.networking.ext.ServiceFlavorService serviceFlavors() {
+        return Apis.get(org.openstack4j.api.networking.ext.ServiceFlavorService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.NeutronServiceProfileService serviceProfiles() {
+        return Apis.get(org.openstack4j.api.networking.ext.NeutronServiceProfileService.class);
+    }
 }
