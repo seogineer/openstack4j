@@ -144,4 +144,18 @@ public interface NetworkingService extends RestService {
      * @return the AddressScopeService
      */
     org.openstack4j.api.networking.ext.AddressScopeService addressScopes();
+
+    /**
+     * Address groups.
+     *
+     * @return the AddressGroupService
+     */
+    org.openstack4j.api.networking.ext.AddressGroupService addressGroups();
+
+    /**
+     * RBAC policies.
+     *
+     * @return the RbacPolicyService
+     */
+    org.openstack4j.api.networking.ext.RbacPolicyService rbacPolicies();
 }

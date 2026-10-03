@@ -185,4 +185,14 @@ public class NetworkingServiceImpl implements NetworkingService {
     public org.openstack4j.api.networking.ext.AddressScopeService addressScopes() {
         return Apis.get(org.openstack4j.api.networking.ext.AddressScopeService.class);
     }
+
+    @Override
+    public org.openstack4j.api.networking.ext.AddressGroupService addressGroups() {
+        return Apis.get(org.openstack4j.api.networking.ext.AddressGroupService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.RbacPolicyService rbacPolicies() {
+        return Apis.get(org.openstack4j.api.networking.ext.RbacPolicyService.class);
+    }
 }
