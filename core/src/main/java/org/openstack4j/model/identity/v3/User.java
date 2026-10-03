@@ -1,5 +1,7 @@
 package org.openstack4j.model.identity.v3;
 
+import java.util.List;
+import java.util.Date;
 import java.util.Map;
 
 import org.openstack4j.common.Buildable;
@@ -34,6 +36,21 @@ public interface User extends ModelEntity, Buildable<UserBuilder> {
      * @return the description of the user
      */
     String getDescription();
+
+    /** @return the user options (for example {@code ignore_password_expiry}, {@code multi_factor_auth_enabled}); null if absent */
+    default Map<String, Object> getOptions() {
+        return null;
+    }
+
+    /** @return when the password expires; null if it never expires */
+    default Date getPasswordExpiresAt() {
+        return null;
+    }
+
+    /** @return the federated identities ({@code idp_id} and {@code protocols}); null if absent */
+    default List<Map<String, Object>> getFederated() {
+        return null;
+    }
 
     /**
      * @return the password of the user

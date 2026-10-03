@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.identity.v3.internal;
 
+import org.openstack4j.model.identity.v3.options.UserListOptions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,6 +125,11 @@ public class UserServiceImpl extends BaseIdentityServices implements UserService
     @Override
     public List<? extends User> list() {
         return get(Users.class, uri(PATH_USERS)).execute().getList();
+    }
+
+    @Override
+    public List<? extends User> list(UserListOptions options) {
+        return get(Users.class, uri(PATH_USERS)).params(Objects.requireNonNull(options).toQueryParams()).execute().getList();
     }
 
     /**

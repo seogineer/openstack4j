@@ -1,5 +1,6 @@
 package org.openstack4j.model.identity.v3;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openstack4j.common.Buildable;
@@ -34,6 +35,11 @@ public interface Domain extends ModelEntity, Buildable<DomainBuilder> {
      * Domain options.
      */
     Map<String, String> getOptions();
+
+    /** @return the domain tags; null if absent */
+    default List<String> getTags() {
+        return null;
+    }
 
     /**
      * @return the Links of the domain

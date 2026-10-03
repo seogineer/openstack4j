@@ -1,5 +1,6 @@
 package org.openstack4j.api.identity.v3;
 
+import org.openstack4j.model.identity.v3.options.ProjectListOptions;
 import java.util.List;
 
 import org.openstack4j.common.RestService;
@@ -77,5 +78,13 @@ public interface ProjectService extends RestService {
      * @return list of projects
      */
     List<? extends Project> list();
+
+    /**
+     * Lists projects matching the filters, including tag filters ({@code GET /v3/projects?...}).
+     *
+     * @param options the filters
+     * @return the matching projects
+     */
+    List<? extends Project> list(ProjectListOptions options);
 
 }
