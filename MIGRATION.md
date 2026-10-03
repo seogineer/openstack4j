@@ -112,3 +112,12 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - TOTP(`passcode`) 세션은 토큰 만료 후 같은 passcode 로 재인증할 수 없습니다. 만료 전에 새 passcode 로 다시 인증하세요.
 - trust 또는 system scope 로 받은 토큰도 이제 세션 컨텍스트를 만들 수 있습니다(4.3 까지는 trust scope 토큰 인증에서 `NullPointerException`).
 - Keystone 이 410 을 돌려주는 OS-SIMPLE-CERT·OS-PKI, 그리고 브라우저 리다이렉트용 websso 두 경로는 지원하지 않습니다.
+
+# 4.4 → 4.5
+
+런타임 동작을 바꾸는 변경은 없습니다. 기존 networking 메서드의 요청은 4.4 와 같습니다.
+
+- `NetworkingService`, `RouterService`, `AgentService`, `PortService`, `NetQuotaService`, `NetFloatingIPService`, `PortForwardingService` 에 추상 메서드가 추가되었습니다. 이 인터페이스를 직접 구현한 테스트용 가짜 구현은 새 메서드를 구현해야 합니다.
+- `Router` 와 `NetQosPolicy` 에는 `default` getter(`getExternalGateways()`, `getId()`)만 추가되어 그대로 컴파일됩니다. `NeutronRouter` 의 `external_gateways` 는 응답 전용이라 router 생성·수정 본문은 바뀌지 않습니다.
+- 새 옵션 클래스(`*Options`)는 설정하지 않은 필드를 보내지 않습니다. 값을 지우려면 `attribute("field", null)` 을 쓰세요.
+- 새 서비스는 해당 Neutron extension 이 꺼져 있으면 404 를 받습니다. `os.networking().extensions().isEnabled(alias)` 로 확인할 수 있습니다.

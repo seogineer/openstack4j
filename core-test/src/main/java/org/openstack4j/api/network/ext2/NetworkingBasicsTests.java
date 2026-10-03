@@ -112,4 +112,11 @@ public class NetworkingBasicsTests extends AbstractNetworkingExtTest {
         Assert.assertEquals(body(request).get("port_forwarding").get("description").asText(), "changed");
         Assert.assertEquals(body(request).get("port_forwarding").size(), 2);
     }
+
+    public void qosPolicyExposesItsId() throws Exception {
+        respondWith(200, "{\"policy\": {\"id\": \"23f44e76-cb35-42fe-99fe-e73de56721f1\", \"name\": \"p\", \"shared\": false, \"rules\": []}}");
+        org.openstack4j.model.network.ext.NetQosPolicy policy = osv3().networking().netQosPolicy().get("23f44e76-cb35-42fe-99fe-e73de56721f1");
+        takeRequest();
+        Assert.assertEquals(policy.getId(), "23f44e76-cb35-42fe-99fe-e73de56721f1");
+    }
 }
