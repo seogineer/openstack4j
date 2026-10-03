@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.networking.internal;
 
+import org.openstack4j.openstack.networking.internal.ext.NeutronExecution;
 import org.openstack4j.openstack.networking.domain.ext.NeutronFloatingIPPool.FloatingIPPools;
 import org.openstack4j.model.network.ext.FloatingIPPool;
 import java.util.List;
@@ -108,6 +109,6 @@ public class FloatingIPServiceImpl extends BaseNetworkingServices implements Net
 
     @Override
     public List<? extends FloatingIPPool> listPools() {
-        return get(FloatingIPPools.class, uri("/floatingip_pools")).execute().getList();
+        return get(FloatingIPPools.class, uri("/floatingip_pools")).execute(NeutronExecution.propagate404()).getList();
     }
 }

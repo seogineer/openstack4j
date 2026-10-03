@@ -28,7 +28,7 @@ public class SubnetPoolServiceImpl extends BaseNeutronExtService implements Subn
 
     private List<String> prefixes(String id, String action, List<String> prefixes) {
         NeutronPrefixes result = put(NeutronPrefixes.class, POOLS + "/" + id(id) + "/" + action)
-                .entity(JsonBody.of(Collections.singletonMap("prefixes", Objects.requireNonNull(prefixes)))).execute();
+                .entity(JsonBody.of(Collections.singletonMap("prefixes", Objects.requireNonNull(prefixes)))).execute(NeutronExecution.propagate404());
         return result == null || result.getPrefixes() == null ? Collections.emptyList() : result.getPrefixes();
     }
 
@@ -39,7 +39,7 @@ public class SubnetPoolServiceImpl extends BaseNeutronExtService implements Subn
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> onboardNetworkSubnets(String id, String networkId) {
         List<Map<String, Object>> result = put(List.class, POOLS + "/" + id(id) + "/onboard_network_subnets")
-                .entity(JsonBody.of(Collections.singletonMap("network_id", Objects.requireNonNull(networkId)))).execute();
+                .entity(JsonBody.of(Collections.singletonMap("network_id", Objects.requireNonNull(networkId)))).execute(NeutronExecution.propagate404());
         return result == null ? Collections.emptyList() : result;
     }
 }

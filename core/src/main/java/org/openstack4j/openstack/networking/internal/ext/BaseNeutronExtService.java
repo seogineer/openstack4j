@@ -19,7 +19,7 @@ public abstract class BaseNeutronExtService extends BaseNetworkingServices {
     }
 
     protected <E> List<E> listOf(Class<? extends ListResult<E>> type, String path, Map<String, String> filters) {
-        ListResult<E> result = get(type, path).params(filters == null ? Collections.emptyMap() : filters).execute();
+        ListResult<E> result = get(type, path).params(filters == null ? Collections.emptyMap() : filters).execute(NeutronExecution.propagate404());
         return result == null ? Collections.emptyList() : result.getList();
     }
 
@@ -28,11 +28,16 @@ public abstract class BaseNeutronExtService extends BaseNetworkingServices {
     }
 
     protected <E> E create(Class<E> type, String path, String root, NeutronAttributes<?> attributes) {
-        return post(type, path).entity(JsonBody.of(root, Objects.requireNonNull(attributes, "attributes").toMap())).execute();
+        return post(type, path).entity(JsonBody.of(root, Objects.requireNonNull(attributes, "attributes").toMap())).execute(NeutronExecution.propagate404());
     }
 
     protected <E> E update(Class<E> type, String path, String root, NeutronAttributes<?> attributes) {
-        return put(type, path).entity(JsonBody.of(root, Objects.requireNonNull(attributes, "attributes").toMap())).execute();
+        return put(type, path).entity(JsonBody.of(root, Objects.requireNonNull(attributes, "attributes").toMap())).execute(NeutronExecution.propagate404());
+    }
+
+    /** Like {@link #show} but a 404 is raised: for list-like resources that have no "missing" meaning. */
+    protected <E> E showStrict(Class<E> type, String path) {
+        return get(type, path).execute(NeutronExecution.propagate404());
     }
 
     protected ActionResponse remove(String path) {

@@ -26,7 +26,7 @@ public class NetworkLoggingServiceImpl extends BaseNeutronExtService implements 
 
     @Override
     public List<String> loggableResources() {
-        NeutronLoggableResources resources = show(NeutronLoggableResources.class, "/log/loggable-resources");
+        NeutronLoggableResources resources = showStrict(NeutronLoggableResources.class, "/log/loggable-resources");
         return resources == null ? Collections.emptyList() : resources.getTypes();
     }
 }
