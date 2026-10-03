@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-parent</artifactId>
-    <version>4.5.0-SNAPSHOT</version>
+    <version>4.6.0-SNAPSHOT</version>
     <name>OpenStack4j Parent</name>
     <description>OpenStack Java API</description>
     <url>https://github.com/seogineer/openstack4j</url>
