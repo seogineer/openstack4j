@@ -1,5 +1,6 @@
 package org.openstack4j.api.identity.v3;
 
+import java.util.Map;
 import java.util.List;
 
 import org.openstack4j.common.RestService;
@@ -63,4 +64,10 @@ public interface TokenService extends RestService {
     List<? extends Domain> getDomainScopes(String tokenId);
 
 
+
+    /**
+     * @param tokenId the token whose user is inspected
+     * @return the system scopes the token's user may request ({@code GET /auth/system}), for example {@code [{"all": true}]}
+     */
+    List<Map<String, Object>> getSystemScopes(String tokenId);
 }

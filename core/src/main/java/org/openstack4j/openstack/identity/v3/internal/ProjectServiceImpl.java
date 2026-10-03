@@ -1,5 +1,10 @@
 package org.openstack4j.openstack.identity.v3.internal;
 
+import org.openstack4j.openstack.internal.microversion.JsonBody;
+import org.openstack4j.openstack.identity.v3.domain.KeystoneProjectTags;
+import java.util.Collections;
+import java.nio.charset.StandardCharsets;
+import java.net.URLEncoder;
 import org.openstack4j.model.identity.v3.options.ProjectListOptions;
 import java.util.List;
 import java.util.Objects;
@@ -70,4 +75,42 @@ public class ProjectServiceImpl extends BaseIdentityServices implements ProjectS
         return get(Projects.class, uri(PATH_PROJECTS)).params(Objects.requireNonNull(options).toQueryParams()).execute().getList();
     }
 
+
+    /** Tags may contain spaces and other reserved characters; encode them as one path segment. */
+    private static String tagSegment(String tag) {
+        return URLEncoder.encode(Objects.requireNonNull(tag), StandardCharsets.UTF_8).replace("+", "%20");
+    }
+
+    @Override
+    public List<String> tags(String projectId) {
+        KeystoneProjectTags tags = get(KeystoneProjectTags.class, uri("/projects/%s/tags", Objects.requireNonNull(projectId))).execute();
+        return tags == null || tags.getTags() == null ? Collections.emptyList() : tags.getTags();
+    }
+
+    @Override
+    public ActionResponse hasTag(String projectId, String tag) {
+        return getWithResponse(uri("/projects/%s/tags/%s", Objects.requireNonNull(projectId), tagSegment(tag))).execute();
+    }
+
+    @Override
+    public ActionResponse addTag(String projectId, String tag) {
+        return putWithResponse(uri("/projects/%s/tags/%s", Objects.requireNonNull(projectId), tagSegment(tag))).execute();
+    }
+
+    @Override
+    public List<String> replaceTags(String projectId, List<String> tags) {
+        KeystoneProjectTags result = put(KeystoneProjectTags.class, uri("/projects/%s/tags", Objects.requireNonNull(projectId)))
+                .entity(JsonBody.of(Collections.singletonMap("tags", Objects.requireNonNull(tags)))).execute();
+        return result == null || result.getTags() == null ? Collections.emptyList() : result.getTags();
+    }
+
+    @Override
+    public ActionResponse removeTag(String projectId, String tag) {
+        return deleteWithResponse(uri("/projects/%s/tags/%s", Objects.requireNonNull(projectId), tagSegment(tag))).execute();
+    }
+
+    @Override
+    public ActionResponse removeAllTags(String projectId) {
+        return deleteWithResponse(uri("/projects/%s/tags", Objects.requireNonNull(projectId))).execute();
+    }
 }
