@@ -79,4 +79,9 @@ public class IdentityServiceImpl extends BaseIdentityServices implements Identit
     public SystemRoleService systemRoles() {
         return Apis.get(SystemRoleService.class);
     }
+
+    @Override
+    public TrustService trusts() {
+        return Apis.get(TrustService.class);
+    }
 }
