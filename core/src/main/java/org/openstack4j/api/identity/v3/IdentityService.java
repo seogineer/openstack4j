@@ -103,4 +103,11 @@ public interface IdentityService extends RestService {
      * @return the SystemRoleService
      */
     SystemRoleService systemRoles();
+
+    /**
+     * OS-TRUST trusts: delegate roles on a project from a trustor to a trustee.
+     *
+     * @return the TrustService
+     */
+    TrustService trusts();
 }
