@@ -1,5 +1,10 @@
 package org.openstack4j.api.networking;
 
+import org.openstack4j.model.network.options.ConntrackHelperOptions;
+import org.openstack4j.model.network.ext.ConntrackHelper;
+import org.openstack4j.model.network.HostRoute;
+import org.openstack4j.model.network.Agent;
+import java.util.Map;
 import java.util.List;
 
 import org.openstack4j.common.RestService;
@@ -96,4 +101,90 @@ public interface RouterService extends RestService {
      * @throws ClientResponseException if one of the specified identifiers does not exist
      */
     RouterInterface detachInterface(String routerId, String subnetId, String portId);
+
+    /**
+     * Adds extra routes atomically (extraroute-atomic).
+     *
+     * @param routerId the router
+     * @param routes   the routes to add
+     * @return the router with its routes
+     */
+    Router addExtraRoutes(String routerId, List<? extends HostRoute> routes);
+
+    /**
+     * Removes extra routes atomically (extraroute-atomic).
+     *
+     * @param routerId the router
+     * @param routes   the routes to remove
+     * @return the router with its remaining routes
+     */
+    Router removeExtraRoutes(String routerId, List<? extends HostRoute> routes);
+
+    /**
+     * Adds external gateways to a multi-homed router (external-gateway-multihoming).
+     *
+     * @param routerId the router
+     * @param gateways gateways, each with network_id and optionally enable_snat and external_fixed_ips
+     * @return the router
+     */
+    Router addExternalGateways(String routerId, List<Map<String, Object>> gateways);
+
+    /**
+     * Updates external gateways of a multi-homed router.
+     *
+     * @param routerId the router
+     * @param gateways the gateways to update
+     * @return the router
+     */
+    Router updateExternalGateways(String routerId, List<Map<String, Object>> gateways);
+
+    /**
+     * Removes external gateways from a multi-homed router.
+     *
+     * @param routerId the router
+     * @param gateways the gateways to remove (network_id, optionally external_fixed_ips)
+     * @return the router
+     */
+    Router removeExternalGateways(String routerId, List<Map<String, Object>> gateways);
+
+    /**
+     * @param routerId the router
+     * @return the conntrack helpers of the router (l3-conntrack-helper)
+     */
+    List<? extends ConntrackHelper> listConntrackHelpers(String routerId);
+
+    /**
+     * @param routerId the router
+     * @param id       the conntrack helper
+     * @return the conntrack helper
+     */
+    ConntrackHelper getConntrackHelper(String routerId, String id);
+
+    /**
+     * @param routerId the router
+     * @param options  the helper (protocol, port, helper)
+     * @return the created conntrack helper
+     */
+    ConntrackHelper createConntrackHelper(String routerId, ConntrackHelperOptions options);
+
+    /**
+     * @param routerId the router
+     * @param id       the conntrack helper
+     * @param options  the fields to change
+     * @return the updated conntrack helper
+     */
+    ConntrackHelper updateConntrackHelper(String routerId, String id, ConntrackHelperOptions options);
+
+    /**
+     * @param routerId the router
+     * @param id       the conntrack helper
+     * @return the action response
+     */
+    ActionResponse deleteConntrackHelper(String routerId, String id);
+
+    /**
+     * @param routerId the router
+     * @return the L3 agents hosting the router (l3_agent_scheduler; agent-based deployments only)
+     */
+    List<? extends Agent> listL3Agents(String routerId);
 }
