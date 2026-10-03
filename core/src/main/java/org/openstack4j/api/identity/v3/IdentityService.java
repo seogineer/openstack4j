@@ -145,4 +145,25 @@ public interface IdentityService extends RestService {
      * @return the FederationService
      */
     FederationService federation();
+
+    /**
+     * OS-OAUTH1 consumers, delegation flow and access tokens.
+     *
+     * @return the OAuth1Service
+     */
+    OAuth1Service oauth1();
+
+    /**
+     * OS-OAUTH2 client credentials tokens.
+     *
+     * @return the OAuth2Service
+     */
+    OAuth2Service oauth2();
+
+    /**
+     * OS-REVOKE token revocation events.
+     *
+     * @return the RevocationEventService
+     */
+    RevocationEventService revocationEvents();
 }

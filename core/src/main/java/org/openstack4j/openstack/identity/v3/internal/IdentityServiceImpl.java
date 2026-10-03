@@ -109,4 +109,19 @@ public class IdentityServiceImpl extends BaseIdentityServices implements Identit
     public FederationService federation() {
         return Apis.get(FederationService.class);
     }
+
+    @Override
+    public OAuth1Service oauth1() {
+        return Apis.get(OAuth1Service.class);
+    }
+
+    @Override
+    public OAuth2Service oauth2() {
+        return Apis.get(OAuth2Service.class);
+    }
+
+    @Override
+    public RevocationEventService revocationEvents() {
+        return Apis.get(RevocationEventService.class);
+    }
 }
