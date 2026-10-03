@@ -200,4 +200,18 @@ public interface NetworkingService extends RestService {
      * @return the NdpProxyService
      */
     org.openstack4j.api.networking.ext.NdpProxyService ndpProxies();
+
+    /**
+     * Neutron service flavors (not compute flavors).
+     *
+     * @return the ServiceFlavorService
+     */
+    org.openstack4j.api.networking.ext.ServiceFlavorService serviceFlavors();
+
+    /**
+     * Neutron service profiles.
+     *
+     * @return the NeutronServiceProfileService
+     */
+    org.openstack4j.api.networking.ext.NeutronServiceProfileService serviceProfiles();
 }
