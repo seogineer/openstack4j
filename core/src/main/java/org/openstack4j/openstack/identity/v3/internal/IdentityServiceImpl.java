@@ -69,4 +69,9 @@ public class IdentityServiceImpl extends BaseIdentityServices implements Identit
         return get(ExtensionList.class, PATH_EXTENSIONS).execute().getList();
     }
 
+
+    @Override
+    public ApplicationCredentialService applicationCredentials() {
+        return Apis.get(ApplicationCredentialService.class);
+    }
 }

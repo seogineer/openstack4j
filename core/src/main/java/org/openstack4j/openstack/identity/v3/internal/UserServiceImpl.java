@@ -1,5 +1,8 @@
 package org.openstack4j.openstack.identity.v3.internal;
 
+import org.openstack4j.openstack.identity.v3.domain.KeystoneAccessRule.AccessRules;
+import org.openstack4j.openstack.identity.v3.domain.KeystoneAccessRule;
+import org.openstack4j.model.identity.v3.AccessRule;
 import org.openstack4j.model.identity.v3.options.UserListOptions;
 import java.util.HashMap;
 import java.util.List;
@@ -167,4 +170,19 @@ public class UserServiceImpl extends BaseIdentityServices implements UserService
         return post(ActionResponse.class, uri("/users/%s/password", userId)).entity(mapEntity).execute();
     }
 
+
+    @Override
+    public List<? extends AccessRule> accessRules(String userId) {
+        return get(AccessRules.class, uri("/users/%s/access_rules", Objects.requireNonNull(userId))).execute().getList();
+    }
+
+    @Override
+    public AccessRule getAccessRule(String userId, String accessRuleId) {
+        return get(KeystoneAccessRule.class, uri("/users/%s/access_rules/%s", Objects.requireNonNull(userId), Objects.requireNonNull(accessRuleId))).execute();
+    }
+
+    @Override
+    public ActionResponse deleteAccessRule(String userId, String accessRuleId) {
+        return deleteWithResponse(uri("/users/%s/access_rules/%s", Objects.requireNonNull(userId), Objects.requireNonNull(accessRuleId))).execute();
+    }
 }

@@ -1,5 +1,6 @@
 package org.openstack4j.api.identity.v3;
 
+import org.openstack4j.model.identity.v3.AccessRule;
 import org.openstack4j.model.identity.v3.options.UserListOptions;
 import java.util.List;
 
@@ -140,4 +141,26 @@ public interface UserService extends RestService {
     ActionResponse changePassword(String userId, String originalPassword, String password);
 
 
+
+    /**
+     * @param userId the user
+     * @return the access rules the user's application credentials use ({@code GET /users/{id}/access_rules})
+     */
+    List<? extends AccessRule> accessRules(String userId);
+
+    /**
+     * @param userId       the user
+     * @param accessRuleId the access rule
+     * @return the access rule
+     */
+    AccessRule getAccessRule(String userId, String accessRuleId);
+
+    /**
+     * Deletes an access rule that no application credential uses any more.
+     *
+     * @param userId       the user
+     * @param accessRuleId the access rule
+     * @return the action response
+     */
+    ActionResponse deleteAccessRule(String userId, String accessRuleId);
 }

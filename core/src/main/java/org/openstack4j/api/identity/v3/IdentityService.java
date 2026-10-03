@@ -89,4 +89,11 @@ public interface IdentityService extends RestService {
     @Deprecated
     List<? extends Extension> listExtensions();
 
+
+    /**
+     * Application credentials of users: list, get, create (with roles, access rules, expiry) and delete.
+     *
+     * @return the ApplicationCredentialService
+     */
+    ApplicationCredentialService applicationCredentials();
 }
