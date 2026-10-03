@@ -205,6 +205,52 @@ public interface IOSClientBuilder<R, T extends IOSClientBuilder<R, T>> {
          */
         V3 scopeToDomain(Identifier domain);
 
+        /**
+         * Authenticates with an application credential identified by its id. The credential is already
+         * bound to a project, so it cannot be combined with a scope.
+         *
+         * @param id     the application credential id
+         * @param secret the application credential secret
+         * @return self for method chaining
+         */
+        V3 applicationCredential(String id, String secret);
+
+        /**
+         * Authenticates with an application credential identified by its name and owner. It cannot be combined with a scope.
+         *
+         * @param name       the application credential name
+         * @param secret     the application credential secret
+         * @param user       the owning user (id or name)
+         * @param userDomain the owning user's domain; required when the user is given by name
+         * @return self for method chaining
+         */
+        V3 applicationCredential(String name, String secret, Identifier user, Identifier userDomain);
+
+        /**
+         * Adds a TOTP passcode to the credentials: password+TOTP (multi-factor) when a password was given,
+         * TOTP alone when the password is null. A TOTP session cannot re-authenticate after the token expires
+         * (the passcode is single use); call {@code authenticate()} again with a fresh passcode.
+         *
+         * @param passcode the TOTP passcode
+         * @return self for method chaining
+         */
+        V3 passcode(String passcode);
+
+        /**
+         * Scopes the token to the whole deployment ({@code {"system": {"all": true}}}).
+         *
+         * @return self for method chaining
+         */
+        V3 scopeToSystem();
+
+        /**
+         * Scopes the token to a trust (OS-TRUST); usually combined with {@link #token(String)} of the trustee.
+         *
+         * @param trustId the trust id
+         * @return self for method chaining
+         */
+        V3 scopeToTrust(String trustId);
+
     }
 
 }

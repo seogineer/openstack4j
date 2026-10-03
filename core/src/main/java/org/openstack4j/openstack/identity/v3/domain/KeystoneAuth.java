@@ -2,7 +2,9 @@ package org.openstack4j.openstack.identity.v3.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -59,6 +61,12 @@ public class KeystoneAuth implements Authentication, AuthStore {
         this.type = type;
     }
 
+    public KeystoneAuth(AuthIdentity identity, AuthScope scope, Type type) {
+        this.identity = identity;
+        this.scope = scope;
+        this.type = type;
+    }
+
     protected KeystoneAuth(Type type) {
         this.type = type;
     }
@@ -80,25 +88,36 @@ public class KeystoneAuth implements Authentication, AuthStore {
     @Override
     @JsonIgnore
     public String getUsername() {
-        return identity.getPassword().getUser().getName();
+        AuthIdentity.AuthPassword.AuthUser u = passwordUser();
+        return u == null ? null : u.getName();
     }
 
     @JsonIgnore
     @Override
     public String getPassword() {
-        return identity.getPassword().getUser().getPassword();
+        AuthIdentity.AuthPassword.AuthUser u = passwordUser();
+        return u == null ? null : u.getPassword();
     }
 
     @Override
     @JsonIgnore
     public String getId() {
-        return identity.getPassword().getUser().getDomain().getId();
+        AuthIdentity.AuthPassword.AuthUser u = passwordUser();
+        return u == null || u.getDomain() == null ? null : u.getDomain().getId();
     }
 
     @Override
     @JsonIgnore
     public String getName() {
-        return identity.getPassword().getUser().getDomain().getName();
+        AuthIdentity.AuthPassword.AuthUser u = passwordUser();
+        return u == null || u.getDomain() == null ? null : u.getDomain().getName();
+    }
+
+    /** The password user, or null for application credential, TOTP-only and token authentication. */
+    private AuthIdentity.AuthPassword.AuthUser passwordUser() {
+        if (identity == null || identity.password == null)
+            return null;
+        return identity.password.user;
     }
 
     @JsonIgnore
@@ -113,6 +132,10 @@ public class KeystoneAuth implements Authentication, AuthStore {
 
         private AuthPassword password;
         private AuthToken token;
+        @JsonProperty("application_credential")
+        private AuthApplicationCredential applicationCredential;
+        @JsonProperty("totp")
+        private AuthTotp totp;
         private List<String> methods = new ArrayList<>();
 
         static AuthIdentity createTokenType(String tokenId) {
@@ -133,10 +156,33 @@ public class KeystoneAuth implements Authentication, AuthStore {
             return identity;
         }
 
+        public static AuthIdentity createApplicationCredentialType(String id, String secret) {
+            AuthIdentity identity = new AuthIdentity();
+            identity.methods.add("application_credential");
+            identity.applicationCredential = AuthApplicationCredential.byId(id, secret);
+            return identity;
+        }
+
+        public static AuthIdentity createApplicationCredentialType(String name, String secret, Identifier user, Identifier userDomain) {
+            AuthIdentity identity = new AuthIdentity();
+            identity.methods.add("application_credential");
+            identity.applicationCredential = AuthApplicationCredential.byName(name, secret, user, userDomain);
+            return identity;
+        }
+
+        /** Password+TOTP when a password was given, TOTP alone otherwise. */
+        public static AuthIdentity createCredentialType(String user, String password, Identifier domain, String passcode) {
+            AuthIdentity identity = password == null ? new AuthIdentity() : createCredentialType(user, password, domain);
+            identity.methods.add("totp");
+            identity.totp = new AuthTotp(user, domain, passcode);
+            return identity;
+        }
+
         @Override
         public Password getPassword() {
             return password;
         }
+
 
         @Override
         public Token getToken() {
@@ -146,6 +192,78 @@ public class KeystoneAuth implements Authentication, AuthStore {
         @Override
         public List<String> getMethods() {
             return methods;
+        }
+
+        public static final class AuthApplicationCredential implements Serializable {
+
+            private static final long serialVersionUID = 1L;
+
+            @JsonProperty("id")
+            private String id;
+            @JsonProperty("name")
+            private String name;
+            @JsonProperty("secret")
+            private String secret;
+            @JsonProperty("user")
+            private AuthPassword.AuthUser user;
+
+            static AuthApplicationCredential byId(String id, String secret) {
+                AuthApplicationCredential credential = new AuthApplicationCredential();
+                credential.id = Objects.requireNonNull(id, "application credential id");
+                credential.secret = Objects.requireNonNull(secret, "application credential secret");
+                return credential;
+            }
+
+            static AuthApplicationCredential byName(String name, String secret, Identifier user, Identifier userDomain) {
+                AuthApplicationCredential credential = new AuthApplicationCredential();
+                credential.name = Objects.requireNonNull(name, "application credential name");
+                credential.secret = Objects.requireNonNull(secret, "application credential secret");
+                credential.user = AuthPassword.AuthUser.of(Objects.requireNonNull(user, "application credential user"), userDomain, null);
+                return credential;
+            }
+
+            public String getId() {
+                return id;
+            }
+
+            public String getName() {
+                return name;
+            }
+        }
+
+        public static final class AuthTotp implements Serializable {
+
+            private static final long serialVersionUID = 1L;
+
+            @JsonProperty("user")
+            private TotpUser user;
+
+            AuthTotp(String user, Identifier domain, String passcode) {
+                this.user = new TotpUser(user, domain, passcode);
+            }
+
+            public static final class TotpUser extends BasicResourceEntity {
+
+                private static final long serialVersionUID = 1L;
+
+                @JsonProperty("domain")
+                private AuthPassword.AuthUser.AuthDomain domain;
+                @JsonProperty("passcode")
+                private String passcode;
+
+                TotpUser(String user, Identifier domainIdentifier, String passcode) {
+                    this.passcode = passcode;
+                    if (domainIdentifier != null) {
+                        domain = new AuthPassword.AuthUser.AuthDomain();
+                        if (domainIdentifier.isTypeID())
+                            domain.setId(domainIdentifier.getId());
+                        else
+                            domain.setName(domainIdentifier.getId());
+                        setName(user);
+                    } else
+                        setId(user);
+                }
+            }
         }
 
         public static final class AuthToken implements Token, Serializable {
@@ -209,6 +327,23 @@ public class KeystoneAuth implements Authentication, AuthStore {
                         setId(username);
                 }
 
+                static AuthUser of(Identifier user, Identifier domainIdentifier, String password) {
+                    AuthUser authUser = new AuthUser();
+                    authUser.password = password;
+                    if (user.isTypeID())
+                        authUser.setId(user.getId());
+                    else
+                        authUser.setName(user.getId());
+                    if (domainIdentifier != null) {
+                        authUser.domain = new AuthDomain();
+                        if (domainIdentifier.isTypeID())
+                            authUser.domain.setId(domainIdentifier.getId());
+                        else
+                            authUser.domain.setName(domainIdentifier.getId());
+                    }
+                    return authUser;
+                }
+
                 @Override
                 public Domain getDomain() {
                     return domain;
@@ -241,6 +376,9 @@ public class KeystoneAuth implements Authentication, AuthStore {
         @JsonProperty("OS-TRUST:trust")
         private ScopeTrust trust;
 
+        @JsonProperty("system")
+        private Map<String, Boolean> system;
+
         public AuthScope(ScopeProject project) {
             this.project = project;
         }
@@ -264,6 +402,13 @@ public class KeystoneAuth implements Authentication, AuthStore {
         public static AuthScope domain(Identifier domain) {
             Objects.requireNonNull(domain, "Domain Scope: domain identifier or name cannot be null");
             return new AuthScope(new AuthDomain(domain));
+        }
+
+        /** System scope: {@code {"system": {"all": true}}}. */
+        public static AuthScope system() {
+            AuthScope scope = new AuthScope((ScopeProject) null);
+            scope.system = Collections.singletonMap("all", Boolean.TRUE);
+            return scope;
         }
 
         public static AuthScope trust(String id) {

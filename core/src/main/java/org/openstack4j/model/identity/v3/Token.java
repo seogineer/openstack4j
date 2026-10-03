@@ -2,6 +2,7 @@ package org.openstack4j.model.identity.v3;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.SortedSetMultimap;
 import org.openstack4j.model.ModelEntity;
@@ -46,6 +47,21 @@ public interface Token extends ModelEntity {
      * @return the project of the token
      */
     Project getProject();
+
+    /** @return the system scope, for example {@code {"all": true}}; null unless the token is system-scoped */
+    default Map<String, Object> getSystem() {
+        return null;
+    }
+
+    /** @return the application credential the token was issued for ({@code id}, {@code name}, {@code restricted}); null otherwise */
+    default Map<String, Object> getApplicationCredential() {
+        return null;
+    }
+
+    /** @return the trust ({@code OS-TRUST:trust}) the token is scoped to; null otherwise */
+    default Map<String, Object> getTrust() {
+        return null;
+    }
 
     /**
      * @return the domain of the token
