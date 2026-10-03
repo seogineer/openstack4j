@@ -96,4 +96,11 @@ public interface IdentityService extends RestService {
      * @return the ApplicationCredentialService
      */
     ApplicationCredentialService applicationCredentials();
+
+    /**
+     * System role assignments of users and groups.
+     *
+     * @return the SystemRoleService
+     */
+    SystemRoleService systemRoles();
 }
