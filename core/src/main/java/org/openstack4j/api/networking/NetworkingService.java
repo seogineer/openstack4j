@@ -130,4 +130,18 @@ public interface NetworkingService extends RestService {
      * @return the QosRuleService
      */
     org.openstack4j.api.networking.ext.QosRuleService qosRules();
+
+    /**
+     * Subnet pools with prefix operations and subnet onboarding.
+     *
+     * @return the SubnetPoolService
+     */
+    org.openstack4j.api.networking.ext.SubnetPoolService subnetPools();
+
+    /**
+     * Address scopes.
+     *
+     * @return the AddressScopeService
+     */
+    org.openstack4j.api.networking.ext.AddressScopeService addressScopes();
 }
