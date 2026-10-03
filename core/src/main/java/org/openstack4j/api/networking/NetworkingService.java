@@ -158,4 +158,18 @@ public interface NetworkingService extends RestService {
      * @return the RbacPolicyService
      */
     org.openstack4j.api.networking.ext.RbacPolicyService rbacPolicies();
+
+    /**
+     * Default security group rules.
+     *
+     * @return the DefaultSecurityGroupRuleService
+     */
+    org.openstack4j.api.networking.ext.DefaultSecurityGroupRuleService defaultSecurityGroupRules();
+
+    /**
+     * Security group default statefulness per project.
+     *
+     * @return the SecurityGroupDefaultStatefulnessService
+     */
+    org.openstack4j.api.networking.ext.SecurityGroupDefaultStatefulnessService securityGroupDefaultStatefulness();
 }
