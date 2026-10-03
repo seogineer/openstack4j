@@ -72,18 +72,27 @@ public class DomainServiceImpl extends BaseIdentityServices implements DomainSer
         return out;
     }
 
-    private static Map<String, Object> options(KeystoneDomainConfig result) {
-        return result == null || result.getConfig() == null ? Collections.emptyMap() : result.getConfig();
+    /** A group comes back nested, {@code {"config": {"<group>": {...}}}}; a flat {@code {"config": {...}}} is accepted too. */
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> options(KeystoneDomainConfig result, String group) {
+        if (result == null || result.getConfig() == null)
+            return Collections.emptyMap();
+        Map<String, Object> config = result.getConfig();
+        Object nested = config.get(group);
+        return config.size() == 1 && nested instanceof Map ? (Map<String, Object>) nested : config;
     }
 
-    /** A single option comes back as {@code {"<option>": value}}. */
+    /** A single option comes back as {@code {"config": {"<option>": value}}}; a bare {@code {"<option>": value}} is accepted too. */
     @SuppressWarnings("unchecked")
     private static Object single(Map<String, Object> response, String option) {
-        return response == null ? null : response.get(option);
+        if (response == null)
+            return null;
+        Object config = response.get("config");
+        return config instanceof Map && !option.equals("config") ? ((Map<String, Object>) config).get(option) : response.get(option);
     }
 
     @Override public Map<String, Map<String, Object>> config(String domainId) { return groups(get(KeystoneDomainConfig.class, uri("/domains/%s/config", domainId)).execute()); }
-    @Override public Map<String, Object> configGroup(String domainId, String group) { return options(get(KeystoneDomainConfig.class, uri("/domains/%s/config/%s", domainId, group)).execute()); }
+    @Override public Map<String, Object> configGroup(String domainId, String group) { return options(get(KeystoneDomainConfig.class, uri("/domains/%s/config/%s", domainId, group)).execute(), group); }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -103,21 +112,21 @@ public class DomainServiceImpl extends BaseIdentityServices implements DomainSer
 
     @Override
     public Map<String, Object> updateConfigGroup(String domainId, String group, Map<String, Object> options) {
-        return options(patch(KeystoneDomainConfig.class, uri("/domains/%s/config/%s", domainId, group)).entity(JsonBody.of("config", options)).execute());
+        return options(patch(KeystoneDomainConfig.class, uri("/domains/%s/config/%s", domainId, group)).entity(JsonBody.of("config", options)).execute(), group);
     }
 
     @Override
     public Object updateConfigOption(String domainId, String group, String option, Object value) {
         Map<String, Object> body = new HashMap<>();
         body.put(option, value);
-        return options(patch(KeystoneDomainConfig.class, uri("/domains/%s/config/%s/%s", domainId, group, option)).entity(JsonBody.of("config", body)).execute()).get(option);
+        return options(patch(KeystoneDomainConfig.class, uri("/domains/%s/config/%s/%s", domainId, group, option)).entity(JsonBody.of("config", body)).execute(), group).get(option);
     }
 
     @Override public ActionResponse deleteConfig(String domainId) { return deleteWithResponse(uri("/domains/%s/config", domainId)).execute(); }
     @Override public ActionResponse deleteConfigGroup(String domainId, String group) { return deleteWithResponse(uri("/domains/%s/config/%s", domainId, group)).execute(); }
     @Override public ActionResponse deleteConfigOption(String domainId, String group, String option) { return deleteWithResponse(uri("/domains/%s/config/%s/%s", domainId, group, option)).execute(); }
     @Override public Map<String, Map<String, Object>> defaultConfig() { return groups(get(KeystoneDomainConfig.class, uri("/domains/config/default")).execute()); }
-    @Override public Map<String, Object> defaultConfigGroup(String group) { return options(get(KeystoneDomainConfig.class, uri("/domains/config/%s/default", group)).execute()); }
+    @Override public Map<String, Object> defaultConfigGroup(String group) { return options(get(KeystoneDomainConfig.class, uri("/domains/config/%s/default", group)).execute(), group); }
 
     @Override
     @SuppressWarnings("unchecked")
