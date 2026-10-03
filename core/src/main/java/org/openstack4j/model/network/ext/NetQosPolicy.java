@@ -12,6 +12,13 @@ import org.openstack4j.model.network.ext.builder.NetQosPolicyBuilder;
 public interface NetQosPolicy extends ModelEntity, Buildable<NetQosPolicyBuilder> {
 
     /**
+     * @return the id of the QoS policy
+     */
+    default String getId() {
+        return null;
+    }
+
+    /**
      * A human-readable description for the resource. Default is an empty string.
      *
      * @return Description

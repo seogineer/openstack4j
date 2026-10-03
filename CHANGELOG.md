@@ -1,3 +1,10 @@
+## 4.5.0
+
+- Neutron 본체(in-tree) 확장 API 147 개: `extensions()`, `serviceProviders()`, `autoAllocatedTopology()`, `qosRules()`(rule types, DSCP, minimum bandwidth/packet rate, packet rate limit, alias), `subnetPools()`(prefix ops, onboard), `addressScopes()`, `addressGroups()`, `rbacPolicies()`, `defaultSecurityGroupRules()`, `securityGroupDefaultStatefulness()`, `segments()`, `networkSegmentRanges()`, `localIps()`, `ndpProxies()`, `serviceFlavors()`, `serviceProfiles()`, `metering()`, `logging()`
+- 기존 서비스 보강: router(extra routes, external gateways, conntrack helpers, l3 agents), agent(dhcp/l3 스케줄링, 삭제), port(bindings), quotas(default, details), floating IP pools, port forwarding update; `Router.getExternalGateways()`, `NetQosPolicy.getId()`
+- 공용 기반 `BaseNeutronExtService`(내부), `NeutronAttributes`(설정한 필드만 보내는 옵션 기반)
+- 테스트: `NetworkingExtensionsLiveTests`(개발용 Neutron/OVN 에서 8 통과, extraroute-atomic 미지원으로 1 skip)
+
 ## 4.4.0
 
 - 인증: application credential(id 또는 name+user), TOTP(`passcode`, password+TOTP MFA), `scopeToSystem()`, `scopeToTrust()`; 토큰 `getSystem()`/`getApplicationCredential()`/`getTrust()`; application credential 세션의 재인증; trust/system scope 토큰의 세션 컨텍스트 NPE 수정

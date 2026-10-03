@@ -136,6 +136,27 @@ os.identity().federation().identityProviders().list();
 - TOTP 세션은 passcode 가 일회용이라 토큰이 만료되면 자동 재인증할 수 없습니다. 새 passcode 로 다시 `authenticate()` 하세요.
 - 같은 스레드에서 `authenticate()` 를 다시 하면 그 클라이언트가 현재 세션이 됩니다. 이전 클라이언트로 돌아가려면 `OSFactory.clientFromToken(token)` 을 쓰세요.
 
+## Networking 확장
+
+4.5.0 부터 Neutron 본체(in-tree)의 API 를 대부분 지원합니다. 기존 메서드와 요청 본문은 바뀌지 않습니다.
+
+```java
+os.networking().extensions().isEnabled("qos");
+os.networking().qosRules().createDscpMarkingRule(policyId, QosRuleOptions.dscpMarking(26));
+SubnetPool pool = os.networking().subnetPools().create(SubnetPoolOptions.create("pool", List.of("10.0.0.0/16")).defaultPrefixlen(24));
+os.networking().addressGroups().addAddresses(groupId, List.of("10.0.2.100/32"));
+os.networking().rbacPolicies().create(RbacPolicyOptions.create("network", networkId, "access_as_shared", projectId));
+os.networking().router().addExtraRoutes(routerId, routes);
+os.networking().port().listBindings(portId);
+```
+
+- 새 accessor: `extensions()`, `serviceProviders()`, `autoAllocatedTopology()`, `qosRules()`, `subnetPools()`, `addressScopes()`, `addressGroups()`, `rbacPolicies()`, `defaultSecurityGroupRules()`, `securityGroupDefaultStatefulness()`, `segments()`, `networkSegmentRanges()`, `localIps()`, `ndpProxies()`, `serviceFlavors()`, `serviceProfiles()`, `metering()`, `logging()`
+- 기존 서비스 보강: router(extra routes, external gateways, conntrack helpers, l3 agents), agent(스케줄링), port(bindings), quotas(default, details), floating IP pools, port forwarding update
+- 옵션 클래스(`*Options`)는 설정한 필드만 보냅니다. 값을 지우려면 `attribute("field", null)`.
+- 해당 extension 이 꺼진 Neutron 은 404 를 돌려줍니다. `extensions().isEnabled(alias)` 로 먼저 확인하세요.
+- VPNaaS, FWaaS v2, BGP, BGPVPN, TaaS, SFC(stadium 프로젝트)는 다음 릴리스에서 다룹니다.
+- 4.5.0 에서 `NetQosPolicy.getId()` 를 추가했습니다(이전에는 구현 클래스로 캐스트해야 했습니다).
+
 ## 빌드
 
 ```bash
