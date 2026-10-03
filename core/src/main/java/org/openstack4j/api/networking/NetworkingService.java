@@ -186,4 +186,18 @@ public interface NetworkingService extends RestService {
      * @return the NetworkSegmentRangeService
      */
     org.openstack4j.api.networking.ext.NetworkSegmentRangeService networkSegmentRanges();
+
+    /**
+     * Local IPs and their port associations.
+     *
+     * @return the LocalIpService
+     */
+    org.openstack4j.api.networking.ext.LocalIpService localIps();
+
+    /**
+     * Router NDP proxies.
+     *
+     * @return the NdpProxyService
+     */
+    org.openstack4j.api.networking.ext.NdpProxyService ndpProxies();
 }
