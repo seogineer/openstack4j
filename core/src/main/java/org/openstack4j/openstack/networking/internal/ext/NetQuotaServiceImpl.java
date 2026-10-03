@@ -64,7 +64,7 @@ public class NetQuotaServiceImpl extends BaseNetworkingServices implements NetQu
 
     @Override
     public Map<String, ? extends QuotaDetail> getDetails(String projectId) {
-        NeutronQuotaDetails details = get(NeutronQuotaDetails.class, uri("/quotas/%s/details.json", Objects.requireNonNull(projectId))).execute();
+        NeutronQuotaDetails details = get(NeutronQuotaDetails.class, uri("/quotas/%s/details.json", Objects.requireNonNull(projectId))).execute(NeutronExecution.propagate404());
         return details == null || details.getQuota() == null ? Collections.emptyMap() : details.getQuota();
     }
 }

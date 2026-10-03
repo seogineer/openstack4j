@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.networking.internal.ext;
 
+import org.openstack4j.openstack.networking.internal.ext.NeutronExecution;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.networking.domain.NeutronRouter.Routers;
 import org.openstack4j.openstack.networking.domain.NeutronNetwork.Networks;
@@ -58,8 +59,8 @@ public class AgentServiceImpl extends BaseNetworkingServices implements AgentSer
     }
 
     @Override public ActionResponse delete(String agentId) { return deleteWithResponse(uri("/agents/%s", Objects.requireNonNull(agentId))).execute(); }
-    @Override public List<? extends Network> listDhcpNetworks(String agentId) { return get(Networks.class, uri("/agents/%s/dhcp-networks", Objects.requireNonNull(agentId))).execute().getList(); }
-    @Override public List<? extends Router> listL3Routers(String agentId) { return get(Routers.class, uri("/agents/%s/l3-routers", Objects.requireNonNull(agentId))).execute().getList(); }
+    @Override public List<? extends Network> listDhcpNetworks(String agentId) { return get(Networks.class, uri("/agents/%s/dhcp-networks", Objects.requireNonNull(agentId))).execute(NeutronExecution.propagate404()).getList(); }
+    @Override public List<? extends Router> listL3Routers(String agentId) { return get(Routers.class, uri("/agents/%s/l3-routers", Objects.requireNonNull(agentId))).execute(NeutronExecution.propagate404()).getList(); }
 
     @Override
     public ActionResponse addRouterToL3Agent(String agentId, String routerId) {
@@ -72,5 +73,5 @@ public class AgentServiceImpl extends BaseNetworkingServices implements AgentSer
         return deleteWithResponse(uri("/agents/%s/l3-routers/%s", Objects.requireNonNull(agentId), Objects.requireNonNull(routerId))).execute();
     }
 
-    @Override public List<? extends Agent> listDhcpAgentsHostingNetwork(String networkId) { return get(Agents.class, uri("/networks/%s/dhcp-agents", Objects.requireNonNull(networkId))).execute().getList(); }
+    @Override public List<? extends Agent> listDhcpAgentsHostingNetwork(String networkId) { return get(Agents.class, uri("/networks/%s/dhcp-agents", Objects.requireNonNull(networkId))).execute(NeutronExecution.propagate404()).getList(); }
 }

@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.networking.internal;
 
+import org.openstack4j.openstack.networking.internal.ext.NeutronExecution;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.networking.domain.ext.NeutronPortBinding.PortBindings;
 import org.openstack4j.openstack.networking.domain.ext.NeutronPortBinding;
@@ -108,8 +109,8 @@ public class PortServiceImpl extends BaseNetworkingServices implements PortServi
         return portId;
     }
 
-    @Override public List<? extends PortBinding> listBindings(String portId) { return get(PortBindings.class, uri("/ports/%s/bindings", Objects.requireNonNull(portId))).execute().getList(); }
-    @Override public PortBinding createBinding(String portId, PortBindingOptions options) { return post(NeutronPortBinding.class, uri("/ports/%s/bindings/", Objects.requireNonNull(portId))).entity(JsonBody.of("binding", options.toMap())).execute(); }
-    @Override public PortBinding activateBinding(String portId, String host) { return put(NeutronPortBinding.class, uri("/ports/%s/bindings/%s/activate", Objects.requireNonNull(portId), Objects.requireNonNull(host))).execute(); }
+    @Override public List<? extends PortBinding> listBindings(String portId) { return get(PortBindings.class, uri("/ports/%s/bindings", Objects.requireNonNull(portId))).execute(NeutronExecution.propagate404()).getList(); }
+    @Override public PortBinding createBinding(String portId, PortBindingOptions options) { return post(NeutronPortBinding.class, uri("/ports/%s/bindings/", Objects.requireNonNull(portId))).entity(JsonBody.of("binding", options.toMap())).execute(NeutronExecution.propagate404()); }
+    @Override public PortBinding activateBinding(String portId, String host) { return put(NeutronPortBinding.class, uri("/ports/%s/bindings/%s/activate", Objects.requireNonNull(portId), Objects.requireNonNull(host))).execute(NeutronExecution.propagate404()); }
     @Override public ActionResponse deleteBinding(String portId, String host) { return deleteWithResponse(uri("/ports/%s/bindings/%s", Objects.requireNonNull(portId), Objects.requireNonNull(host))).execute(); }
 }

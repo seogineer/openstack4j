@@ -38,7 +38,7 @@ public class LocalIpServiceImpl extends BaseNeutronExtService implements LocalIp
         body.put("fixed_port_id", id(fixedPortId));
         if (fixedIp != null)
             body.put("fixed_ip", fixedIp);
-        return post(NeutronLocalIpPortAssociation.class, PATH + "/" + id(localIpId) + "/port_associations").entity(JsonBody.of("port_association", body)).execute();
+        return post(NeutronLocalIpPortAssociation.class, PATH + "/" + id(localIpId) + "/port_associations").entity(JsonBody.of("port_association", body)).execute(NeutronExecution.propagate404());
     }
 
     @Override

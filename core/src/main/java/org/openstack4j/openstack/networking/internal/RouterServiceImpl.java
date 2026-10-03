@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.networking.internal;
 
+import org.openstack4j.openstack.networking.internal.ext.NeutronExecution;
 import org.openstack4j.openstack.networking.domain.ext.NeutronConntrackHelper.ConntrackHelpers;
 import org.openstack4j.openstack.networking.domain.ext.NeutronConntrackHelper;
 import org.openstack4j.openstack.networking.domain.NeutronAgent.Agents;
@@ -133,7 +134,7 @@ public class RouterServiceImpl extends BaseNetworkingServices implements RouterS
 
     private Router routerAction(String routerId, String action, String key, Object value) {
         return put(NeutronRouter.class, uri("/routers/%s/%s", Objects.requireNonNull(routerId), action))
-                .entity(JsonBody.of("router", Collections.singletonMap(key, Objects.requireNonNull(value)))).execute();
+                .entity(JsonBody.of("router", Collections.singletonMap(key, Objects.requireNonNull(value)))).execute(NeutronExecution.propagate404());
     }
 
     private static List<Map<String, String>> routes(List<? extends HostRoute> routes) {
@@ -155,19 +156,19 @@ public class RouterServiceImpl extends BaseNetworkingServices implements RouterS
         return "/routers/" + Objects.requireNonNull(routerId) + "/conntrack_helpers";
     }
 
-    @Override public List<? extends ConntrackHelper> listConntrackHelpers(String routerId) { return get(ConntrackHelpers.class, helpers(routerId)).execute().getList(); }
+    @Override public List<? extends ConntrackHelper> listConntrackHelpers(String routerId) { return get(ConntrackHelpers.class, helpers(routerId)).execute(NeutronExecution.propagate404()).getList(); }
     @Override public ConntrackHelper getConntrackHelper(String routerId, String id) { return get(NeutronConntrackHelper.class, helpers(routerId) + "/" + Objects.requireNonNull(id)).execute(); }
 
     @Override
     public ConntrackHelper createConntrackHelper(String routerId, ConntrackHelperOptions options) {
-        return post(NeutronConntrackHelper.class, helpers(routerId)).entity(JsonBody.of("conntrack_helper", options.toMap())).execute();
+        return post(NeutronConntrackHelper.class, helpers(routerId)).entity(JsonBody.of("conntrack_helper", options.toMap())).execute(NeutronExecution.propagate404());
     }
 
     @Override
     public ConntrackHelper updateConntrackHelper(String routerId, String id, ConntrackHelperOptions options) {
-        return put(NeutronConntrackHelper.class, helpers(routerId) + "/" + Objects.requireNonNull(id)).entity(JsonBody.of("conntrack_helper", options.toMap())).execute();
+        return put(NeutronConntrackHelper.class, helpers(routerId) + "/" + Objects.requireNonNull(id)).entity(JsonBody.of("conntrack_helper", options.toMap())).execute(NeutronExecution.propagate404());
     }
 
     @Override public ActionResponse deleteConntrackHelper(String routerId, String id) { return deleteWithResponse(helpers(routerId) + "/" + Objects.requireNonNull(id)).execute(); }
-    @Override public List<? extends Agent> listL3Agents(String routerId) { return get(Agents.class, uri("/routers/%s/l3-agents", Objects.requireNonNull(routerId))).execute().getList(); }
+    @Override public List<? extends Agent> listL3Agents(String routerId) { return get(Agents.class, uri("/routers/%s/l3-agents", Objects.requireNonNull(routerId))).execute(NeutronExecution.propagate404()).getList(); }
 }

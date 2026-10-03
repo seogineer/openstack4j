@@ -27,7 +27,7 @@ public class AddressGroupServiceImpl extends BaseNeutronExtService implements Ad
 
     private AddressGroup addresses(String id, String action, List<String> addresses) {
         return put(NeutronAddressGroup.class, GROUPS + "/" + id(id) + "/" + action)
-                .entity(JsonBody.of(Collections.singletonMap("addresses", Objects.requireNonNull(addresses)))).execute();
+                .entity(JsonBody.of(Collections.singletonMap("addresses", Objects.requireNonNull(addresses)))).execute(NeutronExecution.propagate404());
     }
 
     @Override public AddressGroup addAddresses(String id, List<String> addresses) { return addresses(id, "add_addresses", addresses); }

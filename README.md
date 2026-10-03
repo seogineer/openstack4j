@@ -153,7 +153,7 @@ os.networking().port().listBindings(portId);
 - 새 accessor: `extensions()`, `serviceProviders()`, `autoAllocatedTopology()`, `qosRules()`, `subnetPools()`, `addressScopes()`, `addressGroups()`, `rbacPolicies()`, `defaultSecurityGroupRules()`, `securityGroupDefaultStatefulness()`, `segments()`, `networkSegmentRanges()`, `localIps()`, `ndpProxies()`, `serviceFlavors()`, `serviceProfiles()`, `metering()`, `logging()`
 - 기존 서비스 보강: router(extra routes, external gateways, conntrack helpers, l3 agents), agent(스케줄링), port(bindings), quotas(default, details), floating IP pools, port forwarding update
 - 옵션 클래스(`*Options`)는 설정한 필드만 보냅니다. 값을 지우려면 `attribute("field", null)`.
-- 해당 extension 이 꺼진 Neutron 은 404 를 돌려줍니다. `extensions().isEnabled(alias)` 로 먼저 확인하세요.
+- 해당 extension 이 꺼져 있거나 상위 자원이 없으면 목록·생성·수정·동작 메서드는 404 예외를 던집니다(빈 결과로 바꾸지 않습니다). 단건 `get(id)` 은 openstack4j 관례대로 없는 자원에 `null` 을, 삭제는 실패한 `ActionResponse` 를 돌려줍니다. `extensions().isEnabled(alias)` 로 먼저 확인할 수 있습니다.
 - VPNaaS, FWaaS v2, BGP, BGPVPN, TaaS, SFC(stadium 프로젝트)는 다음 릴리스에서 다룹니다.
 - 4.5.0 에서 `NetQosPolicy.getId()` 를 추가했습니다(이전에는 구현 클래스로 캐스트해야 했습니다).
 
