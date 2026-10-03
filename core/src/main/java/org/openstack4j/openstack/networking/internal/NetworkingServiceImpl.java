@@ -175,4 +175,14 @@ public class NetworkingServiceImpl implements NetworkingService {
     public org.openstack4j.api.networking.ext.QosRuleService qosRules() {
         return Apis.get(org.openstack4j.api.networking.ext.QosRuleService.class);
     }
+
+    @Override
+    public org.openstack4j.api.networking.ext.SubnetPoolService subnetPools() {
+        return Apis.get(org.openstack4j.api.networking.ext.SubnetPoolService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.AddressScopeService addressScopes() {
+        return Apis.get(org.openstack4j.api.networking.ext.AddressScopeService.class);
+    }
 }
