@@ -2,6 +2,7 @@ package org.openstack4j.openstack.identity.v3.domain;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -37,6 +38,12 @@ public class KeystoneToken implements Token {
     private List<KeystoneRole> roles;
     @JsonProperty(required = false)
     private KeystoneProject project;
+    @JsonProperty("system")
+    private Map<String, Object> system;
+    @JsonProperty("application_credential")
+    private Map<String, Object> applicationCredential;
+    @JsonProperty("OS-TRUST:trust")
+    private Map<String, Object> trust;
     @JsonProperty(required = false)
     private KeystoneDomain domain;
     @JsonProperty
@@ -73,6 +80,21 @@ public class KeystoneToken implements Token {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public Map<String, Object> getSystem() {
+        return system;
+    }
+
+    @Override
+    public Map<String, Object> getApplicationCredential() {
+        return applicationCredential;
+    }
+
+    @Override
+    public Map<String, Object> getTrust() {
+        return trust;
     }
 
     @Override

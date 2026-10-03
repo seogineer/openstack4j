@@ -199,16 +199,23 @@ public class OSAuthenticator {
         KeystoneToken token = response.getEntity(KeystoneToken.class);
         token.setId(response.header(ClientConstants.HEADER_X_SUBJECT_TOKEN));
 
-        if (auth.getType().equals(Type.CREDENTIALS)) {
+        // application credentials re-authenticate with the stored credential, like passwords
+        if (auth.getType() == Type.CREDENTIALS || auth.getType() == Type.APPLICATION_CREDENTIAL) {
             token = token.applyContext(info.endpoint, auth);
         } else {
+            // a trust- or system-scoped token request has no project/domain scope; fall back to the token's own
+            Authentication.Scope scope = auth.getScope();
             if (token.getProject() != null) {
+                boolean scoped = scope != null && scope.getProject() != null;
                 token = token.applyContext(info.endpoint, new TokenAuth(token.getId(),
-                        auth.getScope().getProject().getName(), auth.getScope().getProject().getId()));
+                        scoped ? scope.getProject().getName() : token.getProject().getName(),
+                        scoped ? scope.getProject().getId() : token.getProject().getId()));
 
             } else if (token.getDomain() != null) {
+                boolean scoped = scope != null && scope.getDomain() != null;
                 token = token.applyContext(info.endpoint, new TokenAuth(token.getId(),
-                        auth.getScope().getDomain().getName(), auth.getScope().getDomain().getId()));
+                        scoped ? scope.getDomain().getName() : token.getDomain().getName(),
+                        scoped ? scope.getDomain().getId() : token.getDomain().getId()));
             } else {
                 token = token.applyContext(info.endpoint, new TokenAuth(token.getId(), null, null));
             }

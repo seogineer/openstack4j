@@ -13,6 +13,7 @@ import org.openstack4j.openstack.identity.v2.domain.Credentials;
 import org.openstack4j.openstack.identity.v2.domain.RaxApiKeyCredentials;
 import org.openstack4j.openstack.identity.v2.domain.TokenAuth;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneAuth;
+import org.openstack4j.openstack.identity.v3.domain.KeystoneAuth.AuthIdentity;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneAuth.AuthScope;
 import org.openstack4j.openstack.internal.OSAuthenticator;
 
@@ -129,6 +130,12 @@ public abstract class OSClientBuilder<R, T extends IOSClientBuilder<R, T>> imple
         Identifier domain;
         AuthScope scope;
         String tokenId;
+        String applicationCredentialId;
+        String applicationCredentialName;
+        String applicationCredentialSecret;
+        Identifier applicationCredentialUser;
+        Identifier applicationCredentialUserDomain;
+        String passcode;
 
         @Override
         public ClientV3 domainName(String domainName) {
@@ -165,6 +172,21 @@ public abstract class OSClientBuilder<R, T extends IOSClientBuilder<R, T>> imple
                 } else {
                     return (OSClientV3) OSAuthenticator.invoke(new KeystoneAuth(tokenId), endpoint, perspective, config, provider);
                 }
+            // application credential (its token is scoped by the credential itself)
+            if (applicationCredentialSecret != null) {
+                if (scope != null)
+                    throw new IllegalStateException("An application credential cannot be combined with a scope; the credential is already scoped");
+                AuthIdentity identity = applicationCredentialId != null
+                        ? AuthIdentity.createApplicationCredentialType(applicationCredentialId, applicationCredentialSecret)
+                        : AuthIdentity.createApplicationCredentialType(applicationCredentialName, applicationCredentialSecret,
+                        applicationCredentialUser, applicationCredentialUserDomain);
+                return (OSClientV3) OSAuthenticator.invoke(new KeystoneAuth(identity, null, Auth.Type.APPLICATION_CREDENTIAL),
+                        endpoint, perspective, config, provider);
+            }
+            // password and/or TOTP
+            if (user != null && user.length() > 0 && passcode != null)
+                return (OSClientV3) OSAuthenticator.invoke(new KeystoneAuth(AuthIdentity.createCredentialType(user, password, domain, passcode),
+                        scope, Auth.Type.CREDENTIALS), endpoint, perspective, config, provider);
             // credential based authentication
             if (user != null && user.length() > 0)
                 return (OSClientV3) OSAuthenticator.invoke(new KeystoneAuth(user, password, domain, scope), endpoint, perspective, config, provider);
@@ -187,6 +209,40 @@ public abstract class OSClientBuilder<R, T extends IOSClientBuilder<R, T>> imple
         @Override
         public ClientV3 scopeToDomain(Identifier domain) {
             this.scope = AuthScope.domain(domain);
+            return this;
+        }
+
+        @Override
+        public ClientV3 applicationCredential(String id, String secret) {
+            this.applicationCredentialId = id;
+            this.applicationCredentialSecret = secret;
+            return this;
+        }
+
+        @Override
+        public ClientV3 applicationCredential(String name, String secret, Identifier user, Identifier userDomain) {
+            this.applicationCredentialName = name;
+            this.applicationCredentialSecret = secret;
+            this.applicationCredentialUser = user;
+            this.applicationCredentialUserDomain = userDomain;
+            return this;
+        }
+
+        @Override
+        public ClientV3 passcode(String passcode) {
+            this.passcode = passcode;
+            return this;
+        }
+
+        @Override
+        public ClientV3 scopeToSystem() {
+            this.scope = AuthScope.system();
+            return this;
+        }
+
+        @Override
+        public ClientV3 scopeToTrust(String trustId) {
+            this.scope = AuthScope.trust(trustId);
             return this;
         }
 
