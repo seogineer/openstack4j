@@ -101,3 +101,14 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - `BlockQuotaSet` 의 `volumes`/`snapshots`/`gigabytes` 는 설정하지 않으면 요청 본문에서 빠집니다(이전에는 0 으로 전송되어 다른 quota 를 0 으로 덮어썼습니다). getter 는 여전히 `int` 이며 미설정 값은 0 으로 읽힙니다.
 - `negotiate()` 후 Cinder 3.53+ 는 생성 본문의 알 수 없는 필드를 거부합니다. 라이브러리는 `bootable` 을 설정한 생성 요청을 3.52 로 보내 이를 피합니다.
 - `volumes().create()` 에 `multiattach` 를 설정하면 Cinder 는 버전과 무관하게 400 을 돌려줍니다(멀티어태치는 volume type 으로 지정). 이는 4.2 와 같습니다.
+
+# 4.3 → 4.4
+
+런타임 동작을 바꾸는 변경은 없습니다. 기존 password·token 인증의 요청 본문, 기존 identity 메서드의 요청은 4.3 과 같습니다.
+
+- `IOSClientBuilder.V3`, `IdentityService`, `UserService`, `ProjectService`, `RoleService`, `DomainService`, `TokenService` 에 추상 메서드가 추가되었습니다. 이 인터페이스를 직접 구현한 테스트용 가짜 구현은 새 메서드를 구현해야 합니다. 모델 인터페이스(`Token`, `User`, `Project`, `Domain`, `Role`)에는 `default` getter 만 추가되어 그대로 컴파일됩니다.
+- 새 응답 필드(user `options`/`password_expires_at`/`federated`, project `is_domain`, domain `tags`, role `description`)는 읽기 전용이라 생성·수정 요청 본문에 들어가지 않습니다. 기존 project/domain/role `options` 는 그대로 `Map<String, String>` 입니다(불리언 값은 `"true"` 문자열).
+- application credential 인증에 scope 를 함께 주면 요청 전에 `IllegalStateException` 이 납니다. credential 이 이미 project 에 묶여 있기 때문입니다.
+- TOTP(`passcode`) 세션은 토큰 만료 후 같은 passcode 로 재인증할 수 없습니다. 만료 전에 새 passcode 로 다시 인증하세요.
+- trust 또는 system scope 로 받은 토큰도 이제 세션 컨텍스트를 만들 수 있습니다(4.3 까지는 trust scope 토큰 인증에서 `NullPointerException`).
+- Keystone 이 410 을 돌려주는 OS-SIMPLE-CERT·OS-PKI, 그리고 브라우저 리다이렉트용 websso 두 경로는 지원하지 않습니다.
