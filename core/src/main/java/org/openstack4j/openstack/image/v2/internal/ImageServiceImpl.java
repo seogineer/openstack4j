@@ -284,4 +284,14 @@ public class ImageServiceImpl extends BaseImageServices implements ImageService 
     public TaskService tasks() {
         return Apis.get(TaskService.class);
     }
+
+    @Override
+    public org.openstack4j.api.image.v2.ext.ImageInfoService info() {
+        return Apis.get(org.openstack4j.api.image.v2.ext.ImageInfoService.class);
+    }
+
+    @Override
+    public org.openstack4j.model.image.v2.ext.ImageVersions versions() {
+        return new ImageVersionDiscovery().fetch();
+    }
 }
