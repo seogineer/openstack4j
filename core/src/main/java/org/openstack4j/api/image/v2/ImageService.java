@@ -164,4 +164,17 @@ public interface ImageService extends RestService {
      * @return the image v2 tasks service
      */
     TaskService tasks();
+
+    /**
+     * Glance discovery information: import methods, stores, usage.
+     *
+     * @return the ImageInfoService
+     */
+    org.openstack4j.api.image.v2.ext.ImageInfoService info();
+
+    /**
+     * @return the API versions of the server ({@code GET /versions} at the Glance root); use {@code supports("2.x")} before
+     *         calling APIs added in later versions
+     */
+    org.openstack4j.model.image.v2.ext.ImageVersions versions();
 }
