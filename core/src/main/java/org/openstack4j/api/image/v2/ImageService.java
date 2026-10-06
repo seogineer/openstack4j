@@ -229,4 +229,11 @@ public interface ImageService extends RestService {
      * @return the action response
      */
     ActionResponse deleteFromStore(String storeId, String imageId);
+
+    /**
+     * The image cache API (API 2.14).
+     *
+     * @return the ImageCacheService
+     */
+    org.openstack4j.api.image.v2.ext.ImageCacheService cache();
 }
