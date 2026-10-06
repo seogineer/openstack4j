@@ -1,5 +1,15 @@
 package org.openstack4j.openstack.image.v2.internal;
 
+import org.openstack4j.openstack.internal.microversion.JsonBody;
+import org.openstack4j.openstack.image.v2.internal.ext.BaseImageExtService;
+import org.openstack4j.openstack.image.v2.domain.ext.GlanceImageLocation;
+import org.openstack4j.openstack.image.v2.domain.GlanceTask;
+import org.openstack4j.model.image.v2.options.ImageImportOptions;
+import org.openstack4j.model.image.v2.ext.ImageLocation;
+import org.openstack4j.model.image.v2.Task;
+import java.util.LinkedHashMap;
+import java.util.Collections;
+import java.util.Arrays;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.util.List;
@@ -293,5 +303,42 @@ public class ImageServiceImpl extends BaseImageServices implements ImageService 
     @Override
     public org.openstack4j.model.image.v2.ext.ImageVersions versions() {
         return new ImageVersionDiscovery().fetch();
+    }
+
+    @Override
+    public ActionResponse importImage(String imageId, ImageImportOptions options) {
+        return postWithResponse(uri("/images/%s/import", Objects.requireNonNull(imageId))).entity(JsonBody.of(Objects.requireNonNull(options).toMap())).execute();
+    }
+
+    @Override
+    public ActionResponse stage(String imageId, Payload<?> payload) {
+        return put(ActionResponse.class, uri("/images/%s/stage", Objects.requireNonNull(imageId)))
+                .header(HEADER_CONTENT_TYPE, CONTENT_TYPE_OCTECT_STREAM).entity(Objects.requireNonNull(payload)).execute();
+    }
+
+    @Override
+    public List<? extends ImageLocation> listLocations(String imageId) {
+        GlanceImageLocation[] locations = get(GlanceImageLocation[].class, uri("/images/%s/locations", Objects.requireNonNull(imageId)))
+                .execute(BaseImageExtService.propagate404());
+        return locations == null ? Collections.emptyList() : Arrays.asList(locations);
+    }
+
+    @Override
+    public ActionResponse addLocation(String imageId, String url, Map<String, Object> validationData) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("url", Objects.requireNonNull(url));
+        if (validationData != null)
+            body.put("validation_data", validationData);
+        return postWithResponse(uri("/images/%s/locations", Objects.requireNonNull(imageId))).entity(JsonBody.of(body)).execute();
+    }
+
+    @Override
+    public List<? extends Task> listTasks(String imageId) {
+        return get(GlanceTask.Tasks.class, uri("/images/%s/tasks", Objects.requireNonNull(imageId))).execute(BaseImageExtService.propagate404()).getList();
+    }
+
+    @Override
+    public ActionResponse deleteFromStore(String storeId, String imageId) {
+        return deleteWithResponse(uri("/stores/%s/%s", Objects.requireNonNull(storeId), Objects.requireNonNull(imageId))).execute();
     }
 }

@@ -1,5 +1,8 @@
 package org.openstack4j.api.image.v2;
 
+import org.openstack4j.model.image.v2.options.ImageImportOptions;
+import org.openstack4j.model.image.v2.ext.ImageLocation;
+import org.openstack4j.model.image.v2.Task;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
@@ -177,4 +180,53 @@ public interface ImageService extends RestService {
      *         calling APIs added in later versions
      */
     org.openstack4j.model.image.v2.ext.ImageVersions versions();
+
+    /**
+     * Starts an interoperable image import (API 2.6).
+     *
+     * @param imageId the image (queued, or uploading after {@link #stage})
+     * @param options the import method and target stores
+     * @return the action response (202 Accepted; the import runs as a task)
+     */
+    ActionResponse importImage(String imageId, ImageImportOptions options);
+
+    /**
+     * Uploads image data to the staging area for the glance-direct import method (API 2.6).
+     *
+     * @param imageId the image
+     * @param payload the image data, sent as application/octet-stream
+     * @return the action response
+     */
+    ActionResponse stage(String imageId, Payload<?> payload);
+
+    /**
+     * @param imageId the image
+     * @return the locations of the image data (service-to-service, API 2.17)
+     */
+    List<? extends ImageLocation> listLocations(String imageId);
+
+    /**
+     * Adds a location to an image that has none yet (service-to-service, API 2.17).
+     *
+     * @param imageId        the image
+     * @param url            the location URL
+     * @param validationData optional hash data ({@code os_hash_algo}, {@code os_hash_value}); null omits it
+     * @return the action response
+     */
+    ActionResponse addLocation(String imageId, String url, Map<String, Object> validationData);
+
+    /**
+     * @param imageId the image
+     * @return the tasks that worked on the image, for example imports (API 2.12)
+     */
+    List<? extends Task> listTasks(String imageId);
+
+    /**
+     * Deletes the image data from one store; the image stays in its other stores (multi-store, API 2.10).
+     *
+     * @param storeId the store
+     * @param imageId the image
+     * @return the action response
+     */
+    ActionResponse deleteFromStore(String storeId, String imageId);
 }
