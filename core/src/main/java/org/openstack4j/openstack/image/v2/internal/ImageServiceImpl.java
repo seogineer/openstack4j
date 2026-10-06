@@ -341,4 +341,9 @@ public class ImageServiceImpl extends BaseImageServices implements ImageService 
     public ActionResponse deleteFromStore(String storeId, String imageId) {
         return deleteWithResponse(uri("/stores/%s/%s", Objects.requireNonNull(storeId), Objects.requireNonNull(imageId))).execute();
     }
+
+    @Override
+    public org.openstack4j.api.image.v2.ext.ImageCacheService cache() {
+        return Apis.get(org.openstack4j.api.image.v2.ext.ImageCacheService.class);
+    }
 }

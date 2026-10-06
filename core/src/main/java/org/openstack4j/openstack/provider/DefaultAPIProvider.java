@@ -327,6 +327,7 @@ public class DefaultAPIProvider implements APIProvider {
         bind(VimService.class, VimServiceImpl.class);
         bind(AgentService.class, AgentServiceImpl.class);
         bind(org.openstack4j.api.image.v2.ImageService.class, org.openstack4j.openstack.image.v2.internal.ImageServiceImpl.class);
+        bind(org.openstack4j.api.image.v2.ext.ImageCacheService.class, org.openstack4j.openstack.image.v2.internal.ext.ImageCacheServiceImpl.class);
         bind(org.openstack4j.api.image.v2.ext.ImageInfoService.class, org.openstack4j.openstack.image.v2.internal.ext.ImageInfoServiceImpl.class);
         bind(TaskService.class, TaskServiceImpl.class);
         bind(TaskService.class, TaskServiceImpl.class);
