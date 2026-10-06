@@ -346,4 +346,9 @@ public class ImageServiceImpl extends BaseImageServices implements ImageService 
     public org.openstack4j.api.image.v2.ext.ImageCacheService cache() {
         return Apis.get(org.openstack4j.api.image.v2.ext.ImageCacheService.class);
     }
+
+    @Override
+    public org.openstack4j.api.image.v2.ext.ImageSchemaService schemas() {
+        return Apis.get(org.openstack4j.api.image.v2.ext.ImageSchemaService.class);
+    }
 }
