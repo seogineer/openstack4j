@@ -127,4 +127,7 @@ public interface ShareService extends RestService {
 
     /** @return the 2.7+ paths of availability zones, services, quotas and share type access */
     org.openstack4j.api.manila.ext.ShareAdministrationService administration();
+
+    /** @return the 2.7+ share APIs: export locations, instances, manage, revert, soft delete, access rules, migration */
+    org.openstack4j.api.manila.ext.ShareExtService sharesExt();
 }
