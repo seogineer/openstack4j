@@ -52,4 +52,9 @@ public class OctaviaServiceImpl implements OctaviaService {
     public org.openstack4j.api.octavia.ext.QuotaService quotas() {
         return Apis.get(org.openstack4j.api.octavia.ext.QuotaService.class);
     }
+
+    @Override
+    public org.openstack4j.api.octavia.ext.L7PolicyService l7Policies() {
+        return Apis.get(org.openstack4j.api.octavia.ext.L7PolicyService.class);
+    }
 }
