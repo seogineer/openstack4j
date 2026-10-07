@@ -29,4 +29,13 @@ public interface DNSService extends RestService {
 
     /** @return the limits */
     org.openstack4j.api.dns.v2.ext.DesignateInfoService info();
+
+    /** @return zone exports and imports (zone files) */
+    org.openstack4j.api.dns.v2.ext.ZoneFileService zoneFiles();
+
+    /** @return the shares of zones with other projects */
+    org.openstack4j.api.dns.v2.ext.ZoneShareService zoneShares();
+
+    /** @return zone transfer requests and accepts */
+    org.openstack4j.api.dns.v2.ext.ZoneTransferService zoneTransfers();
 }

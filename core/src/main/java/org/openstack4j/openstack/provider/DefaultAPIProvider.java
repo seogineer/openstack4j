@@ -374,6 +374,9 @@ public class DefaultAPIProvider implements APIProvider {
         bind(WorkflowDefinitionService.class, WorkflowDefinitionServiceImpl.class);
         bind(DNSService.class, DNSServiceImpl.class);
         bind(org.openstack4j.api.dns.v2.ZoneService.class, org.openstack4j.openstack.dns.v2.internal.ZoneServiceImpl.class);
+        bind(org.openstack4j.api.dns.v2.ext.ZoneFileService.class, org.openstack4j.openstack.dns.v2.internal.ext.ZoneFileServiceImpl.class);
+        bind(org.openstack4j.api.dns.v2.ext.ZoneShareService.class, org.openstack4j.openstack.dns.v2.internal.ext.ZoneShareServiceImpl.class);
+        bind(org.openstack4j.api.dns.v2.ext.ZoneTransferService.class, org.openstack4j.openstack.dns.v2.internal.ext.ZoneTransferServiceImpl.class);
         bind(org.openstack4j.api.dns.v2.ext.DesignatePoolService.class, org.openstack4j.openstack.dns.v2.internal.ext.DesignatePoolServiceImpl.class);
         bind(org.openstack4j.api.dns.v2.ext.DesignateServiceStatusService.class, org.openstack4j.openstack.dns.v2.internal.ext.DesignateServiceStatusServiceImpl.class);
         bind(org.openstack4j.api.dns.v2.ext.DesignateInfoService.class, org.openstack4j.openstack.dns.v2.internal.ext.DesignateInfoServiceImpl.class);
