@@ -64,4 +64,11 @@ public interface HeatService extends RestService {
      * @return the ResourceTypeService
      */
     org.openstack4j.api.heat.ext.ResourceTypeService resourceTypes();
+
+    /**
+     * Heat software deployments.
+     *
+     * @return the SoftwareDeploymentService
+     */
+    org.openstack4j.api.heat.ext.SoftwareDeploymentService softwareDeployments();
 }
