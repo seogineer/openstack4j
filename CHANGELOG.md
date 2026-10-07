@@ -1,3 +1,9 @@
+## 4.6.0
+
+- Glance v2 누락 API 59 개: `imagesV2().versions()`(root `/versions`, `supports()`), `info()`(import methods, stores, stores detail, usage), interoperable image import(`stage`, `importImage`: glance-direct/web-download/copy-image/glance-download), `listLocations`/`addLocation`, `listTasks`, `deleteFromStore`, `cache()`(list/queue/delete/clear/clean/prune), `schemas()`(16), `metadefs()`(namespaces, resource types, objects, properties, tags)
+- 공용 기반 `BaseImageExtService`(내부, 404 전달), `ImageAttributes`(설정한 필드만 보내는 옵션 기반)
+- 테스트: `ImageExtensionsLiveTests`(`OS_AUTH_URL`·`OS_TOKEN` 있을 때)
+
 ## 4.5.0
 
 - Neutron 본체(in-tree) 확장 API 147 개: `extensions()`, `serviceProviders()`, `autoAllocatedTopology()`, `qosRules()`(rule types, DSCP, minimum bandwidth/packet rate, packet rate limit, alias), `subnetPools()`(prefix ops, onboard), `addressScopes()`, `addressGroups()`, `rbacPolicies()`, `defaultSecurityGroupRules()`, `securityGroupDefaultStatefulness()`, `segments()`, `networkSegmentRanges()`, `localIps()`, `ndpProxies()`, `serviceFlavors()`, `serviceProfiles()`, `metering()`, `logging()`
