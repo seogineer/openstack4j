@@ -1,5 +1,8 @@
 package org.openstack4j.openstack.heat.internal;
 
+import org.openstack4j.openstack.heat.domain.ext.HeatStackSnapshot.Snapshots;
+import org.openstack4j.openstack.heat.domain.ext.HeatStackSnapshot;
+import org.openstack4j.model.heat.ext.StackSnapshot;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.heat.internal.ext.BaseHeatExtService;
 import org.openstack4j.openstack.heat.domain.ext.HeatStackOutput.Outputs;
@@ -182,4 +185,62 @@ public class StackServiceImpl extends BaseHeatServices implements StackService {
     @Override public ActionResponse check(String stackName, String stackId) { return action(stackName, stackId, "check"); }
     @Override public ActionResponse cancelUpdate(String stackName, String stackId) { return action(stackName, stackId, "cancel_update"); }
     @Override public ActionResponse cancelWithoutRollback(String stackName, String stackId) { return action(stackName, stackId, "cancel_without_rollback"); }
+
+    @Override
+    public List<? extends StackSnapshot> snapshots(String stackName, String stackId) {
+        return get(Snapshots.class, stack(stackName, stackId) + "/snapshots").execute(BaseHeatExtService.propagate404()).getList();
+    }
+
+    /** The create response is the snapshot without a root key (unlike show), so it is read with the plain mapper. */
+    @Override
+    public StackSnapshot snapshot(String stackName, String stackId, String snapshotName) {
+        Map<String, Object> body = snapshotName == null ? Collections.emptyMap() : Collections.singletonMap("name", snapshotName);
+        Map<?, ?> created = post(Map.class, stack(stackName, stackId) + "/snapshots").entity(JsonBody.of(body)).execute(BaseHeatExtService.propagate404());
+        return created == null ? null : PLAIN.convertValue(created, HeatStackSnapshot.class);
+    }
+
+    @Override
+    public StackSnapshot getSnapshot(String stackName, String stackId, String snapshotId) {
+        return get(HeatStackSnapshot.class, stack(stackName, stackId) + "/snapshots/" + Objects.requireNonNull(snapshotId)).execute();
+    }
+
+    @Override
+    public ActionResponse deleteSnapshot(String stackName, String stackId, String snapshotId) {
+        return deleteWithResponse(stack(stackName, stackId) + "/snapshots/" + Objects.requireNonNull(snapshotId)).execute();
+    }
+
+    @Override
+    public ActionResponse restoreSnapshot(String stackName, String stackId, String snapshotId) {
+        return postWithResponse(stack(stackName, stackId) + "/snapshots/" + Objects.requireNonNull(snapshotId) + "/restore").execute();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> preview(StackCreate stackCreate) {
+        Map<String, Object> result = post(Map.class, "/stacks/preview").entity(Objects.requireNonNull(stackCreate)).execute(BaseHeatExtService.propagate404());
+        Object stack = result == null ? null : result.get("stack");
+        return stack instanceof Map ? (Map<String, Object>) stack : (result == null ? Collections.emptyMap() : result);
+    }
+
+    @Override
+    public Map<String, List<Map<String, Object>>> previewUpdate(String stackName, String stackId, StackUpdate stackUpdate) {
+        return changes(put(Map.class, stack(stackName, stackId) + "/preview").entity(Objects.requireNonNull(stackUpdate)).execute(BaseHeatExtService.propagate404()));
+    }
+
+    @Override
+    public Map<String, List<Map<String, Object>>> previewPatchUpdate(String stackName, String stackId, StackUpdate stackUpdate) {
+        return changes(patch(Map.class, stack(stackName, stackId) + "/preview").entity(Objects.requireNonNull(stackUpdate)).execute(BaseHeatExtService.propagate404()));
+    }
+
+    /** {@code {"resource_changes": {"unchanged": [...], "updated": [...], ...}}}; an unwrapped body is accepted too. */
+    @SuppressWarnings("unchecked")
+    private static Map<String, List<Map<String, Object>>> changes(Map<?, ?> result) {
+        if (result == null)
+            return Collections.emptyMap();
+        Object inner = result.get("resource_changes");
+        return (Map<String, List<Map<String, Object>>>) (inner instanceof Map ? inner : result);
+    }
+
+    private static final com.fasterxml.jackson.databind.ObjectMapper PLAIN = new com.fasterxml.jackson.databind.ObjectMapper()
+            .disable(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 }
