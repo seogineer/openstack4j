@@ -41,4 +41,12 @@ public interface EventsService {
      * @return event details
      */
     Event show(String stackName, String stackId, String resourceName, String eventId);
+
+    /**
+     * Lists the events of a stack given only its name (Heat redirects to the name/id URL).
+     *
+     * @param stackName the stack name
+     * @return the events
+     */
+    List<? extends Event> list(String stackName);
 }

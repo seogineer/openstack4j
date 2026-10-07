@@ -1,5 +1,11 @@
 package org.openstack4j.openstack.heat.internal;
 
+import org.openstack4j.openstack.internal.microversion.JsonBody;
+import org.openstack4j.openstack.heat.internal.ext.BaseHeatExtService;
+import org.openstack4j.openstack.heat.domain.ext.HeatStackOutput.Outputs;
+import org.openstack4j.openstack.heat.domain.ext.HeatStackOutput;
+import org.openstack4j.model.heat.ext.StackOutput;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -113,4 +119,67 @@ public class StackServiceImpl extends BaseHeatServices implements StackService {
                 .build();
         return post(HeatStack.class, uri("/stacks")).entity(heatStackAdopt).execute();
     }
+
+    private static String stack(String stackName, String stackId) {
+        return "/stacks/" + Objects.requireNonNull(stackName) + "/" + Objects.requireNonNull(stackId);
+    }
+
+    /**
+     * {@code DELETE /stacks/{identity}} answers with a redirect that clients turn into a GET for DELETE, so the stack is
+     * looked up first and deleted by name and id.
+     */
+    @Override
+    public ActionResponse delete(String stackIdentity) {
+        Stack found = getStackByName(Objects.requireNonNull(stackIdentity));
+        if (found == null)
+            return ActionResponse.actionFailed("Stack " + stackIdentity + " not found", 404);
+        return delete(found.getName(), found.getId());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> environment(String stackName, String stackId) {
+        Map<String, Object> env = get(Map.class, stack(stackName, stackId) + "/environment").execute(BaseHeatExtService.propagate404());
+        return env == null ? Collections.emptyMap() : env;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> export(String stackName, String stackId) {
+        Map<String, Object> data = get(Map.class, stack(stackName, stackId) + "/export").execute(BaseHeatExtService.propagate404());
+        return data == null ? Collections.emptyMap() : data;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<String, String> files(String stackName, String stackId) {
+        Map<String, String> files = get(Map.class, stack(stackName, stackId) + "/files").execute(BaseHeatExtService.propagate404());
+        return files == null ? Collections.emptyMap() : files;
+    }
+
+    @Override
+    public List<? extends StackOutput> outputs(String stackName, String stackId) {
+        return get(Outputs.class, stack(stackName, stackId) + "/outputs").execute(BaseHeatExtService.propagate404()).getList();
+    }
+
+    @Override
+    public StackOutput output(String stackName, String stackId, String outputKey) {
+        return get(HeatStackOutput.class, stack(stackName, stackId) + "/outputs/" + Objects.requireNonNull(outputKey)).execute();
+    }
+
+    @Override
+    public ActionResponse patchUpdate(String stackName, String stackId, StackUpdate stackUpdate) {
+        return ToActionResponseFunction.INSTANCE.apply(patch(Void.class, stack(stackName, stackId)).entity(Objects.requireNonNull(stackUpdate)).executeWithResponse());
+    }
+
+    /** Stack actions take {@code {"<action>": null}}; JsonBody keeps the explicit null. */
+    private ActionResponse action(String stackName, String stackId, String action) {
+        return postWithResponse(stack(stackName, stackId) + "/actions").entity(JsonBody.of(Collections.singletonMap(action, null))).execute();
+    }
+
+    @Override public ActionResponse suspend(String stackName, String stackId) { return action(stackName, stackId, "suspend"); }
+    @Override public ActionResponse resume(String stackName, String stackId) { return action(stackName, stackId, "resume"); }
+    @Override public ActionResponse check(String stackName, String stackId) { return action(stackName, stackId, "check"); }
+    @Override public ActionResponse cancelUpdate(String stackName, String stackId) { return action(stackName, stackId, "cancel_update"); }
+    @Override public ActionResponse cancelWithoutRollback(String stackName, String stackId) { return action(stackName, stackId, "cancel_without_rollback"); }
 }
