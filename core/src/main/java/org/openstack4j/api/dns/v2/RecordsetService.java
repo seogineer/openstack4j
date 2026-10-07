@@ -1,5 +1,6 @@
 package org.openstack4j.api.dns.v2;
 
+import java.util.Map;
 import java.util.List;
 
 import org.openstack4j.common.RestService;
@@ -74,4 +75,13 @@ public interface RecordsetService extends RestService {
      */
     List<? extends Recordset> list(String zoneId);
 
+    /**
+     * @param filters query parameters such as {@code name}, {@code type}, {@code data}, {@code status}, {@code ttl},
+     *                {@code limit}, {@code marker}
+     * @return the matching recordsets of all zones
+     */
+    List<? extends Recordset> list(Map<String, String> filters);
+
+    /** @return the matching recordsets of a zone; a missing zone raises */
+    List<? extends Recordset> list(String zoneId, Map<String, String> filters);
 }

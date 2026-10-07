@@ -87,6 +87,11 @@ public class ParseActionResponseFromJsonMap implements Function<Map<String, Obje
             return ActionResponse.actionFailed(msg, response.getStatus());
         }
 
+        // Designate: { "code": 404, "type": "zone_not_found", "message": "Could not find Zone", "request_id": ... }
+        if (map.get(KEY_MESSAGE) instanceof String) {
+            return ActionResponse.actionFailed((String) map.get(KEY_MESSAGE), response.getStatus());
+        }
+
         return null;
     }
 

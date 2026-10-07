@@ -20,4 +20,19 @@ public class DNSServiceImpl extends BaseDNSServices implements DNSService {
     public RecordsetService recordsets() {
         return Apis.get(RecordsetService.class);
     }
+
+    @Override
+    public org.openstack4j.api.dns.v2.ext.DesignatePoolService pools() {
+        return Apis.get(org.openstack4j.api.dns.v2.ext.DesignatePoolService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.dns.v2.ext.DesignateServiceStatusService serviceStatuses() {
+        return Apis.get(org.openstack4j.api.dns.v2.ext.DesignateServiceStatusService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.dns.v2.ext.DesignateInfoService info() {
+        return Apis.get(org.openstack4j.api.dns.v2.ext.DesignateInfoService.class);
+    }
 }

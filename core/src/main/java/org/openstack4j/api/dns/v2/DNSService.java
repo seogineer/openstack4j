@@ -21,4 +21,12 @@ public interface DNSService extends RestService {
      */
     RecordsetService recordsets();
 
+    /** @return the pools (admin) */
+    org.openstack4j.api.dns.v2.ext.DesignatePoolService pools();
+
+    /** @return the statuses of the Designate services (admin) */
+    org.openstack4j.api.dns.v2.ext.DesignateServiceStatusService serviceStatuses();
+
+    /** @return the limits */
+    org.openstack4j.api.dns.v2.ext.DesignateInfoService info();
 }
