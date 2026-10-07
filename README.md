@@ -246,6 +246,23 @@ os.dns().reverseFloatingIps().set("RegionOne", floatingIpId, "smtp.example.com."
 - 모델은 자주 쓰는 필드만 getter 가 있고, 나머지는 `getAttributes()` 에 있습니다
 - 관리자가 다른 프로젝트를 다루려면(모든 프로젝트의 zone 목록, 다른 프로젝트의 quota) Designate 헤더 `X-Auth-All-Projects: true` 나 `X-Auth-Sudo-Project-ID: <id>` 가 필요합니다. 지금은 세션 헤더로 줍니다: `os.headers(Map.of("X-Auth-All-Projects", "true"))` — 세션의 모든 요청에 붙고 기존 세션 헤더를 대체하므로, 필요한 호출 뒤에 `os.headers(null)` 로 지우세요
 
+## Shared file systems(Manila) microversion 과 확장
+
+같은 릴리스에서 Manila v2 의 2.7 이후 API 를 지원합니다. 기존 `os.share()` 메서드는 지금처럼 항상 2.6 으로 요청합니다(경로와 action 이름이 2.6 전용). 새 메서드는 각자의 최소 microversion 으로 요청하고, `negotiate()` 를 부르면 세션 버전(서버 최대, 2.99 까지)으로 요청합니다.
+
+```java
+os.share().microVersions().negotiate();                            // 새 메서드만 영향
+os.share().sharesExt().listExportLocations(shareId);               // 2.9
+os.share().shareReplicas().create(ShareReplicaCreate.create(shareId).availabilityZone("az2"));
+os.share().shareGroups().create(ShareGroupCreate.create().shareTypes(List.of(typeId)));
+os.share().shareBackups().create(ShareBackupCreate.create(shareId)); // experimental 헤더는 자동
+```
+
+- 새 accessor: `messages()`, `administration()`(AZ·services·quotas·type access 의 2.7+ 경로), `sharesExt()`(export locations, instances, manage, revert, soft delete, access rules, migration), `snapshotsExt()`, `shareReplicas()`, `shareGroups()`/`shareGroupSnapshots()`/`shareGroupTypes()`, `shareNetworkSubnets()`, `shareServersExt()`, `shareBackups()`, `shareTransfers()`, `resourceLocks()`, `qosTypes()`
+- 세션 버전이 메서드의 최소 버전보다 낮으면 요청 전에 `MicroVersionException` 이 납니다
+- experimental API(2.96 미만의 migration, share server migration, share backups)는 `X-OpenStack-Manila-API-Experimental: True` 를 자동으로 보냅니다
+- 새 모델은 상태를 문자열로 갖고, 나머지 필드는 `getAttributes()` 에 있습니다
+
 ## 빌드
 
 ```bash
