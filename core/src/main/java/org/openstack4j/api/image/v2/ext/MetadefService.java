@@ -6,9 +6,13 @@ import java.util.Map;
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.image.v2.ext.MetadefNamespace;
+import org.openstack4j.model.image.v2.ext.MetadefObject;
+import org.openstack4j.model.image.v2.ext.MetadefProperty;
 import org.openstack4j.model.image.v2.ext.MetadefResourceType;
 import org.openstack4j.model.image.v2.ext.MetadefResourceTypeAssociation;
 import org.openstack4j.model.image.v2.options.MetadefNamespaceOptions;
+import org.openstack4j.model.image.v2.options.MetadefObjectOptions;
+import org.openstack4j.model.image.v2.options.MetadefPropertyOptions;
 
 /**
  * Glance metadata definitions ({@code /v2/metadefs}): namespaces, resource types, objects, properties and tags.
@@ -96,4 +100,90 @@ public interface MetadefService extends RestService {
      * @return the action response
      */
     ActionResponse dissociateResourceType(String namespace, String name);
+
+    /**
+     * Lists the objects of a namespace.
+     *
+     * @param namespace the namespace
+     * @return the result
+     */
+    List<? extends MetadefObject> listObjects(String namespace);
+
+    /**
+     * Returns an object; null if missing.
+     *
+     * @param namespace the namespace
+     * @param name the name
+     * @return the result
+     */
+    MetadefObject getObject(String namespace, String name);
+
+    /**
+     * Creates an object.
+     *
+     * @param namespace the namespace
+     * @param options the options
+     * @return the result
+     */
+    MetadefObject createObject(String namespace, MetadefObjectOptions options);
+
+    /**
+     * Replaces an object (PUT, full body).
+     *
+     * @param namespace the namespace
+     * @param name the name
+     * @param options the options
+     * @return the result
+     */
+    MetadefObject updateObject(String namespace, String name, MetadefObjectOptions options);
+
+    /**
+     * @param namespace the namespace
+     * @param name the name
+     * @return the action response
+     */
+    ActionResponse deleteObject(String namespace, String name);
+
+    /**
+     * Lists the properties of a namespace as name to property.
+     *
+     * @param namespace the namespace
+     * @return the result
+     */
+    Map<String, ? extends MetadefProperty> listProperties(String namespace);
+
+    /**
+     * Returns a property; null if missing.
+     *
+     * @param namespace the namespace
+     * @param name the name
+     * @return the result
+     */
+    MetadefProperty getProperty(String namespace, String name);
+
+    /**
+     * Creates a property.
+     *
+     * @param namespace the namespace
+     * @param options the options
+     * @return the result
+     */
+    MetadefProperty createProperty(String namespace, MetadefPropertyOptions options);
+
+    /**
+     * Replaces a property (PUT, full body).
+     *
+     * @param namespace the namespace
+     * @param name the name
+     * @param options the options
+     * @return the result
+     */
+    MetadefProperty updateProperty(String namespace, String name, MetadefPropertyOptions options);
+
+    /**
+     * @param namespace the namespace
+     * @param name the name
+     * @return the action response
+     */
+    ActionResponse deleteProperty(String namespace, String name);
 }
