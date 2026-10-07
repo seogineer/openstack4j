@@ -50,4 +50,29 @@ public class DNSServiceImpl extends BaseDNSServices implements DNSService {
     public org.openstack4j.api.dns.v2.ext.ZoneTransferService zoneTransfers() {
         return Apis.get(org.openstack4j.api.dns.v2.ext.ZoneTransferService.class);
     }
+
+    @Override
+    public org.openstack4j.api.dns.v2.ext.DesignateTldService tlds() {
+        return Apis.get(org.openstack4j.api.dns.v2.ext.DesignateTldService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.dns.v2.ext.DesignateTsigKeyService tsigKeys() {
+        return Apis.get(org.openstack4j.api.dns.v2.ext.DesignateTsigKeyService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.dns.v2.ext.DesignateBlacklistService blacklists() {
+        return Apis.get(org.openstack4j.api.dns.v2.ext.DesignateBlacklistService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.dns.v2.ext.DesignateQuotaService quotas() {
+        return Apis.get(org.openstack4j.api.dns.v2.ext.DesignateQuotaService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.dns.v2.ext.ReverseFloatingIpService reverseFloatingIps() {
+        return Apis.get(org.openstack4j.api.dns.v2.ext.ReverseFloatingIpService.class);
+    }
 }

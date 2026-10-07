@@ -374,6 +374,11 @@ public class DefaultAPIProvider implements APIProvider {
         bind(WorkflowDefinitionService.class, WorkflowDefinitionServiceImpl.class);
         bind(DNSService.class, DNSServiceImpl.class);
         bind(org.openstack4j.api.dns.v2.ZoneService.class, org.openstack4j.openstack.dns.v2.internal.ZoneServiceImpl.class);
+        bind(org.openstack4j.api.dns.v2.ext.DesignateTldService.class, org.openstack4j.openstack.dns.v2.internal.ext.DesignateTldServiceImpl.class);
+        bind(org.openstack4j.api.dns.v2.ext.DesignateTsigKeyService.class, org.openstack4j.openstack.dns.v2.internal.ext.DesignateTsigKeyServiceImpl.class);
+        bind(org.openstack4j.api.dns.v2.ext.DesignateBlacklistService.class, org.openstack4j.openstack.dns.v2.internal.ext.DesignateBlacklistServiceImpl.class);
+        bind(org.openstack4j.api.dns.v2.ext.DesignateQuotaService.class, org.openstack4j.openstack.dns.v2.internal.ext.DesignateQuotaServiceImpl.class);
+        bind(org.openstack4j.api.dns.v2.ext.ReverseFloatingIpService.class, org.openstack4j.openstack.dns.v2.internal.ext.ReverseFloatingIpServiceImpl.class);
         bind(org.openstack4j.api.dns.v2.ext.ZoneFileService.class, org.openstack4j.openstack.dns.v2.internal.ext.ZoneFileServiceImpl.class);
         bind(org.openstack4j.api.dns.v2.ext.ZoneShareService.class, org.openstack4j.openstack.dns.v2.internal.ext.ZoneShareServiceImpl.class);
         bind(org.openstack4j.api.dns.v2.ext.ZoneTransferService.class, org.openstack4j.openstack.dns.v2.internal.ext.ZoneTransferServiceImpl.class);
