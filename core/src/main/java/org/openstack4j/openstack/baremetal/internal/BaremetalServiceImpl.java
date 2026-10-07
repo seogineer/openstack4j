@@ -3,6 +3,10 @@ package org.openstack4j.openstack.baremetal.internal;
 import org.openstack4j.api.Apis;
 import org.openstack4j.api.baremetal.BaremetalMicroVersionService;
 import org.openstack4j.api.baremetal.BaremetalService;
+import org.openstack4j.api.baremetal.InspectionRuleService;
+import org.openstack4j.api.baremetal.RunbookService;
+import org.openstack4j.api.baremetal.DeployTemplateService;
+import org.openstack4j.api.baremetal.AllocationService;
 import org.openstack4j.api.baremetal.ChassisService;
 import org.openstack4j.api.baremetal.DriverService;
 import org.openstack4j.api.baremetal.NodeService;
@@ -17,4 +21,8 @@ public class BaremetalServiceImpl implements BaremetalService {
     @Override public PortgroupService portgroups() { return Apis.get(PortgroupService.class); }
     @Override public ChassisService chassis() { return Apis.get(ChassisService.class); }
     @Override public DriverService drivers() { return Apis.get(DriverService.class); }
+    @Override public AllocationService allocations() { return Apis.get(AllocationService.class); }
+    @Override public DeployTemplateService deployTemplates() { return Apis.get(DeployTemplateService.class); }
+    @Override public RunbookService runbooks() { return Apis.get(RunbookService.class); }
+    @Override public InspectionRuleService inspectionRules() { return Apis.get(InspectionRuleService.class); }
 }
