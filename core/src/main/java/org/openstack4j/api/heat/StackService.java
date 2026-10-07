@@ -1,5 +1,6 @@
 package org.openstack4j.api.heat;
 
+import org.openstack4j.model.heat.ext.StackSnapshot;
 import org.openstack4j.model.heat.ext.StackOutput;
 import java.util.List;
 import java.util.Map;
@@ -206,4 +207,75 @@ public interface StackService {
      * @return the action response
      */
     ActionResponse cancelWithoutRollback(String stackName, String stackId);
+
+    /**
+     * @param stackName the stack name
+     * @param stackId   the stack id
+     * @return the snapshots of the stack
+     */
+    List<? extends StackSnapshot> snapshots(String stackName, String stackId);
+
+    /**
+     * Takes a snapshot of the stack (asynchronous; poll {@link #getSnapshot}).
+     *
+     * @param stackName    the stack name
+     * @param stackId      the stack id
+     * @param snapshotName the snapshot name; null lets Heat name it
+     * @return the snapshot being created
+     */
+    StackSnapshot snapshot(String stackName, String stackId, String snapshotName);
+
+    /**
+     * @param stackName  the stack name
+     * @param stackId    the stack id
+     * @param snapshotId the snapshot
+     * @return the snapshot with its data; null if missing
+     */
+    StackSnapshot getSnapshot(String stackName, String stackId, String snapshotId);
+
+    /**
+     * @param stackName  the stack name
+     * @param stackId    the stack id
+     * @param snapshotId the snapshot
+     * @return the action response
+     */
+    ActionResponse deleteSnapshot(String stackName, String stackId, String snapshotId);
+
+    /**
+     * Restores the stack to a snapshot (asynchronous).
+     *
+     * @param stackName  the stack name
+     * @param stackId    the stack id
+     * @param snapshotId the snapshot
+     * @return the action response
+     */
+    ActionResponse restoreSnapshot(String stackName, String stackId, String snapshotId);
+
+    /**
+     * Previews a stack create without creating anything.
+     *
+     * @param stackCreate the stack to preview
+     * @return the previewed stack with its resources
+     */
+    Map<String, Object> preview(StackCreate stackCreate);
+
+    /**
+     * Previews a full (PUT) update.
+     *
+     * @param stackName   the stack name
+     * @param stackId     the stack id
+     * @param stackUpdate the update
+     * @return the resource changes: unchanged, updated, replaced, added, deleted
+     */
+    Map<String, List<Map<String, Object>>> previewUpdate(String stackName, String stackId, StackUpdate stackUpdate);
+
+    /**
+     * Previews a PATCH update.
+     *
+     * @param stackName   the stack name
+     * @param stackId     the stack id
+     * @param stackUpdate the changes
+     * @return the resource changes: unchanged, updated, replaced, added, deleted
+     */
+    Map<String, List<Map<String, Object>>> previewPatchUpdate(String stackName, String stackId, StackUpdate stackUpdate);
 }
