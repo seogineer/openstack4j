@@ -15,7 +15,7 @@ import org.openstack4j.model.network.options.LocalIpOptions;
 public interface LocalIpService extends RestService {
 
     /**
-     * Lists local IPs, optionally filtered.
+     * Lists local IPs.
      *
      * @return the result
      */
@@ -24,7 +24,6 @@ public interface LocalIpService extends RestService {
     /**
      * Lists local IPs, optionally filtered.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */
@@ -45,7 +44,7 @@ public interface LocalIpService extends RestService {
     LocalIp create(LocalIpOptions options);
 
     /**
-     * Updates the name or description of a local IP.
+     * Updates a local IP; only the fields set in the options are sent.
      *
      * @param id the id
      * @param options the options

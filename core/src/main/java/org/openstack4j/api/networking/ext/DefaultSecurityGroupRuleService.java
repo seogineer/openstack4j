@@ -23,7 +23,6 @@ public interface DefaultSecurityGroupRuleService extends RestService {
     /**
      * Lists the default security group rules.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

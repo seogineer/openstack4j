@@ -23,7 +23,6 @@ public interface FlavorProfileService extends RestService {
     /**
      * Lists flavor profiles (admin).
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

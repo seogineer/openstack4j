@@ -15,7 +15,7 @@ import org.openstack4j.model.identity.v3.options.LimitListOptions;
 public interface LimitService extends RestService {
 
     /**
-     * Lists limits, optionally filtered.
+     * Lists limits.
      *
      * @return the result
      */

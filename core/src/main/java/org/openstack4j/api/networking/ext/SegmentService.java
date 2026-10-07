@@ -14,7 +14,7 @@ import org.openstack4j.model.network.options.SegmentOptions;
 public interface SegmentService extends RestService {
 
     /**
-     * Lists segments, optionally filtered (network_id, network_type, physical_network).
+     * Lists segments.
      *
      * @return the result
      */
@@ -23,7 +23,6 @@ public interface SegmentService extends RestService {
     /**
      * Lists segments, optionally filtered (network_id, network_type, physical_network).
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

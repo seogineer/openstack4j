@@ -23,7 +23,6 @@ public interface AvailabilityZoneProfileService extends RestService {
     /**
      * Lists availability zone profiles (admin).
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

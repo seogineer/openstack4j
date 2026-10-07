@@ -23,7 +23,6 @@ public interface NeutronServiceProfileService extends RestService {
     /**
      * Lists service profiles.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

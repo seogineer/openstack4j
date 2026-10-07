@@ -33,14 +33,14 @@ public interface ImageCacheService extends RestService {
     ActionResponse delete(String imageId);
 
     /**
-     * Clears the cache and the queue; with a target (cache or queue) only that one.
+     * Clears both the cache and the queue.
      *
      * @return the action response
      */
     ActionResponse clear();
 
     /**
-     * Clears the cache and the queue; with a target (cache or queue) only that one.
+     * Clears only the cache or only the queue ({@code x-image-cache-clear-target}); a null target clears both.
      *
      * @param target the target
      * @return the action response
@@ -48,14 +48,14 @@ public interface ImageCacheService extends RestService {
     ActionResponse clear(String target);
 
     /**
-     * Removes invalid and stalled cache entries.
+     * Removes invalid and stalled cache entries (API 2.18).
      *
      * @return the action response
      */
     ActionResponse clean();
 
     /**
-     * Shrinks the cache to its configured maximum size.
+     * Shrinks the cache to its configured maximum size (API 2.18).
      *
      * @return the action response
      */

@@ -25,7 +25,6 @@ public interface MeteringService extends RestService {
     /**
      * Lists metering labels.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */
@@ -61,7 +60,6 @@ public interface MeteringService extends RestService {
     /**
      * Lists metering label rules.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

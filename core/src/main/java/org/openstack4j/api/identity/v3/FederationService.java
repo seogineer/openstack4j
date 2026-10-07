@@ -78,7 +78,6 @@ public interface FederationService extends RestService {
      *
      * @param idpId the idp id
      * @param protocolId the protocol id
-     * @param Map<String the map< string
      * @param headers the headers
      * @return the result
      */

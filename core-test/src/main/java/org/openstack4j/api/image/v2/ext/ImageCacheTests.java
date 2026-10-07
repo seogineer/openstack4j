@@ -44,4 +44,10 @@ public class ImageCacheTests extends AbstractImageExtTest {
         }
         takeRequest();
     }
+
+    public void clearWithNullTargetClearsBoth() throws Exception {
+        respondWith(204);
+        Assert.assertTrue(osv3().imagesV2().cache().clear(null).isSuccess());
+        Assert.assertNull(expect("DELETE", "/v2/cache").getHeader("x-image-cache-clear-target"));
+    }
 }

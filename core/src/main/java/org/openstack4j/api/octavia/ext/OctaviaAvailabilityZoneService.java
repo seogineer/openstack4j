@@ -14,7 +14,7 @@ import org.openstack4j.model.octavia.options.OctaviaAvailabilityZoneOptions;
 public interface OctaviaAvailabilityZoneService extends RestService {
 
     /**
-     * Lists availability zones, optionally filtered.
+     * Lists availability zones.
      *
      * @return the result
      */
@@ -23,7 +23,6 @@ public interface OctaviaAvailabilityZoneService extends RestService {
     /**
      * Lists availability zones, optionally filtered.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

@@ -14,7 +14,7 @@ import org.openstack4j.model.network.options.RbacPolicyOptions;
 public interface RbacPolicyService extends RestService {
 
     /**
-     * Lists RBAC policies, optionally filtered (object_type, object_id, action, target_tenant).
+     * Lists RBAC policies.
      *
      * @return the result
      */
@@ -23,7 +23,6 @@ public interface RbacPolicyService extends RestService {
     /**
      * Lists RBAC policies, optionally filtered (object_type, object_id, action, target_tenant).
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

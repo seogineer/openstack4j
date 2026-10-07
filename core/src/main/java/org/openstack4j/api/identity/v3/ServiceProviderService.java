@@ -27,7 +27,6 @@ public interface ServiceProviderService extends RestService {
      * Creates a service provider (PUT); attribute keys: auth_url, sp_url, description, enabled, relay_state_prefix.
      *
      * @param id the id
-     * @param Map<String the map< string
      * @param attributes the attributes
      * @return the result
      */
@@ -37,7 +36,6 @@ public interface ServiceProviderService extends RestService {
      * Updates a service provider (PATCH) with the given attributes.
      *
      * @param id the id
-     * @param Map<String the map< string
      * @param attributes the attributes
      * @return the result
      */

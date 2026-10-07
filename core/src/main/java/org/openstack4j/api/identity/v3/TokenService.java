@@ -66,8 +66,8 @@ public interface TokenService extends RestService {
 
 
     /**
-     * @param tokenId the token whose user is inspected
-     * @return the system scopes the token's user may request ({@code GET /auth/system}), for example {@code [{"all": true}]}
+     * @param tokenId sent as X-Subject-Token; Keystone answers for the session token (X-Auth-Token), so pass the session token
+     * @return the system scopes the session user may request ({@code GET /auth/system}), for example {@code [{"all": true}]}
      */
     List<Map<String, Object>> getSystemScopes(String tokenId);
 }

@@ -14,7 +14,7 @@ import org.openstack4j.model.octavia.options.OctaviaFlavorOptions;
 public interface OctaviaFlavorService extends RestService {
 
     /**
-     * Lists Octavia flavors, optionally filtered.
+     * Lists Octavia flavors.
      *
      * @return the result
      */
@@ -23,7 +23,6 @@ public interface OctaviaFlavorService extends RestService {
     /**
      * Lists Octavia flavors, optionally filtered.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

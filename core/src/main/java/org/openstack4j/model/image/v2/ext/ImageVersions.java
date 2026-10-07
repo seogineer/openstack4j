@@ -9,7 +9,7 @@ public interface ImageVersions extends ModelEntity {
 
     List<? extends ImageVersion> getVersions();
 
-    /** @return the CURRENT version without the leading "v", for example "2.17"; null if the server reported none */
+    /** @return the CURRENT version without the leading "v", for example "2.17"; the highest listed version when none is CURRENT; null if the list is empty */
     String getCurrent();
 
     /**

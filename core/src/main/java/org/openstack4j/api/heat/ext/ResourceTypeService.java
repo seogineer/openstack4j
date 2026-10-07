@@ -20,7 +20,6 @@ public interface ResourceTypeService extends RestService {
     /**
      * Lists resource type names, optionally filtered (name, version, support_status, with_description).
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */
