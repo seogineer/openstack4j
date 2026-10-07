@@ -118,4 +118,13 @@ public interface ShareService extends RestService {
      * @return service which provides methods to manage quota sets
      */
     QuotaSetService quotaSets();
+
+    /** @return the opt-in microversion controls of the methods added in 4.6 (the older methods always send 2.6) */
+    ShareMicroVersionService microVersions();
+
+    /** @return user messages about asynchronous failures (2.37) */
+    org.openstack4j.api.manila.ext.ShareMessageService messages();
+
+    /** @return the 2.7+ paths of availability zones, services, quotas and share type access */
+    org.openstack4j.api.manila.ext.ShareAdministrationService administration();
 }

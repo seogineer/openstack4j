@@ -173,4 +173,19 @@ public class ShareServiceImpl extends BaseShareServices implements ShareService 
     public QuotaSetService quotaSets() {
         return Apis.get(QuotaSetService.class);
     }
+
+    @Override
+    public org.openstack4j.api.manila.ShareMicroVersionService microVersions() {
+        return Apis.get(org.openstack4j.api.manila.ShareMicroVersionService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.manila.ext.ShareMessageService messages() {
+        return Apis.get(org.openstack4j.api.manila.ext.ShareMessageService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.manila.ext.ShareAdministrationService administration() {
+        return Apis.get(org.openstack4j.api.manila.ext.ShareAdministrationService.class);
+    }
 }
