@@ -38,4 +38,19 @@ public interface DNSService extends RestService {
 
     /** @return zone transfer requests and accepts */
     org.openstack4j.api.dns.v2.ext.ZoneTransferService zoneTransfers();
+
+    /** @return the top-level domains (admin) */
+    org.openstack4j.api.dns.v2.ext.DesignateTldService tlds();
+
+    /** @return the TSIG keys (admin) */
+    org.openstack4j.api.dns.v2.ext.DesignateTsigKeyService tsigKeys();
+
+    /** @return the zone name blacklists (admin) */
+    org.openstack4j.api.dns.v2.ext.DesignateBlacklistService blacklists();
+
+    /** @return the DNS quotas */
+    org.openstack4j.api.dns.v2.ext.DesignateQuotaService quotas();
+
+    /** @return the PTR records of floating IPs */
+    org.openstack4j.api.dns.v2.ext.ReverseFloatingIpService reverseFloatingIps();
 }

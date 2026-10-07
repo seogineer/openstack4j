@@ -229,6 +229,22 @@ os.baremetal().ports().create(PortCreate.create(node.getUuid(), "52:54:00:12:34:
 - 이름으로 node 를 가리키려면(`nodes().get("bm-1")`) microversion 1.5 이상이 필요합니다 — `negotiate()` 를 먼저 부르세요
 - 모델은 자주 쓰는 필드만 getter 가 있고, 나머지(microversion 마다 늘어나는 필드)는 `getAttributes()` 에 있습니다
 
+## DNS(Designate) 확장
+
+같은 릴리스에서 Designate v2 의 나머지 API 를 지원합니다.
+
+```java
+os.dns().zones().list(Map.of("name", "example.org."));
+ZoneExport export = os.dns().zoneFiles().export(zoneId);           // 완료 후 getExportContent(id) 가 zone file
+os.dns().zoneFiles().importZone(zoneFileText);                      // text/dns
+ZoneTransferRequest offer = os.dns().zoneTransfers().createRequest(zoneId, targetProjectId, null);
+os.dns().reverseFloatingIps().set("RegionOne", floatingIpId, "smtp.example.com.", null, 600);
+```
+
+- zones: 필터 목록, abandon, `transferFromMaster`(xfr), `movePool`; recordsets: 필터 목록(전체·zone 별)
+- 새 accessor: `zoneFiles()`(export/import), `zoneShares()`, `zoneTransfers()`(requests/accepts), `tlds()`, `tsigKeys()`, `blacklists()`, `pools()`, `quotas()`, `serviceStatuses()`, `info()`(limits), `reverseFloatingIps()`
+- 모델은 자주 쓰는 필드만 getter 가 있고, 나머지는 `getAttributes()` 에 있습니다
+
 ## 빌드
 
 ```bash
