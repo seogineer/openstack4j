@@ -43,4 +43,25 @@ public interface HeatService extends RestService {
      * @return SoftwareConfigService
      */
     SoftwareConfigService softwareConfig();
+
+    /**
+     * Heat build information and engine services.
+     *
+     * @return the HeatInfoService
+     */
+    org.openstack4j.api.heat.ext.HeatInfoService info();
+
+    /**
+     * Heat template versions and functions.
+     *
+     * @return the TemplateVersionService
+     */
+    org.openstack4j.api.heat.ext.TemplateVersionService templateVersions();
+
+    /**
+     * Heat resource types.
+     *
+     * @return the ResourceTypeService
+     */
+    org.openstack4j.api.heat.ext.ResourceTypeService resourceTypes();
 }
