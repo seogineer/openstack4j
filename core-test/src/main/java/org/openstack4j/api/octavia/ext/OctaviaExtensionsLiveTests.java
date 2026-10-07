@@ -45,6 +45,9 @@ public class OctaviaExtensionsLiveTests {
         return value;
     }
 
+    /** Unique per run so a run that died before its cleanup cannot block the next one (AZ names are primary keys). */
+    private static final String SUFFIX = Long.toString(System.currentTimeMillis(), 36);
+
     public void providersAndCapabilities() {
         Assert.assertFalse(os.octavia().providers().list().isEmpty());
         Assert.assertTrue(os.octavia().providers().flavorCapabilities("amphora").stream().anyMatch(c -> "loadbalancer_topology".equals(c.getName())));
@@ -56,10 +59,10 @@ public class OctaviaExtensionsLiveTests {
     }
 
     public void flavorProfileAndFlavor() {
-        FlavorProfile profile = os.octavia().flavorProfiles().create(FlavorProfileOptions.create("os4j-live-fp", "amphora", "{\"loadbalancer_topology\": \"SINGLE\"}"));
+        FlavorProfile profile = os.octavia().flavorProfiles().create(FlavorProfileOptions.create("os4j-live-fp-" + SUFFIX, "amphora", "{\"loadbalancer_topology\": \"SINGLE\"}"));
         boolean profileDeleted = false;
         try {
-            OctaviaFlavor flavor = os.octavia().flavors().create(OctaviaFlavorOptions.create("os4j-live-flavor", profile.getId()));
+            OctaviaFlavor flavor = os.octavia().flavors().create(OctaviaFlavorOptions.create("os4j-live-flavor-" + SUFFIX, profile.getId()));
             boolean flavorDeleted;
             try {
                 Assert.assertEquals(os.octavia().flavors().get(flavor.getId()).getFlavorProfileId(), profile.getId());
@@ -74,15 +77,16 @@ public class OctaviaExtensionsLiveTests {
     }
 
     public void availabilityZoneProfileAndZone() {
-        AvailabilityZoneProfile profile = os.octavia().availabilityZoneProfiles().create(AvailabilityZoneProfileOptions.create("os4j-live-azp", "amphora", "{\"compute_zone\": \"nova\"}"));
+        AvailabilityZoneProfile profile = os.octavia().availabilityZoneProfiles().create(AvailabilityZoneProfileOptions.create("os4j-live-azp-" + SUFFIX, "amphora", "{\"compute_zone\": \"" + System.getenv().getOrDefault("OS_COMPUTE_ZONE", "nova") + "\"}"));
         boolean profileDeleted;
         try {
-            os.octavia().availabilityZones().create(OctaviaAvailabilityZoneOptions.create("os4j-live-az", profile.getId()));
+            String zone = "os4j-live-az-" + SUFFIX;
+            os.octavia().availabilityZones().create(OctaviaAvailabilityZoneOptions.create(zone, profile.getId()));
             boolean zoneDeleted;
             try {
-                Assert.assertEquals(os.octavia().availabilityZones().get("os4j-live-az").getAvailabilityZoneProfileId(), profile.getId());
+                Assert.assertEquals(os.octavia().availabilityZones().get(zone).getAvailabilityZoneProfileId(), profile.getId());
             } finally {
-                zoneDeleted = os.octavia().availabilityZones().delete("os4j-live-az").isSuccess();
+                zoneDeleted = os.octavia().availabilityZones().delete(zone).isSuccess();
             }
             Assert.assertTrue(zoneDeleted, "availability zone not deleted");
         } finally {
