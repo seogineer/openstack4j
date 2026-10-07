@@ -5,11 +5,10 @@ import java.util.Map;
 
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
-import org.openstack4j.model.manila.Access;
-import org.openstack4j.model.manila.ShareInstance;
 import org.openstack4j.model.manila.ext.ExportLocation;
 import org.openstack4j.model.manila.ext.ShareAccessRule;
 import org.openstack4j.model.manila.ext.ShareInfo;
+import org.openstack4j.model.manila.ext.ShareInstanceInfo;
 import org.openstack4j.model.manila.ext.options.ShareAccessCreate;
 import org.openstack4j.model.manila.ext.options.ShareMigration;
 
@@ -40,7 +39,7 @@ public interface ShareExtService extends RestService {
     List<? extends ExportLocation> listInstanceExportLocations(String shareInstanceId);
 
     /** @return the instances of a share (2.7, admin); a missing share raises */
-    List<? extends ShareInstance> listInstances(String shareId);
+    List<? extends ShareInstanceInfo> listInstances(String shareId);
 
     /**
      * Brings an existing back-end share under Manila ({@code POST /shares/manage}, 2.7, admin).
@@ -62,8 +61,8 @@ public interface ShareExtService extends RestService {
     /** Restores a share from the recycle bin (2.69). */
     ActionResponse restore(String shareId);
 
-    /** Adds an access rule (2.7; metadata 2.45, locks 2.82). */
-    Access grantAccess(String shareId, ShareAccessCreate access);
+    /** Adds an access rule (2.7; metadata 2.45, locks 2.82); its {@code state} starts as {@code queued_to_apply} from 2.28. */
+    ShareAccessRule grantAccess(String shareId, ShareAccessCreate access);
 
     /** Removes an access rule (2.7). */
     ActionResponse revokeAccess(String shareId, String accessId);
@@ -85,7 +84,7 @@ public interface ShareExtService extends RestService {
     /** Starts migrating a share (2.29; experimental below 2.96, the header is sent for you). */
     ActionResponse migrationStart(String shareId, ShareMigration migration);
 
-    /** @return {@code total_progress} and {@code task_state} (2.29) */
+    /** @return {@code total_progress} and {@code task_state} (2.29; from 2.98 via {@code GET /shares/{id}/migration-progress}) */
     Map<String, Object> migrationProgress(String shareId);
 
     ActionResponse migrationComplete(String shareId);

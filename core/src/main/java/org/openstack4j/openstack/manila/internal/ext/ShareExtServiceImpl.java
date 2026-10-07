@@ -10,26 +10,25 @@ import java.util.Objects;
 
 import org.openstack4j.api.manila.ext.ShareExtService;
 import org.openstack4j.model.common.ActionResponse;
-import org.openstack4j.model.manila.Access;
-import org.openstack4j.model.manila.ShareInstance;
 import org.openstack4j.model.manila.ext.ExportLocation;
 import org.openstack4j.model.manila.ext.ShareAccessRule;
 import org.openstack4j.model.manila.ext.ShareInfo;
+import org.openstack4j.model.manila.ext.ShareInstanceInfo;
 import org.openstack4j.model.manila.ext.options.ShareAccessCreate;
 import org.openstack4j.model.manila.ext.options.ShareMigration;
 import org.openstack4j.openstack.internal.MicroVersion;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
-import org.openstack4j.openstack.manila.domain.ManilaAccess;
-import org.openstack4j.openstack.manila.domain.ManilaShareInstance;
 import org.openstack4j.openstack.manila.domain.ext.ManilaExportLocation;
 import org.openstack4j.openstack.manila.domain.ext.ManilaExportLocation.ManilaExportLocationList;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareAccessRule;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareAccessRule.ManilaShareAccessRuleList;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareInfo;
+import org.openstack4j.openstack.manila.domain.ext.ManilaShareInstanceInfo.ManilaShareInstanceInfoList;
 
 public class ShareExtServiceImpl extends BaseManilaExtService implements ShareExtService {
 
     private static final MicroVersion MIGRATION_STABLE = V(96);
+    private static final MicroVersion MIGRATION_PROGRESS_GET = V(98);
 
     private static String share(String shareId) {
         return "/shares/" + id(shareId);
@@ -80,8 +79,8 @@ public class ShareExtServiceImpl extends BaseManilaExtService implements ShareEx
     }
 
     @Override
-    public List<? extends ShareInstance> listInstances(String shareId) {
-        return listOf(V(7), ManilaShareInstance.ShareInstances.class, share(shareId) + "/instances", null);
+    public List<? extends ShareInstanceInfo> listInstances(String shareId) {
+        return listOf(V(7), ManilaShareInstanceInfoList.class, share(shareId) + "/instances", null);
     }
 
     @Override
@@ -111,13 +110,13 @@ public class ShareExtServiceImpl extends BaseManilaExtService implements ShareEx
     }
 
     @Override
-    public Access grantAccess(String shareId, ShareAccessCreate access) {
+    public ShareAccessRule grantAccess(String shareId, ShareAccessCreate access) {
         Map<String, Object> fields = Objects.requireNonNull(access, "access").toMap();
         MicroVersion floor = fields.keySet().stream().anyMatch(k -> k.startsWith("lock_")) ? V(82) : fields.containsKey("metadata") ? V(45) : V(7);
         Map<String, Object> wrapper = new HashMap<>();
         wrapper.put("allow_access", fields);
         String path = share(shareId) + "/action";
-        return at(floor, post(ManilaAccess.class, path), path + " allow_access").entity(JsonBody.of(wrapper)).execute(propagate404());
+        return at(floor, post(ManilaShareAccessRule.class, path), path + " allow_access").entity(JsonBody.of(wrapper)).execute(propagate404());
     }
 
     @Override
@@ -163,6 +162,12 @@ public class ShareExtServiceImpl extends BaseManilaExtService implements ShareEx
     @SuppressWarnings("unchecked")
     @Override
     public Map<String, Object> migrationProgress(String shareId) {
+        String feature = share(shareId) + "/action migration_get_progress";
+        if (versionFor(feature, V(29)).compareTo(MIGRATION_PROGRESS_GET) >= 0) {
+            // the action is capped at 2.97; from 2.98 progress has its own GET
+            Map<String, Object> shown = showStrict(V(29), Map.class, share(shareId) + "/migration-progress");
+            return shown == null ? new LinkedHashMap<>() : shown;
+        }
         String path = share(shareId) + "/action";
         Map<String, Object> wrapper = new HashMap<>();
         wrapper.put("migration_get_progress", null);

@@ -52,7 +52,7 @@ public class ShareAdministrationServiceImpl extends BaseManilaExtService impleme
 
     @Override
     public ActionResponse ensureShares(String host) {
-        return send(V(86), postWithResponse("/services/ensure-shares"), "/services/ensure-shares", Map.of("host", Objects.requireNonNull(host, "host")));
+        return send(V(86), postWithResponse("/services/ensure-shares"), "/services/ensure-shares", Map.of("ensure_shares", Map.of("host", Objects.requireNonNull(host, "host"))));
     }
 
     @Override

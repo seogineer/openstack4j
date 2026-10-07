@@ -28,7 +28,7 @@ public class ShareReplicaSnapshotTests extends AbstractManilaExtTest {
         respondWith(202);
 
         var replicas = osv3().share().shareReplicas();
-        ShareReplica created = replicas.create(ShareReplicaCreate.create("s1").availabilityZone("nova"));
+        ShareReplica created = replicas.create(ShareReplicaCreate.create("s1").availabilityZone("nova").shareNetworkId("n1"));
         List<? extends ShareReplica> all = replicas.listDetail("s1");
         replicas.get("r1");
         Assert.assertTrue(replicas.promote("r1", null).isSuccess());
@@ -42,8 +42,8 @@ public class ShareReplicaSnapshotTests extends AbstractManilaExtTest {
         Assert.assertTrue(replicas.delete("r1").isSuccess());
 
         RecordedRequest create = expect("POST", P + "/share-replicas");
-        Assert.assertEquals(body(create).toString(), "{\"share_replica\":{\"share_id\":\"s1\",\"availability_zone\":\"nova\"}}");
-        Assert.assertEquals(create.getHeader("X-OpenStack-Manila-API-Version"), "2.56");
+        Assert.assertEquals(body(create).toString(), "{\"share_replica\":{\"share_id\":\"s1\",\"availability_zone\":\"nova\",\"share_network_id\":\"n1\"}}");
+        Assert.assertEquals(create.getHeader("X-OpenStack-Manila-API-Version"), "2.72");
         expect("GET", P + "/share-replicas/detail?share_id=s1");
         expect("GET", P + "/share-replicas/r1");
         Assert.assertEquals(body(expect("POST", P + "/share-replicas/r1/action")).toString(), "{\"promote\":null}");
