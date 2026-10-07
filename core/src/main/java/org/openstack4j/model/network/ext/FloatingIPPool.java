@@ -8,4 +8,6 @@ public interface FloatingIPPool extends ModelEntity {
     String getSubnetName();
     String getNetworkId();
     String getProjectId();
+    /** @return the CIDR of the pool subnet; null if the server did not send it */
+    default String getCidr() { return null; }
 }

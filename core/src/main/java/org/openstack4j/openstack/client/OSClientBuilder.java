@@ -172,6 +172,10 @@ public abstract class OSClientBuilder<R, T extends IOSClientBuilder<R, T>> imple
                 } else {
                     return (OSClientV3) OSAuthenticator.invoke(new KeystoneAuth(tokenId), endpoint, perspective, config, provider);
                 }
+            if ((applicationCredentialId != null || applicationCredentialName != null) && applicationCredentialSecret == null)
+                throw new IllegalStateException("An application credential needs its secret");
+            if (passcode != null && (user == null || user.isEmpty()))
+                throw new IllegalStateException("A TOTP passcode needs credentials(user, ...) to identify the user");
             // application credential (its token is scoped by the credential itself)
             if (applicationCredentialSecret != null) {
                 if (scope != null)

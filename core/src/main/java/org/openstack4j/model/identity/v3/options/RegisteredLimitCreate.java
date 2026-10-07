@@ -19,8 +19,8 @@ public class RegisteredLimitCreate {
         return new RegisteredLimitCreate(serviceId, resourceName, defaultLimit);
     }
 
-    public RegisteredLimitCreate regionId(String regionId) { fields.put("region_id", regionId); return this; }
-    public RegisteredLimitCreate description(String description) { fields.put("description", description); return this; }
+    public RegisteredLimitCreate regionId(String regionId) { if (regionId != null) fields.put("region_id", regionId); return this; }
+    public RegisteredLimitCreate description(String description) { if (description != null) fields.put("description", description); return this; }
 
     public Map<String, Object> toMap() {
         return new LinkedHashMap<>(fields);

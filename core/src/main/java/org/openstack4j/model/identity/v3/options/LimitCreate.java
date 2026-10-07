@@ -24,8 +24,8 @@ public class LimitCreate {
         return new LimitCreate("domain_id", domainId, serviceId, resourceName, resourceLimit);
     }
 
-    public LimitCreate regionId(String regionId) { fields.put("region_id", regionId); return this; }
-    public LimitCreate description(String description) { fields.put("description", description); return this; }
+    public LimitCreate regionId(String regionId) { if (regionId != null) fields.put("region_id", regionId); return this; }
+    public LimitCreate description(String description) { if (description != null) fields.put("description", description); return this; }
 
     public Map<String, Object> toMap() {
         return new LinkedHashMap<>(fields);

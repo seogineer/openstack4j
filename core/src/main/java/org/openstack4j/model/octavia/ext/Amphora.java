@@ -23,4 +23,6 @@ public interface Amphora extends ModelEntity {
     String getComputeFlavor();
     String getCreatedAt();
     String getUpdatedAt();
+    /** @return 1 while the amphora certificate is being rotated; null if not sent */
+    default Integer getCertBusy() { return null; }
 }

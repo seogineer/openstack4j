@@ -29,6 +29,7 @@ public class GlanceVersions implements ImageVersions {
 
     @Override
     public boolean supports(String version) {
+        java.util.Objects.requireNonNull(version, "version");
         String current = getCurrent();
         return current != null && compare(strip(version), current) <= 0;
     }
