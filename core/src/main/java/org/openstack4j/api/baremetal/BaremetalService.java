@@ -10,4 +10,16 @@ public interface BaremetalService extends RestService {
 
     /** @return the bare metal nodes */
     NodeService nodes();
+
+    /** @return the bare metal ports */
+    PortService ports();
+
+    /** @return the bare metal port groups (microversion 1.23) */
+    PortgroupService portgroups();
+
+    /** @return the bare metal chassis */
+    ChassisService chassis();
+
+    /** @return the bare metal drivers */
+    DriverService drivers();
 }

@@ -210,6 +210,23 @@ os.heat().softwareDeployments().create(SoftwareDeploymentOptions.create(serverId
 - 새 accessor: `info()`(build info, services), `templateVersions()`, `resourceTypes()`, `softwareDeployments()`
 - `stacks()` 보강: delete(name), environment, export, files, outputs, PATCH update, actions(suspend/resume/check/cancel), snapshots, preview; `events().list(stackName)`, `softwareConfig().list()`
 
+## Bare metal (Ironic)
+
+같은 릴리스에서 Ironic(bare metal v1)의 핵심 API 를 지원합니다. 대부분의 필드와 API 는 높은 microversion 이 필요하므로 세션마다 `negotiate()` 를 먼저 부르기를 권합니다(기본값은 꺼짐 — 헤더가 없으면 서버는 1.1 로 처리합니다).
+
+```java
+os.baremetal().microVersions().negotiate();                       // 서버 최대(1.107 까지)로
+Node node = os.baremetal().nodes().create(NodeCreate.create("ipmi").name("bm-1").driverInfo(Map.of("ipmi_address", "192.0.2.1")));
+os.baremetal().nodes().update("bm-1", List.of(BaremetalPatch.replace("/description", "rack 3")));   // JSON Patch
+os.baremetal().nodes().setProvisionState("bm-1", NodeProvision.target("manage"));
+os.baremetal().nodes().setPowerState("bm-1", "power on");
+os.baremetal().ports().create(PortCreate.create(node.getUuid(), "52:54:00:12:34:56"));
+```
+
+- `nodes()`: 목록(detail, 필터)·get·create·update(JSON Patch)·delete, 상태(states, power, provision, RAID, boot mode, secure boot), console, boot device, NMI, validate, maintenance, traits, VIF
+- `ports()`, `portgroups()`(node·portgroup 별 목록 포함), `chassis()`, `drivers()`(properties, RAID logical disk properties)
+- 모델은 자주 쓰는 필드만 getter 가 있고, 나머지(microversion 마다 늘어나는 필드)는 `getAttributes()` 에 있습니다
+
 ## 빌드
 
 ```bash
