@@ -1,17 +1,16 @@
 package org.openstack4j.api.baremetal;
 
-import org.openstack4j.model.baremetal.options.NodeProvision;
-import org.openstack4j.model.baremetal.NodeStates;
 import java.util.List;
 import java.util.Map;
 
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.baremetal.BaremetalPatch;
 import org.openstack4j.model.baremetal.Node;
+import org.openstack4j.model.baremetal.NodeStates;
 import org.openstack4j.model.baremetal.options.NodeCreate;
+import org.openstack4j.model.baremetal.options.NodeProvision;
 import org.openstack4j.model.common.ActionResponse;
 
-/** Bare metal nodes ({@code /v1/nodes}). A node is addressed by its UUID or (microversion 1.5+) its name. */
 public interface NodeService extends RestService {
 
     /** @return the nodes (summary fields; use {@code listDetail()} for all fields) */
@@ -112,4 +111,57 @@ public interface NodeService extends RestService {
     ActionResponse attachVif(String nodeIdent, String vifId, Map<String, ?> options);
 
     ActionResponse detachVif(String nodeIdent, String vifId);
+
+    /** @return the node's BIOS settings ({@code name}, {@code value}, and more with microversion 1.74); a missing node raises */
+    List<Map<String, Object>> listBiosSettings(String nodeIdent);
+
+    /** @return the BIOS setting, or {@code null} when the node or the setting does not exist */
+    Map<String, Object> getBiosSetting(String nodeIdent, String settingName);
+
+    /** @return the node's firmware components (microversion 1.86); a missing node raises */
+    List<Map<String, Object>> listFirmwareComponents(String nodeIdent);
+
+    /** @return the node's history events (microversion 1.78); a missing node raises */
+    List<Map<String, Object>> listHistory(String nodeIdent);
+
+    /** @return the history event, or {@code null} when it does not exist (microversion 1.78) */
+    Map<String, Object> getHistoryEvent(String nodeIdent, String eventUuid);
+
+    /** @return {@code inventory} and {@code plugin_data} of the last inspection (microversion 1.81); a missing node or inventory raises */
+    Map<String, Object> getInventory(String nodeIdent);
+
+    /** @return the node's child node UUIDs (microversion 1.83); a missing node raises */
+    List<String> listChildren(String nodeIdent);
+
+    /**
+     * Attaches virtual media (microversion 1.89).
+     *
+     * @param deviceType e.g. {@code CDROM}
+     * @param options    more fields, e.g. {@code image_download_source}; may be {@code null}
+     */
+    ActionResponse attachVirtualMedia(String nodeIdent, String deviceType, String imageUrl, Map<String, ?> options);
+
+    /** Detaches all virtual media (microversion 1.89). */
+    ActionResponse detachVirtualMedia(String nodeIdent);
+
+    /** Detaches the virtual media of one device type (microversion 1.89). */
+    ActionResponse detachVirtualMedia(String nodeIdent, String deviceType);
+
+    /** @return the components that have indicators (microversion 1.63); a missing node raises */
+    List<Map<String, Object>> listIndicatorComponents(String nodeIdent);
+
+    /** @return the indicators of a component, e.g. {@code system} (microversion 1.63); a missing node raises */
+    List<Map<String, Object>> listIndicators(String nodeIdent, String component);
+
+    /** @param indicator {@code <indicator>@<component>}, e.g. {@code led@system}; @return its state, e.g. {@code ON} */
+    String getIndicatorState(String nodeIdent, String indicator);
+
+    /** @param state {@code ON}, {@code OFF} or {@code BLINKING} */
+    ActionResponse setIndicatorState(String nodeIdent, String indicator, String state);
+
+    /** @return the vendor passthru methods of the node's driver; a missing node raises */
+    Map<String, Object> listVendorPassthruMethods(String nodeIdent);
+
+    /** Calls a vendor passthru method with {@code POST}. */
+    ActionResponse vendorPassthru(String nodeIdent, String method, Map<String, ?> args);
 }

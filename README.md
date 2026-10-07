@@ -225,6 +225,8 @@ os.baremetal().ports().create(PortCreate.create(node.getUuid(), "52:54:00:12:34:
 
 - `nodes()`: 목록(detail, 필터)·get·create·update(JSON Patch)·delete, 상태(states, power, provision, RAID, boot mode, secure boot), console, boot device, NMI, validate, maintenance, traits, VIF
 - `ports()`, `portgroups()`(node·portgroup 별 목록 포함), `chassis()`, `drivers()`(properties, RAID logical disk properties)
+- `allocations()`, `deployTemplates()`, `runbooks()`, `inspectionRules()`, `volumeConnectors()`/`volumeTargets()`, `conductors()`(shards 포함); node 의 BIOS·firmware·history·inventory·children·virtual media·indicators·vendor passthru
+- 이름으로 node 를 가리키려면(`nodes().get("bm-1")`) microversion 1.5 이상이 필요합니다 — `negotiate()` 를 먼저 부르세요
 - 모델은 자주 쓰는 필드만 getter 가 있고, 나머지(microversion 마다 늘어나는 필드)는 `getAttributes()` 에 있습니다
 
 ## 빌드

@@ -1,6 +1,7 @@
 package org.openstack4j.openstack.baremetal.internal;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -222,5 +223,113 @@ public class NodeServiceImpl extends BaseBaremetalServices implements NodeServic
     static final class Vifs {
         @JsonProperty("vifs")
         private List<Map<String, Object>> vifs = Collections.emptyList();
+    }
+
+    @Override
+    public List<Map<String, Object>> listBiosSettings(String nodeIdent) {
+        return showStrict(Lists.class, node(nodeIdent) + "/bios").list("bios");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<String, Object> getBiosSetting(String nodeIdent, String settingName) {
+        Map<String, Object> body = show(Map.class, node(nodeIdent) + "/bios/" + id(settingName));
+        return body == null ? null : (Map<String, Object>) body.get(settingName);
+    }
+
+    @Override
+    public List<Map<String, Object>> listFirmwareComponents(String nodeIdent) {
+        return showStrict(Lists.class, node(nodeIdent) + "/firmware").list("firmware");
+    }
+
+    @Override
+    public List<Map<String, Object>> listHistory(String nodeIdent) {
+        return showStrict(Lists.class, node(nodeIdent) + "/history").list("history");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<String, Object> getHistoryEvent(String nodeIdent, String eventUuid) {
+        return show(Map.class, node(nodeIdent) + "/history/" + id(eventUuid));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<String, Object> getInventory(String nodeIdent) {
+        return showStrict(Map.class, node(nodeIdent) + "/inventory");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> listChildren(String nodeIdent) {
+        Map<String, Object> body = showStrict(Map.class, node(nodeIdent) + "/children");
+        Object children = body == null ? null : body.get("children");
+        return children instanceof List ? (List<String>) children : Collections.emptyList();
+    }
+
+    @Override
+    public ActionResponse attachVirtualMedia(String nodeIdent, String deviceType, String imageUrl, Map<String, ?> options) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("device_type", Objects.requireNonNull(deviceType, "deviceType"));
+        body.put("image_url", Objects.requireNonNull(imageUrl, "imageUrl"));
+        if (options != null)
+            body.putAll(options);
+        return postWithResponse(node(nodeIdent) + "/vmedia").entity(JsonBody.of(body)).execute();
+    }
+
+    @Override
+    public ActionResponse detachVirtualMedia(String nodeIdent) {
+        return remove(node(nodeIdent) + "/vmedia");
+    }
+
+    @Override
+    public ActionResponse detachVirtualMedia(String nodeIdent, String deviceType) {
+        return deleteWithResponse(node(nodeIdent) + "/vmedia").param("device_types", Objects.requireNonNull(deviceType, "deviceType")).execute();
+    }
+
+    @Override
+    public List<Map<String, Object>> listIndicatorComponents(String nodeIdent) {
+        return showStrict(Lists.class, node(nodeIdent) + "/management/indicators").list("components");
+    }
+
+    @Override
+    public List<Map<String, Object>> listIndicators(String nodeIdent, String component) {
+        return showStrict(Lists.class, node(nodeIdent) + "/management/indicators/" + id(component)).list("indicators");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public String getIndicatorState(String nodeIdent, String indicator) {
+        Map<String, Object> body = showStrict(Map.class, node(nodeIdent) + "/management/indicators/" + id(indicator));
+        return body == null ? null : (String) body.get("state");
+    }
+
+    @Override
+    public ActionResponse setIndicatorState(String nodeIdent, String indicator, String state) {
+        return action(node(nodeIdent) + "/management/indicators/" + id(indicator), Map.of("state", Objects.requireNonNull(state, "state")));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<String, Object> listVendorPassthruMethods(String nodeIdent) {
+        return showStrict(Map.class, node(nodeIdent) + "/vendor_passthru/methods");
+    }
+
+    @Override
+    public ActionResponse vendorPassthru(String nodeIdent, String method, Map<String, ?> args) {
+        return postWithResponse(node(nodeIdent) + "/vendor_passthru").param("method", id(method))
+                .entity(JsonBody.of(args == null ? Map.of() : args)).execute();
+    }
+
+    /** A response with one list of objects under a key. */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    static final class Lists extends HashMap<String, Object> {
+        private static final long serialVersionUID = 1L;
+
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> list(String key) {
+            Object list = get(key);
+            return list instanceof List ? (List<Map<String, Object>>) list : Collections.emptyList();
+        }
     }
 }
