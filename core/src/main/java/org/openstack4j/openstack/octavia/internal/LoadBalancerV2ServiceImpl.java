@@ -108,4 +108,9 @@ public class LoadBalancerV2ServiceImpl extends BaseOctaviaServices implements Lo
         Objects.requireNonNull(loadbalancerId);
         return get(OctaviaLoadBalancerV2StatusTree.class, uri("/lbaas/loadbalancers/%s/status", loadbalancerId)).execute();
     }
+
+    @Override
+    public ActionResponse failover(String loadBalancerId) {
+        return putWithResponse(uri("/lbaas/loadbalancers/%s/failover", Objects.requireNonNull(loadBalancerId))).execute();
+    }
 }

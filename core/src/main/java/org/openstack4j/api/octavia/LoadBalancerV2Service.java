@@ -84,4 +84,12 @@ public interface LoadBalancerV2Service extends RestService {
      * @return status
      */
     LoadBalancerV2StatusTree statusTree(String loadbalancerId);
+
+    /**
+     * Fails the load balancer over to new amphorae (admin; 202 Accepted).
+     *
+     * @param loadBalancerId the load balancer
+     * @return the action response
+     */
+    ActionResponse failover(String loadBalancerId);
 }
