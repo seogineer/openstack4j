@@ -351,4 +351,9 @@ public class ImageServiceImpl extends BaseImageServices implements ImageService 
     public org.openstack4j.api.image.v2.ext.ImageSchemaService schemas() {
         return Apis.get(org.openstack4j.api.image.v2.ext.ImageSchemaService.class);
     }
+
+    @Override
+    public org.openstack4j.api.image.v2.ext.MetadefService metadefs() {
+        return Apis.get(org.openstack4j.api.image.v2.ext.MetadefService.class);
+    }
 }
