@@ -67,7 +67,7 @@ public final class NodeCreate extends BaremetalAttributes<NodeCreate> {
         return put("lessee", lessee);
     }
 
-    /** Needs microversion 1.31; e.g. {@code bootInterface} is {@code attribute("boot_interface", "pxe")}. */
+    /** Needs microversion 1.20. The other interfaces (1.31) go through {@code attribute}, e.g. {@code attribute("boot_interface", "pxe")}. */
     public NodeCreate networkInterface(String networkInterface) {
         return put("network_interface", networkInterface);
     }

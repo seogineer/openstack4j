@@ -161,7 +161,10 @@ public interface NodeService extends RestService {
     /** @return the indicators of a component, e.g. {@code system} (microversion 1.63); a missing node raises */
     List<Map<String, Object>> listIndicators(String nodeIdent, String component);
 
-    /** @param indicator {@code <indicator>@<component>}, e.g. {@code led@system}; @return its state, e.g. {@code ON} */
+    /**
+     * @param indicator {@code <indicator>@<component>}, e.g. {@code led@system}
+     * @return its state, e.g. {@code ON}; a missing node or indicator raises
+     */
     String getIndicatorState(String nodeIdent, String indicator);
 
     /** @param state {@code ON}, {@code OFF} or {@code BLINKING} */

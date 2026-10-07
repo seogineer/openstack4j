@@ -23,7 +23,7 @@ public interface PortgroupService extends RestService {
 
     List<? extends Portgroup> listDetail(Map<String, String> filters);
 
-    /** @return the port groups of a node with all fields ({@code GET /v1/nodes/{node}/portgroups/detail}); a missing node raises */
+    /** @return the port groups of a node with all fields ({@code GET /v1/nodes/{node}/portgroups/detail}, microversion 1.24); a missing node raises */
     List<? extends Portgroup> listByNode(String nodeIdent);
 
     /** @return the port group, or {@code null} when it does not exist */

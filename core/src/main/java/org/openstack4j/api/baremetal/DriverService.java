@@ -12,7 +12,7 @@ public interface DriverService extends RestService {
     /** @return the drivers enabled on the conductors */
     List<? extends Driver> list();
 
-    /** @param filters query parameters {@code type} ({@code classic} or {@code dynamic}) and {@code detail} ({@code true}) */
+    /** @param filters query parameters {@code type} ({@code classic} or {@code dynamic}) and {@code detail} ({@code true}), both microversion 1.30 */
     List<? extends Driver> list(Map<String, String> filters);
 
     /** @return the driver, or {@code null} when it is not enabled */
