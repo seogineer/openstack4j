@@ -14,6 +14,14 @@ public final class AllocationCreate extends BaremetalAttributes<AllocationCreate
         return new AllocationCreate().put("resource_class", Objects.requireNonNull(resourceClass, "resourceClass"));
     }
 
+    /**
+     * Backfills an allocation for a node that is already deployed (microversion 1.58); the resource class is
+     * taken from the node.
+     */
+    public static AllocationCreate backfill(String node) {
+        return new AllocationCreate().put("node", Objects.requireNonNull(node, "node"));
+    }
+
     @Override
     protected AllocationCreate self() {
         return this;
