@@ -92,4 +92,19 @@ public abstract class BaseManilaExtService extends BaseOpenStackService {
     protected ActionResponse remove(MicroVersion floor, String path) {
         return at(floor, deleteWithResponse(path), path).execute();
     }
+
+    /** Adds {@code X-OpenStack-Manila-API-Experimental: True} when the request's microversion is below {@code stableFrom}. */
+    protected <R> Invocation<R> experimentalHeader(MicroVersion floor, MicroVersion stableFrom, Invocation<R> invocation, String feature) {
+        if (versionFor(feature, floor).compareTo(stableFrom) < 0)
+            invocation.header("X-OpenStack-Manila-API-Experimental", "True");
+        return invocation;
+    }
+
+    /** An action of an API that was experimental below {@code stableFrom}. */
+    protected ActionResponse experimental(MicroVersion floor, MicroVersion stableFrom, String path, String name, Map<String, ?> body) {
+        Map<String, Object> wrapper = new java.util.HashMap<>();
+        wrapper.put(name, body);
+        String feature = path + "/action " + name;
+        return experimentalHeader(floor, stableFrom, at(floor, postWithResponse(path + "/action"), feature), feature).entity(JsonBody.of(wrapper)).execute();
+    }
 }
