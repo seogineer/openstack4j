@@ -179,6 +179,10 @@ public class DefaultAPIProvider implements APIProvider {
         bind(org.openstack4j.api.baremetal.BaremetalService.class, org.openstack4j.openstack.baremetal.internal.BaremetalServiceImpl.class);
         bind(org.openstack4j.api.baremetal.BaremetalMicroVersionService.class, org.openstack4j.openstack.baremetal.internal.BaremetalMicroVersionServiceImpl.class);
         bind(org.openstack4j.api.baremetal.NodeService.class, org.openstack4j.openstack.baremetal.internal.NodeServiceImpl.class);
+        bind(org.openstack4j.api.baremetal.PortService.class, org.openstack4j.openstack.baremetal.internal.PortServiceImpl.class);
+        bind(org.openstack4j.api.baremetal.PortgroupService.class, org.openstack4j.openstack.baremetal.internal.PortgroupServiceImpl.class);
+        bind(org.openstack4j.api.baremetal.ChassisService.class, org.openstack4j.openstack.baremetal.internal.ChassisServiceImpl.class);
+        bind(org.openstack4j.api.baremetal.DriverService.class, org.openstack4j.openstack.baremetal.internal.DriverServiceImpl.class);
         bind(org.openstack4j.api.octavia.ext.AmphoraService.class, org.openstack4j.openstack.octavia.internal.ext.AmphoraServiceImpl.class);
         bind(org.openstack4j.api.octavia.ext.AvailabilityZoneProfileService.class, org.openstack4j.openstack.octavia.internal.ext.AvailabilityZoneProfileServiceImpl.class);
         bind(org.openstack4j.api.octavia.ext.OctaviaAvailabilityZoneService.class, org.openstack4j.openstack.octavia.internal.ext.OctaviaAvailabilityZoneServiceImpl.class);
