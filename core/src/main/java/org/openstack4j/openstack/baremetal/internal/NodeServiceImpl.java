@@ -1,26 +1,25 @@
 package org.openstack4j.openstack.baremetal.internal;
 
-import org.openstack4j.openstack.internal.microversion.JsonBody;
-import org.openstack4j.openstack.compute.functions.ToActionResponseFunction;
-import org.openstack4j.openstack.baremetal.domain.IronicNodeStates;
-import org.openstack4j.model.baremetal.options.NodeProvision;
-import org.openstack4j.model.baremetal.NodeStates;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.util.stream.Collectors;
-import java.util.Objects;
-import java.util.LinkedHashMap;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openstack4j.api.baremetal.NodeService;
 import org.openstack4j.model.baremetal.BaremetalPatch;
 import org.openstack4j.model.baremetal.Node;
+import org.openstack4j.model.baremetal.NodeStates;
 import org.openstack4j.model.baremetal.options.NodeCreate;
+import org.openstack4j.model.baremetal.options.NodeProvision;
 import org.openstack4j.model.common.ActionResponse;
-import org.openstack4j.openstack.baremetal.domain.IronicNode;
 import org.openstack4j.openstack.baremetal.domain.IronicNode.Nodes;
+import org.openstack4j.openstack.baremetal.domain.IronicNode;
+import org.openstack4j.openstack.baremetal.domain.IronicNodeStates;
+import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 public class NodeServiceImpl extends BaseBaremetalServices implements NodeService {
 
@@ -175,7 +174,7 @@ public class NodeServiceImpl extends BaseBaremetalServices implements NodeServic
 
     @Override
     public ActionResponse addTrait(String nodeIdent, String trait) {
-        return ToActionResponseFunction.INSTANCE.apply(put(Void.class, node(nodeIdent) + "/traits/" + id(trait)).executeWithResponse());
+        return putWithResponse(node(nodeIdent) + "/traits/" + id(trait)).execute();
     }
 
     @Override
@@ -205,7 +204,7 @@ public class NodeServiceImpl extends BaseBaremetalServices implements NodeServic
         body.put("id", id(vifId));
         if (options != null)
             body.putAll(options);
-        return ToActionResponseFunction.INSTANCE.apply(post(Void.class, node(nodeIdent) + "/vifs").entity(JsonBody.of(body)).executeWithResponse());
+        return postWithResponse(node(nodeIdent) + "/vifs").entity(JsonBody.of(body)).execute();
     }
 
     @Override

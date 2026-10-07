@@ -1,6 +1,5 @@
 package org.openstack4j.openstack.baremetal.internal;
 
-import org.openstack4j.openstack.compute.functions.ToActionResponseFunction;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -67,8 +66,12 @@ public class BaseBaremetalServices extends BaseOpenStackService {
         return ExecutionOptions.create(PropagateOnStatus.on(404));
     }
 
+    /** @return {@code value}, which must be a non-blank path segment (no {@code /}, {@code ?} or {@code #}) */
     protected static String id(String value) {
-        return Objects.requireNonNull(value, "id");
+        Objects.requireNonNull(value, "id");
+        if (value.isBlank() || value.indexOf('/') >= 0 || value.indexOf('?') >= 0 || value.indexOf('#') >= 0)
+            throw new IllegalArgumentException("Not a valid identifier: '" + value + "'");
+        return value;
     }
 
     protected <E> List<E> listOf(Class<? extends ListResult<E>> type, String path, Map<String, String> filters) {
@@ -97,8 +100,8 @@ public class BaseBaremetalServices extends BaseOpenStackService {
         return deleteWithResponse(path).execute();
     }
 
-    /** A {@code PUT} whose response has no body (202 or 204). */
+    /** A {@code PUT} whose response has no body (202 or 204). A 4xx is a failed response, a 5xx raises. */
     protected ActionResponse action(String path, Map<String, ?> body) {
-        return ToActionResponseFunction.INSTANCE.apply(put(Void.class, path).entity(JsonBody.of(body)).executeWithResponse());
+        return putWithResponse(path).entity(JsonBody.of(body)).execute();
     }
 }

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import java.util.function.Function;
 import org.openstack4j.core.transport.HttpResponse;
+import org.openstack4j.core.transport.ObjectMapperSingleton;
 import org.openstack4j.model.common.ActionResponse;
 
 /**
@@ -70,7 +71,7 @@ public class ParseActionResponseFromJsonMap implements Function<Map<String, Obje
         //   "error_message": "error message",
         //   "error_code": XXX }
         if (map.containsKey("error_message")) {
-            String msg = String.valueOf(map.get("error_message"));
+            String msg = faultstringOf(map.get("error_message"));
             return ActionResponse.actionFailed(msg, response.getStatus());
         }
 
@@ -89,4 +90,20 @@ public class ParseActionResponseFromJsonMap implements Function<Map<String, Obje
         return null;
     }
 
+    /**
+     * Ironic and Magnum (WSME) send {@code error_message} as a JSON document in a string,
+     * {@code "{\"faultstring\": \"...\", \"faultcode\": ..., \"debuginfo\": ...}"}; their message is its faultstring.
+     * Any other value is used as it is.
+     */
+    private static String faultstringOf(Object errorMessage) {
+        String text = String.valueOf(errorMessage);
+        if (!(errorMessage instanceof String) || !text.trim().startsWith("{"))
+            return text;
+        try {
+            Object faultstring = ObjectMapperSingleton.getContext(Map.class).readValue(text, Map.class).get(OCTAVIA_ERROR);
+            return faultstring instanceof String ? (String) faultstring : text;
+        } catch (Exception e) {
+            return text;
+        }
+    }
 }

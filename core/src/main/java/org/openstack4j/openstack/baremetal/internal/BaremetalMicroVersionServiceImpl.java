@@ -40,7 +40,8 @@ public class BaremetalMicroVersionServiceImpl extends BaseBaremetalServices impl
 
     /** @return the v1 range from the Ironic root document, or {@code null} when the server has none */
     private static VersionRange discover() {
-        IronicVersions.Entry v1 = new BaremetalVersionDiscovery().fetch().v1();
+        IronicVersions root = new BaremetalVersionDiscovery().fetch();
+        IronicVersions.Entry v1 = root == null ? null : root.v1();
         if (v1 == null || v1.version == null || v1.version.isEmpty())
             return null;
         MicroVersion min = v1.minVersion == null || v1.minVersion.isEmpty() ? null : MicroVersions.parse(v1.minVersion);

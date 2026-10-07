@@ -4,6 +4,7 @@
 - Octavia 누락 API 47 개: `octavia().l7Policies()`(rules 포함), `flavors()`, `flavorProfiles()`, `availabilityZones()`, `availabilityZoneProfiles()`, `providers()`(capabilities), `quotas()`, `amphorae()`, `listenerV2().stats`, `loadBalancerV2().failover`, `lbPoolV2().updateMembers`(additive_only)
 - Heat 누락 API 31 개: `heat().info()`(build info, services), `templateVersions()`, `resourceTypes()`, `softwareDeployments()`, `stacks()` 의 delete(name)·environment·export·files·outputs·patchUpdate·suspend/resume/check/cancelUpdate/cancelWithoutRollback·snapshots·preview, `events().list(stackName)`, `softwareConfig().list()`
 - Ironic(bare metal v1) 신규: `os.baremetal()` — opt-in microversion(`microVersions()`, 1.1~1.107), `nodes()`(CRUD·JSON Patch·상태·power/provision/RAID/boot mode/secure boot·console·boot device·NMI·validate·maintenance·traits·VIF), `ports()`, `portgroups()`, `chassis()`, `drivers()`; `ServiceType.BAREMETAL`
+- 오류 메시지: `error_message` 가 JSON 문서 문자열인 응답(Ironic, Magnum)은 그 `faultstring` 을 `ActionResponse.getFault()`·예외 메시지로 쓴다(이전에는 JSON 원문)
 - 공용 기반 `BaseOctaviaExtService`·`OctaviaAttributes`(내부/옵션)
 - 공용 기반 `BaseImageExtService`(내부, 404 전달), `ImageAttributes`(설정한 필드만 보내는 옵션 기반)
 - 테스트: `ImageExtensionsLiveTests`, `OctaviaExtensionsLiveTests`, `HeatExtensionsLiveTests`(`OS_AUTH_URL`·`OS_TOKEN` 있을 때)
