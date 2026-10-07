@@ -101,6 +101,10 @@ public class Apis {
      *
      * @return the Octavia services
      */
+    public static org.openstack4j.api.baremetal.BaremetalService getBaremetalService() {
+        return get(org.openstack4j.api.baremetal.BaremetalService.class);
+    }
+
     public static OctaviaService getOctaviaService() {
         return get(OctaviaService.class);
     }
