@@ -153,7 +153,7 @@ os.networking().port().listBindings(portId);
 - 새 accessor: `extensions()`, `serviceProviders()`, `autoAllocatedTopology()`, `qosRules()`, `subnetPools()`, `addressScopes()`, `addressGroups()`, `rbacPolicies()`, `defaultSecurityGroupRules()`, `securityGroupDefaultStatefulness()`, `segments()`, `networkSegmentRanges()`, `localIps()`, `ndpProxies()`, `serviceFlavors()`, `serviceProfiles()`, `metering()`, `logging()`
 - 기존 서비스 보강: router(extra routes, external gateways, conntrack helpers, l3 agents), agent(스케줄링), port(bindings), quotas(default, details), floating IP pools, port forwarding update
 - 옵션 클래스(`*Options`)는 설정한 필드만 보냅니다. 값을 지우려면 `attribute("field", null)`.
-- 해당 extension 이 꺼져 있거나 상위 자원이 없으면 목록·생성·수정·동작 메서드는 404 예외를 던집니다(빈 결과로 바꾸지 않습니다). 단건 `get(id)` 은 openstack4j 관례대로 없는 자원에 `null` 을, 삭제는 실패한 `ActionResponse` 를 돌려줍니다. `extensions().isEnabled(alias)` 로 먼저 확인할 수 있습니다.
+- 해당 extension 이 꺼져 있거나 상위 자원이 없을 때(404): 모델이나 목록을 돌려주는 메서드(목록, 생성, 수정, prefix·주소 추가처럼 결과를 돌려주는 동작)는 404 를 예외로 던집니다. `ActionResponse` 를 돌려주는 메서드(삭제, import·stage·캐시 동작, agent 스케줄링, flavor 의 profile 연결)는 실패한 `ActionResponse`(코드 404)를 돌려주고, 단건 `get(id)` 은 없는 자원에 `null` 을 돌려줍니다. `extensions().isEnabled(alias)` 로 먼저 확인할 수 있습니다.
 - VPNaaS, FWaaS v2, BGP, BGPVPN, TaaS, SFC(stadium 프로젝트)는 다음 릴리스에서 다룹니다.
 - 4.5.0 에서 `NetQosPolicy.getId()` 를 추가했습니다(이전에는 구현 클래스로 캐스트해야 했습니다).
 
@@ -175,7 +175,7 @@ os.imagesV2().schemas().image();                             // JSON schema as a
 
 - 새 하위 서비스: `info()`(import methods, stores, usage), `cache()`(API 2.14), `schemas()`, `metadefs()`(namespaces, resource types, objects, properties, tags)
 - `ImageService` 추가: `versions()`, `importImage`, `stage`, `listLocations`/`addLocation`(2.17), `listTasks`(2.12), `deleteFromStore`(2.10)
-- Glance 는 microversion 헤더가 없습니다. 새 API 가 없는(오래된 서버, 캐시 middleware 꺼짐) Glance 는 404 를 주며, 목록·생성·수정·동작 메서드는 이를 예외로 던집니다. 단건 `get` 은 `null`, 삭제는 실패한 `ActionResponse` 입니다.
+- Glance 는 microversion 헤더가 없습니다. 새 API 가 없는(오래된 서버, 캐시 middleware 꺼짐) Glance 는 404 를 줍니다: 모델이나 목록을 돌려주는 메서드(목록, 생성, 수정, prefix·주소 추가처럼 결과를 돌려주는 동작)는 404 를 예외로 던집니다. `ActionResponse` 를 돌려주는 메서드(삭제, import·stage·캐시 동작, agent 스케줄링, flavor 의 profile 연결)는 실패한 `ActionResponse`(코드 404)를 돌려주고, 단건 `get(id)` 은 없는 자원에 `null` 을 돌려줍니다. `versions().supports("2.x")` 로 먼저 확인할 수 있습니다.
 
 ## 빌드
 

@@ -67,8 +67,14 @@ public class ImageExtensionsLiveTests {
                 Thread.sleep(1000);
             Assert.assertEquals(os.imagesV2().get(image.getId()).getStatus(), Image.ImageStatus.ACTIVE);
             Assert.assertFalse(os.imagesV2().listTasks(image.getId()).isEmpty());
-            if (os.imagesV2().versions().supports("2.17"))
-                Assert.assertNotNull(os.imagesV2().listLocations(image.getId()));
+            if (os.imagesV2().versions().supports("2.17")) {
+                // GET locations is service-to-service (policy role:service); an admin/member token gets 403
+                try {
+                    Assert.assertNotNull(os.imagesV2().listLocations(image.getId()));
+                } catch (org.openstack4j.api.exceptions.ResponseException e) {
+                    if (e.getStatus() != 403) throw e;
+                }
+            }
         } finally {
             Assert.assertTrue(os.imagesV2().delete(image.getId()).isSuccess());
         }
