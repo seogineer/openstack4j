@@ -49,4 +49,18 @@ public interface OctaviaService extends RestService {
      * @return the L7PolicyService
      */
     org.openstack4j.api.octavia.ext.L7PolicyService l7Policies();
+
+    /**
+     * Octavia flavors.
+     *
+     * @return the OctaviaFlavorService
+     */
+    org.openstack4j.api.octavia.ext.OctaviaFlavorService flavors();
+
+    /**
+     * Octavia flavor profiles.
+     *
+     * @return the FlavorProfileService
+     */
+    org.openstack4j.api.octavia.ext.FlavorProfileService flavorProfiles();
 }
