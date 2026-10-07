@@ -158,7 +158,11 @@ public final class HttpCommand<R> {
             if (HttpHeaders.CONTENT_LENGTH.equalsIgnoreCase(h.getKey())
                     || HttpHeaders.TRANSFER_ENCODING.equalsIgnoreCase(h.getKey()))
                 continue;
-            clientReq.addHeader(h.getKey(), String.valueOf(h.getValue()));
+            // a caller's Accept replaces the default application/json instead of adding a second one
+            if (HttpHeaders.ACCEPT.equalsIgnoreCase(h.getKey()))
+                clientReq.setHeader(h.getKey(), String.valueOf(h.getValue()));
+            else
+                clientReq.addHeader(h.getKey(), String.valueOf(h.getValue()));
         }
     }
 }
