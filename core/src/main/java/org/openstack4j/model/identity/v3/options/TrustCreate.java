@@ -24,7 +24,7 @@ public class TrustCreate {
         return new TrustCreate(trustorUserId, trusteeUserId, impersonation);
     }
 
-    public TrustCreate projectId(String projectId) { fields.put("project_id", projectId); return this; }
+    public TrustCreate projectId(String projectId) { if (projectId != null) fields.put("project_id", projectId); return this; }
     public TrustCreate expiresAt(Date expiresAt) { fields.put("expires_at", expiresAt.toInstant().toString()); return this; }
     public TrustCreate remainingUses(int remainingUses) { fields.put("remaining_uses", remainingUses); return this; }
     public TrustCreate allowRedelegation(boolean allow) { fields.put("allow_redelegation", allow); return this; }

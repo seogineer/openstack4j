@@ -16,11 +16,13 @@ public class NeutronFloatingIPPool implements FloatingIPPool {
     @JsonProperty("subnet_name") private String subnetName;
     @JsonProperty("network_id") private String networkId;
     @JsonProperty("project_id") private String projectId;
+    @JsonProperty("cidr") private String cidr;
 
     @Override public String getSubnetId() { return subnetId; }
     @Override public String getSubnetName() { return subnetName; }
     @Override public String getNetworkId() { return networkId; }
     @Override public String getProjectId() { return projectId; }
+    @Override public String getCidr() { return cidr; }
 
     public static class FloatingIPPools extends ListResult<NeutronFloatingIPPool> {
         private static final long serialVersionUID = 1L;

@@ -50,4 +50,12 @@ public interface QuotaService extends RestService {
      * @return the action response
      */
     ActionResponse reset(String projectId);
+
+    /**
+     * Lists quotas, optionally filtered (for example project_id).
+     *
+     * @param filters the query filters
+     * @return the result
+     */
+    List<? extends OctaviaQuota> list(java.util.Map<String, String> filters);
 }

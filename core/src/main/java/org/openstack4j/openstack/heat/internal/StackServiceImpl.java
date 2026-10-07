@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.heat.internal;
 
+import org.openstack4j.core.transport.ObjectMapperSingleton;
 import org.openstack4j.openstack.heat.domain.ext.HeatStackSnapshot.Snapshots;
 import org.openstack4j.openstack.heat.domain.ext.HeatStackSnapshot;
 import org.openstack4j.model.heat.ext.StackSnapshot;
@@ -191,12 +192,12 @@ public class StackServiceImpl extends BaseHeatServices implements StackService {
         return get(Snapshots.class, stack(stackName, stackId) + "/snapshots").execute(BaseHeatExtService.propagate404()).getList();
     }
 
-    /** The create response is the snapshot without a root key (unlike show), so it is read with the plain mapper. */
+    /** The create response is the snapshot without a root key (unlike show), so it is read as a Map and converted with the non-root mapper. */
     @Override
     public StackSnapshot snapshot(String stackName, String stackId, String snapshotName) {
         Map<String, Object> body = snapshotName == null ? Collections.emptyMap() : Collections.singletonMap("name", snapshotName);
         Map<?, ?> created = post(Map.class, stack(stackName, stackId) + "/snapshots").entity(JsonBody.of(body)).execute(BaseHeatExtService.propagate404());
-        return created == null ? null : PLAIN.convertValue(created, HeatStackSnapshot.class);
+        return created == null ? null : ObjectMapperSingleton.getContext(Map.class).convertValue(created, HeatStackSnapshot.class);
     }
 
     @Override
@@ -240,7 +241,4 @@ public class StackServiceImpl extends BaseHeatServices implements StackService {
         Object inner = result.get("resource_changes");
         return (Map<String, List<Map<String, Object>>>) (inner instanceof Map ? inner : result);
     }
-
-    private static final com.fasterxml.jackson.databind.ObjectMapper PLAIN = new com.fasterxml.jackson.databind.ObjectMapper()
-            .disable(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 }

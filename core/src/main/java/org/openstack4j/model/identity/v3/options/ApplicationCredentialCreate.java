@@ -22,9 +22,9 @@ public class ApplicationCredentialCreate {
         return new ApplicationCredentialCreate(name);
     }
 
-    public ApplicationCredentialCreate description(String description) { fields.put("description", description); return this; }
+    public ApplicationCredentialCreate description(String description) { if (description != null) fields.put("description", description); return this; }
     /** A secret of your own; Keystone generates one when omitted. */
-    public ApplicationCredentialCreate secret(String secret) { fields.put("secret", secret); return this; }
+    public ApplicationCredentialCreate secret(String secret) { if (secret != null) fields.put("secret", secret); return this; }
     /** ISO 8601 expiry is generated from the date (UTC). */
     public ApplicationCredentialCreate expiresAt(Date expiresAt) { fields.put("expires_at", expiresAt.toInstant().toString()); return this; }
     /** Allows the credential to create other application credentials and trusts. */

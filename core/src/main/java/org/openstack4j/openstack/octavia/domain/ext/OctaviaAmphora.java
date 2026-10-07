@@ -35,6 +35,7 @@ public class OctaviaAmphora implements Amphora {
     @JsonProperty("compute_flavor") private String computeFlavor;
     @JsonProperty("created_at") private String createdAt;
     @JsonProperty("updated_at") private String updatedAt;
+    @JsonProperty("cert_busy") private Integer certBusy;
 
     @Override public String getId() { return id; }
     @Override public String getLoadBalancerId() { return loadBalancerId; }
@@ -55,6 +56,7 @@ public class OctaviaAmphora implements Amphora {
     @Override public String getComputeFlavor() { return computeFlavor; }
     @Override public String getCreatedAt() { return createdAt; }
     @Override public String getUpdatedAt() { return updatedAt; }
+    @Override public Integer getCertBusy() { return certBusy; }
 
     public static class Amphorae extends ListResult<OctaviaAmphora> {
         private static final long serialVersionUID = 1L;
