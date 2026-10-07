@@ -27,6 +27,7 @@ public enum ServiceType {
     MAGNUM("magnum", "container"),
     DNS("designate", "dns"),
     WORKFLOW("mistral", "workflow"),
+    BAREMETAL("ironic", "baremetal"),
     UNKNOWN("NA", "NA");
 
     private static final String SERVICE_PATTERN_SUFFIX = "[v|\\d|\\.]*";

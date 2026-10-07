@@ -196,6 +196,13 @@ public interface OSClient<T extends OSClient<T>> {
     OctaviaService octavia();
 
     /**
+     * Returns the bare metal (Ironic) service API
+     *
+     * @return the bare metal service
+     */
+    org.openstack4j.api.baremetal.BaremetalService baremetal();
+
+    /**
      * Returns the Artifact Service API
      *
      * @return the artifact service
