@@ -1,5 +1,9 @@
 package org.openstack4j.openstack.dns.v2.internal;
 
+import org.openstack4j.openstack.internal.microversion.JsonBody;
+import org.openstack4j.openstack.dns.v2.internal.ext.BaseDesignateExtService;
+import java.util.Map;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,6 +59,32 @@ public class ZoneServiceImpl extends BaseDNSServices implements ZoneService {
     @Override
     public List<? extends Zone> list() {
         return get(DesignateZone.Zones.class, uri(PATH_ZONES)).execute().getList();
+    }
+
+    @Override
+    public List<? extends Zone> list(Map<String, String> filters) {
+        return get(DesignateZone.Zones.class, uri(PATH_ZONES)).params(filters == null ? Collections.emptyMap() : filters)
+                .execute(BaseDesignateExtService.propagate404()).getList();
+    }
+
+    @Override
+    public ActionResponse abandon(String zoneId) {
+        return task(zoneId, "abandon", Map.of());
+    }
+
+    @Override
+    public ActionResponse transferFromMaster(String zoneId) {
+        return task(zoneId, "xfr", Map.of());
+    }
+
+    @Override
+    public ActionResponse movePool(String zoneId, String poolId) {
+        return task(zoneId, "pool_move", poolId == null ? Map.of() : Map.of("pool_id", poolId));
+    }
+
+    private ActionResponse task(String zoneId, String task, Map<String, ?> body) {
+        Objects.requireNonNull(zoneId, "zoneId");
+        return postWithResponse(PATH_ZONES, "/", zoneId, "/tasks/", task).entity(JsonBody.of(body)).execute();
     }
 
 }

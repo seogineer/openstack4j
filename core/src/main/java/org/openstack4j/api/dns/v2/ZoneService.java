@@ -1,5 +1,6 @@
 package org.openstack4j.api.dns.v2;
 
+import java.util.Map;
 import java.util.List;
 
 import org.openstack4j.common.RestService;
@@ -68,4 +69,19 @@ public interface ZoneService extends RestService {
      */
     List<? extends Zone> list();
 
+    /**
+     * @param filters query parameters such as {@code name}, {@code email}, {@code status}, {@code type}, {@code ttl},
+     *                {@code description}, {@code limit}, {@code marker}, {@code sort_key}
+     * @return the matching zones
+     */
+    List<? extends Zone> list(Map<String, String> filters);
+
+    /** Abandons a zone: Designate forgets it but leaves it on the name servers (admin). */
+    ActionResponse abandon(String zoneId);
+
+    /** Asks a secondary zone to transfer the zone from its masters now ({@code tasks/xfr}). */
+    ActionResponse transferFromMaster(String zoneId);
+
+    /** Moves a zone to another pool (admin); {@code poolId} {@code null} lets the scheduler choose. */
+    ActionResponse movePool(String zoneId, String poolId);
 }

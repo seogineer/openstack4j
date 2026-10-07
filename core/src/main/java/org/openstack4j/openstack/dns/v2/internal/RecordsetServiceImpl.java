@@ -1,5 +1,8 @@
 package org.openstack4j.openstack.dns.v2.internal;
 
+import org.openstack4j.openstack.dns.v2.internal.ext.BaseDesignateExtService;
+import java.util.Map;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -59,6 +62,19 @@ public class RecordsetServiceImpl extends BaseDNSServices implements RecordsetSe
     @Override
     public List<? extends Recordset> list() {
         return get(DesignateRecordset.Recordsets.class, uri(PATH_RECORDSETS)).execute().getList();
+    }
+
+    @Override
+    public List<? extends Recordset> list(Map<String, String> filters) {
+        return get(DesignateRecordset.Recordsets.class, uri(PATH_RECORDSETS)).params(filters == null ? Collections.emptyMap() : filters)
+                .execute(BaseDesignateExtService.propagate404()).getList();
+    }
+
+    @Override
+    public List<? extends Recordset> list(String zoneId, Map<String, String> filters) {
+        Objects.requireNonNull(zoneId, "zoneId");
+        return get(DesignateRecordset.Recordsets.class, PATH_ZONES, "/", zoneId, PATH_RECORDSETS).params(filters == null ? Collections.emptyMap() : filters)
+                .execute(BaseDesignateExtService.propagate404()).getList();
     }
 
 }
