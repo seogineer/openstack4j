@@ -77,4 +77,9 @@ public class OctaviaServiceImpl implements OctaviaService {
     public org.openstack4j.api.octavia.ext.AvailabilityZoneProfileService availabilityZoneProfiles() {
         return Apis.get(org.openstack4j.api.octavia.ext.AvailabilityZoneProfileService.class);
     }
+
+    @Override
+    public org.openstack4j.api.octavia.ext.AmphoraService amphorae() {
+        return Apis.get(org.openstack4j.api.octavia.ext.AmphoraService.class);
+    }
 }

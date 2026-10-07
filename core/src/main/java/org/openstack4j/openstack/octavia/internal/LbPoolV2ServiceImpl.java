@@ -1,5 +1,7 @@
 package org.openstack4j.openstack.octavia.internal;
 
+import org.openstack4j.openstack.internal.microversion.JsonBody;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -140,5 +142,11 @@ public class LbPoolV2ServiceImpl extends BaseOctaviaServices implements LbPoolV2
         Objects.requireNonNull(lbPoolId);
         Objects.requireNonNull(memberId);
         return ToActionResponseFunction.INSTANCE.apply(delete(void.class, uri("/lbaas/pools/%s/members/%s", lbPoolId, memberId)).executeWithResponse());
+    }
+
+    @Override
+    public ActionResponse updateMembers(String poolId, List<Map<String, Object>> members, boolean additiveOnly) {
+        return putWithResponse(uri("/lbaas/pools/%s/members", Objects.requireNonNull(poolId))).param(additiveOnly, "additive_only", true)
+                .entity(JsonBody.of(Collections.singletonMap("members", Objects.requireNonNull(members)))).execute();
     }
 }

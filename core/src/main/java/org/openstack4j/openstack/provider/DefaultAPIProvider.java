@@ -176,6 +176,7 @@ public class DefaultAPIProvider implements APIProvider {
         bind(PortService.class, PortServiceImpl.class);
         bind(RouterService.class, RouterServiceImpl.class);
         bind(OctaviaService.class, OctaviaServiceImpl.class);
+        bind(org.openstack4j.api.octavia.ext.AmphoraService.class, org.openstack4j.openstack.octavia.internal.ext.AmphoraServiceImpl.class);
         bind(org.openstack4j.api.octavia.ext.AvailabilityZoneProfileService.class, org.openstack4j.openstack.octavia.internal.ext.AvailabilityZoneProfileServiceImpl.class);
         bind(org.openstack4j.api.octavia.ext.OctaviaAvailabilityZoneService.class, org.openstack4j.openstack.octavia.internal.ext.OctaviaAvailabilityZoneServiceImpl.class);
         bind(org.openstack4j.api.octavia.ext.FlavorProfileService.class, org.openstack4j.openstack.octavia.internal.ext.FlavorProfileServiceImpl.class);

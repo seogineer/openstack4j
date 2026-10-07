@@ -1,5 +1,8 @@
 package org.openstack4j.openstack.octavia.internal;
 
+import org.openstack4j.openstack.octavia.internal.ext.BaseOctaviaExtService;
+import org.openstack4j.openstack.octavia.domain.OctaviaLoadBalancerV2Stats;
+import org.openstack4j.model.octavia.LoadBalancerV2Stats;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -72,5 +75,10 @@ public class ListenerV2ServiceImpl extends BaseOctaviaServices implements Listen
         Objects.requireNonNull(listenerId);
         Objects.requireNonNull(listener);
         return put(OctaviaListenerV2.class, uri("/lbaas/listeners/%s", listenerId)).entity(listener).execute();
+    }
+
+    @Override
+    public LoadBalancerV2Stats stats(String listenerId) {
+        return get(OctaviaLoadBalancerV2Stats.class, uri("/lbaas/listeners/%s/stats", Objects.requireNonNull(listenerId))).execute(BaseOctaviaExtService.propagate404());
     }
 }

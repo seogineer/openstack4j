@@ -117,4 +117,15 @@ public interface LbPoolV2Service extends RestService {
      * @return Member
      */
     MemberV2 updateMember(String lbPoolId, String memberId, MemberV2Update member);
+
+    /**
+     * Updates the members of a pool in one request ({@code PUT /lbaas/pools/{id}/members}, 202 Accepted). Members not in the list
+     * are removed unless {@code additiveOnly} is true; members are matched by address and protocol_port.
+     *
+     * @param poolId       the pool
+     * @param members      the members (address, protocol_port, weight, name, subnet_id, ...)
+     * @param additiveOnly true to add or update only, keeping members that are not listed
+     * @return the action response
+     */
+    ActionResponse updateMembers(String poolId, List<Map<String, Object>> members, boolean additiveOnly);
 }

@@ -77,4 +77,11 @@ public interface OctaviaService extends RestService {
      * @return the AvailabilityZoneProfileService
      */
     org.openstack4j.api.octavia.ext.AvailabilityZoneProfileService availabilityZoneProfiles();
+
+    /**
+     * Octavia amphorae (admin).
+     *
+     * @return the AmphoraService
+     */
+    org.openstack4j.api.octavia.ext.AmphoraService amphorae();
 }
