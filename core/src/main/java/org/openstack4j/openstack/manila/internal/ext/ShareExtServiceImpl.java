@@ -51,26 +51,22 @@ public class ShareExtServiceImpl extends BaseManilaExtService implements ShareEx
 
     @Override
     public Map<String, String> getExportLocationMetadata(String shareId, String exportLocationId) {
-        return strings(showStrict(V(87), Map.class, location(shareId, exportLocationId) + "/metadata"), "metadata");
+        return metadataOf(V(87), location(shareId, exportLocationId) + "/metadata");
     }
 
     @Override
     public String getExportLocationMetadataItem(String shareId, String exportLocationId, String key) {
-        Map<?, ?> body = show(V(87), Map.class, location(shareId, exportLocationId) + "/metadata/" + id(key));
-        Map<String, String> meta = strings(body, "meta");
-        return meta.isEmpty() ? strings(body, "metadata").get(key) : meta.get(key);
+        return metadataItem(V(87), location(shareId, exportLocationId) + "/metadata", key);
     }
 
     @Override
     public Map<String, String> setExportLocationMetadata(String shareId, String exportLocationId, Map<String, String> metadata) {
-        String path = location(shareId, exportLocationId) + "/metadata";
-        return strings(at(V(87), post(Map.class, path), path).entity(JsonBody.of("metadata", Objects.requireNonNull(metadata, "metadata"))).execute(propagate404()), "metadata");
+        return writeMetadata(V(87), location(shareId, exportLocationId) + "/metadata", metadata, false);
     }
 
     @Override
     public Map<String, String> replaceExportLocationMetadata(String shareId, String exportLocationId, Map<String, String> metadata) {
-        String path = location(shareId, exportLocationId) + "/metadata";
-        return strings(at(V(87), put(Map.class, path), path).entity(JsonBody.of("metadata", Objects.requireNonNull(metadata, "metadata"))).execute(propagate404()), "metadata");
+        return writeMetadata(V(87), location(shareId, exportLocationId) + "/metadata", metadata, true);
     }
 
     @Override
@@ -183,14 +179,5 @@ public class ShareExtServiceImpl extends BaseManilaExtService implements ShareEx
     @Override
     public ActionResponse migrationCancel(String shareId) {
         return experimental(V(29), MIGRATION_STABLE, share(shareId), "migration_cancel", null);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Map<String, String> strings(Map<?, ?> body, String root) {
-        Map<String, String> result = new LinkedHashMap<>();
-        Object inner = body == null ? null : body.get(root);
-        if (inner instanceof Map)
-            ((Map<String, Object>) inner).forEach((k, v) -> result.put(k, v == null ? null : String.valueOf(v)));
-        return result;
     }
 }
