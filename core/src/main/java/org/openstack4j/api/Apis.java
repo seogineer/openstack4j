@@ -97,14 +97,19 @@ public class Apis {
     }
 
     /**
-     * Gets the Octavia services API
+     * Gets the bare metal (Ironic) services API
      *
-     * @return the Octavia services
+     * @return the bare metal services
      */
     public static org.openstack4j.api.baremetal.BaremetalService getBaremetalService() {
         return get(org.openstack4j.api.baremetal.BaremetalService.class);
     }
 
+    /**
+     * Gets the Octavia services API
+     *
+     * @return the Octavia services
+     */
     public static OctaviaService getOctaviaService() {
         return get(OctaviaService.class);
     }
