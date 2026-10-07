@@ -42,4 +42,11 @@ public interface OctaviaService extends RestService {
      * @return the QuotaService
      */
     org.openstack4j.api.octavia.ext.QuotaService quotas();
+
+    /**
+     * Octavia L7 policies and rules.
+     *
+     * @return the L7PolicyService
+     */
+    org.openstack4j.api.octavia.ext.L7PolicyService l7Policies();
 }
