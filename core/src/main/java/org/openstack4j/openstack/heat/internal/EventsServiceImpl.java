@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.heat.internal;
 
+import org.openstack4j.openstack.heat.internal.ext.BaseHeatExtService;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,4 +42,9 @@ public class EventsServiceImpl extends BaseHeatServices implements EventsService
         return get(HeatEvent.class, uri("/stacks/%s/%s/resources/%s/events/%s", stackName, stackId, resourceName, eventId)).execute();
     }
 
+
+    @Override
+    public List<? extends Event> list(String stackName) {
+        return get(Events.class, uri("/stacks/%s/events", Objects.requireNonNull(stackName))).execute(BaseHeatExtService.propagate404()).getList();
+    }
 }

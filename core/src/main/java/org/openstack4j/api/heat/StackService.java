@@ -1,5 +1,6 @@
 package org.openstack4j.api.heat;
 
+import org.openstack4j.model.heat.ext.StackOutput;
 import java.util.List;
 import java.util.Map;
 
@@ -110,4 +111,99 @@ public interface StackService {
      */
     Stack adopt(AdoptStackData adoptStackData, Map<String, String> parameters,
             boolean disableRollback, Long timeOutMins, String template);
+
+    /**
+     * Deletes a stack given only its name or id (looked up first, then deleted by name and id).
+     *
+     * @param stackIdentity the stack name or id
+     * @return the action response; a failed response with code 404 when the stack does not exist
+     */
+    ActionResponse delete(String stackIdentity);
+
+    /**
+     * @param stackName the stack name
+     * @param stackId   the stack id
+     * @return the effective environment of the stack (parameters, parameter_defaults, resource_registry ...)
+     */
+    Map<String, Object> environment(String stackName, String stackId);
+
+    /**
+     * @param stackName the stack name
+     * @param stackId   the stack id
+     * @return the exported stack data, usable for adopt
+     */
+    Map<String, Object> export(String stackName, String stackId);
+
+    /**
+     * @param stackName the stack name
+     * @param stackId   the stack id
+     * @return the files of the stack, path to content
+     */
+    Map<String, String> files(String stackName, String stackId);
+
+    /**
+     * @param stackName the stack name
+     * @param stackId   the stack id
+     * @return the outputs of the stack (keys and descriptions, without values)
+     */
+    List<? extends StackOutput> outputs(String stackName, String stackId);
+
+    /**
+     * @param stackName the stack name
+     * @param stackId   the stack id
+     * @param outputKey the output key
+     * @return the output with its value; null if missing
+     */
+    StackOutput output(String stackName, String stackId, String outputKey);
+
+    /**
+     * Updates a stack with PATCH: only the given template, parameters and files change, the rest are kept.
+     *
+     * @param stackName   the stack name
+     * @param stackId     the stack id
+     * @param stackUpdate the changes
+     * @return the action response
+     */
+    ActionResponse patchUpdate(String stackName, String stackId, StackUpdate stackUpdate);
+
+    /**
+     * @param stackName the stack name
+     * @param stackId   the stack id
+     * @return the action response
+     */
+    ActionResponse suspend(String stackName, String stackId);
+
+    /**
+     * @param stackName the stack name
+     * @param stackId   the stack id
+     * @return the action response
+     */
+    ActionResponse resume(String stackName, String stackId);
+
+    /**
+     * Checks that the stack resources still exist and are healthy.
+     *
+     * @param stackName the stack name
+     * @param stackId   the stack id
+     * @return the action response
+     */
+    ActionResponse check(String stackName, String stackId);
+
+    /**
+     * Cancels an in-progress update and rolls it back.
+     *
+     * @param stackName the stack name
+     * @param stackId   the stack id
+     * @return the action response
+     */
+    ActionResponse cancelUpdate(String stackName, String stackId);
+
+    /**
+     * Cancels an in-progress create or update without rolling back.
+     *
+     * @param stackName the stack name
+     * @param stackId   the stack id
+     * @return the action response
+     */
+    ActionResponse cancelWithoutRollback(String stackName, String stackId);
 }
