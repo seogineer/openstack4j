@@ -1,5 +1,7 @@
 package org.openstack4j.api.heat;
 
+import java.util.Map;
+import java.util.List;
 import org.openstack4j.api.Builders;
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
@@ -36,4 +38,15 @@ public interface SoftwareConfigService extends RestService {
      */
     ActionResponse delete(String configId);
 
+
+    /**
+     * @return the software configs of the project
+     */
+    List<? extends SoftwareConfig> list();
+
+    /**
+     * @param filters query filters (limit, marker)
+     * @return the software configs of the project
+     */
+    List<? extends SoftwareConfig> list(Map<String, String> filters);
 }

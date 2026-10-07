@@ -1,5 +1,10 @@
 package org.openstack4j.openstack.heat.internal;
 
+import org.openstack4j.openstack.heat.internal.ext.BaseHeatExtService;
+import org.openstack4j.openstack.heat.domain.ext.HeatSoftwareConfigs;
+import java.util.Map;
+import java.util.List;
+import java.util.Collections;
 import org.openstack4j.api.heat.SoftwareConfigService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.heat.SoftwareConfig;
@@ -43,4 +48,15 @@ public class SoftwareConfigServiceImpl extends BaseHeatServices implements Softw
         return deleteWithResponse(uri(BASE_URI + "/%s", configId)).execute();
     }
 
+
+    @Override
+    public List<? extends SoftwareConfig> list() {
+        return list(null);
+    }
+
+    @Override
+    public List<? extends SoftwareConfig> list(Map<String, String> filters) {
+        return get(HeatSoftwareConfigs.class, BASE_URI).params(filters == null ? Collections.emptyMap() : filters)
+                .execute(BaseHeatExtService.propagate404()).getList();
+    }
 }

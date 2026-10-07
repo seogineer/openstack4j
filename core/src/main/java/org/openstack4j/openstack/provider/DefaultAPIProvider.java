@@ -228,6 +228,7 @@ public class DefaultAPIProvider implements APIProvider {
         bind(ZoneService.class, ZoneServiceImpl.class);
         bind(CinderZoneService.class, CinderZoneServiceImpl.class);
         bind(HeatService.class, HeatServiceImpl.class);
+        bind(org.openstack4j.api.heat.ext.SoftwareDeploymentService.class, org.openstack4j.openstack.heat.internal.ext.SoftwareDeploymentServiceImpl.class);
         bind(org.openstack4j.api.heat.ext.ResourceTypeService.class, org.openstack4j.openstack.heat.internal.ext.ResourceTypeServiceImpl.class);
         bind(org.openstack4j.api.heat.ext.TemplateVersionService.class, org.openstack4j.openstack.heat.internal.ext.TemplateVersionServiceImpl.class);
         bind(org.openstack4j.api.heat.ext.HeatInfoService.class, org.openstack4j.openstack.heat.internal.ext.HeatInfoServiceImpl.class);
