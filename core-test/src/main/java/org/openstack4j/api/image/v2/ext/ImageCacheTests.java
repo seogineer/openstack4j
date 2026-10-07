@@ -35,12 +35,12 @@ public class ImageCacheTests extends AbstractImageExtTest {
     }
 
     public void cacheDisabledIsRaised() throws Exception {
-        respondWith(404, "<html><body><h1>404 Not Found</h1></body></html>");
+        respondWith(java.util.Collections.singletonMap("Content-Type", "text/html; charset=UTF-8"), 404, "<html><body><h1>404 Not Found</h1>The resource could not be found.</body></html>");
         try {
             osv3().imagesV2().cache().list();
             Assert.fail("expected the 404 to surface");
         } catch (RuntimeException expected) {
-            Assert.assertNotNull(expected.getMessage());
+            Assert.assertFalse(String.valueOf(expected.getMessage()).contains("Unexpected character"), "parse error instead of the 404: " + expected.getMessage());
         }
         takeRequest();
     }

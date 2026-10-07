@@ -120,11 +120,11 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - `NetworkingService`, `RouterService`, `AgentService`, `PortService`, `NetQuotaService`, `NetFloatingIPService`, `PortForwardingService` 에 추상 메서드가 추가되었습니다. 이 인터페이스를 직접 구현한 테스트용 가짜 구현은 새 메서드를 구현해야 합니다.
 - `Router` 와 `NetQosPolicy` 에는 `default` getter(`getExternalGateways()`, `getId()`)만 추가되어 그대로 컴파일됩니다. `NeutronRouter` 의 `external_gateways` 는 응답 전용이라 router 생성·수정 본문은 바뀌지 않습니다.
 - 새 옵션 클래스(`*Options`)는 설정하지 않은 필드를 보내지 않습니다. 값을 지우려면 `attribute("field", null)` 을 쓰세요.
-- 새 서비스의 목록·생성·수정·동작 메서드는 404(extension 꺼짐, 상위 자원 없음)를 예외로 던집니다. 단건 `get(id)` 은 `null`, 삭제는 실패한 `ActionResponse` 입니다. `os.networking().extensions().isEnabled(alias)` 로 확인할 수 있습니다.
+- 404(extension 꺼짐, 상위 자원 없음): 모델이나 목록을 돌려주는 메서드(목록, 생성, 수정, prefix·주소 추가처럼 결과를 돌려주는 동작)는 404 를 예외로 던집니다. `ActionResponse` 를 돌려주는 메서드(삭제, import·stage·캐시 동작, agent 스케줄링, flavor 의 profile 연결)는 실패한 `ActionResponse`(코드 404)를 돌려주고, 단건 `get(id)` 은 없는 자원에 `null` 을 돌려줍니다. `os.networking().extensions().isEnabled(alias)` 로 확인할 수 있습니다.
 
 # 4.5 → 4.6
 
 런타임 동작을 바꾸는 변경은 없습니다. 기존 image v2 메서드의 요청은 4.5 와 같습니다.
 
 - `ImageService` 에 추상 메서드(`versions`, `info`, `cache`, `schemas`, `metadefs`, `importImage`, `stage`, `listLocations`, `addLocation`, `listTasks`, `deleteFromStore`)가 추가되었습니다. 이 인터페이스를 직접 구현한 가짜 구현은 새 메서드를 구현해야 합니다.
-- 새 메서드는 서버 API 버전이 낮거나 기능이 꺼져 있으면 404 를 예외로 받습니다. `os.imagesV2().versions().supports("2.x")` 로 먼저 확인할 수 있습니다.
+- 서버 API 버전이 낮거나 기능이 꺼져 있으면(404): 모델이나 목록을 돌려주는 메서드(목록, 생성, 수정, prefix·주소 추가처럼 결과를 돌려주는 동작)는 404 를 예외로 던집니다. `ActionResponse` 를 돌려주는 메서드(삭제, import·stage·캐시 동작, agent 스케줄링, flavor 의 profile 연결)는 실패한 `ActionResponse`(코드 404)를 돌려주고, 단건 `get(id)` 은 없는 자원에 `null` 을 돌려줍니다. `os.imagesV2().versions().supports("2.x")` 로 먼저 확인할 수 있습니다.
