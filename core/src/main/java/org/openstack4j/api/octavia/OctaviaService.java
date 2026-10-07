@@ -63,4 +63,18 @@ public interface OctaviaService extends RestService {
      * @return the FlavorProfileService
      */
     org.openstack4j.api.octavia.ext.FlavorProfileService flavorProfiles();
+
+    /**
+     * Octavia availability zones.
+     *
+     * @return the OctaviaAvailabilityZoneService
+     */
+    org.openstack4j.api.octavia.ext.OctaviaAvailabilityZoneService availabilityZones();
+
+    /**
+     * Octavia availability zone profiles.
+     *
+     * @return the AvailabilityZoneProfileService
+     */
+    org.openstack4j.api.octavia.ext.AvailabilityZoneProfileService availabilityZoneProfiles();
 }
