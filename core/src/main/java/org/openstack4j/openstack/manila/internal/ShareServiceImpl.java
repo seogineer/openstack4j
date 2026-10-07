@@ -193,4 +193,14 @@ public class ShareServiceImpl extends BaseShareServices implements ShareService 
     public org.openstack4j.api.manila.ext.ShareExtService sharesExt() {
         return Apis.get(org.openstack4j.api.manila.ext.ShareExtService.class);
     }
+
+    @Override
+    public org.openstack4j.api.manila.ext.SnapshotExtService snapshotsExt() {
+        return Apis.get(org.openstack4j.api.manila.ext.SnapshotExtService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.manila.ext.ShareReplicaService shareReplicas() {
+        return Apis.get(org.openstack4j.api.manila.ext.ShareReplicaService.class);
+    }
 }

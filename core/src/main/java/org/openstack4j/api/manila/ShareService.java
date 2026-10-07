@@ -130,4 +130,10 @@ public interface ShareService extends RestService {
 
     /** @return the 2.7+ share APIs: export locations, instances, manage, revert, soft delete, access rules, migration */
     org.openstack4j.api.manila.ext.ShareExtService sharesExt();
+
+    /** @return the 2.12+ snapshot APIs: metadata, manage/unmanage, snapshot instances */
+    org.openstack4j.api.manila.ext.SnapshotExtService snapshotsExt();
+
+    /** @return share replicas (2.56) */
+    org.openstack4j.api.manila.ext.ShareReplicaService shareReplicas();
 }

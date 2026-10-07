@@ -107,4 +107,31 @@ public abstract class BaseManilaExtService extends BaseOpenStackService {
         String feature = path + "/action " + name;
         return experimentalHeader(floor, stableFrom, at(floor, postWithResponse(path + "/action"), feature), feature).entity(JsonBody.of(wrapper)).execute();
     }
+
+    /** @return {@code GET <path>} unwrapped from {@code {"metadata": {...}}}; a missing resource raises */
+    protected Map<String, String> metadataOf(MicroVersion floor, String path) {
+        return strings(showStrict(floor, Map.class, path), "metadata");
+    }
+
+    /** @return one item of {@code GET <path>/<key>} ({@code {"meta": {k: v}}} or {@code {"metadata": {k: v}}}), or {@code null} */
+    protected String metadataItem(MicroVersion floor, String path, String key) {
+        Map<?, ?> body = show(floor, Map.class, path + "/" + id(key));
+        Map<String, String> meta = strings(body, "meta");
+        return meta.isEmpty() ? strings(body, "metadata").get(key) : meta.get(key);
+    }
+
+    /** {@code POST} (merge, {@code replace} false) or {@code PUT} (replace all) {@code {"metadata": {...}}}; @return all items */
+    protected Map<String, String> writeMetadata(MicroVersion floor, String path, Map<String, String> metadata, boolean replace) {
+        Invocation<Map> invocation = replace ? put(Map.class, path) : post(Map.class, path);
+        return strings(at(floor, invocation, path).entity(JsonBody.of("metadata", Objects.requireNonNull(metadata, "metadata"))).execute(propagate404()), "metadata");
+    }
+
+    @SuppressWarnings("unchecked")
+    protected static Map<String, String> strings(Map<?, ?> body, String root) {
+        Map<String, String> result = new java.util.LinkedHashMap<>();
+        Object inner = body == null ? null : body.get(root);
+        if (inner instanceof Map)
+            ((Map<String, Object>) inner).forEach((k, v) -> result.put(k, v == null ? null : String.valueOf(v)));
+        return result;
+    }
 }
