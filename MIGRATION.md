@@ -129,3 +129,4 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - `ImageService` 에 추상 메서드(`versions`, `info`, `cache`, `schemas`, `metadefs`, `importImage`, `stage`, `listLocations`, `addLocation`, `listTasks`, `deleteFromStore`)가 추가되었습니다. 이 인터페이스를 직접 구현한 가짜 구현은 새 메서드를 구현해야 합니다.
 - 서버 API 버전이 낮거나 기능이 꺼져 있으면(404): 모델이나 목록을 돌려주는 메서드(목록, 생성, 수정, prefix·주소 추가처럼 결과를 돌려주는 동작)는 404 를 예외로 던집니다. `ActionResponse` 를 돌려주는 메서드(삭제, import·stage·캐시 동작, agent 스케줄링, flavor 의 profile 연결)는 실패한 `ActionResponse`(코드 404)를 돌려주고, 단건 `get(id)` 은 없는 자원에 `null` 을 돌려줍니다. `os.imagesV2().versions().supports("2.x")` 로 먼저 확인할 수 있습니다.
 - `OctaviaService`, `ListenerV2Service`, `LoadBalancerV2Service`, `LbPoolV2Service` 에도 추상 메서드가 추가되었습니다(Octavia 확장). 직접 구현한 가짜 구현은 새 메서드가 필요합니다.
+- `HeatService`, `StackService`, `EventsService`, `SoftwareConfigService` 에도 추상 메서드가 추가되었습니다(Heat 확장).
