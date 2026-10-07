@@ -157,6 +157,26 @@ os.networking().port().listBindings(portId);
 - VPNaaS, FWaaS v2, BGP, BGPVPN, TaaS, SFC(stadium 프로젝트)는 다음 릴리스에서 다룹니다.
 - 4.5.0 에서 `NetQosPolicy.getId()` 를 추가했습니다(이전에는 구현 클래스로 캐스트해야 했습니다).
 
+## Image 확장
+
+4.6.0 부터 Glance v2 의 나머지 API 를 지원합니다. 기존 메서드와 요청 본문은 바뀌지 않습니다.
+
+```java
+ImageVersions versions = os.imagesV2().versions();          // GET /versions (Glance root)
+if (versions.supports("2.6")) {
+    os.imagesV2().stage(imageId, Payloads.create(new File("cirros.img")));
+    os.imagesV2().importImage(imageId, ImageImportOptions.glanceDirect());
+}
+os.imagesV2().importImage(imageId, ImageImportOptions.webDownload("https://example.com/cirros.img"));
+os.imagesV2().info().importMethods();                       // [glance-direct, web-download, ...]
+os.imagesV2().metadefs().createNamespace(MetadefNamespaceOptions.create("OS::Example").visibility("private"));
+os.imagesV2().schemas().image();                             // JSON schema as a Map
+```
+
+- 새 하위 서비스: `info()`(import methods, stores, usage), `cache()`(API 2.14), `schemas()`, `metadefs()`(namespaces, resource types, objects, properties, tags)
+- `ImageService` 추가: `versions()`, `importImage`, `stage`, `listLocations`/`addLocation`(2.17), `listTasks`(2.12), `deleteFromStore`(2.10)
+- Glance 는 microversion 헤더가 없습니다. 새 API 가 없는(오래된 서버, 캐시 middleware 꺼짐) Glance 는 404 를 주며, 목록·생성·수정·동작 메서드는 이를 예외로 던집니다. 단건 `get` 은 `null`, 삭제는 실패한 `ActionResponse` 입니다.
+
 ## 빌드
 
 ```bash
