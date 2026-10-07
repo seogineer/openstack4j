@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.baremetal.internal;
 
+import org.openstack4j.openstack.compute.functions.ToActionResponseFunction;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -94,5 +95,10 @@ public class BaseBaremetalServices extends BaseOpenStackService {
 
     protected ActionResponse remove(String path) {
         return deleteWithResponse(path).execute();
+    }
+
+    /** A {@code PUT} whose response has no body (202 or 204). */
+    protected ActionResponse action(String path, Map<String, ?> body) {
+        return ToActionResponseFunction.INSTANCE.apply(put(Void.class, path).entity(JsonBody.of(body)).executeWithResponse());
     }
 }
