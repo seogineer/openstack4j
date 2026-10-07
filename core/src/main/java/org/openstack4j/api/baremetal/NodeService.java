@@ -132,6 +132,13 @@ public interface NodeService extends RestService {
     /** @return the node's history events (microversion 1.78); a missing node raises */
     List<Map<String, Object>> listHistory(String nodeIdent);
 
+    /**
+     * @param filters query parameters such as {@code marker}, {@code limit}, {@code fields}; {@code detail=true}
+     *                (event_type, conductor, user) is sent unless {@code detail} or {@code fields} is given
+     * @return the node's history events (microversion 1.78); a missing node raises
+     */
+    List<Map<String, Object>> listHistory(String nodeIdent, Map<String, String> filters);
+
     /** @return the history event, or {@code null} when it does not exist (microversion 1.78) */
     Map<String, Object> getHistoryEvent(String nodeIdent, String eventUuid);
 

@@ -252,6 +252,11 @@ public class NodeServiceImpl extends BaseBaremetalServices implements NodeServic
         return showStrict(Lists.class, node(nodeIdent) + "/history").list("history");
     }
 
+    @Override
+    public List<Map<String, Object>> listHistory(String nodeIdent, Map<String, String> filters) {
+        return get(Lists.class, node(nodeIdent) + "/history").params(withDetail(filters)).execute(propagate404()).list("history");
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Map<String, Object> getHistoryEvent(String nodeIdent, String eventUuid) {
