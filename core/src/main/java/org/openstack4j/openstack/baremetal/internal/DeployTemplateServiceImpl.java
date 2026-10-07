@@ -1,6 +1,5 @@
 package org.openstack4j.openstack.baremetal.internal;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,9 +20,7 @@ public class DeployTemplateServiceImpl extends BaseBaremetalServices implements 
 
     @Override
     public List<? extends DeployTemplate> list(Map<String, String> filters) {
-        Map<String, String> query = filters == null ? new HashMap<>() : new HashMap<>(filters);
-        query.putIfAbsent("detail", "true");
-        return listOf(IronicDeployTemplateList.class, "/deploy_templates", query);
+        return listOf(IronicDeployTemplateList.class, "/deploy_templates", withDetail(filters));
     }
 
     @Override

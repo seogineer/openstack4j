@@ -15,7 +15,7 @@ public interface RunbookService extends RestService {
     /** @return the runbooks with all fields */
     List<? extends Runbook> list();
 
-    /** @param filters query parameters such as {@code project}, {@code limit}, {@code marker} ({@code detail=true} is sent unless given) */
+    /** @param filters query parameters such as {@code project}, {@code limit}, {@code marker} ({@code detail=true} is sent unless {@code detail} or {@code fields} is given) */
     List<? extends Runbook> list(Map<String, String> filters);
 
     /** @return the runbook, or {@code null} when it does not exist */

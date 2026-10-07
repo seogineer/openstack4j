@@ -1,6 +1,5 @@
 package org.openstack4j.openstack.baremetal.internal;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,9 +20,7 @@ public class VolumeConnectorServiceImpl extends BaseBaremetalServices implements
 
     @Override
     public List<? extends VolumeConnector> list(Map<String, String> filters) {
-        Map<String, String> query = filters == null ? new HashMap<>() : new HashMap<>(filters);
-        query.putIfAbsent("detail", "true");
-        return listOf(IronicVolumeConnectorList.class, "/volume/connectors", query);
+        return listOf(IronicVolumeConnectorList.class, "/volume/connectors", withDetail(filters));
     }
 
     @Override

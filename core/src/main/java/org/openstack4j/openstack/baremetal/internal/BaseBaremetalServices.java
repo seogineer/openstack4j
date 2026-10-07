@@ -1,6 +1,7 @@
 package org.openstack4j.openstack.baremetal.internal;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -103,5 +104,16 @@ public class BaseBaremetalServices extends BaseOpenStackService {
     /** A {@code PUT} whose response has no body (202 or 204). A 4xx is a failed response, a 5xx raises. */
     protected ActionResponse action(String path, Map<String, ?> body) {
         return putWithResponse(path).entity(JsonBody.of(body)).execute();
+    }
+
+    /**
+     * @return {@code filters} plus {@code detail=true}, unless the caller set {@code detail} or {@code fields}
+     *         (Ironic rejects {@code detail} together with {@code fields})
+     */
+    protected static Map<String, String> withDetail(Map<String, String> filters) {
+        Map<String, String> query = filters == null ? new HashMap<>() : new HashMap<>(filters);
+        if (!query.containsKey("fields"))
+            query.putIfAbsent("detail", "true");
+        return query;
     }
 }

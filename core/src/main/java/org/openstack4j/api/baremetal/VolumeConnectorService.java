@@ -15,7 +15,7 @@ public interface VolumeConnectorService extends RestService {
     /** @return the volume connectors with all fields */
     List<? extends VolumeConnector> list();
 
-    /** @param filters query parameters such as {@code node}, {@code limit}, {@code marker} ({@code detail=true} is sent unless given) */
+    /** @param filters query parameters such as {@code node}, {@code limit}, {@code marker} ({@code detail=true} is sent unless {@code detail} or {@code fields} is given) */
     List<? extends VolumeConnector> list(Map<String, String> filters);
 
     /** @return the volume connector, or {@code null} when it does not exist */
