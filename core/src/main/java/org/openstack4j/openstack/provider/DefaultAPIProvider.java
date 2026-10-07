@@ -308,6 +308,11 @@ public class DefaultAPIProvider implements APIProvider {
         bind(org.openstack4j.api.manila.ext.ShareExtService.class, org.openstack4j.openstack.manila.internal.ext.ShareExtServiceImpl.class);
         bind(org.openstack4j.api.manila.ext.SnapshotExtService.class, org.openstack4j.openstack.manila.internal.ext.SnapshotExtServiceImpl.class);
         bind(org.openstack4j.api.manila.ext.ShareReplicaService.class, org.openstack4j.openstack.manila.internal.ext.ShareReplicaServiceImpl.class);
+        bind(org.openstack4j.api.manila.ext.ShareGroupService.class, org.openstack4j.openstack.manila.internal.ext.ShareGroupServiceImpl.class);
+        bind(org.openstack4j.api.manila.ext.ShareGroupSnapshotService.class, org.openstack4j.openstack.manila.internal.ext.ShareGroupSnapshotServiceImpl.class);
+        bind(org.openstack4j.api.manila.ext.ShareGroupTypeService.class, org.openstack4j.openstack.manila.internal.ext.ShareGroupTypeServiceImpl.class);
+        bind(org.openstack4j.api.manila.ext.ShareNetworkSubnetService.class, org.openstack4j.openstack.manila.internal.ext.ShareNetworkSubnetServiceImpl.class);
+        bind(org.openstack4j.api.manila.ext.ShareServerExtService.class, org.openstack4j.openstack.manila.internal.ext.ShareServerExtServiceImpl.class);
         bind(SecurityServiceService.class, SecurityServiceServiceImpl.class);
         bind(ShareSnapshotService.class, ShareSnapshotServiceImpl.class);
         bind(ShareNetworkService.class, ShareNetworkServiceImpl.class);

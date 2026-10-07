@@ -6,10 +6,10 @@ import java.util.Map;
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.manila.Access;
-import org.openstack4j.model.manila.Share;
 import org.openstack4j.model.manila.ShareInstance;
 import org.openstack4j.model.manila.ext.ExportLocation;
 import org.openstack4j.model.manila.ext.ShareAccessRule;
+import org.openstack4j.model.manila.ext.ShareInfo;
 import org.openstack4j.model.manila.ext.options.ShareAccessCreate;
 import org.openstack4j.model.manila.ext.options.ShareMigration;
 
@@ -48,7 +48,7 @@ public interface ShareExtService extends RestService {
      * @param share the {@code share} fields: {@code protocol}, {@code export_path}, {@code service_host} and optional
      *              {@code name}, {@code share_type}, {@code driver_options}, {@code is_public}, {@code description} ...
      */
-    Share manage(Map<String, ?> share);
+    ShareInfo manage(Map<String, ?> share);
 
     /** Removes a share from Manila without deleting it on the back end (2.7, admin). */
     ActionResponse unmanage(String shareId);
