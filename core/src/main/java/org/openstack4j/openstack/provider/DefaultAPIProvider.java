@@ -179,6 +179,10 @@ public class DefaultAPIProvider implements APIProvider {
         bind(org.openstack4j.api.baremetal.BaremetalService.class, org.openstack4j.openstack.baremetal.internal.BaremetalServiceImpl.class);
         bind(org.openstack4j.api.baremetal.BaremetalMicroVersionService.class, org.openstack4j.openstack.baremetal.internal.BaremetalMicroVersionServiceImpl.class);
         bind(org.openstack4j.api.baremetal.NodeService.class, org.openstack4j.openstack.baremetal.internal.NodeServiceImpl.class);
+        bind(org.openstack4j.api.baremetal.AllocationService.class, org.openstack4j.openstack.baremetal.internal.AllocationServiceImpl.class);
+        bind(org.openstack4j.api.baremetal.DeployTemplateService.class, org.openstack4j.openstack.baremetal.internal.DeployTemplateServiceImpl.class);
+        bind(org.openstack4j.api.baremetal.RunbookService.class, org.openstack4j.openstack.baremetal.internal.RunbookServiceImpl.class);
+        bind(org.openstack4j.api.baremetal.InspectionRuleService.class, org.openstack4j.openstack.baremetal.internal.InspectionRuleServiceImpl.class);
         bind(org.openstack4j.api.baremetal.PortService.class, org.openstack4j.openstack.baremetal.internal.PortServiceImpl.class);
         bind(org.openstack4j.api.baremetal.PortgroupService.class, org.openstack4j.openstack.baremetal.internal.PortgroupServiceImpl.class);
         bind(org.openstack4j.api.baremetal.ChassisService.class, org.openstack4j.openstack.baremetal.internal.ChassisServiceImpl.class);

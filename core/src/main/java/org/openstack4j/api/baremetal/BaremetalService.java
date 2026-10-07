@@ -22,4 +22,16 @@ public interface BaremetalService extends RestService {
 
     /** @return the bare metal drivers */
     DriverService drivers();
+
+    /** @return the bare metal allocations (microversion 1.52) */
+    AllocationService allocations();
+
+    /** @return the deploy templates (microversion 1.55) */
+    DeployTemplateService deployTemplates();
+
+    /** @return the runbooks (microversion 1.92) */
+    RunbookService runbooks();
+
+    /** @return the inspection rules (microversion 1.96) */
+    InspectionRuleService inspectionRules();
 }
