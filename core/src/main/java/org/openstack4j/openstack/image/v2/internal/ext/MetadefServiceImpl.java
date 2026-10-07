@@ -1,5 +1,10 @@
 package org.openstack4j.openstack.image.v2.internal.ext;
 
+import org.openstack4j.openstack.image.v2.domain.ext.GlanceMetadefTag.Tags;
+import org.openstack4j.openstack.image.v2.domain.ext.GlanceMetadefTag;
+import org.openstack4j.model.image.v2.ext.MetadefTag;
+import java.util.stream.Collectors;
+import java.util.Collections;
 import org.openstack4j.openstack.image.v2.domain.ext.GlanceMetadefProperties;
 import org.openstack4j.openstack.image.v2.domain.ext.GlanceMetadefProperty;
 import org.openstack4j.openstack.image.v2.domain.ext.GlanceMetadefObject.MetadefObjects;
@@ -73,4 +78,29 @@ public class MetadefServiceImpl extends BaseImageExtService implements MetadefSe
     @Override public MetadefProperty createProperty(String namespace, MetadefPropertyOptions options) { return create(GlanceMetadefProperty.class, ns(namespace) + "/properties", options); }
     @Override public MetadefProperty updateProperty(String namespace, String name, MetadefPropertyOptions options) { return replace(GlanceMetadefProperty.class, ns(namespace) + "/properties/" + id(name), options); }
     @Override public ActionResponse deleteProperty(String namespace, String name) { return remove(ns(namespace) + "/properties/" + id(name)); }
+
+    private static String tags(String namespace) {
+        return ns(namespace) + "/tags";
+    }
+
+    @Override public List<? extends MetadefTag> listTags(String namespace) { return listOf(Tags.class, tags(namespace), null); }
+    @Override public MetadefTag getTag(String namespace, String name) { return show(GlanceMetadefTag.class, tags(namespace) + "/" + id(name)); }
+    @Override public MetadefTag createTag(String namespace, String name) { return post(GlanceMetadefTag.class, tags(namespace) + "/" + id(name)).execute(propagate404()); }
+
+    @Override
+    public List<? extends MetadefTag> createTags(String namespace, List<String> names, boolean append) {
+        List<Map<String, String>> tags = names.stream().map(n -> Collections.singletonMap("name", n)).collect(Collectors.toList());
+        Tags result = post(Tags.class, tags(namespace)).header("X-Openstack-Append", String.valueOf(append))
+                .entity(JsonBody.of(Collections.singletonMap("tags", tags))).execute(propagate404());
+        return result == null ? Collections.emptyList() : result.getList();
+    }
+
+    @Override
+    public MetadefTag updateTag(String namespace, String name, String newName) {
+        return put(GlanceMetadefTag.class, tags(namespace) + "/" + id(name))
+                .entity(JsonBody.of(Collections.singletonMap("name", id(newName)))).execute(propagate404());
+    }
+
+    @Override public ActionResponse deleteTag(String namespace, String name) { return remove(tags(namespace) + "/" + id(name)); }
+    @Override public ActionResponse deleteAllTags(String namespace) { return remove(tags(namespace)); }
 }

@@ -10,6 +10,7 @@ import org.openstack4j.model.image.v2.ext.MetadefObject;
 import org.openstack4j.model.image.v2.ext.MetadefProperty;
 import org.openstack4j.model.image.v2.ext.MetadefResourceType;
 import org.openstack4j.model.image.v2.ext.MetadefResourceTypeAssociation;
+import org.openstack4j.model.image.v2.ext.MetadefTag;
 import org.openstack4j.model.image.v2.options.MetadefNamespaceOptions;
 import org.openstack4j.model.image.v2.options.MetadefObjectOptions;
 import org.openstack4j.model.image.v2.options.MetadefPropertyOptions;
@@ -186,4 +187,67 @@ public interface MetadefService extends RestService {
      * @return the action response
      */
     ActionResponse deleteProperty(String namespace, String name);
+
+    /**
+     * Lists the tags of a namespace.
+     *
+     * @param namespace the namespace
+     * @return the result
+     */
+    List<? extends MetadefTag> listTags(String namespace);
+
+    /**
+     * Returns a tag; null if missing.
+     *
+     * @param namespace the namespace
+     * @param name the name
+     * @return the result
+     */
+    MetadefTag getTag(String namespace, String name);
+
+    /**
+     * Creates one tag.
+     *
+     * @param namespace the namespace
+     * @param name the name
+     * @return the result
+     */
+    MetadefTag createTag(String namespace, String name);
+
+    /**
+     * Creates tags in one request; with append=false the namespace's existing tags are replaced by this list (X-Openstack-Append).
+     *
+     * @param namespace the namespace
+     * @param names the names
+     * @param append the append
+     * @return the result
+     */
+    List<? extends MetadefTag> createTags(String namespace, List<String> names, boolean append);
+
+    /**
+     * Renames a tag.
+     *
+     * @param namespace the namespace
+     * @param name the name
+     * @param newName the new name
+     * @return the result
+     */
+    MetadefTag updateTag(String namespace, String name, String newName);
+
+    /**
+     * Deletes a tag.
+     *
+     * @param namespace the namespace
+     * @param name the name
+     * @return the action response
+     */
+    ActionResponse deleteTag(String namespace, String name);
+
+    /**
+     * Deletes every tag of the namespace.
+     *
+     * @param namespace the namespace
+     * @return the action response
+     */
+    ActionResponse deleteAllTags(String namespace);
 }
