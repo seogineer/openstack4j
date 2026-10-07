@@ -1,8 +1,10 @@
 ## 4.6.0
 
 - Glance v2 누락 API 59 개: `imagesV2().versions()`(root `/versions`, `supports()`), `info()`(import methods, stores, stores detail, usage), interoperable image import(`stage`, `importImage`: glance-direct/web-download/copy-image/glance-download), `listLocations`/`addLocation`, `listTasks`, `deleteFromStore`, `cache()`(list/queue/delete/clear/clean/prune), `schemas()`(16), `metadefs()`(namespaces, resource types, objects, properties, tags)
+- Octavia 누락 API 47 개: `octavia().l7Policies()`(rules 포함), `flavors()`, `flavorProfiles()`, `availabilityZones()`, `availabilityZoneProfiles()`, `providers()`(capabilities), `quotas()`, `amphorae()`, `listenerV2().stats`, `loadBalancerV2().failover`, `lbPoolV2().updateMembers`(additive_only)
+- 공용 기반 `BaseOctaviaExtService`·`OctaviaAttributes`(내부/옵션)
 - 공용 기반 `BaseImageExtService`(내부, 404 전달), `ImageAttributes`(설정한 필드만 보내는 옵션 기반)
-- 테스트: `ImageExtensionsLiveTests`(`OS_AUTH_URL`·`OS_TOKEN` 있을 때)
+- 테스트: `ImageExtensionsLiveTests`, `OctaviaExtensionsLiveTests`(`OS_AUTH_URL`·`OS_TOKEN` 있을 때)
 
 ## 4.5.0
 

@@ -177,6 +177,23 @@ os.imagesV2().schemas().image();                             // JSON schema as a
 - `ImageService` 추가: `versions()`, `importImage`, `stage`, `listLocations`/`addLocation`(2.17), `listTasks`(2.12), `deleteFromStore`(2.10)
 - Glance 는 microversion 헤더가 없습니다. 새 API 가 없는(오래된 서버, 캐시 middleware 꺼짐) Glance 는 404 를 줍니다: 모델이나 목록을 돌려주는 메서드(목록, 생성, 수정, prefix·주소 추가처럼 결과를 돌려주는 동작)는 404 를 예외로 던집니다. `ActionResponse` 를 돌려주는 메서드(삭제, import·stage·캐시 동작, agent 스케줄링, flavor 의 profile 연결)는 실패한 `ActionResponse`(코드 404)를 돌려주고, 단건 `get(id)` 은 없는 자원에 `null` 을 돌려줍니다. `versions().supports("2.x")` 로 먼저 확인할 수 있습니다.
 
+## Octavia 확장
+
+같은 릴리스에서 Octavia(load balancer v2)의 나머지 API 도 지원합니다.
+
+```java
+os.octavia().l7Policies().create(L7PolicyOptions.create(listenerId, "REDIRECT_TO_URL").redirectUrl("https://example.com"));
+os.octavia().l7Policies().createRule(policyId, L7RuleOptions.create("PATH", "STARTS_WITH", "/api"));
+os.octavia().flavors().create(OctaviaFlavorOptions.create("single", flavorProfileId));
+os.octavia().quotas().update(projectId, OctaviaQuotaOptions.create().loadbalancer(20));
+os.octavia().lbPoolV2().updateMembers(poolId, members, false);    // batch replace
+os.octavia().loadBalancerV2().failover(lbId);
+```
+
+- 새 accessor: `l7Policies()`(rules 포함), `flavors()`, `flavorProfiles()`, `availabilityZones()`, `availabilityZoneProfiles()`, `providers()`, `quotas()`, `amphorae()`(관리자)
+- 기존 서비스 보강: `listenerV2().stats`, `loadBalancerV2().failover`, `lbPoolV2().updateMembers`
+- 404 규칙은 Image·Networking 확장과 같습니다. quota 의 `null` 은 기본값 적용, `-1` 은 무제한입니다.
+
 ## 빌드
 
 ```bash
