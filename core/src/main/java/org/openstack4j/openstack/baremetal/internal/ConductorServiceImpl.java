@@ -22,9 +22,7 @@ public class ConductorServiceImpl extends BaseBaremetalServices implements Condu
 
     @Override
     public List<? extends Conductor> list(Map<String, String> filters) {
-        Map<String, String> query = filters == null ? new HashMap<>() : new HashMap<>(filters);
-        query.putIfAbsent("detail", "true");
-        return listOf(IronicConductorList.class, "/conductors", query);
+        return listOf(IronicConductorList.class, "/conductors", withDetail(filters));
     }
 
     @Override

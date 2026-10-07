@@ -11,6 +11,7 @@ import org.openstack4j.model.baremetal.options.NodeCreate;
 import org.openstack4j.model.baremetal.options.NodeProvision;
 import org.openstack4j.model.common.ActionResponse;
 
+/** Bare metal nodes ({@code /v1/nodes}). A node is addressed by its UUID or (microversion 1.5+) its name. */
 public interface NodeService extends RestService {
 
     /** @return the nodes (summary fields; use {@code listDetail()} for all fields) */
@@ -112,8 +113,15 @@ public interface NodeService extends RestService {
 
     ActionResponse detachVif(String nodeIdent, String vifId);
 
-    /** @return the node's BIOS settings ({@code name}, {@code value}, and more with microversion 1.74); a missing node raises */
+    /** @return the node's BIOS settings ({@code name}, {@code value}); a missing node raises */
     List<Map<String, Object>> listBiosSettings(String nodeIdent);
+
+    /**
+     * @param filters query parameters, e.g. {@code detail=true} for {@code attribute_type}, {@code allowable_values} ...
+     *                (microversion 1.74) or {@code fields}
+     * @return the node's BIOS settings; a missing node raises
+     */
+    List<Map<String, Object>> listBiosSettings(String nodeIdent, Map<String, String> filters);
 
     /** @return the BIOS setting, or {@code null} when the node or the setting does not exist */
     Map<String, Object> getBiosSetting(String nodeIdent, String settingName);

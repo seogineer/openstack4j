@@ -227,7 +227,12 @@ public class NodeServiceImpl extends BaseBaremetalServices implements NodeServic
 
     @Override
     public List<Map<String, Object>> listBiosSettings(String nodeIdent) {
-        return showStrict(Lists.class, node(nodeIdent) + "/bios").list("bios");
+        return listBiosSettings(nodeIdent, null);
+    }
+
+    @Override
+    public List<Map<String, Object>> listBiosSettings(String nodeIdent, Map<String, String> filters) {
+        return get(Lists.class, node(nodeIdent) + "/bios").params(filters == null ? Collections.emptyMap() : filters).execute(propagate404()).list("bios");
     }
 
     @SuppressWarnings("unchecked")

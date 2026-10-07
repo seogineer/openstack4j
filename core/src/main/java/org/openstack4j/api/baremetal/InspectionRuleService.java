@@ -15,7 +15,7 @@ public interface InspectionRuleService extends RestService {
     /** @return the inspection rules with all fields */
     List<? extends InspectionRule> list();
 
-    /** @param filters query parameters such as {@code phase}, {@code limit}, {@code marker} ({@code detail=true} is sent unless given) */
+    /** @param filters query parameters such as {@code phase}, {@code limit}, {@code marker} ({@code detail=true} is sent unless {@code detail} or {@code fields} is given) */
     List<? extends InspectionRule> list(Map<String, String> filters);
 
     /** @return the inspection rule, or {@code null} when it does not exist */
