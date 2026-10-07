@@ -194,6 +194,22 @@ os.octavia().loadBalancerV2().failover(lbId);
 - 기존 서비스 보강: `listenerV2().stats`, `loadBalancerV2().failover`, `lbPoolV2().updateMembers`
 - 404 규칙은 Image·Networking 확장과 같습니다. quota 의 `null` 은 기본값 적용, `-1` 은 무제한입니다.
 
+## Heat 확장
+
+같은 릴리스에서 Heat(orchestration)의 나머지 API 도 지원합니다.
+
+```java
+os.heat().stacks().preview(stackCreate);                          // create 미리 보기
+os.heat().stacks().outputs(name, id); os.heat().stacks().output(name, id, "value");
+os.heat().stacks().suspend(name, id); os.heat().stacks().resume(name, id);
+os.heat().stacks().snapshot(name, id, "before-upgrade");
+os.heat().resourceTypes().schema("OS::Nova::Server");
+os.heat().softwareDeployments().create(SoftwareDeploymentOptions.create(serverId, configId));
+```
+
+- 새 accessor: `info()`(build info, services), `templateVersions()`, `resourceTypes()`, `softwareDeployments()`
+- `stacks()` 보강: delete(name), environment, export, files, outputs, PATCH update, actions(suspend/resume/check/cancel), snapshots, preview; `events().list(stackName)`, `softwareConfig().list()`
+
 ## 빌드
 
 ```bash
