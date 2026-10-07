@@ -243,4 +243,11 @@ public interface ImageService extends RestService {
      * @return the ImageSchemaService
      */
     org.openstack4j.api.image.v2.ext.ImageSchemaService schemas();
+
+    /**
+     * Glance metadata definitions (metadefs).
+     *
+     * @return the MetadefService
+     */
+    org.openstack4j.api.image.v2.ext.MetadefService metadefs();
 }
