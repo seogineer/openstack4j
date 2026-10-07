@@ -14,7 +14,7 @@ import org.openstack4j.model.network.options.ServiceFlavorOptions;
 public interface ServiceFlavorService extends RestService {
 
     /**
-     * Lists service flavors, optionally filtered (service_type).
+     * Lists service flavors.
      *
      * @return the result
      */
@@ -23,7 +23,6 @@ public interface ServiceFlavorService extends RestService {
     /**
      * Lists service flavors, optionally filtered (service_type).
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

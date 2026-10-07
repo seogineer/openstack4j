@@ -14,7 +14,7 @@ import org.openstack4j.model.network.options.NetworkSegmentRangeOptions;
 public interface NetworkSegmentRangeService extends RestService {
 
     /**
-     * Lists network segment ranges, optionally filtered.
+     * Lists network segment ranges.
      *
      * @return the result
      */
@@ -23,7 +23,6 @@ public interface NetworkSegmentRangeService extends RestService {
     /**
      * Lists network segment ranges, optionally filtered.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

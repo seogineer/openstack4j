@@ -28,7 +28,6 @@ public interface IdentityProviderService extends RestService {
      * Creates an identity provider (PUT); attribute keys: description, enabled, domain_id, remote_ids, authorization_ttl.
      *
      * @param id the id
-     * @param Map<String the map< string
      * @param attributes the attributes
      * @return the result
      */
@@ -38,7 +37,6 @@ public interface IdentityProviderService extends RestService {
      * Updates an identity provider (PATCH) with the given attributes.
      *
      * @param id the id
-     * @param Map<String the map< string
      * @param attributes the attributes
      * @return the result
      */

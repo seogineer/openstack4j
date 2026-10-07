@@ -14,7 +14,7 @@ import org.openstack4j.model.network.options.NetworkLogOptions;
 public interface NetworkLoggingService extends RestService {
 
     /**
-     * Lists network logs, optionally filtered.
+     * Lists network logs.
      *
      * @return the result
      */
@@ -23,7 +23,6 @@ public interface NetworkLoggingService extends RestService {
     /**
      * Lists network logs, optionally filtered.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

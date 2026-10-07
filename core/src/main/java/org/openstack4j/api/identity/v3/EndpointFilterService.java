@@ -40,7 +40,6 @@ public interface EndpointFilterService extends RestService {
      *
      * @param name the name
      * @param description the description
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */
@@ -52,7 +51,6 @@ public interface EndpointFilterService extends RestService {
      * @param id the id
      * @param name the name
      * @param description the description
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

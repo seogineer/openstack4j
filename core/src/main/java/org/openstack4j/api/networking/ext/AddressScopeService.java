@@ -14,7 +14,7 @@ import org.openstack4j.model.network.options.AddressScopeOptions;
 public interface AddressScopeService extends RestService {
 
     /**
-     * Lists address scopes, optionally filtered.
+     * Lists address scopes.
      *
      * @return the result
      */
@@ -23,7 +23,6 @@ public interface AddressScopeService extends RestService {
     /**
      * Lists address scopes, optionally filtered.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

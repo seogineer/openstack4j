@@ -16,7 +16,7 @@ import org.openstack4j.model.octavia.options.L7RuleOptions;
 public interface L7PolicyService extends RestService {
 
     /**
-     * Lists L7 policies, optionally filtered (for example listener_id).
+     * Lists L7 policies.
      *
      * @return the result
      */
@@ -25,7 +25,6 @@ public interface L7PolicyService extends RestService {
     /**
      * Lists L7 policies, optionally filtered (for example listener_id).
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */
@@ -72,7 +71,6 @@ public interface L7PolicyService extends RestService {
      * Lists the rules of an L7 policy.
      *
      * @param policyId the policy id
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

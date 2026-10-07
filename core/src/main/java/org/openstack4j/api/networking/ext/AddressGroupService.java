@@ -14,7 +14,7 @@ import org.openstack4j.model.network.options.AddressGroupOptions;
 public interface AddressGroupService extends RestService {
 
     /**
-     * Lists address groups, optionally filtered.
+     * Lists address groups.
      *
      * @return the result
      */
@@ -23,7 +23,6 @@ public interface AddressGroupService extends RestService {
     /**
      * Lists address groups, optionally filtered.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

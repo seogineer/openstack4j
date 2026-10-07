@@ -14,7 +14,7 @@ import org.openstack4j.model.heat.options.SoftwareDeploymentOptions;
 public interface SoftwareDeploymentService extends RestService {
 
     /**
-     * Lists software deployments, optionally filtered (server_id).
+     * Lists software deployments.
      *
      * @return the result
      */
@@ -23,7 +23,6 @@ public interface SoftwareDeploymentService extends RestService {
     /**
      * Lists software deployments, optionally filtered (server_id).
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

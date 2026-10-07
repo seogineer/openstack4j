@@ -21,16 +21,17 @@ import org.openstack4j.model.image.v2.options.MetadefPropertyOptions;
 public interface MetadefService extends RestService {
 
     /**
-     * Lists metadef namespaces, optionally filtered (resource_types, visibility).
+     * Lists metadef namespaces, optionally filtered (resource_types, visibility). Glance pages results (25 by default);
+     * pass {@code limit}/{@code marker} through the filters overload for more.
      *
      * @return the result
      */
     List<? extends MetadefNamespace> listNamespaces();
 
     /**
-     * Lists metadef namespaces, optionally filtered (resource_types, visibility).
+     * Lists metadef namespaces, optionally filtered (resource_types, visibility). Glance pages results (25 by default);
+     * pass {@code limit}/{@code marker} through the filters overload for more.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

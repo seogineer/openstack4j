@@ -23,7 +23,6 @@ public interface SecurityGroupDefaultStatefulnessService extends RestService {
     /**
      * Lists the per-project default statefulness entries.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

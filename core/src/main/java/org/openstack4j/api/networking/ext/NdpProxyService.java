@@ -14,7 +14,7 @@ import org.openstack4j.model.network.options.NdpProxyOptions;
 public interface NdpProxyService extends RestService {
 
     /**
-     * Lists NDP proxies, optionally filtered.
+     * Lists NDP proxies.
      *
      * @return the result
      */
@@ -23,7 +23,6 @@ public interface NdpProxyService extends RestService {
     /**
      * Lists NDP proxies, optionally filtered.
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

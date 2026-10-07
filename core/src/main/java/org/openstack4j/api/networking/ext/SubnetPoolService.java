@@ -14,7 +14,7 @@ import org.openstack4j.model.network.options.SubnetPoolOptions;
 public interface SubnetPoolService extends RestService {
 
     /**
-     * Lists subnet pools, optionally filtered (for example ip_version, shared, address_scope_id).
+     * Lists subnet pools.
      *
      * @return the result
      */
@@ -23,7 +23,6 @@ public interface SubnetPoolService extends RestService {
     /**
      * Lists subnet pools, optionally filtered (for example ip_version, shared, address_scope_id).
      *
-     * @param Map<String the map< string
      * @param filters the filters
      * @return the result
      */

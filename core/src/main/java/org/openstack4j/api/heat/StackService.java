@@ -122,6 +122,7 @@ public interface StackService {
     ActionResponse delete(String stackIdentity);
 
     /**
+     * @throws org.openstack4j.api.exceptions.ResponseException if the stack does not exist (404)
      * @param stackName the stack name
      * @param stackId   the stack id
      * @return the effective environment of the stack (parameters, parameter_defaults, resource_registry ...)
@@ -129,6 +130,7 @@ public interface StackService {
     Map<String, Object> environment(String stackName, String stackId);
 
     /**
+     * @throws org.openstack4j.api.exceptions.ResponseException if the stack does not exist (404)
      * @param stackName the stack name
      * @param stackId   the stack id
      * @return the exported stack data, usable for adopt
@@ -136,6 +138,7 @@ public interface StackService {
     Map<String, Object> export(String stackName, String stackId);
 
     /**
+     * @throws org.openstack4j.api.exceptions.ResponseException if the stack does not exist (404)
      * @param stackName the stack name
      * @param stackId   the stack id
      * @return the files of the stack, path to content
@@ -143,6 +146,7 @@ public interface StackService {
     Map<String, String> files(String stackName, String stackId);
 
     /**
+     * @throws org.openstack4j.api.exceptions.ResponseException if the stack does not exist (404)
      * @param stackName the stack name
      * @param stackId   the stack id
      * @return the outputs of the stack (keys and descriptions, without values)
@@ -209,6 +213,7 @@ public interface StackService {
     ActionResponse cancelWithoutRollback(String stackName, String stackId);
 
     /**
+     * @throws org.openstack4j.api.exceptions.ResponseException if the stack does not exist (404)
      * @param stackName the stack name
      * @param stackId   the stack id
      * @return the snapshots of the stack

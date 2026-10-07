@@ -14,7 +14,7 @@ import org.openstack4j.model.identity.v3.options.RegisteredLimitListOptions;
 public interface RegisteredLimitService extends RestService {
 
     /**
-     * Lists registered limits, optionally filtered.
+     * Lists registered limits.
      *
      * @return the result
      */
