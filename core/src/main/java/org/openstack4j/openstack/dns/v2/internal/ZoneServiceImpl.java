@@ -83,8 +83,7 @@ public class ZoneServiceImpl extends BaseDNSServices implements ZoneService {
     }
 
     private ActionResponse task(String zoneId, String task, Map<String, ?> body) {
-        Objects.requireNonNull(zoneId, "zoneId");
-        return postWithResponse(PATH_ZONES, "/", zoneId, "/tasks/", task).entity(JsonBody.of(body)).execute();
+        return postWithResponse(PATH_ZONES, "/", BaseDesignateExtService.validId(zoneId), "/tasks/", task).entity(JsonBody.of(body)).execute();
     }
 
 }

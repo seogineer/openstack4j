@@ -1,5 +1,6 @@
 package org.openstack4j.connectors.httpclient;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -91,8 +92,10 @@ public final class HttpCommand<R> {
     public ClassicHttpResponse execute() throws Exception {
         if (request.getEntity() != null) {
             if (InputStream.class.isAssignableFrom(request.getEntity().getClass())) {
-                clientReq.setEntity(new InputStreamEntity((InputStream) request.getEntity(), -1,
-                        ContentType.parse(request.getContentType())));
+                InputStream stream = (InputStream) request.getEntity();
+                // an in-memory body has a known length; servers behind uwsgi may not de-chunk a chunked body
+                long length = stream instanceof ByteArrayInputStream ? stream.available() : -1;
+                clientReq.setEntity(new InputStreamEntity(stream, length, ContentType.parse(request.getContentType())));
             } else {
                 String json = ObjectMapperSingleton.getContext(request.getEntity().getClass()).writer()
                         .writeValueAsString(request.getEntity());

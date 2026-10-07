@@ -25,6 +25,11 @@ public abstract class BaseDesignateExtService extends BaseDNSServices {
 
     /** @return {@code value}, which must be a non-blank path segment (no {@code /}, {@code ?} or {@code #}) */
     protected static String id(String value) {
+        return validId(value);
+    }
+
+    /** @return {@code value}, which must be a non-blank path segment (no {@code /}, {@code ?} or {@code #}) */
+    public static String validId(String value) {
         Objects.requireNonNull(value, "id");
         if (value.isBlank() || value.indexOf('/') >= 0 || value.indexOf('?') >= 0 || value.indexOf('#') >= 0)
             throw new IllegalArgumentException("Not a valid identifier: '" + value + "'");
