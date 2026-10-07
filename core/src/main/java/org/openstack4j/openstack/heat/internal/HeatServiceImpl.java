@@ -37,4 +37,19 @@ public class HeatServiceImpl extends BaseHeatServices implements HeatService {
     }
 
 
+
+    @Override
+    public org.openstack4j.api.heat.ext.HeatInfoService info() {
+        return Apis.get(org.openstack4j.api.heat.ext.HeatInfoService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.heat.ext.TemplateVersionService templateVersions() {
+        return Apis.get(org.openstack4j.api.heat.ext.TemplateVersionService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.heat.ext.ResourceTypeService resourceTypes() {
+        return Apis.get(org.openstack4j.api.heat.ext.ResourceTypeService.class);
+    }
 }
