@@ -14,14 +14,14 @@ import org.openstack4j.model.octavia.ext.AmphoraStats;
 public interface AmphoraService extends RestService {
 
     /**
-     * Lists amphorae, optionally filtered (load_balancer_id, status).
+     * Lists amphorae, optionally filtered (loadbalancer_id, status).
      *
      * @return the result
      */
     List<? extends Amphora> list();
 
     /**
-     * Lists amphorae, optionally filtered (load_balancer_id, status).
+     * Lists amphorae, optionally filtered (loadbalancer_id, status).
      *
      * @param Map<String the map< string
      * @param filters the filters

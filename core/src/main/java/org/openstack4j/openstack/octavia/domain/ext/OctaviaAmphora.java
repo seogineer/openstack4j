@@ -2,6 +2,7 @@ package org.openstack4j.openstack.octavia.domain.ext;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -15,7 +16,8 @@ public class OctaviaAmphora implements Amphora {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("id") private String id;
-    @JsonProperty("load_balancer_id") private String loadBalancerId;
+    // the API sends loadbalancer_id; the api-ref example shows load_balancer_id
+    @JsonProperty("loadbalancer_id") @JsonAlias("load_balancer_id") private String loadBalancerId;
     @JsonProperty("compute_id") private String computeId;
     @JsonProperty("lb_network_ip") private String lbNetworkIp;
     @JsonProperty("vrrp_ip") private String vrrpIp;
