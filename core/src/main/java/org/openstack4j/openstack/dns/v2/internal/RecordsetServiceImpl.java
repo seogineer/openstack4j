@@ -72,8 +72,7 @@ public class RecordsetServiceImpl extends BaseDNSServices implements RecordsetSe
 
     @Override
     public List<? extends Recordset> list(String zoneId, Map<String, String> filters) {
-        Objects.requireNonNull(zoneId, "zoneId");
-        return get(DesignateRecordset.Recordsets.class, PATH_ZONES, "/", zoneId, PATH_RECORDSETS).params(filters == null ? Collections.emptyMap() : filters)
+        return get(DesignateRecordset.Recordsets.class, PATH_ZONES, "/", BaseDesignateExtService.validId(zoneId), PATH_RECORDSETS).params(filters == null ? Collections.emptyMap() : filters)
                 .execute(BaseDesignateExtService.propagate404()).getList();
     }
 

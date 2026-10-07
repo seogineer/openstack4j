@@ -244,6 +244,7 @@ os.dns().reverseFloatingIps().set("RegionOne", floatingIpId, "smtp.example.com."
 - zones: 필터 목록, abandon, `transferFromMaster`(xfr), `movePool`; recordsets: 필터 목록(전체·zone 별)
 - 새 accessor: `zoneFiles()`(export/import), `zoneShares()`, `zoneTransfers()`(requests/accepts), `tlds()`, `tsigKeys()`, `blacklists()`, `pools()`, `quotas()`, `serviceStatuses()`, `info()`(limits), `reverseFloatingIps()`
 - 모델은 자주 쓰는 필드만 getter 가 있고, 나머지는 `getAttributes()` 에 있습니다
+- 관리자가 다른 프로젝트를 다루려면(모든 프로젝트의 zone 목록, 다른 프로젝트의 quota) Designate 헤더 `X-Auth-All-Projects: true` 나 `X-Auth-Sudo-Project-ID: <id>` 가 필요합니다. 지금은 세션 헤더로 줍니다: `os.headers(Map.of("X-Auth-All-Projects", "true"))` — 세션의 모든 요청에 붙고 기존 세션 헤더를 대체하므로, 필요한 호출 뒤에 `os.headers(null)` 로 지우세요
 
 ## 빌드
 
