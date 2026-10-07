@@ -67,7 +67,7 @@ public class ShareReplicaSnapshotTests extends AbstractManilaExtTest {
         respondWith(200, "{\"meta\": {\"project\": \"x\"}}");
         respondWith(200, "{\"metadata\": {\"project\": \"y\"}}");
         respondWith(200);
-        respondWith(202, "{\"snapshot\": {\"id\": \"sn2\", \"share_id\": \"s1\", \"name\": \"managed\"}}");
+        respondWith(202, "{\"snapshot\": {\"id\": \"sn2\", \"share_id\": \"s1\", \"name\": \"managed\", \"status\": \"manage_starting\"}}");
         respondWith(202);
         respondWith(200, "{\"snapshot_instances\": [{\"id\": \"si1\", \"snapshot_id\": \"sn1\", \"status\": \"available\", \"share_instance_id\": \"i1\"}]}");
         respondWith(200, "{\"snapshot_instance\": {\"id\": \"si1\", \"snapshot_id\": \"sn1\", \"status\": \"available\", \"provider_location\": \"/snap\"}}");
@@ -98,6 +98,7 @@ public class ShareReplicaSnapshotTests extends AbstractManilaExtTest {
         Assert.assertEquals(metadata.get("project"), "x");
         Assert.assertEquals(item, "x");
         Assert.assertEquals(managed.getId(), "sn2");
+        Assert.assertEquals(managed.getStatus(), "manage_starting");
         Assert.assertEquals(instances.get(0).getShareInstanceId(), "i1");
         Assert.assertEquals(instance.getProviderLocation(), "/snap");
     }

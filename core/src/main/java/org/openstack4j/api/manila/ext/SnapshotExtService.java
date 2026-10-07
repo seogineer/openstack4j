@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
-import org.openstack4j.model.manila.ShareSnapshot;
+import org.openstack4j.model.manila.ext.ShareSnapshotInfo;
 import org.openstack4j.model.manila.ext.SnapshotInstance;
 
 /** The 2.12+ snapshot APIs: metadata, manage/unmanage and snapshot instances. */
@@ -31,7 +31,7 @@ public interface SnapshotExtService extends RestService {
      * @param snapshot the {@code snapshot} fields: {@code share_id}, {@code provider_location} and optional {@code name},
      *                 {@code description}, {@code driver_options}
      */
-    ShareSnapshot manage(Map<String, ?> snapshot);
+    ShareSnapshotInfo manage(Map<String, ?> snapshot);
 
     /** Removes a snapshot from Manila without deleting it on the back end (2.12, admin). */
     ActionResponse unmanage(String snapshotId);

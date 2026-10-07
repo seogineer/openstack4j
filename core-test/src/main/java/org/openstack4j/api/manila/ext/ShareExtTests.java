@@ -5,7 +5,7 @@ import java.util.Map;
 
 import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.model.manila.Access;
-import org.openstack4j.model.manila.Share;
+import org.openstack4j.model.manila.ext.ShareInfo;
 import org.openstack4j.model.manila.ext.ExportLocation;
 import org.openstack4j.model.manila.ext.ShareAccessRule;
 import org.openstack4j.model.manila.ext.options.ShareAccessCreate;
@@ -70,7 +70,7 @@ public class ShareExtTests extends AbstractManilaExtTest {
         Assert.assertTrue(ext.softDelete("s1").isSuccess());
         Assert.assertTrue(ext.restore("s1").isSuccess());
         Assert.assertTrue(ext.unmanage("s1").isSuccess());
-        Share managed = ext.manage(Map.of("protocol", "nfs", "export_path", "192.162.10.6:/shares/x", "service_host", "manila2@stor#pool"));
+        ShareInfo managed = ext.manage(Map.of("protocol", "nfs", "export_path", "192.162.10.6:/shares/x", "service_host", "manila2@stor#pool"));
         ext.listInstances("s1");
 
         RecordedRequest grant = expect("POST", P + "/shares/s1/action");
@@ -87,6 +87,7 @@ public class ShareExtTests extends AbstractManilaExtTest {
         expect("GET", P + "/shares/s1/instances");
         Assert.assertEquals(access.getAccessTo(), "10.0.0.0/24");
         Assert.assertEquals(managed.getId(), "s2");
+        Assert.assertEquals(managed.getStatus(), "manage_starting");
     }
 
     public void accessRules() throws Exception {

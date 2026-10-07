@@ -8,11 +8,11 @@ import java.util.Objects;
 
 import org.openstack4j.api.manila.ext.SnapshotExtService;
 import org.openstack4j.model.common.ActionResponse;
-import org.openstack4j.model.manila.ShareSnapshot;
+import org.openstack4j.model.manila.ext.ShareSnapshotInfo;
 import org.openstack4j.model.manila.ext.SnapshotInstance;
 import org.openstack4j.openstack.internal.MicroVersion;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
-import org.openstack4j.openstack.manila.domain.ManilaShareSnapshot;
+import org.openstack4j.openstack.manila.domain.ext.ManilaShareSnapshotInfo;
 import org.openstack4j.openstack.manila.domain.ext.ManilaSnapshotInstance;
 import org.openstack4j.openstack.manila.domain.ext.ManilaSnapshotInstance.ManilaSnapshotInstanceList;
 
@@ -52,8 +52,8 @@ public class SnapshotExtServiceImpl extends BaseManilaExtService implements Snap
     }
 
     @Override
-    public ShareSnapshot manage(Map<String, ?> snapshot) {
-        return at(MANAGE, post(ManilaShareSnapshot.class, "/snapshots/manage"), "/snapshots/manage")
+    public ShareSnapshotInfo manage(Map<String, ?> snapshot) {
+        return at(MANAGE, post(ManilaShareSnapshotInfo.class, "/snapshots/manage"), "/snapshots/manage")
                 .entity(JsonBody.of("snapshot", Objects.requireNonNull(snapshot, "snapshot"))).execute(propagate404());
     }
 

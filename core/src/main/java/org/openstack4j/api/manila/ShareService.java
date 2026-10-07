@@ -136,4 +136,19 @@ public interface ShareService extends RestService {
 
     /** @return share replicas (2.56) */
     org.openstack4j.api.manila.ext.ShareReplicaService shareReplicas();
+
+    /** @return share groups (2.55) */
+    org.openstack4j.api.manila.ext.ShareGroupService shareGroups();
+
+    /** @return share group snapshots (2.55) */
+    org.openstack4j.api.manila.ext.ShareGroupSnapshotService shareGroupSnapshots();
+
+    /** @return share group types (2.55) */
+    org.openstack4j.api.manila.ext.ShareGroupTypeService shareGroupTypes();
+
+    /** @return share network subnets (2.51) */
+    org.openstack4j.api.manila.ext.ShareNetworkSubnetService shareNetworkSubnets();
+
+    /** @return the 2.49+ share server APIs and share network security service updates */
+    org.openstack4j.api.manila.ext.ShareServerExtService shareServersExt();
 }

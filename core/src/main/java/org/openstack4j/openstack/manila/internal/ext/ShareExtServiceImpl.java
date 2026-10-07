@@ -11,21 +11,21 @@ import java.util.Objects;
 import org.openstack4j.api.manila.ext.ShareExtService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.manila.Access;
-import org.openstack4j.model.manila.Share;
 import org.openstack4j.model.manila.ShareInstance;
 import org.openstack4j.model.manila.ext.ExportLocation;
 import org.openstack4j.model.manila.ext.ShareAccessRule;
+import org.openstack4j.model.manila.ext.ShareInfo;
 import org.openstack4j.model.manila.ext.options.ShareAccessCreate;
 import org.openstack4j.model.manila.ext.options.ShareMigration;
 import org.openstack4j.openstack.internal.MicroVersion;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.manila.domain.ManilaAccess;
-import org.openstack4j.openstack.manila.domain.ManilaShare;
 import org.openstack4j.openstack.manila.domain.ManilaShareInstance;
 import org.openstack4j.openstack.manila.domain.ext.ManilaExportLocation;
 import org.openstack4j.openstack.manila.domain.ext.ManilaExportLocation.ManilaExportLocationList;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareAccessRule;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareAccessRule.ManilaShareAccessRuleList;
+import org.openstack4j.openstack.manila.domain.ext.ManilaShareInfo;
 
 public class ShareExtServiceImpl extends BaseManilaExtService implements ShareExtService {
 
@@ -85,8 +85,8 @@ public class ShareExtServiceImpl extends BaseManilaExtService implements ShareEx
     }
 
     @Override
-    public Share manage(Map<String, ?> share) {
-        return at(V(7), post(ManilaShare.class, "/shares/manage"), "/shares/manage").entity(JsonBody.of("share", Objects.requireNonNull(share, "share")))
+    public ShareInfo manage(Map<String, ?> share) {
+        return at(V(7), post(ManilaShareInfo.class, "/shares/manage"), "/shares/manage").entity(JsonBody.of("share", Objects.requireNonNull(share, "share")))
                 .execute(propagate404());
     }
 
