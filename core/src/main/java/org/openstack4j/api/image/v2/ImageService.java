@@ -236,4 +236,11 @@ public interface ImageService extends RestService {
      * @return the ImageCacheService
      */
     org.openstack4j.api.image.v2.ext.ImageCacheService cache();
+
+    /**
+     * Glance JSON schemas of images, members, tasks and metadefs.
+     *
+     * @return the ImageSchemaService
+     */
+    org.openstack4j.api.image.v2.ext.ImageSchemaService schemas();
 }
