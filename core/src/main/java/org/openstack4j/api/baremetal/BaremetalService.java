@@ -34,4 +34,13 @@ public interface BaremetalService extends RestService {
 
     /** @return the inspection rules (microversion 1.96) */
     InspectionRuleService inspectionRules();
+
+    /** @return the volume connectors (microversion 1.32) */
+    VolumeConnectorService volumeConnectors();
+
+    /** @return the volume targets (microversion 1.32) */
+    VolumeTargetService volumeTargets();
+
+    /** @return the conductors (microversion 1.49) and node shards (1.82) */
+    ConductorService conductors();
 }
