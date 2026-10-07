@@ -42,4 +42,14 @@ public class OctaviaServiceImpl implements OctaviaService {
         return Apis.get(HealthMonitorV2Service.class);
     }
 
+
+    @Override
+    public org.openstack4j.api.octavia.ext.ProviderService providers() {
+        return Apis.get(org.openstack4j.api.octavia.ext.ProviderService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.octavia.ext.QuotaService quotas() {
+        return Apis.get(org.openstack4j.api.octavia.ext.QuotaService.class);
+    }
 }

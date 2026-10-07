@@ -28,4 +28,18 @@ public interface OctaviaService extends RestService {
      * @return the healthMonitorV2 Service API
      */
     HealthMonitorV2Service healthMonitorV2();
+
+    /**
+     * Octavia provider drivers and their capabilities.
+     *
+     * @return the ProviderService
+     */
+    org.openstack4j.api.octavia.ext.ProviderService providers();
+
+    /**
+     * Octavia quotas.
+     *
+     * @return the QuotaService
+     */
+    org.openstack4j.api.octavia.ext.QuotaService quotas();
 }
