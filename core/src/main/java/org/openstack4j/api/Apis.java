@@ -151,6 +151,15 @@ public class Apis {
     }
 
     /**
+     * Gets the resource optimization (Watcher) services API
+     *
+     * @return the resource optimization (Watcher) services
+     */
+    public static org.openstack4j.api.optimization.OptimizationService getOptimizationService() {
+        return get(org.openstack4j.api.optimization.OptimizationService.class);
+    }
+
+    /**
      * Gets the bare metal (Ironic) services API
      *
      * @return the bare metal services
