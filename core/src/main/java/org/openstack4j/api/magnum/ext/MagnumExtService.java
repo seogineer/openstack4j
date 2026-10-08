@@ -10,7 +10,7 @@ import org.openstack4j.model.common.ActionResponse;
 public interface MagnumExtService extends RestService {
 
     /**
-     * Resizes a cluster (container-infra microversion 1.7).
+     * Resizes a cluster (container-infra microversion 1.7; 1.10 when {@code nodeCount} is 0).
      *
      * @param nodesToRemove nodes to remove when shrinking, or {@code null}
      * @param nodegroup     the node group, or {@code null} for the default worker group
@@ -36,7 +36,7 @@ public interface MagnumExtService extends RestService {
     /** @param filters e.g. {@code all_tenants=True} (admin), {@code limit}, {@code marker} */
     List<Map<String, Object>> listQuotas(Map<String, String> filters);
 
-    /** @return the quota, raising when it does not exist */
+    /** @return the quota; when none is stored Magnum answers the default ({@code hard_limit} = max clusters per project) */
     Map<String, Object> getQuota(String projectId, String resource);
 
     Map<String, Object> updateQuota(String projectId, String resource, int hardLimit);
