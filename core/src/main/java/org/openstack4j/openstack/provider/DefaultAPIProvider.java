@@ -146,6 +146,11 @@ public class DefaultAPIProvider implements APIProvider {
         bind(org.openstack4j.api.networking.ext.RbacPolicyService.class, org.openstack4j.openstack.networking.internal.ext.RbacPolicyServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.AddressGroupService.class, org.openstack4j.openstack.networking.internal.ext.AddressGroupServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.AddressScopeService.class, org.openstack4j.openstack.networking.internal.ext.AddressScopeServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.VpnServiceService.class, org.openstack4j.openstack.networking.internal.ext.VpnServiceServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.IkePolicyService.class, org.openstack4j.openstack.networking.internal.ext.IkePolicyServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.IpsecPolicyService.class, org.openstack4j.openstack.networking.internal.ext.IpsecPolicyServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.IpsecSiteConnectionService.class, org.openstack4j.openstack.networking.internal.ext.IpsecSiteConnectionServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.VpnEndpointGroupService.class, org.openstack4j.openstack.networking.internal.ext.VpnEndpointGroupServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.SubnetPoolService.class, org.openstack4j.openstack.networking.internal.ext.SubnetPoolServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.QosRuleService.class, org.openstack4j.openstack.networking.internal.ext.QosRuleServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.AutoAllocatedTopologyService.class, org.openstack4j.openstack.networking.internal.ext.AutoAllocatedTopologyServiceImpl.class);
