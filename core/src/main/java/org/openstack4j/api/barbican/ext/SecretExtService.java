@@ -40,6 +40,9 @@ public interface SecretExtService extends RestService {
     /** @return the consumers of a secret ({@code service}, {@code resource_type}, {@code resource_id} …; API 1.1) */
     List<Map<String, Object>> listConsumers(String secretId);
 
+    /** @param filters {@code limit} (server default 10, max 100) and {@code offset} @return one page of consumers */
+    List<Map<String, Object>> listConsumers(String secretId, Map<String, String> filters);
+
     /** Registers a consumer of a secret (API 1.1, e.g. {@code image}, {@code image}, an image id). */
     ActionResponse registerConsumer(String secretId, String service, String resourceType, String resourceId);
 

@@ -99,7 +99,12 @@ public class SecretExtServiceImpl extends BaseBarbicanExtService implements Secr
 
     @Override
     public List<Map<String, Object>> listConsumers(String secretId) {
-        return mapsOf(secret(secretId) + "/consumers", "consumers");
+        return listConsumers(secretId, null);
+    }
+
+    @Override
+    public List<Map<String, Object>> listConsumers(String secretId, Map<String, String> filters) {
+        return mapsOf(secret(secretId) + "/consumers", "consumers", filters);
     }
 
     @Override

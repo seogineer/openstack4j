@@ -14,6 +14,9 @@ public interface BarbicanQuotaService extends RestService {
     /** @return the projects with configured quotas: project id to its quotas (admin) */
     Map<String, Map<String, Integer>> listProjectQuotas();
 
+    /** @param filters {@code limit} (server default 10, max 100) and {@code offset} @return one page of project quotas */
+    Map<String, Map<String, Integer>> listProjectQuotas(Map<String, String> filters);
+
     /** @return the configured quotas of a project (admin); a project without them raises */
     Map<String, Integer> getProjectQuotas(String projectId);
 

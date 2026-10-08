@@ -299,6 +299,7 @@ os.barbican().quotas().setProjectQuotas(projectId, Map.of("secrets", 50));
 ```
 
 - New accessors: `acls()` (secret and container read ACLs), `secretsExt()` (payload, user metadata, consumers — API 1.1 header added for you), `containersExt()` (secrets, consumers), `orders()`, `quotas()` (effective and project quotas), `secretStores()` (multiple back ends, preferred store)
+- Methods take an id or the `*_ref` URL Barbican returns (its last path segment is used)
 - Models have getters for the common fields; the rest are in `getAttributes()`
 
 ## Build

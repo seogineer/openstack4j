@@ -16,7 +16,8 @@ public interface BarbicanAclService extends RestService {
      * Replaces the read ACL of a secret.
      *
      * @param users         the users allowed to read; {@code null} leaves the list out
-     * @param projectAccess {@code false} limits reading to {@code users}; {@code null} leaves it out
+     * @param projectAccess {@code false} limits reading to {@code users}; {@code null} leaves it out (the server
+     *                      then uses its defaults: no users, project access {@code true}). At least one must be set.
      */
     ActionResponse setSecretAcl(String secretId, List<String> users, Boolean projectAccess);
 

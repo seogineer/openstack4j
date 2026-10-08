@@ -18,8 +18,13 @@ public class BarbicanQuotaServiceImpl extends BaseBarbicanExtService implements 
 
     @Override
     public Map<String, Map<String, Integer>> listProjectQuotas() {
+        return listProjectQuotas(null);
+    }
+
+    @Override
+    public Map<String, Map<String, Integer>> listProjectQuotas(Map<String, String> filters) {
         Map<String, Map<String, Integer>> result = new LinkedHashMap<>();
-        for (Map<String, Object> entry : mapsOf("/project-quotas", "project_quotas"))
+        for (Map<String, Object> entry : mapsOf("/project-quotas", "project_quotas", filters))
             result.put(String.valueOf(entry.get("project_id")), ints(entry.get("project_quotas")));
         return result;
     }

@@ -27,7 +27,12 @@ public class ContainerExtServiceImpl extends BaseBarbicanExtService implements C
 
     @Override
     public List<Map<String, Object>> listConsumers(String containerId) {
-        return mapsOf(container(containerId) + "/consumers", "consumers");
+        return listConsumers(containerId, null);
+    }
+
+    @Override
+    public List<Map<String, Object>> listConsumers(String containerId, Map<String, String> filters) {
+        return mapsOf(container(containerId) + "/consumers", "consumers", filters);
     }
 
     @Override
@@ -42,7 +47,8 @@ public class ContainerExtServiceImpl extends BaseBarbicanExtService implements C
 
     private static JsonBody secret(String name, String secretRef) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("name", Objects.requireNonNull(name, "name"));
+        if (name != null)
+            body.put("name", name);
         body.put("secret_ref", Objects.requireNonNull(secretRef, "secretRef"));
         return JsonBody.of(body);
     }

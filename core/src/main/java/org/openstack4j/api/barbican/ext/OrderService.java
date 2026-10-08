@@ -24,7 +24,7 @@ public interface OrderService extends RestService {
      *
      * @param type {@code key}, {@code asymmetric} or {@code certificate}
      * @param meta e.g. {@code name}, {@code algorithm}, {@code bit_length}, {@code mode}, {@code payload_content_type}
-     * @return the reference (URL) of the new order; poll {@link #get(String)} until it is {@code ACTIVE}
+     * @return the reference (URL) of the new order; pass it (or its id) to {@link #get(String)} until it is {@code ACTIVE}
      */
     String create(String type, Map<String, ?> meta);
 
