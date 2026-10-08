@@ -370,6 +370,8 @@ public class DefaultAPIProvider implements APIProvider {
         bind(LbPoolV2Service.class, LbPoolV2ServiceImpl.class);
         bind(TroveService.class, TroveServiceImpl.class);
         bind(org.openstack4j.api.trove.ext.TroveInstanceExtService.class, org.openstack4j.openstack.trove.internal.ext.TroveInstanceExtServiceImpl.class);
+        bind(org.openstack4j.api.trove.ext.TroveDatastoreExtService.class, org.openstack4j.openstack.trove.internal.ext.TroveDatastoreExtServiceImpl.class);
+        bind(org.openstack4j.api.trove.ext.TroveAdminService.class, org.openstack4j.openstack.trove.internal.ext.TroveAdminServiceImpl.class);
         bind(org.openstack4j.api.trove.ext.TroveBackupService.class, org.openstack4j.openstack.trove.internal.ext.TroveBackupServiceImpl.class);
         bind(org.openstack4j.api.trove.ext.BackupStrategyService.class, org.openstack4j.openstack.trove.internal.ext.BackupStrategyServiceImpl.class);
         bind(org.openstack4j.api.trove.ext.ConfigurationGroupService.class, org.openstack4j.openstack.trove.internal.ext.ConfigurationGroupServiceImpl.class);

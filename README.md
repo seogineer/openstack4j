@@ -302,6 +302,22 @@ os.barbican().quotas().setProjectQuotas(projectId, Map.of("secrets", 50));
 - Methods take an id or the `*_ref` URL Barbican returns (its last path segment is used)
 - Models have getters for the common fields; the rest are in `getAttributes()`
 
+## Database (Trove) extensions
+
+The same release supports the rest of the Trove v1.0 API. The existing `instanceService()`, `databaseService()`, `databaseUsersService()`, `datastoreService()` and `flavorService()` are unchanged.
+
+```java
+os.trove().instancesExt().resizeVolume(instanceId, 20);
+os.trove().instancesExt().attachConfiguration(instanceId, configurationId);
+os.trove().instancesExt().enableLog(instanceId, "slow_query");
+Backup backup = os.trove().backups().create(BackupOptions.create("nightly").instance(instanceId));
+os.trove().configurations().create(ConfigurationOptions.create("tuned", Map.of("max_connections", 500)));
+os.trove().troveAdmin().getQuotas(projectId);                     // admin
+```
+
+- New accessors: `instancesExt()` (detail list, rename, configuration attach/detach, datastore upgrade, replica detach, access, restart/resize/promote/eject/reset status, instance backups, configuration defaults, logs, SSL, root), `backups()`, `backupStrategies()`, `configurations()`, `datastoresExt()` (version by id, configuration parameters, delete datastore, limits), `troveAdmin()` (`/mgmt` instances, actions, root history, datastore versions, parameters, quotas)
+- Responses whose shape varies by datastore (logs, SSL, parameters, admin views) are returned as `Map`s
+
 ## Build
 
 ```bash
