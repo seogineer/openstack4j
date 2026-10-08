@@ -156,8 +156,28 @@ os.networking().port().listBindings(portId);
 - 기존 서비스 보강: router(extra routes, external gateways, conntrack helpers, l3 agents), agent(스케줄링), port(bindings), quotas(default, details), floating IP pools, port forwarding update
 - 옵션 클래스(`*Options`)는 설정한 필드만 보냅니다. 값을 지우려면 `attribute("field", null)`.
 - 해당 extension 이 꺼져 있거나 상위 자원이 없을 때(404): 모델이나 목록을 돌려주는 메서드(목록, 생성, 수정, prefix·주소 추가처럼 결과를 돌려주는 동작)는 404 를 예외로 던집니다. `ActionResponse` 를 돌려주는 메서드(삭제, import·stage·캐시 동작, agent 스케줄링, flavor 의 profile 연결)는 실패한 `ActionResponse`(코드 404)를 돌려주고, 단건 `get(id)` 은 없는 자원에 `null` 을 돌려줍니다. `extensions().isEnabled(alias)` 로 먼저 확인할 수 있습니다.
-- VPNaaS, FWaaS v2, BGP, BGPVPN, TaaS, SFC(stadium 프로젝트)는 다음 릴리스에서 다룹니다.
+- stadium 프로젝트(VPNaaS, FWaaS v2, BGP, BGPVPN, TaaS, SFC service graph)는 4.6.0 부터 지원합니다 — 아래를 보세요.
 - 4.5.0 에서 `NetQosPolicy.getId()` 를 추가했습니다(이전에는 구현 클래스로 캐스트해야 했습니다).
+
+## Neutron stadium 프로젝트
+
+같은 릴리스에서 Neutron 과 따로 설치하는 프로젝트의 API 를 지원합니다. 서버에 해당 plugin 이 있어야 하며, `extensions().isEnabled(alias)`(`vpnaas`, `fwaas_v2`, `bgp`, `bgpvpn`, `taas`, `sfc`)로 확인할 수 있습니다.
+
+```java
+VpnService vpn = os.networking().vpnServices().create(VpnServiceOptions.create(routerId).name("vpn"));
+os.networking().ipsecSiteConnections().create(IpsecSiteConnectionOptions.create(vpn.getId(), ikeId, ipsecId, peerIp, peerId, psk)
+        .localEpGroupId(localGroupId).peerEpGroupId(peerGroupId));
+os.networking().firewallPoliciesV2().insertRule(policyId, ruleId, null, null);
+os.networking().bgpSpeakers().addPeer(speakerId, peerId);
+os.networking().bgpvpnAssociations().associateNetwork(bgpvpnId, networkId);
+os.networking().tapFlows().create(TapFlowOptions.create(tapServiceId, sourcePortId, "BOTH"));
+```
+
+- VPNaaS: `vpnServices()`, `ikePolicies()`, `ipsecPolicies()`, `ipsecSiteConnections()`, `vpnEndpointGroups()`
+- FWaaS v2: `firewallGroups()`, `firewallPoliciesV2()`(rule 삽입/제거), `firewallRulesV2()` — FWaaS v1 의 `firewalls()` 메서드는 그대로입니다
+- BGP dynamic routing: `bgpSpeakers()`(peer, gateway network, 광고 경로, dynamic routing agent), `bgpPeers()`; BGPVPN: `bgpvpns()`, `bgpvpnAssociations()`(network, router, port)
+- TaaS: `tapServices()`, `tapFlows()`, `tapMirrors()`; SFC: `sfcServiceGraphs()`
+- 모델은 자주 쓰는 필드만 getter 가 있고 나머지는 `getAttributes()` 에 있습니다. 404 규칙은 Networking 확장과 같습니다.
 
 ## Image 확장
 
