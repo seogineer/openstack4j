@@ -54,4 +54,19 @@ public class TroveServiceImpl extends BaseTroveServices implements TroveService 
     public org.openstack4j.api.trove.ext.TroveInstanceExtService instancesExt() {
         return Apis.get(org.openstack4j.api.trove.ext.TroveInstanceExtService.class);
     }
+
+    @Override
+    public org.openstack4j.api.trove.ext.TroveBackupService backups() {
+        return Apis.get(org.openstack4j.api.trove.ext.TroveBackupService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.trove.ext.BackupStrategyService backupStrategies() {
+        return Apis.get(org.openstack4j.api.trove.ext.BackupStrategyService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.trove.ext.ConfigurationGroupService configurations() {
+        return Apis.get(org.openstack4j.api.trove.ext.ConfigurationGroupService.class);
+    }
 }
