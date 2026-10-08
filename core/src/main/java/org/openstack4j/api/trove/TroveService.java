@@ -44,4 +44,6 @@ public interface TroveService extends RestService {
      */
     InstanceService instanceService();
 
+    /** @return database instance updates, actions, logs, SSL and root access */
+    org.openstack4j.api.trove.ext.TroveInstanceExtService instancesExt();
 }

@@ -50,4 +50,8 @@ public class TroveServiceImpl extends BaseTroveServices implements TroveService 
         return Apis.get(InstanceService.class);
     }
 
+    @Override
+    public org.openstack4j.api.trove.ext.TroveInstanceExtService instancesExt() {
+        return Apis.get(org.openstack4j.api.trove.ext.TroveInstanceExtService.class);
+    }
 }

@@ -369,6 +369,7 @@ public class DefaultAPIProvider implements APIProvider {
         bind(HealthMonitorV2Service.class, HealthMonitorV2ServiceImpl.class);
         bind(LbPoolV2Service.class, LbPoolV2ServiceImpl.class);
         bind(TroveService.class, TroveServiceImpl.class);
+        bind(org.openstack4j.api.trove.ext.TroveInstanceExtService.class, org.openstack4j.openstack.trove.internal.ext.TroveInstanceExtServiceImpl.class);
         bind(InstanceFlavorService.class, DBFlavorServiceImpl.class);
         bind(DatastoreService.class, DBDatastoreServiceImpl.class);
         bind(DatabaseService.class, DBDatabaseServiceImpl.class);
