@@ -32,6 +32,7 @@ public enum ServiceType {
     RESERVATION("blazar", "reservation"),
     RATING("cloudkitty", "rating"),
     ACCELERATOR("cyborg", "accelerator"),
+    MESSAGING("zaqar", "messaging"),
     UNKNOWN("NA", "NA");
 
     private static final String SERVICE_PATTERN_SUFFIX = "[v|\\d|\\.]*";

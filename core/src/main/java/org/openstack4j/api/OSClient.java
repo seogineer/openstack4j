@@ -203,6 +203,13 @@ public interface OSClient<T extends OSClient<T>> {
     org.openstack4j.api.baremetal.BaremetalService baremetal();
 
     /**
+     * Returns the messaging (Zaqar) service API
+     *
+     * @return the messaging (Zaqar) service
+     */
+    org.openstack4j.api.messaging.MessagingService messaging();
+
+    /**
      * Returns the accelerator (Cyborg) service API
      *
      * @return the accelerator (Cyborg) service

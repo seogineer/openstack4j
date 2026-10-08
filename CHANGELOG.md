@@ -6,6 +6,7 @@
 - Ironic(bare metal v1) 신규: `os.baremetal()` — opt-in microversion(`microVersions()`, 1.1~1.107), `nodes()`(CRUD·JSON Patch·상태·power/provision/RAID/boot mode/secure boot·console·boot device·NMI·validate·maintenance·traits·VIF), `ports()`, `portgroups()`, `chassis()`, `drivers()`, `allocations()`, `deployTemplates()`, `runbooks()`, `inspectionRules()`, `volumeConnectors()`, `volumeTargets()`, `conductors()`(+shards), node BIOS/firmware/history/inventory/children/virtual media/indicators/vendor passthru; `ServiceType.BAREMETAL`
 - Designate(DNS v2) 누락 API: zones 필터·abandon·xfr·pool move, recordsets 필터, `zoneFiles()`(export/import), `zoneShares()`, `zoneTransfers()`, `tlds()`, `tsigKeys()`, `blacklists()`, `pools()`, `quotas()`, `serviceStatuses()`, `info().limits()`, `reverseFloatingIps()`
 - httpclient connector: 호출자가 준 `Accept` 헤더가 기본값을 대체
+- Zaqar(messaging v2) 신규: `os.messaging()` — queues(share, purge, stats), messages, claims, subscriptions(confirm), pools, flavors, ping/health, `Client-ID` 헤더; `ServiceType.MESSAGING`
 - CloudKitty(rating v2) 신규: `os.rating()` — dataframes, rating modules, scopes, summary, reprocessing; Cyborg(accelerator v2) 신규: `os.accelerator()` — ARQs, device profiles, devices(enable/disable), deployables(program), attributes; `ServiceType.RATING`, `ACCELERATOR`
 - Blazar(reservation v1) 신규: `os.reservation()` — leases, 예약 host pool(allocations, properties), floating IP pool; `ServiceType.RESERVATION`
 - Masakari(instance HA v1) 신규: `os.instanceHa()` — segments, segment hosts, notifications, vmoves; `ServiceType.INSTANCE_HA`
