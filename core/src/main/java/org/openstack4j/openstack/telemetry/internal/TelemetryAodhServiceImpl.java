@@ -50,4 +50,8 @@ public class TelemetryAodhServiceImpl implements TelemetryAodhService {
         return Apis.get(CapabilitiesService.class);
     }
 
+    @Override
+    public org.openstack4j.api.telemetry.ext.AodhAlarmExtService alarmsExt() {
+        return Apis.get(org.openstack4j.api.telemetry.ext.AodhAlarmExtService.class);
+    }
 }

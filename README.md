@@ -318,6 +318,21 @@ os.trove().troveAdmin().getQuotas(projectId);                     // admin
 - New accessors: `instancesExt()` (detail list, rename, configuration attach/detach, datastore upgrade, replica detach, access, restart/resize/promote/eject/reset status, instance backups, configuration defaults, logs, SSL, root), `backups()`, `backupStrategies()`, `configurations()`, `datastoresExt()` (version by id, configuration parameters, delete datastore, limits), `troveAdmin()` (`/mgmt` instances, actions, root history, datastore versions, parameters, quotas)
 - Responses whose shape varies by datastore (logs, SSL, parameters, admin views) are returned as `Map`s
 
+## Object storage, alarming and container infra additions
+
+```java
+os.objectStorage().info();                                         // GET /info (cluster capabilities)
+os.objectStorage().listEndpoints("photos", "cat.jpg");             // list_endpoints middleware
+os.telemetry().alarmsExt().history(alarmId, null);                 // Aodh: history, state, query, quotas
+os.telemetry().alarmsExt().setState(alarmId, "alarm");
+os.magnum().extensions().resizeCluster(clusterId, 5, null, null);  // container-infra 1.7 header added for you
+os.magnum().extensions().upgradeCluster(clusterId, templateId, 1, null);
+```
+
+- Swift: `info()`, `listEndpoints(container, object)`
+- Aodh: `alarmsExt()` — alarm history, state get/set, complex queries of alarms and history, quotas
+- Magnum: `extensions()` — cluster resize (1.7) and upgrade (1.8), CA certificate by type, quotas, stats
+
 ## Build
 
 ```bash

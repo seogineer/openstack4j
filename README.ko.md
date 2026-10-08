@@ -318,6 +318,21 @@ os.trove().troveAdmin().getQuotas(projectId);                     // 관리자
 - 새 accessor: `instancesExt()`(detail 목록, 이름 변경, configuration 연결/해제, datastore upgrade, replica 분리, access, restart/resize/promote/eject/reset status, instance backups, configuration 기본값, logs, SSL, root), `backups()`, `backupStrategies()`, `configurations()`, `datastoresExt()`(id 로 version 조회, configuration parameters, datastore 삭제, limits), `troveAdmin()`(`/mgmt` instances, 동작, root 이력, datastore versions, parameters, quotas)
 - datastore 마다 모양이 다른 응답(logs, SSL, parameters, 관리자 view)은 `Map` 으로 돌려줍니다
 
+## Object storage, alarming, container infra 보강
+
+```java
+os.objectStorage().info();                                         // GET /info (클러스터 기능)
+os.objectStorage().listEndpoints("photos", "cat.jpg");             // list_endpoints middleware
+os.telemetry().alarmsExt().history(alarmId, null);                 // Aodh: history, state, query, quotas
+os.telemetry().alarmsExt().setState(alarmId, "alarm");
+os.magnum().extensions().resizeCluster(clusterId, 5, null, null);  // container-infra 1.7 헤더 자동
+os.magnum().extensions().upgradeCluster(clusterId, templateId, 1, null);
+```
+
+- Swift: `info()`, `listEndpoints(container, object)`
+- Aodh: `alarmsExt()` — alarm history, state 조회/설정, alarm·history complex query, quotas
+- Magnum: `extensions()` — cluster resize(1.7)·upgrade(1.8), 종류별 CA 인증서, quotas, stats
+
 ## 빌드
 
 ```bash
