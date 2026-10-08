@@ -38,8 +38,10 @@ public interface ContainerAppService extends RestService {
     /**
      * Creates a container.
      *
-     * @param container {@code image} and e.g. {@code name}, {@code command} (a list), {@code cpu}, {@code memory},
-     *                  {@code environment}, {@code nets}, {@code mounts}, {@code security_groups}, {@code restart_policy}
+     * @param container {@code image} and e.g. {@code name}, {@code command}, {@code cpu}, {@code memory},
+     *                  {@code environment}, {@code nets}, {@code mounts}, {@code security_groups}, {@code restart_policy};
+     *                  {@code command} must be a list when a field needing 1.20 or newer is present ({@code privileged},
+     *                  {@code healthcheck}, {@code exposed_ports}, {@code registry}, {@code host}, {@code entrypoint})
      * @param run       whether to start it once created
      */
     Map<String, Object> createContainer(Map<String, ?> container, boolean run);
@@ -88,7 +90,7 @@ public interface ContainerAppService extends RestService {
      */
     Map<String, Object> executeContainer(String containerIdent, String command, boolean run, boolean interactive);
 
-    /** Resizes the TTY of an exec session. @return {@code exec_id} and {@code url} */
+    /** Resizes the TTY of an exec session. @return the response body (usually empty) */
     Map<String, Object> resizeExec(String containerIdent, String execId, int height, int width);
 
     /** @param params e.g. {@code stdout}, {@code stderr}, {@code timestamps}, {@code tail}, {@code since}, or {@code null} */
@@ -137,12 +139,12 @@ public interface ContainerAppService extends RestService {
     /** @return the image, or {@code null} when it does not exist */
     Map<String, Object> getImage(String imageId);
 
-    /** @param image {@code repo}, {@code host}, optional {@code tag}, {@code image_driver} */
+    /** @param image {@code repo}, {@code host}, optional {@code tag}, {@code image_id}, {@code size}, {@code image_pull_policy} */
     Map<String, Object> pullImage(Map<String, ?> image);
 
     ActionResponse deleteImage(String imageId);
 
-    /** @param params e.g. {@code image_driver}, {@code exact_match}, or {@code null} @return the matching images */
+    /** @param image a name (no {@code /}), optionally with a tag @param params e.g. {@code image_driver}, {@code exact_match}, or {@code null} @return the matching images */
     List<Map<String, Object>> searchImages(String image, Map<String, String> params);
 
     /** @return the compute hosts (1.4) */
