@@ -54,7 +54,10 @@ public interface RegistrationService extends RestService {
     /** Deletes the expired tokens (admin). */
     ActionResponse deleteExpiredTokens();
 
-    /** @return the token's task type, actions and {@code required_fields}, or {@code null} when it does not exist */
+    /**
+     * @return the token's task type, actions and {@code required_fields}, or {@code null} when it does not exist; a
+     *         token whose task is already completed or cancelled raises (400)
+     */
     Map<String, Object> getToken(String token);
 
     /** Submits the token with its required fields (e.g. {@code password}). */
@@ -62,6 +65,15 @@ public interface RegistrationService extends RestService {
 
     /** @param filters as for {@link #listTasks}, or {@code null} @return the notifications (admin) */
     List<Map<String, Object>> listNotifications(Map<String, ?> filters);
+
+    /**
+     * Lists notifications page by page (admin).
+     *
+     * @param params  e.g. {@code page}, {@code notifications_per_page}, or {@code null}
+     * @param filters as for {@link #listTasks}, or {@code null}
+     * @return {@code notifications}, {@code pages}, {@code has_more}, {@code has_prev}
+     */
+    Map<String, Object> listNotifications(Map<String, String> params, Map<String, ?> filters);
 
     /** Acknowledges the notifications with these ids (admin). */
     ActionResponse acknowledgeNotifications(List<String> notificationIds);
@@ -78,7 +90,7 @@ public interface RegistrationService extends RestService {
     /**
      * Invites a user to the current project.
      *
-     * @param roles          the roles to grant
+     * @param roles          the roles to grant, or {@code null} when only {@code inheritedRoles} are given
      * @param inheritedRoles roles inherited by sub-projects, or {@code null}
      * @param extra          other fields such as {@code username}, or {@code null}
      */
@@ -93,10 +105,10 @@ public interface RegistrationService extends RestService {
     /** @return {@code roles} and {@code inherited_roles} of the user on the current project */
     Map<String, Object> getUserRoles(String userId);
 
-    /** @param inheritedRoles or {@code null} */
+    /** @param roles or {@code null} @param inheritedRoles or {@code null} (one of them is required) */
     ActionResponse addUserRoles(String userId, List<String> roles, List<String> inheritedRoles);
 
-    /** @param inheritedRoles or {@code null} */
+    /** @param roles or {@code null} @param inheritedRoles or {@code null} (one of them is required) */
     ActionResponse removeUserRoles(String userId, List<String> roles, List<String> inheritedRoles);
 
     /** @return the roles the caller may grant on the current project */

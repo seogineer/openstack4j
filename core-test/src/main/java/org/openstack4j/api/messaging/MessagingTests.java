@@ -163,6 +163,12 @@ public class MessagingTests extends AbstractTest {
         Assert.assertEquals(health.get("catalog_reachable"), Boolean.TRUE);
     }
 
+    public void getMessagesWhenNoneExistIsEmpty() throws Exception {
+        respondWith(404, "{\"title\": \"Not found\", \"description\": \"Messages could not be found.\"}");
+        Assert.assertTrue(osv3().messaging().getMessages("demo", List.of("gone")).isEmpty());
+        takeRequest();
+    }
+
     public void clientIdIsPerSessionAndSessionHeaderWins() throws Exception {
         respondWith(204);
         respondWith(204);

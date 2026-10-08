@@ -164,7 +164,14 @@ public class MessagingServiceImpl extends BaseOpenStackService implements Messag
     @SuppressWarnings("unchecked")
     @Override
     public List<Map<String, Object>> getMessages(String queueName, List<String> messageIds) {
-        return list(orNoContent(get(Map.class, queue(queueName) + "/messages").param("ids", String.join(",", Objects.requireNonNull(messageIds, "messageIds")))), "messages");
+        // Zaqar answers 404 when none of the ids exist
+        HttpResponse response = get(Map.class, queue(queueName) + "/messages").param("ids", String.join(",", Objects.requireNonNull(messageIds, "messageIds")))
+                .executeWithResponse();
+        if (response.getStatus() == 404) {
+            HttpEntityHandler.closeQuietly(response);
+            return Collections.emptyList();
+        }
+        return list(orNoContent(response), "messages");
     }
 
     @Override

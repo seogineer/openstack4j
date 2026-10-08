@@ -227,6 +227,17 @@ public class TackerSolTests extends AbstractTest {
         takeRequest();
     }
 
+    public void vnfdAcceptListIsSentWithoutSpaces() throws Exception {
+        respondWith(Map.of("Content-Type", "application/zip"), 200, "PK");
+        File vnfd = File.createTempFile("vnfd", ".zip");
+        try {
+            osv3().tacker().vnfPackages().downloadVnfd("p1", "text/plain, application/zip", vnfd);
+        } finally {
+            vnfd.delete();
+        }
+        Assert.assertEquals(takeRequest().getHeader("Accept"), "text/plain,application/zip");
+    }
+
     public void uploadFromFileHasALength() throws Exception {
         respondWith(202);
         File csar = File.createTempFile("pkg", ".zip");

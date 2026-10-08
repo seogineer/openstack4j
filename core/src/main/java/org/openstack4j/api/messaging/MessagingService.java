@@ -55,7 +55,7 @@ public interface MessagingService extends RestService {
      */
     Map<String, Object> listMessages(String queueName, Map<String, String> filters);
 
-    /** @return the messages with these ids */
+    /** @return the messages with these ids (empty when none of them exist) */
     List<Map<String, Object>> getMessages(String queueName, List<String> messageIds);
 
     /** Deletes the messages with these ids. */

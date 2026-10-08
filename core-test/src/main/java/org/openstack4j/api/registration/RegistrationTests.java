@@ -189,6 +189,26 @@ public class RegistrationTests extends AbstractTest {
         takeRequest();
     }
 
+    public void inheritedRolesOnlyAndNotificationPages() throws Exception {
+        respondWith(202, "{\"notes\": [\"task created\"]}");
+        respondWith(202, "{\"notes\": [\"task created\"]}");
+        respondWith(200, "{\"notifications\": [{\"uuid\": \"n1\"}], \"pages\": 3, \"has_more\": true, \"has_prev\": false}");
+
+        var reg = osv3().registration();
+        Assert.assertTrue(reg.inviteUser("a@example.com", null, List.of("member"), null).isSuccess());
+        Assert.assertTrue(reg.addUserRoles("u1", null, List.of("member")).isSuccess());
+        Map<String, Object> page = reg.listNotifications(Map.of("page", "2", "notifications_per_page", "10"), null);
+        Assert.assertEquals(page.get("pages"), 3);
+        Assert.assertThrows(IllegalArgumentException.class, () -> reg.addUserRoles("u1", null, null));
+
+        Map<?, ?> invite = new ObjectMapper().readValue(takeRequest().getBody().readUtf8(), Map.class);
+        Assert.assertFalse(invite.containsKey("roles"));
+        Assert.assertEquals(invite.get("inherited_roles"), List.of("member"));
+        Assert.assertEquals(json(takeRequest()), "{\"inherited_roles\":[\"member\"]}");
+        String p = path(takeRequest());
+        Assert.assertTrue(p.startsWith("/v1/notifications?") && p.contains("page=2") && p.contains("notifications_per_page=10"), p);
+    }
+
     public void failuresCarryAdjutantErrors() throws Exception {
         respondWith(404, "\"Not found.\"");
         respondWith(501, "\"Revoking keystone users not implemented. Try removing all roles instead.\"");
