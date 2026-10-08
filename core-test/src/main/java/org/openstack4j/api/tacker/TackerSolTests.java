@@ -209,6 +209,39 @@ public class TackerSolTests extends AbstractTest {
         takeRequest();
     }
 
+    public void solRequestsAcceptPlainJson() throws Exception {
+        respondWith(200, "[]");
+        osv3().tacker().vnfLcm().listVnfInstances(null);
+        Assert.assertEquals(takeRequest().getHeader("Accept"), "application/json");
+    }
+
+    public void vnfdServedAsJsonStringIsWrittenAsText() throws Exception {
+        respondWith(200, "\"tosca_definitions_version: tosca_simple_yaml_1_2\\n\"");
+        File vnfd = File.createTempFile("vnfd", ".yaml");
+        try {
+            Assert.assertTrue(osv3().tacker().vnfPackages().downloadVnfd("p1", null, vnfd).isSuccess());
+            Assert.assertEquals(Files.readString(vnfd.toPath()), "tosca_definitions_version: tosca_simple_yaml_1_2\n");
+        } finally {
+            vnfd.delete();
+        }
+        takeRequest();
+    }
+
+    public void uploadFromFileHasALength() throws Exception {
+        respondWith(202);
+        File csar = File.createTempFile("pkg", ".zip");
+        try {
+            Files.writeString(csar.toPath(), "PK-file");
+            Assert.assertTrue(osv3().tacker().vnfPackages().uploadContent("p1", Payloads.create(csar)).isSuccess());
+        } finally {
+            csar.delete();
+        }
+        RecordedRequest r = takeRequest();
+        Assert.assertEquals(r.getHeader("Content-Length"), "7");
+        Assert.assertNull(r.getHeader("Transfer-Encoding"));
+        Assert.assertEquals(r.getBody().readUtf8(), "PK-file");
+    }
+
     public void vimUpdate() throws Exception {
         respondWith(200, "{\"vim\": {\"id\": \"v1\", \"name\": \"renamed\", \"is_default\": true}}");
 
