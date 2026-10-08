@@ -49,12 +49,13 @@ public interface TroveAdminService extends RestService {
     /**
      * Adds a configuration parameter to a datastore version.
      *
-     * @param parameter {@code name}, {@code data_type}, {@code min_size}, {@code max_size}, {@code restart_required}
-     * @return the version's parameters
+     * @param parameter {@code name}, {@code data_type}, {@code restart_required}, and {@code min_size}/{@code max_size}
+     *                  for integers
+     * @return the created parameter
      */
-    List<Map<String, Object>> createParameter(String versionId, Map<String, ?> parameter);
+    Map<String, Object> createParameter(String versionId, Map<String, ?> parameter);
 
-    /** @return the updated parameter */
+    /** @param parameter the whole parameter: {@code name}, {@code data_type}, {@code restart_required} (+ sizes for integers) @return the updated parameter */
     Map<String, Object> updateParameter(String versionId, String parameterName, Map<String, ?> parameter);
 
     ActionResponse deleteParameter(String versionId, String parameterName);

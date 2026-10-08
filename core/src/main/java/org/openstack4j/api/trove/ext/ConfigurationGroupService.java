@@ -22,7 +22,10 @@ public interface ConfigurationGroupService extends RestService {
 
     Configuration create(ConfigurationOptions options);
 
-    /** Replaces the group's values (and name/description when set); Trove answers 202 without a body. */
+    /**
+     * Replaces all values of the group (and its name/description when set); Trove answers 202 without a body.
+     * {@code options} must set {@code values} — Trove empties the group otherwise; use {@link #patchValues} to merge.
+     */
     ActionResponse update(String id, ConfigurationOptions options);
 
     /** Merges the given parameter values into the group ({@code PATCH}); the other values stay. */
