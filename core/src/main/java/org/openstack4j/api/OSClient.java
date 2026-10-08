@@ -203,6 +203,13 @@ public interface OSClient<T extends OSClient<T>> {
     org.openstack4j.api.baremetal.BaremetalService baremetal();
 
     /**
+     * Returns the resource optimization (Watcher) service API
+     *
+     * @return the resource optimization (Watcher) service
+     */
+    org.openstack4j.api.optimization.OptimizationService optimization();
+
+    /**
      * Returns the registration (Adjutant) service API
      *
      * @return the registration (Adjutant) service

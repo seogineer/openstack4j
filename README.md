@@ -384,6 +384,16 @@ os.registration().listTasks(Map.of("tasks_per_page", "25"), Map.of("approved", M
 os.registration().submitToken(token, Map.of("password", newPassword));
 ```
 
+## Resource optimization (Watcher)
+
+New service `os.optimization()` (Watcher v1): audit templates, audits, action plans (start), actions (skip), goals, strategies (state), scoring engines, services, the compute data model and webhooks. Lists return their page (`next` holds the following page's URL). Methods that need a newer API send `OpenStack-API-Version: infra-optim <version>` themselves.
+
+```java
+os.optimization().createAudit(Map.of("goal", "server_consolidation", "audit_type", "ONESHOT"));
+os.optimization().startActionPlan(actionPlanUuid);
+os.optimization().getDataModel("compute", null);                     // infra-optim 1.3 added for you
+```
+
 ## Build
 
 ```bash

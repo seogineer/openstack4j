@@ -182,6 +182,13 @@ public abstract class OSClientSession<R, T extends OSClient<T>> implements Endpo
     /**
      * {@inheritDoc}
      */
+    public org.openstack4j.api.optimization.OptimizationService optimization() {
+        return Apis.getOptimizationService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public org.openstack4j.api.baremetal.BaremetalService baremetal() {
         return Apis.getBaremetalService();
     }
