@@ -366,12 +366,12 @@ os.accelerator().getDeviceProfile("fpga-profile");                   // 이름�
 
 ## Messaging(Zaqar)
 
-새 서비스 `os.messaging()`(Zaqar v2): queues(metadata, JSON Patch, stats, pre-signed share, purge), messages(post, list, id 조회, pop, delete), claims, subscriptions(confirm 포함), pools, flavors, health. 모든 요청에 `Client-ID` 헤더가 붙습니다: JVM 당 한 번 생성한 UUID, 또는 직접 지정한 값.
+새 서비스 `os.messaging()`(Zaqar v2): queues(metadata, JSON Patch, stats, pre-signed share, purge), messages(post, list, id 조회, pop, delete), claims, subscriptions(confirm 포함), pools, flavors, health. 모든 요청에 `Client-ID` 헤더가 붙습니다: 클라이언트의 `headers(...)` 에 준 값, 없으면 `useClientId` 로 지정한 값, 그것도 없으면 클라이언트마다 생성한 UUID. Zaqar 는 `echo=true` 가 아니면 자기 Client-ID 로 보낸 메시지를 목록에서 숨깁니다.
 
 ```java
 os.messaging().useClientId("3381af92-2b9e-11e3-b191-71861300734c");
 os.messaging().postMessages("demo", List.of(Map.of("body", Map.of("event", "BackupStarted"), "ttl", 300)));
-os.messaging().claimMessages("demo", 300, 300, 5);                   // 가져올 메시지가 없으면 빈 리스트
+os.messaging().claimMessages("demo", 300, 300, 5);                   // claim_id + messages(가져올 메시지가 없으면 messages 가 비어 있음)
 ```
 
 ## 빌드

@@ -8,11 +8,13 @@ import org.openstack4j.model.common.ActionResponse;
 
 /**
  * Messaging (Zaqar v2): queues, messages, claims, subscriptions, pools and flavors. Results are {@code Map}s. Every
- * request carries a {@code Client-ID} header: a UUID generated once per JVM, or the one set with {@link #useClientId}.
+ * request carries a {@code Client-ID} header: a {@code Client-ID} given in the client's {@code headers(...)}, else the
+ * one set with {@link #useClientId}, else a UUID generated once per client. Zaqar hides a client's own messages from
+ * its listings unless {@code echo=true}.
  */
 public interface MessagingService extends RestService {
 
-    /** Uses {@code clientId} (a UUID) as the {@code Client-ID} of the following requests from any thread. */
+    /** Uses {@code clientId} (a UUID) as the {@code Client-ID} of the current client's requests. */
     void useClientId(String clientId);
 
     /** @param filters e.g. {@code limit}, {@code marker}, {@code detailed}, {@code name}, {@code with_count} @return {@code queues}, {@code links}, {@code count} */
@@ -47,8 +49,11 @@ public interface MessagingService extends RestService {
     /** @param messages each with {@code body} and optional {@code ttl}, {@code delay} @return the new messages' hrefs */
     List<String> postMessages(String queueName, List<Map<String, Object>> messages);
 
-    /** @param filters e.g. {@code marker}, {@code limit}, {@code echo}, {@code include_claimed} @return the messages (empty when none) */
-    List<Map<String, Object>> listMessages(String queueName, Map<String, String> filters);
+    /**
+     * @param filters e.g. {@code marker}, {@code limit}, {@code echo}, {@code include_claimed}
+     * @return {@code messages} (empty when none) and {@code links}; the next page's {@code marker} is in the {@code next} link
+     */
+    Map<String, Object> listMessages(String queueName, Map<String, String> filters);
 
     /** @return the messages with these ids */
     List<Map<String, Object>> getMessages(String queueName, List<String> messageIds);
@@ -71,9 +76,9 @@ public interface MessagingService extends RestService {
      * @param ttl   seconds the claim lives
      * @param grace seconds added to the claimed messages' ttl
      * @param limit or {@code null}
-     * @return the claimed messages (empty when none are available)
+     * @return {@code claim_id} and the claimed {@code messages}; no {@code claim_id} and no messages when none are available
      */
-    List<Map<String, Object>> claimMessages(String queueName, int ttl, int grace, Integer limit);
+    Map<String, Object> claimMessages(String queueName, int ttl, int grace, Integer limit);
 
     /** @return the claim ({@code age}, {@code ttl}, {@code messages}), or {@code null} */
     Map<String, Object> getClaim(String queueName, String claimId);
@@ -83,7 +88,8 @@ public interface MessagingService extends RestService {
 
     ActionResponse releaseClaim(String queueName, String claimId);
 
-    List<Map<String, Object>> listSubscriptions(String queueName, Map<String, String> filters);
+    /** @return {@code subscriptions} and {@code links} */
+    Map<String, Object> listSubscriptions(String queueName, Map<String, String> filters);
 
     /** @return the subscription, or {@code null} */
     Map<String, Object> getSubscription(String queueName, String subscriptionId);
@@ -99,8 +105,8 @@ public interface MessagingService extends RestService {
     /** Confirms (or un-confirms) a subscription that requires confirmation. */
     ActionResponse confirmSubscription(String queueName, String subscriptionId, boolean confirmed);
 
-    /** @param filters e.g. {@code limit}, {@code marker}, {@code detailed} @return the storage pools (admin) */
-    List<Map<String, Object>> listPools(Map<String, String> filters);
+    /** @param filters e.g. {@code limit}, {@code marker}, {@code detailed} @return {@code pools} and {@code links} (admin) */
+    Map<String, Object> listPools(Map<String, String> filters);
 
     /** @param pool {@code weight}, {@code uri}, optional {@code flavor}, {@code options} */
     ActionResponse createPool(String poolName, Map<String, ?> pool);
@@ -112,8 +118,8 @@ public interface MessagingService extends RestService {
 
     ActionResponse deletePool(String poolName);
 
-    /** @return the flavors (admin) */
-    List<Map<String, Object>> listFlavors(Map<String, String> filters);
+    /** @return {@code flavors} and {@code links} (admin) */
+    Map<String, Object> listFlavors(Map<String, String> filters);
 
     /** @param flavor e.g. {@code pool_list}, {@code capabilities} */
     ActionResponse createFlavor(String flavorName, Map<String, ?> flavor);

@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.messaging.internal;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.openstack4j.api.messaging.MessagingService;
@@ -18,11 +20,13 @@ import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.ModelEntity;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.internal.BaseOpenStackService;
+import org.openstack4j.openstack.internal.OSClientSession;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 public class MessagingServiceImpl extends BaseOpenStackService implements MessagingService {
 
-    private static volatile String clientId = UUID.randomUUID().toString();
+    /** Client ids per session (client); a session gets a random one on its first request unless it set one. */
+    private static final Map<Object, String> CLIENT_IDS = Collections.synchronizedMap(new WeakHashMap<>());
 
     public MessagingServiceImpl() {
         // catalogs register the bare root (http://host:8888) or .../v2; paths carry /v2 themselves
@@ -31,12 +35,17 @@ public class MessagingServiceImpl extends BaseOpenStackService implements Messag
 
     @Override
     protected <R> Invocation<R> decorate(Invocation<R> invocation) {
-        return invocation.header("Client-ID", clientId);
+        OSClientSession<?, ?> session = OSClientSession.getCurrent();
+        Map<String, String> headers = session.getHeaders();
+        if (headers != null && headers.keySet().stream().anyMatch("Client-ID"::equalsIgnoreCase))
+            return invocation;
+        return invocation.header("Client-ID", CLIENT_IDS.computeIfAbsent(session, s -> UUID.randomUUID().toString()));
     }
 
     @Override
     public void useClientId(String id) {
-        clientId = Objects.requireNonNull(id, "clientId");
+        UUID.fromString(Objects.requireNonNull(id, "clientId"));
+        CLIENT_IDS.put(OSClientSession.getCurrent(), id);
     }
 
     private static <T> ExecutionOptions<T> propagate404() {
@@ -61,14 +70,24 @@ public class MessagingServiceImpl extends BaseOpenStackService implements Messag
     }
 
     /** Executes a request answered with 204 and no body when there is nothing to return; {@code null} then. */
-    @SuppressWarnings("unchecked")
     private static Map<String, Object> orNoContent(Invocation<Map> invocation) {
-        HttpResponse response = invocation.executeWithResponse();
+        return orNoContent(invocation.executeWithResponse());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> orNoContent(HttpResponse response) {
         if (response.getStatus() == 204) {
             HttpEntityHandler.closeQuietly(response);
             return null;
         }
         return response.getEntity(Map.class, propagate404());
+    }
+
+    /** {@code body}, or a body with an empty {@code key} list when there was none (204). */
+    private static Map<String, Object> page(Map<String, Object> body, String key) {
+        Map<String, Object> page = body == null ? new LinkedHashMap<>() : body;
+        page.putIfAbsent(key, new ArrayList<>());
+        return page;
     }
 
     @SuppressWarnings("unchecked")
@@ -124,7 +143,7 @@ public class MessagingServiceImpl extends BaseOpenStackService implements Messag
 
     @Override
     public ActionResponse purgeQueue(String queueName, List<String> resourceTypes) {
-        Map<String, Object> body = resourceTypes == null ? Map.of() : Map.of("resource_types", resourceTypes);
+        Map<String, Object> body = Map.of("resource_types", resourceTypes == null ? List.of("messages", "subscriptions") : resourceTypes);
         return postWithResponse(queue(queueName) + "/purge").entity(JsonBody.of(body)).execute();
     }
 
@@ -136,11 +155,10 @@ public class MessagingServiceImpl extends BaseOpenStackService implements Messag
         return resources instanceof List ? (List<String>) resources : Collections.emptyList();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public List<Map<String, Object>> listMessages(String queueName, Map<String, String> filters) {
+    public Map<String, Object> listMessages(String queueName, Map<String, String> filters) {
         // 204 when there are no messages
-        return list(orNoContent(get(Map.class, queue(queueName) + "/messages").params(params(filters))), "messages");
+        return page(orNoContent(get(Map.class, queue(queueName) + "/messages").params(params(filters))), "messages");
     }
 
     @SuppressWarnings("unchecked")
@@ -174,17 +192,21 @@ public class MessagingServiceImpl extends BaseOpenStackService implements Messag
         return invocation.execute();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public List<Map<String, Object>> claimMessages(String queueName, int ttl, int grace, Integer limit) {
+    public Map<String, Object> claimMessages(String queueName, int ttl, int grace, Integer limit) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("ttl", ttl);
         body.put("grace", grace);
         Invocation<Map> invocation = post(Map.class, queue(queueName) + "/claims").entity(JsonBody.of(body));
         if (limit != null)
             invocation.param("limit", limit);
-        // 204 when there is nothing to claim
-        return list(orNoContent(invocation), "messages");
+        // 204 when there is nothing to claim; the claim id is only in the Location header (and the messages' hrefs)
+        HttpResponse response = invocation.executeWithResponse();
+        String location = response.header("Location");
+        Map<String, Object> claim = page(orNoContent(response), "messages");
+        if (location != null && response.getStatus() == 201)
+            claim.put("claim_id", location.replaceAll("[?#].*$", "").replaceAll("/+$", "").replaceAll("^.*/", ""));
+        return claim;
     }
 
     @SuppressWarnings("unchecked")
@@ -208,8 +230,8 @@ public class MessagingServiceImpl extends BaseOpenStackService implements Messag
     }
 
     @Override
-    public List<Map<String, Object>> listSubscriptions(String queueName, Map<String, String> filters) {
-        return list(strict(get(Map.class, queue(queueName) + "/subscriptions").params(params(filters))), "subscriptions");
+    public Map<String, Object> listSubscriptions(String queueName, Map<String, String> filters) {
+        return page(strict(get(Map.class, queue(queueName) + "/subscriptions").params(params(filters))), "subscriptions");
     }
 
     @SuppressWarnings("unchecked")
@@ -239,12 +261,12 @@ public class MessagingServiceImpl extends BaseOpenStackService implements Messag
 
     @Override
     public ActionResponse confirmSubscription(String queueName, String subscriptionId, boolean confirmed) {
-        return postWithResponse(queue(queueName) + "/subscriptions/" + id(subscriptionId) + "/confirm").entity(JsonBody.of(Map.of("confirmed", confirmed))).execute();
+        return putWithResponse(queue(queueName) + "/subscriptions/" + id(subscriptionId) + "/confirm").entity(JsonBody.of(Map.of("confirmed", confirmed))).execute();
     }
 
     @Override
-    public List<Map<String, Object>> listPools(Map<String, String> filters) {
-        return list(strict(get(Map.class, "/v2/pools").params(params(filters))), "pools");
+    public Map<String, Object> listPools(Map<String, String> filters) {
+        return page(strict(get(Map.class, "/v2/pools").params(params(filters))), "pools");
     }
 
     @Override
@@ -269,8 +291,8 @@ public class MessagingServiceImpl extends BaseOpenStackService implements Messag
     }
 
     @Override
-    public List<Map<String, Object>> listFlavors(Map<String, String> filters) {
-        return list(strict(get(Map.class, "/v2/flavors").params(params(filters))), "flavors");
+    public Map<String, Object> listFlavors(Map<String, String> filters) {
+        return page(strict(get(Map.class, "/v2/flavors").params(params(filters))), "flavors");
     }
 
     @Override
