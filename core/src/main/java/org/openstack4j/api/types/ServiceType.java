@@ -28,6 +28,7 @@ public enum ServiceType {
     DNS("designate", "dns"),
     WORKFLOW("mistral", "workflow"),
     BAREMETAL("ironic", "baremetal"),
+    INSTANCE_HA("masakari", "instance-ha"),
     UNKNOWN("NA", "NA");
 
     private static final String SERVICE_PATTERN_SUFFIX = "[v|\\d|\\.]*";

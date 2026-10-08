@@ -334,6 +334,16 @@ os.magnum().extensions().upgradeCluster(clusterId, templateId, 1, null);
 - Magnum: `extensions()` — cluster resize(1.7)·upgrade(1.8), 종류별 CA 인증서, quotas, stats
 - Mistral: `workflow().extensions()` — workflow·workbook·action 검증, code sources, dynamic actions, event triggers, sub-executions, execution report, workflow 공유(members)
 
+## Instance HA(Masakari)
+
+새 서비스 `os.instanceHa()`(Masakari v1): failover segment, segment 의 host, 장애 notification, 복구 때의 instance 이동(vmoves).
+
+```java
+Segment segment = os.instanceHa().segments().create(SegmentOptions.create("rack-a", "COMPUTE", "auto"));
+os.instanceHa().hosts().create(segment.getUuid(), HostOptions.create("compute-01", "COMPUTE", "SSH"));
+os.instanceHa().notifications().listVMoves(notificationId, null);    // instance-ha 1.3 헤더 자동
+```
+
 ## 빌드
 
 ```bash
