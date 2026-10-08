@@ -48,7 +48,7 @@ public class BgpvpnOptions extends NeutronAttributes<BgpvpnOptions> {
         return put("vni", value);
     }
 
-    public BgpvpnOptions localPref(Integer value) {
+    public BgpvpnOptions localPref(Long value) {
         return put("local_pref", value);
     }
 

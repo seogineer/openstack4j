@@ -9,7 +9,7 @@ import org.openstack4j.model.ModelEntity;
 public interface BgpSpeaker extends ModelEntity {
     String getId();
     String getName();
-    Integer getLocalAs();
+    Long getLocalAs();
     Integer getIpVersion();
     List<String> getPeers();
     List<String> getNetworks();

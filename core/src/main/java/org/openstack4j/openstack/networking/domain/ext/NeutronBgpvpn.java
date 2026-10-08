@@ -29,7 +29,7 @@ public class NeutronBgpvpn implements Bgpvpn {
     @JsonProperty("routers") private List<String> routers;
     @JsonProperty("ports") private List<String> ports;
     @JsonProperty("vni") private Integer vni;
-    @JsonProperty("local_pref") private Integer localPref;
+    @JsonProperty("local_pref") private Long localPref;
     @JsonProperty("project_id") private String projectId;
 
     @JsonIgnore
@@ -46,7 +46,7 @@ public class NeutronBgpvpn implements Bgpvpn {
     @Override public List<String> getRouters() { return routers; }
     @Override public List<String> getPorts() { return ports; }
     @Override public Integer getVni() { return vni; }
-    @Override public Integer getLocalPref() { return localPref; }
+    @Override public Long getLocalPref() { return localPref; }
     @Override public String getProjectId() { return projectId; }
 
     @JsonAnySetter

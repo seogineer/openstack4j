@@ -161,7 +161,7 @@ os.networking().port().listBindings(portId);
 
 ## Neutron stadium 프로젝트
 
-같은 릴리스에서 Neutron 과 따로 설치하는 프로젝트의 API 를 지원합니다. 서버에 해당 plugin 이 있어야 하며, `extensions().isEnabled(alias)`(`vpnaas`, `fwaas_v2`, `bgp`, `bgpvpn`, `taas`, `sfc`)로 확인할 수 있습니다.
+같은 릴리스에서 Neutron 과 따로 설치하는 프로젝트의 API 를 지원합니다. 서버에 해당 plugin 이 있어야 하며, `extensions().isEnabled(alias)`(`vpnaas`, `fwaas_v2`, `bgp`, `bgpvpn`, `taas`, `tap-mirror`, `service_graph`)로 확인할 수 있습니다.
 
 ```java
 VpnService vpn = os.networking().vpnServices().create(VpnServiceOptions.create(routerId).name("vpn"));
