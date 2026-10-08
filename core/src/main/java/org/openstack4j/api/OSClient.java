@@ -203,6 +203,13 @@ public interface OSClient<T extends OSClient<T>> {
     org.openstack4j.api.baremetal.BaremetalService baremetal();
 
     /**
+     * Returns the application container (Zun) service API
+     *
+     * @return the application container (Zun) service
+     */
+    org.openstack4j.api.containerapp.ContainerAppService containerApp();
+
+    /**
      * Returns the resource optimization (Watcher) service API
      *
      * @return the resource optimization (Watcher) service

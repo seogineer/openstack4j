@@ -160,6 +160,15 @@ public class Apis {
     }
 
     /**
+     * Gets the application container (Zun) services API
+     *
+     * @return the application container (Zun) services
+     */
+    public static org.openstack4j.api.containerapp.ContainerAppService getContainerAppService() {
+        return get(org.openstack4j.api.containerapp.ContainerAppService.class);
+    }
+
+    /**
      * Gets the bare metal (Ironic) services API
      *
      * @return the bare metal services
