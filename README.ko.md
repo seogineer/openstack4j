@@ -4,16 +4,16 @@ OpenStack4j (seogineer fork)
 [![CI](https://github.com/seogineer/openstack4j/actions/workflows/ci.yaml/badge.svg)](https://github.com/seogineer/openstack4j/actions/workflows/ci.yaml)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE)
 
-**English** | [한국어](README.ko.md)
+[English](README.md) | **한국어**
 
-> **This repository is a successor fork of [openstack4j/openstack4j](https://github.com/openstack4j/openstack4j).**
-> Upstream development stopped after 3.12 (2024-05). This fork targets JDK 17+ / Spring Boot 3 and current dependencies,
-> and aims to cover every API of the latest OpenStack release. The Java packages (`org.openstack4j`) are unchanged;
-> only the Maven coordinates move to `io.github.seogineer`. See [MIGRATION.md](MIGRATION.md) for moving from 3.x.
+> **이 저장소는 [openstack4j/openstack4j](https://github.com/openstack4j/openstack4j) 의 후속 포크입니다.**
+> 원본은 2024-05 의 3.12 이후 개발이 멈췄습니다. 이 포크는 JDK 17+ / Spring Boot 3 지원과 최신 의존성,
+> 그리고 최신 OpenStack 릴리스의 모든 API 지원을 목표로 합니다. Java 패키지(`org.openstack4j`)는 그대로 두고 Maven 좌표만 `io.github.seogineer` 로 바꿉니다.
+> 3.x 에서 옮겨 오는 방법은 [MIGRATION.md](MIGRATION.md) 를 보세요.
 
 OpenStack4j is a fluent OpenStack client that allows provisioning and control of an OpenStack deployment.   This includes support for Identity, Compute, Image, Network, Block Storage, Telemetry, Data Processing as well as many extensions (LBaaS, FWaaS, Quota-Sets, etc)
 
-## Installation
+## 설치
 
 ```xml
 <dependency>
@@ -23,61 +23,61 @@ OpenStack4j is a fluent OpenStack client that allows provisioning and control of
 </dependency>
 ```
 
-`openstack4j` pulls in the core together with the Apache HttpClient 5 connector. To use another connector, see [connectors/README.md](connectors/README.md).
+`openstack4j` 는 core 와 Apache HttpClient 5 connector 를 함께 끌어오는 아티팩트입니다. 다른 connector 를 쓰려면 [connectors/README.md](connectors/README.md) 를 보세요.
 
-## Supported environments
+## 지원 환경
 
-| Component | JDK 17 | JDK 21 | JDK 25 |
+| 구성 | JDK 17 | JDK 21 | JDK 25 |
 |---|---|---|---|
 | core | 🟢 | 🟢 | 🟢 |
 | httpclient (Apache HttpClient 5) | 🟢 | 🟢 | 🟢 |
 | okhttp (OkHttp 4) | 🟢 | 🟢 | 🟢 |
 | http-connector (JDK HttpClient) | 🟢 | 🟢 | 🟢 |
 
-CI also checks a build together with Spring Boot 3.5 (`examples/spring-boot-smoke`).
+Spring Boot 3.5 와 함께 쓰는 구성을 CI 에서 확인합니다(`examples/spring-boot-smoke`).
 
-## Documentation
+## 문서
 
-The upstream documentation ([openstack4j.github.io](https://openstack4j.github.io/)) and the usage examples below still apply; just use the Maven coordinates above.
-See [MIGRATION.md](MIGRATION.md) for moving from 3.x and [CHANGELOG.md](CHANGELOG.md) for the changes.
+원본 문서([openstack4j.github.io](https://openstack4j.github.io/))와 아래 사용 예가 그대로 적용됩니다. Maven 좌표만 위의 것으로 바꾸세요.
+3.x 에서 옮겨 오는 방법은 [MIGRATION.md](MIGRATION.md), 변경 내역은 [CHANGELOG.md](CHANGELOG.md) 를 보세요.
 
 ## Placement
 
-Since 4.1.0 the whole Placement API (microversions 1.28–1.39) is supported. The client negotiates the server's microversion range automatically, and you can pin a version if you want.
+4.1.0 부터 Placement API 전체(microversion 1.28~1.39)를 지원합니다. 서버의 microversion 범위를 자동으로 협상하고, 원하면 고정할 수 있습니다.
 
 ```java
 PlacementService placement = os.placement();
-placement.versions().get();                      // server range and negotiated version
-placement.useMicroVersion("1.36");               // optional: pin a version
+placement.versions().get();                      // 서버 범위와 협상된 버전
+placement.useMicroVersion("1.36");               // 선택: 버전 고정
 
-// capacity
+// 용량 조회
 Map<String, ResourceCapacity> capacity = placement.usages().capacity(rpUuid);
 
-// update an inventory (retry on a generation conflict)
+// inventory 수정 (generation 충돌 시 재시도)
 Placement.retryOnConcurrentUpdate(3, () -> {
     ResourceProviderInventories inv = placement.inventories().list(rpUuid);
     return placement.inventories().update(rpUuid, inv.getResourceProviderGeneration(), "VCPU",
             Inventory.builder().total(64).allocationRatio(4.0f).build());
 });
 
-// scheduling candidates
+// 스케줄링 후보
 placement.allocationCandidates().list(AllocationCandidatesQuery.builder()
         .resources("VCPU", 2).resources("MEMORY_MB", 2048).required("HW_CPU_X86_AVX2").limit(10).build());
 ```
 
-The existing `placement().resourceProviders()` keeps working. On servers older than 1.28 the new APIs throw `PlacementMicroVersionException`.
+기존 `placement().resourceProviders()` 는 그대로 동작합니다. 1.28 보다 오래된 서버에서는 새 API 가 `PlacementMicroVersionException` 을 던집니다.
 
-## Compute microversions
+## Compute microversion
 
-Since 4.2.0 Nova microversions (2.1–2.104) can be turned on per session. They are off by default: without them no microversion header is sent (Nova answers as 2.1) and existing code behaves as before.
+4.2.0 부터 Nova microversion(2.1~2.104)을 선택적으로 켤 수 있습니다. 기본값은 꺼짐이라, 켜지 않으면 요청에 microversion 헤더가 붙지 않고(Nova 는 2.1 로 처리) 기존 코드는 그대로 동작합니다.
 
 ```java
-ComputeVersion v = os.compute().microVersions().negotiate();   // min(2.104, server max)
-os.compute().microVersions().use("2.79");                      // or pin a version
-os.compute().microVersions().clear();                          // back to no header
+ComputeVersion v = os.compute().microVersions().negotiate();   // min(2.104, 서버 최대)
+os.compute().microVersions().use("2.79");                      // 또는 버전 고정
+os.compute().microVersions().clear();                          // 다시 헤더 없음
 
 Server server = os.compute().servers().get(id);
-server.getFlavorSummary().getOriginalName();                   // 2.47+ embedded flavor
+server.getFlavorSummary().getOriginalName();                   // 2.47+ 내장 flavor
 server.getTags();                                              // 2.26+
 
 os.compute().servers().lock(id, "maintenance");                // 2.73+
@@ -86,18 +86,18 @@ os.compute().servers().boot(Builders.server().name("vm").flavor(f).image(i)
         .autoAllocateNetwork().hostname("vm-01").build());     // 2.37+, 2.90+
 ```
 
-- Existing methods that use APIs Nova removed in later microversions (the proxy APIs such as `floatingIps()`, `securityGroups()`, `images()`, `host()`, the old `getVNCConsole`, `diagnostics`, creating a keypair without a public key, …) are sent at the highest microversion that still supports them, so they keep working after `negotiate()`.
-- New features check the microversion they need before the request and throw `MicroVersionException` when the session does not send it (or microversions are off).
-- The chosen version is kept per client session and compute endpoint.
+- Nova 가 이후 microversion 에서 없앤 API 를 쓰는 기존 메서드(`floatingIps()`, `securityGroups()`, `images()`, `host()` 같은 프록시 API, 기존 `getVNCConsole`, `diagnostics`, 공개키 없는 키페어 생성 등)는 지원하는 가장 높은 microversion 으로 보내므로 `negotiate()` 후에도 계속 동작합니다.
+- 새 기능은 필요한 최소 microversion 을 요청 전에 검사하고, 세션이 그 버전을 보내지 않으면(또는 꺼져 있으면) `MicroVersionException` 을 던집니다.
+- 선택한 버전은 클라이언트 세션과 compute endpoint 별로 유지됩니다.
 
-## Block storage microversions
+## Block storage microversion
 
-Since 4.3.0 Cinder v3 microversions (3.0–3.71) can be turned on per session. They are off by default: without them no microversion header is sent (Cinder answers as 3.0) and existing code behaves as before.
+4.3.0 부터 Cinder v3 microversion(3.0~3.71)을 선택적으로 켤 수 있습니다. 기본값은 꺼짐이라, 켜지 않으면 요청에 microversion 헤더가 붙지 않고(Cinder 는 3.0 으로 처리) 기존 코드는 그대로 동작합니다.
 
 ```java
-BlockStorageVersion v = os.blockStorage().microVersions().negotiate();   // min(3.71, server max)
-os.blockStorage().microVersions().use("3.50");                            // or pin a version
-os.blockStorage().microVersions().clear();                                // back to no header
+BlockStorageVersion v = os.blockStorage().microVersions().negotiate();   // min(3.71, 서버 최대)
+os.blockStorage().microVersions().use("3.50");                            // 또는 버전 고정
+os.blockStorage().microVersions().clear();                                // 다시 헤더 없음
 
 Volume volume = os.blockStorage().volumes().get(id);
 volume.getVolumeTypeId();                                                 // 3.63+
@@ -108,19 +108,19 @@ os.blockStorage().attachments().create(volumeId, serverId, null, "rw");   // 3.2
 os.blockStorage().groups().create(GroupCreate.create("g", groupTypeId, List.of(typeId)));         // 3.13+
 ```
 
-- A volume create body with `bootable` (rejected from 3.53) and a snapshot create with `force=false` (rejected from 3.66) are sent at 3.52 and 3.65, so existing calls keep working after `negotiate()`. The other existing methods have the same format up to 3.71.
-- New features check the microversion they need before the request and throw `MicroVersionException` when the session does not send it (or microversions are off).
-- Compute and block storage microversion state are independent and kept per client session and endpoint.
+- Cinder 가 3.53 부터 거부하는 생성 본문의 `bootable`, 3.66 부터 거부하는 스냅샷 `force=false` 는 각각 3.52/3.65 로 보내므로 기존 호출이 `negotiate()` 후에도 계속 동작합니다. 그 밖의 기존 메서드는 3.71 까지 형식이 같습니다.
+- 새 기능은 필요한 최소 microversion 을 요청 전에 검사하고, 세션이 그 버전을 보내지 않으면(또는 꺼져 있으면) `MicroVersionException` 을 던집니다.
+- compute 와 block storage 의 microversion 상태는 서로 독립이며, 클라이언트 세션과 endpoint 별로 유지됩니다.
 
-## Identity v3 extensions
+## Identity v3 확장
 
-Since 4.4.0 the Keystone authentication methods and extension APIs (OS-*) are supported. Existing authentication bodies and methods are unchanged.
+4.4.0 부터 Keystone 의 인증 방식과 확장 API(OS-*)를 지원합니다. 기존 인증 본문과 메서드는 바뀌지 않습니다.
 
 ```java
-// application credential (no scope — the credential itself is bound to a project)
+// application credential (scope 없이 — credential 자체가 project 에 묶여 있음)
 OSClientV3 os = OSFactory.builderV3().endpoint(url).applicationCredential(credentialId, secret).authenticate();
 
-// MFA (password + TOTP), system scope, trust scope
+// MFA(password + TOTP), system scope, trust scope
 OSFactory.builderV3().endpoint(url).credentials("alice", password, Identifier.byName("Default")).passcode("123456").authenticate();
 OSFactory.builderV3().endpoint(url).credentials("admin", password, Identifier.byName("Default")).scopeToSystem().authenticate();
 OSFactory.builderV3().endpoint(url).token(trusteeToken).scopeToTrust(trustId).authenticate();
@@ -133,14 +133,14 @@ os.identity().registeredLimits().create(List.of(RegisteredLimitCreate.create(com
 os.identity().federation().identityProviders().list();
 ```
 
-- New accessors: `applicationCredentials()`, `trusts()`, `endpointFilter()`, `endpointPolicies()`, `limits()`, `registeredLimits()`, `federation()`, `oauth1()` (with HMAC-SHA1 signing), `oauth2()`, `revocationEvents()`, `systemRoles()`
-- Existing services extended: project tags, OS-INHERIT inherited roles, implied roles and role inferences, domain configuration, access rules, `UserListOptions`/`ProjectListOptions`
-- A TOTP passcode is single-use, so a TOTP session cannot re-authenticate by itself when its token expires. Call `authenticate()` again with a new passcode.
-- Calling `authenticate()` again on the same thread makes that client the current session. Use `OSFactory.clientFromToken(token)` to go back to an earlier client.
+- 새 accessor: `applicationCredentials()`, `trusts()`, `endpointFilter()`, `endpointPolicies()`, `limits()`, `registeredLimits()`, `federation()`, `oauth1()`(HMAC-SHA1 서명 포함), `oauth2()`, `revocationEvents()`, `systemRoles()`
+- 기존 서비스 보강: project tags, OS-INHERIT 상속 역할, implied roles·role inferences, domain configuration, access rules, `UserListOptions`/`ProjectListOptions`
+- TOTP 세션은 passcode 가 일회용이라 토큰이 만료되면 자동 재인증할 수 없습니다. 새 passcode 로 다시 `authenticate()` 하세요.
+- 같은 스레드에서 `authenticate()` 를 다시 하면 그 클라이언트가 현재 세션이 됩니다. 이전 클라이언트로 돌아가려면 `OSFactory.clientFromToken(token)` 을 쓰세요.
 
-## Networking extensions
+## Networking 확장
 
-Since 4.5.0 most of the Neutron (in-tree) API is supported. Existing methods and request bodies are unchanged.
+4.5.0 부터 Neutron 본체(in-tree)의 API 를 대부분 지원합니다. 기존 메서드와 요청 본문은 바뀌지 않습니다.
 
 ```java
 os.networking().extensions().isEnabled("qos");
@@ -152,16 +152,16 @@ os.networking().router().addExtraRoutes(routerId, routes);
 os.networking().port().listBindings(portId);
 ```
 
-- New accessors: `extensions()`, `serviceProviders()`, `autoAllocatedTopology()`, `qosRules()`, `subnetPools()`, `addressScopes()`, `addressGroups()`, `rbacPolicies()`, `defaultSecurityGroupRules()`, `securityGroupDefaultStatefulness()`, `segments()`, `networkSegmentRanges()`, `localIps()`, `ndpProxies()`, `serviceFlavors()`, `serviceProfiles()`, `metering()`, `logging()`
-- Existing services extended: router (extra routes, external gateways, conntrack helpers, l3 agents), agent (scheduling), port (bindings), quotas (default, details), floating IP pools, port forwarding update
-- Option classes (`*Options`) send only the fields you set. Use `attribute("field", null)` to clear a value.
-- When the extension is off or a parent resource is missing (404): methods that return a model or a list (lists, create, update, and actions that return a result such as adding prefixes or addresses) throw the 404 as an exception. Methods that return an `ActionResponse` (delete, import/stage/cache actions, agent scheduling, linking a profile to a flavor) return a failed `ActionResponse` (code 404), and a single `get(id)` returns `null` for a missing resource. Check first with `extensions().isEnabled(alias)`.
-- VPNaaS, FWaaS v2, BGP, BGPVPN, TaaS and SFC (stadium projects) come in a later release.
-- 4.5.0 added `NetQosPolicy.getId()` (before, you had to cast to the implementation class).
+- 새 accessor: `extensions()`, `serviceProviders()`, `autoAllocatedTopology()`, `qosRules()`, `subnetPools()`, `addressScopes()`, `addressGroups()`, `rbacPolicies()`, `defaultSecurityGroupRules()`, `securityGroupDefaultStatefulness()`, `segments()`, `networkSegmentRanges()`, `localIps()`, `ndpProxies()`, `serviceFlavors()`, `serviceProfiles()`, `metering()`, `logging()`
+- 기존 서비스 보강: router(extra routes, external gateways, conntrack helpers, l3 agents), agent(스케줄링), port(bindings), quotas(default, details), floating IP pools, port forwarding update
+- 옵션 클래스(`*Options`)는 설정한 필드만 보냅니다. 값을 지우려면 `attribute("field", null)`.
+- 해당 extension 이 꺼져 있거나 상위 자원이 없을 때(404): 모델이나 목록을 돌려주는 메서드(목록, 생성, 수정, prefix·주소 추가처럼 결과를 돌려주는 동작)는 404 를 예외로 던집니다. `ActionResponse` 를 돌려주는 메서드(삭제, import·stage·캐시 동작, agent 스케줄링, flavor 의 profile 연결)는 실패한 `ActionResponse`(코드 404)를 돌려주고, 단건 `get(id)` 은 없는 자원에 `null` 을 돌려줍니다. `extensions().isEnabled(alias)` 로 먼저 확인할 수 있습니다.
+- VPNaaS, FWaaS v2, BGP, BGPVPN, TaaS, SFC(stadium 프로젝트)는 다음 릴리스에서 다룹니다.
+- 4.5.0 에서 `NetQosPolicy.getId()` 를 추가했습니다(이전에는 구현 클래스로 캐스트해야 했습니다).
 
-## Image extensions
+## Image 확장
 
-Since 4.6.0 the rest of the Glance v2 API is supported. Existing methods and request bodies are unchanged.
+4.6.0 부터 Glance v2 의 나머지 API 를 지원합니다. 기존 메서드와 요청 본문은 바뀌지 않습니다.
 
 ```java
 ImageVersions versions = os.imagesV2().versions();          // GET /versions (Glance root)
@@ -175,13 +175,13 @@ os.imagesV2().metadefs().createNamespace(MetadefNamespaceOptions.create("OS::Exa
 os.imagesV2().schemas().image();                             // JSON schema as a Map
 ```
 
-- New sub-services: `info()` (import methods, stores, usage), `cache()` (API 2.14), `schemas()`, `metadefs()` (namespaces, resource types, objects, properties, tags)
-- Added to `ImageService`: `versions()`, `importImage`, `stage`, `listLocations`/`addLocation` (2.17), `listTasks` (2.12), `deleteFromStore` (2.10)
-- Glance has no microversion header. A Glance without the new API (an older server, the cache middleware turned off) answers 404, handled as in the networking extensions: model- and list-returning methods throw, `ActionResponse` methods return a failed response (code 404), and a single `get(id)` returns `null`. Check first with `versions().supports("2.x")`.
+- 새 하위 서비스: `info()`(import methods, stores, usage), `cache()`(API 2.14), `schemas()`, `metadefs()`(namespaces, resource types, objects, properties, tags)
+- `ImageService` 추가: `versions()`, `importImage`, `stage`, `listLocations`/`addLocation`(2.17), `listTasks`(2.12), `deleteFromStore`(2.10)
+- Glance 는 microversion 헤더가 없습니다. 새 API 가 없는(오래된 서버, 캐시 middleware 꺼짐) Glance 는 404 를 줍니다: 모델이나 목록을 돌려주는 메서드(목록, 생성, 수정, prefix·주소 추가처럼 결과를 돌려주는 동작)는 404 를 예외로 던집니다. `ActionResponse` 를 돌려주는 메서드(삭제, import·stage·캐시 동작, agent 스케줄링, flavor 의 profile 연결)는 실패한 `ActionResponse`(코드 404)를 돌려주고, 단건 `get(id)` 은 없는 자원에 `null` 을 돌려줍니다. `versions().supports("2.x")` 로 먼저 확인할 수 있습니다.
 
-## Octavia extensions
+## Octavia 확장
 
-The same release supports the rest of the Octavia (load balancer v2) API.
+같은 릴리스에서 Octavia(load balancer v2)의 나머지 API 도 지원합니다.
 
 ```java
 os.octavia().l7Policies().create(L7PolicyOptions.create(listenerId, "REDIRECT_TO_URL").redirectUrl("https://example.com"));
@@ -192,16 +192,16 @@ os.octavia().lbPoolV2().updateMembers(poolId, members, false);    // batch repla
 os.octavia().loadBalancerV2().failover(lbId);
 ```
 
-- New accessors: `l7Policies()` (with rules), `flavors()`, `flavorProfiles()`, `availabilityZones()`, `availabilityZoneProfiles()`, `providers()`, `quotas()`, `amphorae()` (admin)
-- Existing services extended: `listenerV2().stats`, `loadBalancerV2().failover`, `lbPoolV2().updateMembers`
-- The 404 rules are the same as for the image and networking extensions. A quota of `null` means the default, `-1` means unlimited.
+- 새 accessor: `l7Policies()`(rules 포함), `flavors()`, `flavorProfiles()`, `availabilityZones()`, `availabilityZoneProfiles()`, `providers()`, `quotas()`, `amphorae()`(관리자)
+- 기존 서비스 보강: `listenerV2().stats`, `loadBalancerV2().failover`, `lbPoolV2().updateMembers`
+- 404 규칙은 Image·Networking 확장과 같습니다. quota 의 `null` 은 기본값 적용, `-1` 은 무제한입니다.
 
-## Heat extensions
+## Heat 확장
 
-The same release supports the rest of the Heat (orchestration) API.
+같은 릴리스에서 Heat(orchestration)의 나머지 API 도 지원합니다.
 
 ```java
-os.heat().stacks().preview(stackCreate);                          // preview a create
+os.heat().stacks().preview(stackCreate);                          // create 미리 보기
 os.heat().stacks().outputs(name, id); os.heat().stacks().output(name, id, "value");
 os.heat().stacks().suspend(name, id); os.heat().stacks().resume(name, id);
 os.heat().stacks().snapshot(name, id, "before-upgrade");
@@ -209,15 +209,15 @@ os.heat().resourceTypes().schema("OS::Nova::Server");
 os.heat().softwareDeployments().create(SoftwareDeploymentOptions.create(serverId, configId));
 ```
 
-- New accessors: `info()` (build info, services), `templateVersions()`, `resourceTypes()`, `softwareDeployments()`
-- `stacks()` extended: delete(name), environment, export, files, outputs, PATCH update, actions (suspend/resume/check/cancel), snapshots, preview; `events().list(stackName)`, `softwareConfig().list()`
+- 새 accessor: `info()`(build info, services), `templateVersions()`, `resourceTypes()`, `softwareDeployments()`
+- `stacks()` 보강: delete(name), environment, export, files, outputs, PATCH update, actions(suspend/resume/check/cancel), snapshots, preview; `events().list(stackName)`, `softwareConfig().list()`
 
 ## Bare metal (Ironic)
 
-The same release supports the Ironic (bare metal v1) API. Most fields and APIs need a higher microversion, so call `negotiate()` first in each session (microversions are off by default — without a header the server answers as 1.1).
+같은 릴리스에서 Ironic(bare metal v1)의 핵심 API 를 지원합니다. 대부분의 필드와 API 는 높은 microversion 이 필요하므로 세션마다 `negotiate()` 를 먼저 부르기를 권합니다(기본값은 꺼짐 — 헤더가 없으면 서버는 1.1 로 처리합니다).
 
 ```java
-os.baremetal().microVersions().negotiate();                       // server max (up to 1.107)
+os.baremetal().microVersions().negotiate();                       // 서버 최대(1.107 까지)로
 Node node = os.baremetal().nodes().create(NodeCreate.create("ipmi").name("bm-1").driverInfo(Map.of("ipmi_address", "192.0.2.1")));
 os.baremetal().nodes().update("bm-1", List.of(BaremetalPatch.replace("/description", "rack 3")));   // JSON Patch
 os.baremetal().nodes().setProvisionState("bm-1", NodeProvision.target("manage"));
@@ -225,59 +225,59 @@ os.baremetal().nodes().setPowerState("bm-1", "power on");
 os.baremetal().ports().create(PortCreate.create(node.getUuid(), "52:54:00:12:34:56"));
 ```
 
-- `nodes()`: list (detail, filters), get, create, update (JSON Patch), delete, states (power, provision, RAID, boot mode, secure boot), console, boot device, NMI, validate, maintenance, traits, VIFs
-- `ports()`, `portgroups()` (including per-node and per-portgroup lists), `chassis()`, `drivers()` (properties, RAID logical disk properties)
-- `allocations()`, `deployTemplates()`, `runbooks()`, `inspectionRules()`, `volumeConnectors()`/`volumeTargets()`, `conductors()` (with shards); node BIOS, firmware, history, inventory, children, virtual media, indicators and vendor passthru
-- Addressing a node by name (`nodes().get("bm-1")`) needs microversion 1.5 or later — call `negotiate()` first
-- Models have getters for the common fields; the rest (fields that grow with each microversion) are in `getAttributes()`
+- `nodes()`: 목록(detail, 필터)·get·create·update(JSON Patch)·delete, 상태(states, power, provision, RAID, boot mode, secure boot), console, boot device, NMI, validate, maintenance, traits, VIF
+- `ports()`, `portgroups()`(node·portgroup 별 목록 포함), `chassis()`, `drivers()`(properties, RAID logical disk properties)
+- `allocations()`, `deployTemplates()`, `runbooks()`, `inspectionRules()`, `volumeConnectors()`/`volumeTargets()`, `conductors()`(shards 포함); node 의 BIOS·firmware·history·inventory·children·virtual media·indicators·vendor passthru
+- 이름으로 node 를 가리키려면(`nodes().get("bm-1")`) microversion 1.5 이상이 필요합니다 — `negotiate()` 를 먼저 부르세요
+- 모델은 자주 쓰는 필드만 getter 가 있고, 나머지(microversion 마다 늘어나는 필드)는 `getAttributes()` 에 있습니다
 
-## DNS (Designate) extensions
+## DNS(Designate) 확장
 
-The same release supports the rest of the Designate v2 API.
+같은 릴리스에서 Designate v2 의 나머지 API 를 지원합니다.
 
 ```java
 os.dns().zones().list(Map.of("name", "example.org."));
-ZoneExport export = os.dns().zoneFiles().export(zoneId);           // when complete, getExportContent(id) is the zone file
+ZoneExport export = os.dns().zoneFiles().export(zoneId);           // 완료 후 getExportContent(id) 가 zone file
 os.dns().zoneFiles().importZone(zoneFileText);                      // text/dns
 ZoneTransferRequest offer = os.dns().zoneTransfers().createRequest(zoneId, targetProjectId, null);
 os.dns().reverseFloatingIps().set("RegionOne", floatingIpId, "smtp.example.com.", null, 600);
 ```
 
-- zones: filtered list, abandon, `transferFromMaster` (xfr), `movePool`; recordsets: filtered list (all zones or one zone)
-- New accessors: `zoneFiles()` (export/import), `zoneShares()`, `zoneTransfers()` (requests/accepts), `tlds()`, `tsigKeys()`, `blacklists()`, `pools()`, `quotas()`, `serviceStatuses()`, `info()` (limits), `reverseFloatingIps()`
-- Models have getters for the common fields; the rest are in `getAttributes()`
-- To act on other projects as an admin (zones of all projects, another project's quotas) Designate needs the header `X-Auth-All-Projects: true` or `X-Auth-Sudo-Project-ID: <id>`. For now pass it as a session header: `os.headers(Map.of("X-Auth-All-Projects", "true"))` — it is added to every request of the session and replaces other session headers, so clear it with `os.headers(null)` after the calls that need it
+- zones: 필터 목록, abandon, `transferFromMaster`(xfr), `movePool`; recordsets: 필터 목록(전체·zone 별)
+- 새 accessor: `zoneFiles()`(export/import), `zoneShares()`, `zoneTransfers()`(requests/accepts), `tlds()`, `tsigKeys()`, `blacklists()`, `pools()`, `quotas()`, `serviceStatuses()`, `info()`(limits), `reverseFloatingIps()`
+- 모델은 자주 쓰는 필드만 getter 가 있고, 나머지는 `getAttributes()` 에 있습니다
+- 관리자가 다른 프로젝트를 다루려면(모든 프로젝트의 zone 목록, 다른 프로젝트의 quota) Designate 헤더 `X-Auth-All-Projects: true` 나 `X-Auth-Sudo-Project-ID: <id>` 가 필요합니다. 지금은 세션 헤더로 줍니다: `os.headers(Map.of("X-Auth-All-Projects", "true"))` — 세션의 모든 요청에 붙고 기존 세션 헤더를 대체하므로, 필요한 호출 뒤에 `os.headers(null)` 로 지우세요
 
-## Shared file systems (Manila) microversions and extensions
+## Shared file systems(Manila) microversion 과 확장
 
-The same release supports the Manila v2 APIs from 2.7 on. The existing `os.share()` methods keep sending 2.6 (their paths and action names exist only up to 2.6). The new methods are sent at their own minimum microversion, or at the session version (server max, up to 2.99) after `negotiate()`.
+같은 릴리스에서 Manila v2 의 2.7 이후 API 를 지원합니다. 기존 `os.share()` 메서드는 지금처럼 항상 2.6 으로 요청합니다(경로와 action 이름이 2.6 전용). 새 메서드는 각자의 최소 microversion 으로 요청하고, `negotiate()` 를 부르면 세션 버전(서버 최대, 2.99 까지)으로 요청합니다.
 
 ```java
-os.share().microVersions().negotiate();                            // affects only the new methods
+os.share().microVersions().negotiate();                            // 새 메서드만 영향
 os.share().sharesExt().listExportLocations(shareId);               // 2.9
 os.share().shareReplicas().create(ShareReplicaCreate.create(shareId).availabilityZone("az2"));
 os.share().shareGroups().create(ShareGroupCreate.create().shareTypes(List.of(typeId)));
-os.share().shareBackups().create(ShareBackupCreate.create(shareId)); // experimental header is added for you
+os.share().shareBackups().create(ShareBackupCreate.create(shareId)); // experimental 헤더는 자동
 ```
 
-- New accessors: `messages()`, `administration()` (the 2.7+ paths of availability zones, services, quotas and type access), `sharesExt()` (export locations, instances, manage, revert, soft delete, access rules, migration), `snapshotsExt()`, `shareReplicas()`, `shareGroups()`/`shareGroupSnapshots()`/`shareGroupTypes()`, `shareNetworkSubnets()`, `shareServersExt()`, `shareBackups()`, `shareTransfers()`, `resourceLocks()`, `qosTypes()`
-- When the session version is lower than a method's minimum, `MicroVersionException` is thrown before the request
-- Experimental APIs (migration below 2.96, share server migration, share backups) send `X-OpenStack-Manila-API-Experimental: True` for you
-- The new models keep status as text; the other fields are in `getAttributes()`
+- 새 accessor: `messages()`, `administration()`(AZ·services·quotas·type access 의 2.7+ 경로), `sharesExt()`(export locations, instances, manage, revert, soft delete, access rules, migration), `snapshotsExt()`, `shareReplicas()`, `shareGroups()`/`shareGroupSnapshots()`/`shareGroupTypes()`, `shareNetworkSubnets()`, `shareServersExt()`, `shareBackups()`, `shareTransfers()`, `resourceLocks()`, `qosTypes()`
+- 세션 버전이 메서드의 최소 버전보다 낮으면 요청 전에 `MicroVersionException` 이 납니다
+- experimental API(2.96 미만의 migration, share server migration, share backups)는 `X-OpenStack-Manila-API-Experimental: True` 를 자동으로 보냅니다
+- 새 모델은 상태를 문자열로 갖고, 나머지 필드는 `getAttributes()` 에 있습니다
 
-## Build
+## 빌드
 
 ```bash
 ./mvnw verify
 ```
 
-## Bugs and contributing
+## 버그 신고와 기여
 
-Please open an issue on [GitHub Issues](https://github.com/seogineer/openstack4j/issues). See [CONTRIBUTING.md](CONTRIBUTING.md) for how to contribute.
+[GitHub Issues](https://github.com/seogineer/openstack4j/issues) 에 남겨 주세요. 기여 방법은 [CONTRIBUTING.md](CONTRIBUTING.md) 를 보세요.
 
-## License
+## 라이선스
 
-Apache License 2.0. Based on the work of the original author Jeremy Unruh and the [upstream openstack4j contributors](https://github.com/openstack4j/openstack4j/graphs/contributors) ([NOTICE](NOTICE)).
+Apache License 2.0. 원작자 Jeremy Unruh 와 [원본 openstack4j 기여자들](https://github.com/openstack4j/openstack4j/graphs/contributors)의 작업에 기반합니다([NOTICE](NOTICE)).
 
 Quick Usage Guide
 -----------------
