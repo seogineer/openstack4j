@@ -63,6 +63,9 @@ public class BarbicanAclServiceImpl extends BaseBarbicanExtService implements Ba
     }
 
     private static JsonBody body(List<String> users, Boolean projectAccess) {
+        // an empty read ACL makes Barbican drop the ACL entirely; deleteSecretAcl/deleteContainerAcl say that explicitly
+        if (users == null && projectAccess == null)
+            throw new IllegalArgumentException("Set users and/or projectAccess; use delete…Acl to remove an ACL");
         Map<String, Object> read = new LinkedHashMap<>();
         if (users != null)
             read.put("users", users);

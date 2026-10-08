@@ -299,6 +299,7 @@ os.barbican().quotas().setProjectQuotas(projectId, Map.of("secrets", 50));
 ```
 
 - 새 accessor: `acls()`(secret·container 의 read ACL), `secretsExt()`(payload, 사용자 metadata, consumers — API 1.1 헤더 자동), `containersExt()`(secrets, consumers), `orders()`, `quotas()`(실효·project quota), `secretStores()`(여러 back end, preferred store)
+- 메서드는 id 나 Barbican 이 돌려주는 `*_ref` URL 을 받습니다(마지막 경로 조각을 씁니다)
 - 모델은 자주 쓰는 필드만 getter 가 있고, 나머지는 `getAttributes()` 에 있습니다
 
 ## 빌드

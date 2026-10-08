@@ -23,9 +23,17 @@ public abstract class BaseBarbicanExtService extends BaseBarbicanServices {
         return ExecutionOptions.create(PropagateOnStatus.on(404));
     }
 
-    /** @return {@code value}, which must be a non-blank path segment (no {@code /}, {@code ?} or {@code #}) */
+    /**
+     * @param value an id, or a Barbican reference URL such as {@code https://host:9311/v1/secrets/<id>} (its last
+     *              path segment is used)
+     * @return the id, which must be a non-blank path segment (no {@code /}, {@code ?} or {@code #})
+     */
     protected static String id(String value) {
         Objects.requireNonNull(value, "id");
+        if (value.startsWith("http://") || value.startsWith("https://")) {
+            String path = value.replaceAll("[?#].*$", "").replaceAll("/+$", "");
+            value = path.substring(path.lastIndexOf('/') + 1);
+        }
         if (value.isBlank() || value.indexOf('/') >= 0 || value.indexOf('?') >= 0 || value.indexOf('#') >= 0)
             throw new IllegalArgumentException("Not a valid identifier: '" + value + "'");
         return value;
@@ -33,13 +41,23 @@ public abstract class BaseBarbicanExtService extends BaseBarbicanServices {
 
     @SuppressWarnings("unchecked")
     protected Map<String, Object> mapOf(String path) {
-        return get(Map.class, path).execute(propagate404());
+        return mapOf(path, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Map<String, Object> mapOf(String path, Map<String, String> filters) {
+        return get(Map.class, path).params(filters == null ? Collections.emptyMap() : filters).execute(propagate404());
     }
 
     /** @return the list of objects under {@code key}; a missing parent raises */
-    @SuppressWarnings("unchecked")
     protected List<Map<String, Object>> mapsOf(String path, String key) {
-        Map<String, Object> body = mapOf(path);
+        return mapsOf(path, key, null);
+    }
+
+    /** @return the list of objects under {@code key} of one page ({@code limit}, {@code offset}); a missing parent raises */
+    @SuppressWarnings("unchecked")
+    protected List<Map<String, Object>> mapsOf(String path, String key, Map<String, String> filters) {
+        Map<String, Object> body = mapOf(path, filters);
         Object list = body == null ? null : body.get(key);
         return list instanceof List ? (List<Map<String, Object>>) list : Collections.emptyList();
     }
