@@ -142,6 +142,15 @@ public class Apis {
     }
 
     /**
+     * Gets the registration (Adjutant) services API
+     *
+     * @return the registration (Adjutant) services
+     */
+    public static org.openstack4j.api.registration.RegistrationService getRegistrationService() {
+        return get(org.openstack4j.api.registration.RegistrationService.class);
+    }
+
+    /**
      * Gets the bare metal (Ironic) services API
      *
      * @return the bare metal services

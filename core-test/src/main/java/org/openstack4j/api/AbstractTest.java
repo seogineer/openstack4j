@@ -293,6 +293,7 @@ public abstract class AbstractTest {
         APP_CATALOG(8082),
         DNS(9001),
         BAREMETAL(6385),
+        REGISTRATION(5050),
         MESSAGING(8888),
         ACCELERATOR(6666),
         RATING(8889),
