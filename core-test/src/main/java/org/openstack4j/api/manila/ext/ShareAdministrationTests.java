@@ -34,7 +34,7 @@ public class ShareAdministrationTests extends AbstractManilaExtTest {
         Assert.assertEquals(body(d).toString(), "{\"host\":\"manila2@generic1\",\"binary\":\"manila-share\",\"disabled_reason\":\"maintenance\"}");
         Assert.assertEquals(d.getHeader("X-OpenStack-Manila-API-Version"), "2.83");
         var e = expect("POST", P + "/services/ensure-shares");
-        Assert.assertEquals(body(e).toString(), "{\"host\":\"manila2@generic1\"}");
+        Assert.assertEquals(body(e).toString(), "{\"ensure_shares\":{\"host\":\"manila2@generic1\"}}");
         Assert.assertEquals(e.getHeader("X-OpenStack-Manila-API-Version"), "2.86");
         Assert.assertEquals(zones.get(0).getName(), "nova");
         Assert.assertEquals(services.get(0).getHost(), "manila2@generic1");

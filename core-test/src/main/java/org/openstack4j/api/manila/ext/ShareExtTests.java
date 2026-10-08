@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.mockwebserver.RecordedRequest;
-import org.openstack4j.model.manila.Access;
 import org.openstack4j.model.manila.ext.ShareInfo;
 import org.openstack4j.model.manila.ext.ExportLocation;
 import org.openstack4j.model.manila.ext.ShareAccessRule;
@@ -57,21 +56,21 @@ public class ShareExtTests extends AbstractManilaExtTest {
     }
 
     public void shareActions() throws Exception {
-        respondWith(200, "{\"access\": " + RULE + "}");
+        respondWith(200, "{\"access\": " + RULE.replace("\"active\"", "\"queued_to_apply\"").replace("\"ip\"", "\"cephx\"") + "}");
         for (int i = 0; i < 5; i++)
             respondWith(202);
         respondWith(200, "{\"share\": {\"id\": \"s2\", \"name\": \"accounting\", \"status\": \"manage_starting\"}}");
-        respondWith(200, "{\"share_instances\": [{\"id\": \"i1\", \"share_id\": \"s1\", \"status\": \"available\"}]}");
+        respondWith(200, "{\"share_instances\": [{\"id\": \"i1\", \"share_id\": \"s1\", \"status\": \"inactive\", \"replica_state\": \"in_sync\"}]}");
 
         var ext = osv3().share().sharesExt();
-        Access access = ext.grantAccess("s1", ShareAccessCreate.create("ip", "10.0.0.0/24").accessLevel("rw").metadata(Map.of("key1", "value1")));
+        ShareAccessRule access = ext.grantAccess("s1", ShareAccessCreate.create("ip", "10.0.0.0/24").accessLevel("rw").metadata(Map.of("key1", "value1")));
         Assert.assertTrue(ext.revokeAccess("s1", "507bf114").isSuccess());
         Assert.assertTrue(ext.revertToSnapshot("s1", "snap1").isSuccess());
         Assert.assertTrue(ext.softDelete("s1").isSuccess());
         Assert.assertTrue(ext.restore("s1").isSuccess());
         Assert.assertTrue(ext.unmanage("s1").isSuccess());
         ShareInfo managed = ext.manage(Map.of("protocol", "nfs", "export_path", "192.162.10.6:/shares/x", "service_host", "manila2@stor#pool"));
-        ext.listInstances("s1");
+        var instances = ext.listInstances("s1");
 
         RecordedRequest grant = expect("POST", P + "/shares/s1/action");
         Assert.assertEquals(body(grant).toString(), "{\"allow_access\":{\"access_type\":\"ip\",\"access_to\":\"10.0.0.0/24\",\"access_level\":\"rw\",\"metadata\":{\"key1\":\"value1\"}}}");
@@ -86,7 +85,10 @@ public class ShareExtTests extends AbstractManilaExtTest {
         Assert.assertEquals(body(expect("POST", P + "/shares/manage")).get("share").get("service_host").asText(), "manila2@stor#pool");
         expect("GET", P + "/shares/s1/instances");
         Assert.assertEquals(access.getAccessTo(), "10.0.0.0/24");
+        Assert.assertEquals(access.getState(), "queued_to_apply");
+        Assert.assertEquals(access.getAccessType(), "cephx");
         Assert.assertEquals(managed.getId(), "s2");
+        Assert.assertEquals(instances.get(0).getStatus(), "inactive");
         Assert.assertEquals(managed.getStatus(), "manage_starting");
     }
 

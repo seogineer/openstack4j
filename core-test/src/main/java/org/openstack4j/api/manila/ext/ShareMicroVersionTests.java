@@ -51,9 +51,9 @@ public class ShareMicroVersionTests extends AbstractManilaExtTest {
         osv3().share().shares().list();
 
         Assert.assertEquals(decodedPath(takeRequest()), "/");
-        RecordedRequest get = takeRequest();
-        Assert.assertEquals(get.getHeader("X-OpenStack-Manila-API-Version"), "2.99");
-        Assert.assertEquals(get.getHeader("OpenStack-API-Version"), "shared-file-system 2.99");
+        RecordedRequest show = takeRequest();
+        Assert.assertEquals(show.getHeader("X-OpenStack-Manila-API-Version"), "2.99");
+        Assert.assertEquals(show.getHeader("OpenStack-API-Version"), "shared-file-system 2.99");
         Assert.assertEquals(takeRequest().getHeader("X-Openstack-Manila-Api-Version"), "2.6");
         Assert.assertEquals(version.getServerMaxVersion(), "2.99");
         Assert.assertEquals(version.getMicroVersion(), "2.99");
@@ -66,6 +66,15 @@ public class ShareMicroVersionTests extends AbstractManilaExtTest {
         } catch (MicroVersionException expected) {
             Assert.assertTrue(expected.getMessage().contains("2.37"), expected.getMessage());
         }
+
+        osv3().share().microVersions().use("2.98");
+        respondWith(200, "{\"total_progress\": 100, \"task_state\": \"migration_driver_phase1_done\"}");
+        Map<String, Object> progress = osv3().share().sharesExt().migrationProgress("s1");
+        RecordedRequest get = takeRequest();
+        Assert.assertEquals(get.getMethod(), "GET");
+        Assert.assertTrue(decodedPath(get).endsWith("/shares/s1/migration-progress"), decodedPath(get));
+        Assert.assertNull(get.getHeader("X-OpenStack-Manila-API-Experimental"));
+        Assert.assertEquals(progress.get("total_progress"), 100);
     }
 
     public void messageDelete() throws Exception {

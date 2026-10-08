@@ -44,7 +44,9 @@ public class ShareReplicaServiceImpl extends BaseManilaExtService implements Sha
 
     @Override
     public ShareReplica create(ShareReplicaCreate create) {
-        return create(FLOOR, ManilaShareReplica.class, PATH, "share_replica", create);
+        Map<String, Object> fields = Objects.requireNonNull(create, "create").toMap();
+        MicroVersion floor = fields.containsKey("share_network_id") ? V(72) : fields.containsKey("scheduler_hints") ? V(67) : FLOOR;
+        return create(floor, ManilaShareReplica.class, PATH, "share_replica", create);
     }
 
     @Override
