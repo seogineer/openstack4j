@@ -30,6 +30,8 @@ public enum ServiceType {
     BAREMETAL("ironic", "baremetal"),
     INSTANCE_HA("masakari", "instance-ha"),
     RESERVATION("blazar", "reservation"),
+    RATING("cloudkitty", "rating"),
+    ACCELERATOR("cyborg", "accelerator"),
     UNKNOWN("NA", "NA");
 
     private static final String SERVICE_PATTERN_SUFFIX = "[v|\\d|\\.]*";

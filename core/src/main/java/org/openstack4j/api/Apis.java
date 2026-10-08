@@ -115,6 +115,24 @@ public class Apis {
     }
 
     /**
+     * Gets the rating (CloudKitty) services API
+     *
+     * @return the rating (CloudKitty) services
+     */
+    public static org.openstack4j.api.rating.RatingService getRatingService() {
+        return get(org.openstack4j.api.rating.RatingService.class);
+    }
+
+    /**
+     * Gets the accelerator (Cyborg) services API
+     *
+     * @return the accelerator (Cyborg) services
+     */
+    public static org.openstack4j.api.accelerator.AcceleratorService getAcceleratorService() {
+        return get(org.openstack4j.api.accelerator.AcceleratorService.class);
+    }
+
+    /**
      * Gets the bare metal (Ironic) services API
      *
      * @return the bare metal services

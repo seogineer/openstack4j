@@ -415,6 +415,34 @@
                 "endpoints": [
                     {
                         "region_id": "RegionOne",
+                        "url": "http://127.0.0.1:6666/v2",
+                        "region": "RegionOne",
+                        "interface": "public",
+                        "id": "e1a2c3d4e5f60718293a4b5c6d7e6666"
+                    }
+                ],
+                "type": "accelerator",
+                "id": "e1a2c3d4e5f60718293a4b5c6d7f6666",
+                "name": "cyborg"
+            },
+            {
+                "endpoints": [
+                    {
+                        "region_id": "RegionOne",
+                        "url": "http://127.0.0.1:8889",
+                        "region": "RegionOne",
+                        "interface": "public",
+                        "id": "e1a2c3d4e5f60718293a4b5c6d7e8889"
+                    }
+                ],
+                "type": "rating",
+                "id": "e1a2c3d4e5f60718293a4b5c6d7f8889",
+                "name": "cloudkitty"
+            },
+            {
+                "endpoints": [
+                    {
+                        "region_id": "RegionOne",
                         "url": "http://127.0.0.1:1234/v1",
                         "region": "RegionOne",
                         "interface": "public",
