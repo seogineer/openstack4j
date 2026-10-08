@@ -366,12 +366,12 @@ os.accelerator().getDeviceProfile("fpga-profile");                   // by name:
 
 ## Messaging (Zaqar)
 
-New service `os.messaging()` (Zaqar v2): queues (metadata, JSON Patch, stats, pre-signed share, purge), messages (post, list, by ids, pop, delete), claims, subscriptions (incl. confirm), pools, flavors and health. Every request carries a `Client-ID` header: a UUID generated once per JVM, or the one you set.
+New service `os.messaging()` (Zaqar v2): queues (metadata, JSON Patch, stats, pre-signed share, purge), messages (post, list, by ids, pop, delete), claims, subscriptions (incl. confirm), pools, flavors and health. Every request carries a `Client-ID` header: the one in the client's `headers(...)`, else the one set with `useClientId`, else a UUID generated per client. Zaqar hides a client's own messages from listings unless `echo=true`.
 
 ```java
 os.messaging().useClientId("3381af92-2b9e-11e3-b191-71861300734c");
 os.messaging().postMessages("demo", List.of(Map.of("body", Map.of("event", "BackupStarted"), "ttl", 300)));
-os.messaging().claimMessages("demo", 300, 300, 5);                   // empty list when nothing is available
+os.messaging().claimMessages("demo", 300, 300, 5);                   // claim_id + messages (no messages when none are free)
 ```
 
 ## Build
