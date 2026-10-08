@@ -9,6 +9,8 @@ import java.util.Objects;
 import org.openstack4j.core.transport.ExecutionOptions;
 import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.common.ActionResponse;
+import org.openstack4j.model.trove.ext.options.TroveAttributes;
+import org.openstack4j.openstack.common.ListResult;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.trove.internal.BaseTroveServices;
 
@@ -64,5 +66,28 @@ public abstract class BaseTroveExtService extends BaseTroveServices {
         Map<String, Object> wrapper = new HashMap<>();
         wrapper.put(name, body);
         return postWithResponse(path + "/action").entity(JsonBody.of(wrapper)).execute();
+    }
+
+    protected <E> List<E> listOf(Class<? extends ListResult<E>> type, String path, Map<String, String> filters) {
+        ListResult<E> result = get(type, path).params(filters == null ? Collections.emptyMap() : filters).execute(propagate404());
+        return result == null ? Collections.emptyList() : result.getList();
+    }
+
+    protected <E> E show(Class<E> type, String path) {
+        return get(type, path).execute();
+    }
+
+    /** {@code POST} with {@code {"<root>": {fields}}}. */
+    protected <E> E create(Class<E> type, String path, String root, TroveAttributes<?> attributes) {
+        return post(type, path).entity(JsonBody.of(root, Objects.requireNonNull(attributes, "attributes").toMap())).execute(propagate404());
+    }
+
+    /** {@code PUT} with {@code {"<root>": {fields}}}. */
+    protected <E> E update(Class<E> type, String path, String root, TroveAttributes<?> attributes) {
+        return put(type, path).entity(JsonBody.of(root, Objects.requireNonNull(attributes, "attributes").toMap())).execute(propagate404());
+    }
+
+    protected ActionResponse remove(String path) {
+        return deleteWithResponse(path).execute();
     }
 }

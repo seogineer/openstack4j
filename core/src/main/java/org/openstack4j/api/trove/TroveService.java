@@ -46,4 +46,13 @@ public interface TroveService extends RestService {
 
     /** @return database instance updates, actions, logs, SSL and root access */
     org.openstack4j.api.trove.ext.TroveInstanceExtService instancesExt();
+
+    /** @return database backups */
+    org.openstack4j.api.trove.ext.TroveBackupService backups();
+
+    /** @return backup strategies */
+    org.openstack4j.api.trove.ext.BackupStrategyService backupStrategies();
+
+    /** @return configuration groups */
+    org.openstack4j.api.trove.ext.ConfigurationGroupService configurations();
 }
