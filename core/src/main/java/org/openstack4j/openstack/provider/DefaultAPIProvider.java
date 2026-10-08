@@ -193,6 +193,10 @@ public class DefaultAPIProvider implements APIProvider {
         bind(RouterService.class, RouterServiceImpl.class);
         bind(OctaviaService.class, OctaviaServiceImpl.class);
         bind(org.openstack4j.api.baremetal.BaremetalService.class, org.openstack4j.openstack.baremetal.internal.BaremetalServiceImpl.class);
+        bind(org.openstack4j.api.instanceha.InstanceHaService.class, org.openstack4j.openstack.instanceha.internal.InstanceHaServiceImpl.class);
+        bind(org.openstack4j.api.instanceha.SegmentService.class, org.openstack4j.openstack.instanceha.internal.SegmentServiceImpl.class);
+        bind(org.openstack4j.api.instanceha.HostService.class, org.openstack4j.openstack.instanceha.internal.HostServiceImpl.class);
+        bind(org.openstack4j.api.instanceha.NotificationService.class, org.openstack4j.openstack.instanceha.internal.NotificationServiceImpl.class);
         bind(org.openstack4j.api.baremetal.BaremetalMicroVersionService.class, org.openstack4j.openstack.baremetal.internal.BaremetalMicroVersionServiceImpl.class);
         bind(org.openstack4j.api.baremetal.NodeService.class, org.openstack4j.openstack.baremetal.internal.NodeServiceImpl.class);
         bind(org.openstack4j.api.baremetal.VolumeConnectorService.class, org.openstack4j.openstack.baremetal.internal.VolumeConnectorServiceImpl.class);

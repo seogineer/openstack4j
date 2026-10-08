@@ -203,6 +203,13 @@ public interface OSClient<T extends OSClient<T>> {
     org.openstack4j.api.baremetal.BaremetalService baremetal();
 
     /**
+     * Returns the instance HA (Masakari) service API
+     *
+     * @return the instance HA (Masakari) service
+     */
+    org.openstack4j.api.instanceha.InstanceHaService instanceHa();
+
+    /**
      * Returns the Artifact Service API
      *
      * @return the artifact service

@@ -415,6 +415,20 @@
                 "endpoints": [
                     {
                         "region_id": "RegionOne",
+                        "url": "http://127.0.0.1:15868/v1/26decac97b67478f9f64ff2c2c1b778e",
+                        "region": "RegionOne",
+                        "interface": "public",
+                        "id": "e1a2c3d4e5f60718293a4b5c6d7e5868"
+                    }
+                ],
+                "type": "instance-ha",
+                "id": "e1a2c3d4e5f60718293a4b5c6d7f5868",
+                "name": "masakari"
+            },
+            {
+                "endpoints": [
+                    {
+                        "region_id": "RegionOne",
                         "url": "http://127.0.0.1:9876",
                         "region": "RegionOne",
                         "interface": "public",

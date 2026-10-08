@@ -101,6 +101,15 @@ public class Apis {
      *
      * @return the bare metal services
      */
+    /**
+     * Gets the instance HA (Masakari) services API
+     *
+     * @return the instance HA (Masakari) services
+     */
+    public static org.openstack4j.api.instanceha.InstanceHaService getInstanceHaService() {
+        return get(org.openstack4j.api.instanceha.InstanceHaService.class);
+    }
+
     public static org.openstack4j.api.baremetal.BaremetalService getBaremetalService() {
         return get(org.openstack4j.api.baremetal.BaremetalService.class);
     }

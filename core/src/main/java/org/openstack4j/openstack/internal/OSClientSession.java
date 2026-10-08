@@ -140,6 +140,10 @@ public abstract class OSClientSession<R, T extends OSClient<T>> implements Endpo
     /**
      * {@inheritDoc}
      */
+    public org.openstack4j.api.instanceha.InstanceHaService instanceHa() {
+        return Apis.getInstanceHaService();
+    }
+
     public org.openstack4j.api.baremetal.BaremetalService baremetal() {
         return Apis.getBaremetalService();
     }
