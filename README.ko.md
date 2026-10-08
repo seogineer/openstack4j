@@ -302,6 +302,22 @@ os.barbican().quotas().setProjectQuotas(projectId, Map.of("secrets", 50));
 - 메서드는 id 나 Barbican 이 돌려주는 `*_ref` URL 을 받습니다(마지막 경로 조각을 씁니다)
 - 모델은 자주 쓰는 필드만 getter 가 있고, 나머지는 `getAttributes()` 에 있습니다
 
+## Database(Trove) 확장
+
+같은 릴리스에서 Trove v1.0 의 나머지 API 를 지원합니다. 기존 `instanceService()`, `databaseService()`, `databaseUsersService()`, `datastoreService()`, `flavorService()` 는 그대로입니다.
+
+```java
+os.trove().instancesExt().resizeVolume(instanceId, 20);
+os.trove().instancesExt().attachConfiguration(instanceId, configurationId);
+os.trove().instancesExt().enableLog(instanceId, "slow_query");
+Backup backup = os.trove().backups().create(BackupOptions.create("nightly").instance(instanceId));
+os.trove().configurations().create(ConfigurationOptions.create("tuned", Map.of("max_connections", 500)));
+os.trove().troveAdmin().getQuotas(projectId);                     // 관리자
+```
+
+- 새 accessor: `instancesExt()`(detail 목록, 이름 변경, configuration 연결/해제, datastore upgrade, replica 분리, access, restart/resize/promote/eject/reset status, instance backups, configuration 기본값, logs, SSL, root), `backups()`, `backupStrategies()`, `configurations()`, `datastoresExt()`(id 로 version 조회, configuration parameters, datastore 삭제, limits), `troveAdmin()`(`/mgmt` instances, 동작, root 이력, datastore versions, parameters, quotas)
+- datastore 마다 모양이 다른 응답(logs, SSL, parameters, 관리자 view)은 `Map` 으로 돌려줍니다
+
 ## 빌드
 
 ```bash

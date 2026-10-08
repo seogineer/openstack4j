@@ -55,4 +55,10 @@ public interface TroveService extends RestService {
 
     /** @return configuration groups */
     org.openstack4j.api.trove.ext.ConfigurationGroupService configurations();
+
+    /** @return datastore versions by id, configuration parameters, datastore deletion and limits */
+    org.openstack4j.api.trove.ext.TroveDatastoreExtService datastoresExt();
+
+    /** @return Trove management (admin) APIs */
+    org.openstack4j.api.trove.ext.TroveAdminService troveAdmin();
 }
