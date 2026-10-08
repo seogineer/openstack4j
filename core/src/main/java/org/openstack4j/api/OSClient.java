@@ -203,6 +203,13 @@ public interface OSClient<T extends OSClient<T>> {
     org.openstack4j.api.baremetal.BaremetalService baremetal();
 
     /**
+     * Returns the registration (Adjutant) service API
+     *
+     * @return the registration (Adjutant) service
+     */
+    org.openstack4j.api.registration.RegistrationService registration();
+
+    /**
      * Returns the messaging (Zaqar) service API
      *
      * @return the messaging (Zaqar) service

@@ -374,6 +374,16 @@ os.messaging().postMessages("demo", List.of(Map.of("body", Map.of("event", "Back
 os.messaging().claimMessages("demo", 300, 300, 5);                   // claim_id + messages(가져올 메시지가 없으면 messages 가 비어 있음)
 ```
 
+## Registration(Adjutant)
+
+새 서비스 `os.registration()`(Adjutant v1): admin 용 tasks(필터 조회, 승인, 수정, 취소), tokens(재발급, 제출, 만료 삭제), notifications(확인 처리)와 프로젝트 셀프서비스: users(초대, 초대 취소), 사용자 role, 부여 가능한 role, 비밀번호 재설정, 이메일 변경, sign-up, quota size.
+
+```java
+os.registration().inviteUser("alice@example.com", List.of("member"), null, null);
+os.registration().listTasks(Map.of("tasks_per_page", "25"), Map.of("approved", Map.of("exact", false)));
+os.registration().submitToken(token, Map.of("password", newPassword));
+```
+
 ## 빌드
 
 ```bash

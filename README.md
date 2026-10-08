@@ -374,6 +374,16 @@ os.messaging().postMessages("demo", List.of(Map.of("body", Map.of("event", "Back
 os.messaging().claimMessages("demo", 300, 300, 5);                   // claim_id + messages (no messages when none are free)
 ```
 
+## Registration (Adjutant)
+
+New service `os.registration()` (Adjutant v1): admin tasks (list with filters, approve, update, cancel), tokens (reissue, submit, purge expired) and notifications (acknowledge), plus project self-service: users (invite, cancel invite), user roles, grantable roles, password reset, email update, sign-up and quota sizes.
+
+```java
+os.registration().inviteUser("alice@example.com", List.of("member"), null, null);
+os.registration().listTasks(Map.of("tasks_per_page", "25"), Map.of("approved", Map.of("exact", false)));
+os.registration().submitToken(token, Map.of("password", newPassword));
+```
+
 ## Build
 
 ```bash

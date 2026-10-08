@@ -415,6 +415,20 @@
                 "endpoints": [
                     {
                         "region_id": "RegionOne",
+                        "url": "http://127.0.0.1:5050/v1",
+                        "region": "RegionOne",
+                        "interface": "public",
+                        "id": "e1a2c3d4e5f60718293a4b5c6d7e5050"
+                    }
+                ],
+                "type": "registration",
+                "id": "e1a2c3d4e5f60718293a4b5c6d7f5050",
+                "name": "adjutant"
+            },
+            {
+                "endpoints": [
+                    {
+                        "region_id": "RegionOne",
                         "url": "http://127.0.0.1:8888",
                         "region": "RegionOne",
                         "interface": "public",
