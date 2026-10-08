@@ -22,4 +22,29 @@ public class TackerServiceImpl implements TackerService {
     public VimService vim() {
         return Apis.get(VimService.class);
     }
+
+    @Override
+    public VnfPackageService vnfPackages() {
+        return Apis.get(VnfPackageService.class);
+    }
+
+    @Override
+    public VnfLcmService vnfLcm() {
+        return Apis.get(VnfLcmService.class);
+    }
+
+    @Override
+    public VnfLcmService vnfLcmV1() {
+        return new org.openstack4j.openstack.tacker.internal.sol.VnfLcmServiceImpl.V1();
+    }
+
+    @Override
+    public VnfFmService vnfFaults() {
+        return Apis.get(VnfFmService.class);
+    }
+
+    @Override
+    public VnfPmService vnfPerformance() {
+        return Apis.get(VnfPmService.class);
+    }
 }

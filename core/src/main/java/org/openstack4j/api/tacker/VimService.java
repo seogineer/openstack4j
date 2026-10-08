@@ -71,11 +71,12 @@ public interface VimService extends RestService {
     Vim register(Vim vim);
 
     /**
-     * Update vim - Update a vim based on user config file or data.
+     * Update vim - Update a vim's name, description, is_default, auth_cred or vim_project.
+     *
      * @param vimId the Vim identifier
-     * @param vimUpdate VimUpdate
-     * @return Vim
+     * @param vim   the fields to change (sent as {@code {"vim": {...}}})
+     * @return the updated vim
      */
-    //Vim update(String vimId, VimUpdate vimUpdate);
+    Map<String, Object> update(String vimId, Map<String, ?> vim);
 
 }

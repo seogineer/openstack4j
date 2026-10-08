@@ -403,6 +403,16 @@ os.containerApp().createContainer(Map.of("image", "nginx", "command", List.of("n
 os.containerApp().executeContainer("web", "uname -a", true, false);
 ```
 
+## NFV(Tacker ETSI NFV-SOL)
+
+`os.tacker()` 에 레거시 v1.0 과 함께 ETSI NFV-SOL API 가 추가되었습니다: `vnfPackages()`(`/vnfpkgm/v1`: 생성, CSAR 업로드·URI 업로드, content/VNFD/artifact 다운로드), `vnfLcm()`(`/vnflcm/v2`)·`vnfLcmV1()`(`/vnflcm/v1`): VNF instance, instantiate/terminate/heal/scale/change_ext_conn/change_vnfpkg, operation occurrence(retry, rollback, fail, cancel), subscription; `vnfFaults()`(`/vnffm/v1`), `vnfPerformance()`(`/vnfpm/v2`). 필요한 `Version` 헤더는 자동으로 붙고, lifecycle 작업은 operation occurrence id 를, 목록은 `items` 와 `next`(`nextpage_opaque_marker`)를 돌려줍니다. `vim().update(...)` 도 추가되었습니다.
+
+```java
+String instanceId = (String) os.tacker().vnfLcm().createVnfInstance(Map.of("vnfdId", vnfdId)).get("id");
+String opOccId = os.tacker().vnfLcm().instantiate(instanceId, Map.of("flavourId", "simple"));
+os.tacker().vnfLcm().getLcmOpOcc(opOccId).get("operationState");
+```
+
 ## 빌드
 
 ```bash

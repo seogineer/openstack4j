@@ -10,6 +10,7 @@ import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.tacker.Vim;
 import org.openstack4j.openstack.compute.functions.ToActionResponseFunction;
+import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.tacker.domain.TackerVim;
 import org.openstack4j.openstack.tacker.domain.TackerVim.TackerVims;
 
@@ -67,13 +68,14 @@ public class VimServiceImpl extends BaseTackerServices implements VimService {
         return post(TackerVim.class, uri("/vims")).entity(vim).execute(ExecutionOptions.<TackerVim>create(PropagateOnStatus.on(500)));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-	/*@Override
-	public Vim update(String vimId, VimUpdate vimUpdate) {
-		checkNotNull(vimId);
-        checkNotNull(vimUpdate);
-        return put(TackerVim.class, uri("/vims/%s", vimId)).entity(vimUpdate).execute();
-	}*/
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<String, Object> update(String vimId, Map<String, ?> vim) {
+        Objects.requireNonNull(vimId, "vimId");
+        Map<String, Object> body = put(Map.class, uri("/vims/%s", vimId))
+                .entity(JsonBody.of(Map.of("vim", Objects.requireNonNull(vim, "vim"))))
+                .execute(ExecutionOptions.<Map>create(PropagateOnStatus.on(404)));
+        Object updated = body == null ? null : body.get("vim");
+        return updated instanceof Map ? (Map<String, Object>) updated : body;
+    }
 }
