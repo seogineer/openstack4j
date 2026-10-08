@@ -206,6 +206,42 @@ public class OptimizationTests extends AbstractTest {
         Assert.assertEquals(r.getMethod(), "POST");
         Assert.assertEquals(path(r), "/v1/webhooks/a1");
         Assert.assertEquals(r.getHeader(VERSION), "infra-optim 1.4");
+        Assert.assertEquals(json(r), "{}");
+    }
+
+    public void templatePatchOfDefaultParametersAndOptInVersion() throws Exception {
+        respondWith(200, "{\"uuid\": \"at1\"}");
+        respondWith(200, "{\"uuid\": \"at1\"}");
+        respondWith(200, "{\"uuid\": \"a1\", \"status_message\": \"x\"}");
+        respondWith(200, "{\"context\": []}");
+        respondWith(200, "{\"uuid\": \"x1\"}");
+        respondWith(200, "{\"uuid\": \"a1\"}");
+
+        var w = osv3().optimization();
+        w.updateAuditTemplate("at1", List.of(Map.of("op", "replace", "path", "/default_parameters", "value", Map.of("para1", 3))));
+        w.updateAuditTemplate("at1", List.of(Map.of("op", "replace", "path", "/name", "value", "n")));
+        w.useApiVersion("1.6");
+        try {
+            w.getAudit("a1");
+            w.getDataModel(null, null);
+            w.updateAction("x1", List.of(Map.of("op", "replace", "path", "/state", "value", "SKIPPED")));
+        } finally {
+            w.useApiVersion(null);
+        }
+        w.getAudit("a1");
+
+        Assert.assertEquals(takeRequest().getHeader(VERSION), "infra-optim 1.7");
+        Assert.assertNull(takeRequest().getHeader(VERSION));
+        Assert.assertEquals(takeRequest().getHeader(VERSION), "infra-optim 1.6");
+        Assert.assertEquals(takeRequest().getHeader(VERSION), "infra-optim 1.6");
+        Assert.assertEquals(takeRequest().getHeader(VERSION), "infra-optim 1.6");
+        Assert.assertNull(takeRequest().getHeader(VERSION));
+        Assert.assertThrows(IllegalArgumentException.class, () -> w.useApiVersion("2"));
+    }
+
+    public void catalogTypeIsInfraOptim() {
+        Assert.assertEquals(org.openstack4j.api.types.ServiceType.OPTIMIZATION.getType(), "infra-optim");
+        Assert.assertEquals(org.openstack4j.api.types.ServiceType.forName("resource-optimization"), org.openstack4j.api.types.ServiceType.UNKNOWN);
     }
 
     public void listRaisesOn404AndDeleteFailureIsReported() throws Exception {
