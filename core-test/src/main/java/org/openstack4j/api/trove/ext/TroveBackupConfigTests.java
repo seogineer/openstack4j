@@ -64,6 +64,12 @@ public class TroveBackupConfigTests extends AbstractTroveExtTest {
         groups.list();
         groups.get("cfg1");
         Assert.assertTrue(groups.update("cfg1", ConfigurationOptions.update().name("new_name").values(Map.of("connect_timeout", 18))).isSuccess());
+        try {
+            groups.update("cfg1", ConfigurationOptions.update().name("only_name"));
+            Assert.fail("expected IllegalArgumentException");
+        } catch (IllegalArgumentException expected) {
+            // PUT without values would empty the group
+        }
         Assert.assertTrue(groups.patchValues("cfg1", Map.of("connect_timeout", 17)).isSuccess());
         List<Map<String, Object>> instances = groups.listInstances("cfg1");
         Assert.assertTrue(groups.delete("cfg1").isSuccess());

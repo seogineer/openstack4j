@@ -82,11 +82,11 @@ public class TroveAdminServiceImpl extends BaseTroveExtService implements TroveA
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Map<String, Object>> createParameter(String versionId, Map<String, ?> parameter) {
+    public Map<String, Object> createParameter(String versionId, Map<String, ?> parameter) {
+        // Trove answers with the parameter itself (the api-ref sample shows a list)
         Map<String, Object> body = post(Map.class, "/mgmt/datastores/versions/" + id(versionId) + "/parameters")
                 .entity(JsonBody.of("configuration-parameter", Objects.requireNonNull(parameter, "parameter"))).execute(propagate404());
-        Object list = body == null ? null : body.get("configuration-parameters");
-        return list instanceof List ? (List<Map<String, Object>>) list : java.util.Collections.emptyList();
+        return body == null ? new HashMap<>() : body;
     }
 
     @SuppressWarnings("unchecked")

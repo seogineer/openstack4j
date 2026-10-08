@@ -50,7 +50,7 @@ public class TroveAdminDatastoreTests extends AbstractTroveExtTest {
         respondWith(202);
         respondWith(202);
         respondWith(202);
-        respondWith(200, "{\"configuration-parameters\": [{\"name\": \"connect_timeout\", \"max\": 65535}]}");
+        respondWith(200, "{\"name\": \"connect_timeout\", \"datastore_version_id\": \"v1\", \"max_size\": 65535, \"min_size\": 64, \"restart_required\": false, \"type\": \"integer\"}");
         respondWith(200, "{\"name\": \"connect_timeout\", \"restart_required\": true}");
         respondWith(204);
         respondWith(200, "{\"quotas\": [{\"in_use\": 5, \"limit\": 15, \"reserved\": 0, \"resource\": \"instances\"}]}");
@@ -69,7 +69,7 @@ public class TroveAdminDatastoreTests extends AbstractTroveExtTest {
         Assert.assertTrue(admin.createDatastoreVersion(Map.of("datastore_name", "mysql", "name", "test", "image_tags", List.of("trove"))).isSuccess());
         Assert.assertTrue(admin.updateDatastoreVersion("v1", Map.of("active", true)).isSuccess());
         Assert.assertTrue(admin.deleteDatastoreVersion("v1").isSuccess());
-        List<Map<String, Object>> created = admin.createParameter("v1", Map.of("name", "connect_timeout", "data_type", "integer"));
+        Map<String, Object> created = admin.createParameter("v1", Map.of("name", "connect_timeout", "data_type", "integer"));
         Map<String, Object> updated = admin.updateParameter("v1", "connect_timeout", Map.of("restart_required", 1));
         Assert.assertTrue(admin.deleteParameter("v1", "connect_timeout").isSuccess());
         List<Map<String, Object>> quotas = admin.getQuotas("p2");
@@ -95,7 +95,7 @@ public class TroveAdminDatastoreTests extends AbstractTroveExtTest {
         Assert.assertEquals(body(expect("PUT", P + "/mgmt/quotas/p2")).toString(), "{\"quotas\":{\"instances\":10}}");
         Assert.assertEquals(((Map<?, ?>) instances.get(0).get("server")).get("host"), "compute-001");
         Assert.assertEquals(history.get("user"), "u1");
-        Assert.assertEquals(created.get(0).get("max"), 65535);
+        Assert.assertEquals(created.get("max_size"), 65535);
         Assert.assertEquals(updated.get("restart_required"), Boolean.TRUE);
         Assert.assertEquals(quotas.get(0).get("limit"), 15);
         Assert.assertEquals(newQuotas.get("backups"), 30);

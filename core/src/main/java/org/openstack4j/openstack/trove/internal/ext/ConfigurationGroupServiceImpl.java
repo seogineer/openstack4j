@@ -37,6 +37,8 @@ public class ConfigurationGroupServiceImpl extends BaseTroveExtService implement
 
     @Override
     public ActionResponse update(String id, ConfigurationOptions options) {
+        if (!java.util.Objects.requireNonNull(options, "options").toMap().containsKey("values"))
+            throw new IllegalArgumentException("A configuration group update replaces all values; set values (or use patchValues)");
         return putWithResponse(PATH + "/" + id(id)).entity(org.openstack4j.openstack.internal.microversion.JsonBody.of(ROOT, java.util.Objects.requireNonNull(options, "options").toMap())).execute();
     }
 
