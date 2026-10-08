@@ -332,6 +332,7 @@ os.magnum().extensions().upgradeCluster(clusterId, templateId, 1, null);
 - Swift: `info()`, `listEndpoints(container, object)`
 - Aodh: `alarmsExt()` — alarm history, state 조회/설정, alarm·history complex query, quotas
 - Magnum: `extensions()` — cluster resize(1.7)·upgrade(1.8), 종류별 CA 인증서, quotas, stats
+- Mistral: `workflow().extensions()` — workflow·workbook·action 검증, code sources, dynamic actions, event triggers, sub-executions, execution report, workflow 공유(members)
 
 ## 빌드
 
