@@ -239,6 +239,12 @@ public class OptimizationTests extends AbstractTest {
         Assert.assertThrows(IllegalArgumentException.class, () -> w.useApiVersion("2"));
     }
 
+    public void forceFalseNeedsNoVersion() throws Exception {
+        respondWith(201, "{\"uuid\": \"a9\"}");
+        osv3().optimization().createAudit(Map.of("goal", "dummy", "force", false));
+        Assert.assertNull(takeRequest().getHeader(VERSION));
+    }
+
     public void catalogTypeIsInfraOptim() {
         Assert.assertEquals(org.openstack4j.api.types.ServiceType.OPTIMIZATION.getType(), "infra-optim");
         Assert.assertEquals(org.openstack4j.api.types.ServiceType.forName("resource-optimization"), org.openstack4j.api.types.ServiceType.UNKNOWN);

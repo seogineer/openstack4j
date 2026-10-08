@@ -157,7 +157,7 @@ public class OptimizationServiceImpl extends BaseOpenStackService implements Opt
     public Map<String, Object> createAudit(Map<String, ?> audit) {
         Objects.requireNonNull(audit, "audit");
         Invocation<Map> invocation = post(Map.class, "/v1/audits").entity(JsonBody.of(audit));
-        if (audit.containsKey("force"))
+        if (Boolean.TRUE.equals(audit.get("force")))
             at(invocation, "1.2");
         else if (audit.containsKey("start_time") || audit.containsKey("end_time"))
             at(invocation, "1.1");

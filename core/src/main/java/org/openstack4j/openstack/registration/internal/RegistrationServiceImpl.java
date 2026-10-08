@@ -188,6 +188,14 @@ public class RegistrationServiceImpl extends BaseOpenStackService implements Reg
     }
 
     @Override
+    public Map<String, Object> listNotifications(Map<String, String> params, Map<String, ?> filters) {
+        Invocation<Map> invocation = get(Map.class, "/v1/notifications");
+        if (params != null)
+            invocation.params(params);
+        return strict(filtered(invocation, filters));
+    }
+
+    @Override
     public List<Map<String, Object>> listNotifications(Map<String, ?> filters) {
         return list(strict(filtered(get(Map.class, "/v1/notifications"), filters)), "notifications");
     }
@@ -219,7 +227,10 @@ public class RegistrationServiceImpl extends BaseOpenStackService implements Reg
         if (extra != null)
             body.putAll(extra);
         body.put("email", Objects.requireNonNull(email, "email"));
-        body.put("roles", Objects.requireNonNull(roles, "roles"));
+        if (roles == null && inheritedRoles == null)
+            throw new IllegalArgumentException("roles or inheritedRoles is required");
+        if (roles != null)
+            body.put("roles", roles);
         if (inheritedRoles != null)
             body.put("inherited_roles", inheritedRoles);
         return post("/v1/openstack/users", body);
@@ -243,7 +254,10 @@ public class RegistrationServiceImpl extends BaseOpenStackService implements Reg
 
     private static Map<String, Object> roles(List<String> roles, List<String> inheritedRoles) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("roles", Objects.requireNonNull(roles, "roles"));
+        if (roles == null && inheritedRoles == null)
+            throw new IllegalArgumentException("roles or inheritedRoles is required");
+        if (roles != null)
+            body.put("roles", roles);
         if (inheritedRoles != null)
             body.put("inherited_roles", inheritedRoles);
         return body;

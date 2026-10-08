@@ -110,7 +110,7 @@ public class VnfPackageServiceImpl extends BaseTackerSolService implements VnfPa
 
     @Override
     public ActionResponse downloadVnfd(String vnfPkgId, String accept, File file) {
-        return download(get(Void.class, pkg(vnfPkgId) + "/vnfd").header("Accept", accept == null ? "text/plain,application/zip" : accept), file);
+        return download(get(Void.class, pkg(vnfPkgId) + "/vnfd").header("Accept", accept == null ? "text/plain,application/zip" : accept.trim().replaceAll("\\s*,\\s*", ",")), file);
     }
 
     @Override
