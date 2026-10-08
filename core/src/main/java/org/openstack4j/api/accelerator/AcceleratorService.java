@@ -36,7 +36,7 @@ public interface AcceleratorService extends RestService {
     /** @return the device profiles */
     List<Map<String, Object>> listDeviceProfiles(Map<String, String> filters);
 
-    /** @param nameOrId a name needs accelerator 2.2 (sent for you) @return the profile, or {@code null} */
+    /** @param nameOrId a uuid, or a name (needs accelerator 2.2, sent only for names) @return the profile, or {@code null} */
     Map<String, Object> getDeviceProfile(String nameOrId);
 
     /** @param profile {@code name}, {@code groups} (e.g. {@code [{"resources:CUSTOM_ACCELERATOR_FPGA": "1"}]}), optional {@code description} */
@@ -47,7 +47,7 @@ public interface AcceleratorService extends RestService {
     /** Deletes device profiles by name. */
     ActionResponse deleteDeviceProfilesByName(List<String> names);
 
-    /** @param filters e.g. {@code type}, {@code vendor}, {@code hostname} @return the devices (status needs 2.3, sent for you) */
+    /** @param filters e.g. {@code type}, {@code vendor}, {@code hostname} @return the devices (sent without a microversion, so older servers work; the 2.3 {@code status} field is not requested) */
     List<Map<String, Object>> listDevices(Map<String, String> filters);
 
     /** @return the device, or {@code null} when it does not exist */
@@ -70,8 +70,8 @@ public interface AcceleratorService extends RestService {
     /** @return the attribute, or {@code null} when it does not exist */
     Map<String, Object> getAttribute(String attributeId);
 
-    /** @return the created attributes */
-    List<Map<String, Object>> createAttribute(String deployableId, String key, String value);
+    /** @return the created attribute */
+    Map<String, Object> createAttribute(String deployableId, String key, String value);
 
     ActionResponse deleteAttribute(String attributeId);
 }

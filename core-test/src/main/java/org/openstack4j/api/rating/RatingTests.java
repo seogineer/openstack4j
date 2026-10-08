@@ -79,4 +79,16 @@ public class RatingTests extends AbstractTest {
         Assert.assertEquals(((List<?>) summary.get("columns")).size(), 4);
         Assert.assertEquals(tasks.get(0).get("reason"), "fix");
     }
+
+    public void emptyResultsAreEmptyNotErrors() throws Exception {
+        respondWith(404, "{\"message\": \"No resource found for provided filters.\"}");
+        respondWith(404, "{\"message\": \"No resource found for provided filters.\"}");
+        Map<String, Object> dataframes = osv3().rating().listDataframes(Map.of("begin", "2030-01-01T00:00:00Z"));
+        List<Map<String, Object>> scopes = osv3().rating().listScopes(Map.of("scope_id", "none"));
+        takeRequest();
+        takeRequest();
+        Assert.assertEquals(dataframes.get("total"), 0);
+        Assert.assertTrue(((List<?>) dataframes.get("dataframes")).isEmpty());
+        Assert.assertTrue(scopes.isEmpty());
+    }
 }

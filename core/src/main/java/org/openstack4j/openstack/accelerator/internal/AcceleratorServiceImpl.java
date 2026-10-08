@@ -19,6 +19,7 @@ import org.openstack4j.openstack.internal.microversion.JsonBody;
 public class AcceleratorServiceImpl extends BaseOpenStackService implements AcceleratorService {
 
     private static final String API_VERSION = "OpenStack-API-Version";
+    private static final java.util.regex.Pattern UUID_LIKE = java.util.regex.Pattern.compile("[0-9a-fA-F]{8}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{4}-?[0-9a-fA-F]{12}");
 
     public AcceleratorServiceImpl() {
         // catalogs register http://host/accelerator or .../accelerator/v2; paths carry /v2 themselves
@@ -89,8 +90,15 @@ public class AcceleratorServiceImpl extends BaseOpenStackService implements Acce
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Map<String, Object> getDeviceProfile(String nameOrId) {
-        return show(get(Map.class, "/v2/device_profiles/" + id(nameOrId)).header(API_VERSION, "accelerator 2.2"));
+        Invocation<Map> invocation = get(Map.class, "/v2/device_profiles/" + id(nameOrId));
+        if (!UUID_LIKE.matcher(nameOrId).matches())
+            invocation.header(API_VERSION, "accelerator 2.2");
+        Map<String, Object> body = show(invocation);
+        // the only Cyborg single-object response that is wrapped
+        Object profile = body == null ? null : body.get("device_profile");
+        return profile instanceof Map ? (Map<String, Object>) profile : body;
     }
 
     @SuppressWarnings("unchecked")
@@ -112,12 +120,12 @@ public class AcceleratorServiceImpl extends BaseOpenStackService implements Acce
 
     @Override
     public List<Map<String, Object>> listDevices(Map<String, String> filters) {
-        return listOf(get(Map.class, "/v2/devices").header(API_VERSION, "accelerator 2.3"), "devices", filters);
+        return listOf(get(Map.class, "/v2/devices"), "devices", filters);
     }
 
     @Override
     public Map<String, Object> getDevice(String deviceId) {
-        return show(get(Map.class, "/v2/devices/" + id(deviceId)).header(API_VERSION, "accelerator 2.3"));
+        return show(get(Map.class, "/v2/devices/" + id(deviceId)));
     }
 
     @Override
@@ -161,12 +169,13 @@ public class AcceleratorServiceImpl extends BaseOpenStackService implements Acce
     }
 
     @Override
-    public List<Map<String, Object>> createAttribute(String deployableId, String key, String value) {
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> createAttribute(String deployableId, String key, String value) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("deployable_id", id(deployableId));
         body.put("key", Objects.requireNonNull(key, "key"));
         body.put("value", Objects.requireNonNull(value, "value"));
-        return listOf(post(Map.class, "/v2/attributes").entity(JsonBody.of(body)), "attributes", null);
+        return post(Map.class, "/v2/attributes").entity(JsonBody.of(body)).execute(propagate404());
     }
 
     @Override

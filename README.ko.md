@@ -361,7 +361,7 @@ os.reservation().hosts().create(Map.of("name", "compute-07", "gpu", "a100"));   
 
 ```java
 os.rating().summary(Map.of("groupby", "project_id", "begin", "2026-10-01T00:00:00Z"));
-os.accelerator().createArqs("fpga-profile");                         // 필요한 곳에 accelerator microversion 자동
+os.accelerator().getDeviceProfile("fpga-profile");                   // 이름으로 조회: accelerator 2.2 헤더 자동
 ```
 
 ## 빌드

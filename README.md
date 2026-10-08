@@ -361,7 +361,7 @@ New services `os.rating()` (CloudKitty v2: rated dataframes, rating modules, sco
 
 ```java
 os.rating().summary(Map.of("groupby", "project_id", "begin", "2026-10-01T00:00:00Z"));
-os.accelerator().createArqs("fpga-profile");                         // accelerator microversions added where needed
+os.accelerator().getDeviceProfile("fpga-profile");                   // by name: accelerator 2.2 header added for you
 ```
 
 ## Build
