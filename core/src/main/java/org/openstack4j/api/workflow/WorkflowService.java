@@ -80,4 +80,7 @@ public interface WorkflowService extends RestService {
      * @return The event trigger service.
      */
     EventTriggerService eventTriggers();
+
+    /** @return validation, code sources, dynamic actions, event triggers, sub-executions, reports and workflow sharing */
+    org.openstack4j.api.workflow.ext.MistralExtService extensions();
 }

@@ -58,4 +58,9 @@ public class WorkflowServiceImpl extends BaseMistralService implements WorkflowS
     public EventTriggerService eventTriggers() {
         return Apis.get(EventTriggerService.class);
     }
+
+    @Override
+    public org.openstack4j.api.workflow.ext.MistralExtService extensions() {
+        return Apis.get(org.openstack4j.api.workflow.ext.MistralExtService.class);
+    }
 }
