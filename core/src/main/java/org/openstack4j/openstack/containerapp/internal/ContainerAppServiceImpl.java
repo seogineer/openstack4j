@@ -27,7 +27,7 @@ public class ContainerAppServiceImpl extends BaseOpenStackService implements Con
     /** Container create fields and the version that introduced them. */
     private static final Map<String, Integer> CREATE_FIELDS = Map.ofEntries(Map.entry("auto_remove", 3), Map.entry("runtime", 5),
             Map.entry("hostname", 9), Map.entry("mounts", 11), Map.entry("privileged", 21), Map.entry("healthcheck", 22),
-            Map.entry("exposed_ports", 24), Map.entry("registry", 31), Map.entry("tty", 36), Map.entry("host", 39),
+            Map.entry("exposed_ports", 24), Map.entry("registry", 31), Map.entry("host", 39),
             Map.entry("entrypoint", 40));
 
     public ContainerAppServiceImpl() {
@@ -344,8 +344,7 @@ public class ContainerAppServiceImpl extends BaseOpenStackService implements Con
     @SuppressWarnings("unchecked")
     @Override
     public List<Map<String, Object>> searchImages(String image, Map<String, String> params) {
-        List<Map<String, Object>> found = params(get(List.class, "/v1/images/search"), params).param("image", Objects.requireNonNull(image, "image"))
-                .execute(propagate404());
+        List<Map<String, Object>> found = params(get(List.class, "/v1/images/" + id(image) + "/search"), params).execute(propagate404());
         return found == null ? Collections.emptyList() : found;
     }
 
@@ -371,9 +370,9 @@ public class ContainerAppServiceImpl extends BaseOpenStackService implements Con
         return body;
     }
 
-    /** Zun reads these parameters from the query string; the body repeats them. */
+    /** Zun reads these parameters from the query string only (pecan merges a key repeated in the body into a list). */
     private Map<String, Object> updateService(String action, Map<String, Object> fields) {
-        Invocation<Map> invocation = put(Map.class, "/v1/services/" + action).entity(JsonBody.of(fields));
+        Invocation<Map> invocation = put(Map.class, "/v1/services/" + action);
         fields.forEach((k, v) -> invocation.param(k, v));
         return unwrap(strict(invocation), "service");
     }

@@ -44,6 +44,12 @@ public class ContainerAppTests extends AbstractTest {
         Assert.assertEquals(org.openstack4j.api.types.ServiceType.forCatalogEntry("compute", "custom"), org.openstack4j.api.types.ServiceType.COMPUTE);
     }
 
+    public void ttyAloneKeepsTheLegacyCreateSchema() throws Exception {
+        respondWith(202, "{\"uuid\": \"c9\"}");
+        osv3().containerApp().createContainer(Map.of("image", "cirros", "command", "/bin/sh", "tty", true, "interactive", true), false);
+        Assert.assertNull(takeRequest().getHeader(VERSION));
+    }
+
     public void containersAndActions() throws Exception {
         respondWith(200, "{\"versions\": [{\"id\": \"v1\", \"max_version\": \"1.40\", \"min_version\": \"1.1\"}]}");
         respondWith(200, "{\"id\": \"v1\"}");
@@ -223,7 +229,7 @@ public class ContainerAppTests extends AbstractTest {
         Assert.assertEquals(body(r).get("repo"), "redis");
         expect("DELETE", "/v1/images/i1", null);
         r = takeRequest();
-        Assert.assertTrue(path(r).startsWith("/v1/images/search?") && path(r).contains("image=nginx") && path(r).contains("exact_match=true"), path(r));
+        Assert.assertEquals(path(r), "/v1/images/nginx/search?exact_match=true");
         expect("GET", "/v1/hosts", "container 1.4");
         expect("GET", "/v1/hosts/compute-1", "container 1.4");
         expect("GET", "/v1/services", null);
@@ -232,12 +238,13 @@ public class ContainerAppTests extends AbstractTest {
         Assert.assertTrue(path(r).startsWith("/v1/services?") && path(r).contains("host=compute-1") && path(r).contains("binary=zun-compute"), path(r));
         r = takeRequest();
         Assert.assertEquals(r.getMethod(), "PUT");
-        Assert.assertTrue(path(r).startsWith("/v1/services/enable?") && path(r).contains("host=compute-1"), path(r));
-        Assert.assertEquals(body(r).get("binary"), "zun-compute");
+        Assert.assertTrue(path(r).startsWith("/v1/services/enable?") && path(r).contains("host=compute-1") && path(r).contains("binary=zun-compute"), path(r));
+        Assert.assertEquals(r.getBodySize(), 0L, "parameters only in the query: pecan merges a repeated body key into a list");
         r = takeRequest();
         Assert.assertTrue(path(r).startsWith("/v1/services/disable?") && path(r).contains("disabled_reason=maint"), path(r));
         r = takeRequest();
         Assert.assertTrue(path(r).startsWith("/v1/services/force_down?") && path(r).contains("forced_down=true"), path(r));
+        Assert.assertEquals(r.getBodySize(), 0L);
         expect("GET", "/v1/capsules", "container 1.32");
         expect("GET", "/v1/capsules/cap1", "container 1.32");
         r = takeRequest();
