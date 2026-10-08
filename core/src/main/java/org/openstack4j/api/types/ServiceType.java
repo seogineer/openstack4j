@@ -35,6 +35,7 @@ public enum ServiceType {
     MESSAGING("zaqar", "messaging"),
     REGISTRATION("adjutant", "registration"),
     OPTIMIZATION("watcher", "infra-optim"),
+    CONTAINER_APP("zun", "application-container"),
     UNKNOWN("NA", "NA");
 
     private static final String SERVICE_PATTERN_SUFFIX = "[v|\\d|\\.]*";
@@ -60,6 +61,19 @@ public enum ServiceType {
                 return s;
         }
         return ServiceType.UNKNOWN;
+    }
+
+    /**
+     * Resolves a catalog entry: by its name when the name identifies a known service, else by its type. Zun registers
+     * type {@code container} (which {@link #MAGNUM} also matches) under the name {@code zun}.
+     *
+     * @param type the catalog entry's type
+     * @param name the catalog entry's name
+     * @return the service type, or {@link #UNKNOWN}
+     */
+    public static ServiceType forCatalogEntry(String type, String name) {
+        ServiceType byName = forName(name);
+        return byName != UNKNOWN ? byName : forName(type);
     }
 
     public String getServiceName() {

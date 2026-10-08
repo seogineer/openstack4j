@@ -394,6 +394,15 @@ os.optimization().startActionPlan(actionPlanUuid);
 os.optimization().getDataModel("compute", null);                     // infra-optim 1.3 added for you
 ```
 
+## Application containers (Zun)
+
+New service `os.containerApp()` (Zun v1): containers (create/run, update, delete, start/stop/reboot/pause/unpause/kill, rebuild, resize, execute, logs, top, stats, attach, archives, commit, networks, security groups, actions), images (pull, search), hosts, services, capsules, quotas, quota classes, availability zones, networks and registries. Without a header Zun answers at 1.1, so methods and create fields that need more send `OpenStack-API-Version: container <version>` themselves; `useApiVersion` opts every request in.
+
+```java
+os.containerApp().createContainer(Map.of("image", "nginx", "command", List.of("nginx", "-g", "daemon off;")), true);  // container 1.20
+os.containerApp().executeContainer("web", "uname -a", true, false);
+```
+
 ## Build
 
 ```bash

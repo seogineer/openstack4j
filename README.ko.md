@@ -394,6 +394,15 @@ os.optimization().startActionPlan(actionPlanUuid);
 os.optimization().getDataModel("compute", null);                     // infra-optim 1.3 자동
 ```
 
+## Application containers(Zun)
+
+새 서비스 `os.containerApp()`(Zun v1): containers(생성/실행, 수정, 삭제, start/stop/reboot/pause/unpause/kill, rebuild, resize, execute, logs, top, stats, attach, archive, commit, network, security group, actions), images(pull, search), hosts, services, capsules, quotas, quota classes, availability zones, networks, registries. 헤더가 없으면 Zun 은 1.1 로 응답하므로, 더 높은 버전이 필요한 메서드와 생성 필드는 `OpenStack-API-Version: container <version>` 을 직접 붙입니다. `useApiVersion` 으로 모든 요청에 버전을 지정할 수 있습니다.
+
+```java
+os.containerApp().createContainer(Map.of("image", "nginx", "command", List.of("nginx", "-g", "daemon off;")), true);  // container 1.20
+os.containerApp().executeContainer("web", "uname -a", true, false);
+```
+
 ## 빌드
 
 ```bash

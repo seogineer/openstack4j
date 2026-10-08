@@ -189,6 +189,13 @@ public abstract class OSClientSession<R, T extends OSClient<T>> implements Endpo
     /**
      * {@inheritDoc}
      */
+    public org.openstack4j.api.containerapp.ContainerAppService containerApp() {
+        return Apis.getContainerAppService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public org.openstack4j.api.baremetal.BaremetalService baremetal() {
         return Apis.getBaremetalService();
     }

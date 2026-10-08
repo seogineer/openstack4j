@@ -193,6 +193,7 @@ public class DefaultAPIProvider implements APIProvider {
         bind(RouterService.class, RouterServiceImpl.class);
         bind(OctaviaService.class, OctaviaServiceImpl.class);
         bind(org.openstack4j.api.baremetal.BaremetalService.class, org.openstack4j.openstack.baremetal.internal.BaremetalServiceImpl.class);
+        bind(org.openstack4j.api.containerapp.ContainerAppService.class, org.openstack4j.openstack.containerapp.internal.ContainerAppServiceImpl.class);
         bind(org.openstack4j.api.optimization.OptimizationService.class, org.openstack4j.openstack.optimization.internal.OptimizationServiceImpl.class);
         bind(org.openstack4j.api.registration.RegistrationService.class, org.openstack4j.openstack.registration.internal.RegistrationServiceImpl.class);
         bind(org.openstack4j.api.messaging.MessagingService.class, org.openstack4j.openstack.messaging.internal.MessagingServiceImpl.class);
