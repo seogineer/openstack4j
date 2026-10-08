@@ -228,4 +228,29 @@ public interface NetworkingService extends RestService {
      * @return the NetworkLoggingService
      */
     org.openstack4j.api.networking.ext.NetworkLoggingService logging();
+
+    /**
+     * @return VPN services (VPNaaS)
+     */
+    org.openstack4j.api.networking.ext.VpnServiceService vpnServices();
+
+    /**
+     * @return IKE policies (VPNaaS)
+     */
+    org.openstack4j.api.networking.ext.IkePolicyService ikePolicies();
+
+    /**
+     * @return IPsec policies (VPNaaS)
+     */
+    org.openstack4j.api.networking.ext.IpsecPolicyService ipsecPolicies();
+
+    /**
+     * @return IPsec site connections (VPNaaS)
+     */
+    org.openstack4j.api.networking.ext.IpsecSiteConnectionService ipsecSiteConnections();
+
+    /**
+     * @return VPN endpoint groups (VPNaaS)
+     */
+    org.openstack4j.api.networking.ext.VpnEndpointGroupService vpnEndpointGroups();
 }

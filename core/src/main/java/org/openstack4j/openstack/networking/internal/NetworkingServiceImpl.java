@@ -245,4 +245,29 @@ public class NetworkingServiceImpl implements NetworkingService {
     public org.openstack4j.api.networking.ext.NetworkLoggingService logging() {
         return Apis.get(org.openstack4j.api.networking.ext.NetworkLoggingService.class);
     }
+
+    @Override
+    public org.openstack4j.api.networking.ext.VpnServiceService vpnServices() {
+        return Apis.get(org.openstack4j.api.networking.ext.VpnServiceService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.IkePolicyService ikePolicies() {
+        return Apis.get(org.openstack4j.api.networking.ext.IkePolicyService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.IpsecPolicyService ipsecPolicies() {
+        return Apis.get(org.openstack4j.api.networking.ext.IpsecPolicyService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.IpsecSiteConnectionService ipsecSiteConnections() {
+        return Apis.get(org.openstack4j.api.networking.ext.IpsecSiteConnectionService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.VpnEndpointGroupService vpnEndpointGroups() {
+        return Apis.get(org.openstack4j.api.networking.ext.VpnEndpointGroupService.class);
+    }
 }
