@@ -35,7 +35,8 @@ public class AcceleratorTests extends AbstractTest {
         respondWith(204);
         respondWith(204);
         respondWith(201, "{\"name\": \"dp1\", \"uuid\": \"p1\", \"groups\": [{\"resources:CUSTOM_ACCELERATOR_FPGA\": \"1\"}]}");
-        respondWith(200, "{\"name\": \"dp1\", \"uuid\": \"p1\"}");
+        respondWith(200, "{\"device_profile\": {\"name\": \"dp1\", \"uuid\": \"p1\"}}");
+        respondWith(200, "{\"device_profile\": {\"name\": \"dp1\", \"uuid\": \"1a939c88-0b01-408b-bab0-4c61d3a02d71\"}}");
         respondWith(204);
 
         var acc = osv3().accelerator();
@@ -46,7 +47,8 @@ public class AcceleratorTests extends AbstractTest {
         Assert.assertTrue(acc.deleteArqs(List.of("a1", "a2")).isSuccess());
         Assert.assertTrue(acc.deleteArqsOfInstance("i1").isSuccess());
         Map<String, Object> profile = acc.createDeviceProfile(Map.of("name", "dp1", "groups", List.of(Map.of("resources:CUSTOM_ACCELERATOR_FPGA", "1"))));
-        acc.getDeviceProfile("dp1");
+        Map<String, Object> byName = acc.getDeviceProfile("dp1");
+        acc.getDeviceProfile("1a939c88-0b01-408b-bab0-4c61d3a02d71");
         Assert.assertTrue(acc.deleteDeviceProfilesByName(List.of("dp1", "dp2")).isSuccess());
 
         RecordedRequest create = takeRequest();
@@ -63,10 +65,12 @@ public class AcceleratorTests extends AbstractTest {
         RecordedRequest profileCreate = takeRequest();
         Assert.assertTrue(json(profileCreate).startsWith("[{"), json(profileCreate));
         Assert.assertEquals(takeRequest().getHeader("OpenStack-API-Version"), "accelerator 2.2");
+        Assert.assertNull(takeRequest().getHeader("OpenStack-API-Version"));
         Assert.assertEquals(path(takeRequest()), "/v2/device_profiles?value=dp1,dp2");
         Assert.assertEquals(created.get(0).get("state"), "Initial");
         Assert.assertEquals(arq.get("state"), "Bound");
         Assert.assertEquals(profile.get("uuid"), "p1");
+        Assert.assertEquals(byName.get("uuid"), "p1");
     }
 
     public void devicesDeployablesAttributes() throws Exception {
@@ -77,7 +81,7 @@ public class AcceleratorTests extends AbstractTest {
         respondWith(200, "{\"deployables\": [{\"uuid\": \"dep1\", \"num_accelerators\": 1}]}");
         respondWith(200, "{\"uuid\": \"dep1\", \"name\": \"fpga0\"}");
         respondWith(200, "{\"uuid\": \"dep1\", \"name\": \"fpga0\"}");
-        respondWith(201, "{\"attributes\": [{\"uuid\": \"at1\", \"key\": \"rc\", \"value\": \"FPGA\"}]}");
+        respondWith(201, "{\"uuid\": \"at1\", \"key\": \"rc\", \"value\": \"FPGA\"}");
         respondWith(204);
 
         var acc = osv3().accelerator();
@@ -88,12 +92,12 @@ public class AcceleratorTests extends AbstractTest {
         acc.listDeployables(null);
         acc.getDeployable("dep1");
         acc.programDeployable("dep1", "img1");
-        List<Map<String, Object>> attrs = acc.createAttribute("1", "rc", "FPGA");
+        Map<String, Object> attr = acc.createAttribute("1", "rc", "FPGA");
         Assert.assertTrue(acc.deleteAttribute("at1").isSuccess());
 
         RecordedRequest list = takeRequest();
         Assert.assertEquals(path(list), "/v2/devices?type=FPGA");
-        Assert.assertEquals(list.getHeader("OpenStack-API-Version"), "accelerator 2.3");
+        Assert.assertNull(list.getHeader("OpenStack-API-Version"));
         Assert.assertEquals(path(takeRequest()), "/v2/devices/d1");
         Assert.assertEquals(path(takeRequest()), "/v2/devices/d1/disable");
         Assert.assertEquals(path(takeRequest()), "/v2/devices/d1/enable");
@@ -105,6 +109,6 @@ public class AcceleratorTests extends AbstractTest {
         Assert.assertEquals(json(takeRequest()), "{\"deployable_id\":\"1\",\"key\":\"rc\",\"value\":\"FPGA\"}");
         Assert.assertEquals(path(takeRequest()), "/v2/attributes/at1");
         Assert.assertEquals(devices.get(0).get("status"), "enabled");
-        Assert.assertEquals(attrs.get(0).get("key"), "rc");
+        Assert.assertEquals(attr.get("key"), "rc");
     }
 }

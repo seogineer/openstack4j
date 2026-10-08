@@ -27,7 +27,7 @@ public interface RatingService extends RestService {
     /** @param enabled or {@code null} @param priority or {@code null} */
     ActionResponse updateModule(String moduleId, Boolean enabled, Integer priority);
 
-    /** @param filters {@code scope_id}, {@code scope_key}, {@code fetcher}, {@code collector}, {@code active}, {@code limit}, {@code offset} @return the scope states */
+    /** @param filters {@code scope_id}, {@code scope_key}, {@code fetcher}, {@code collector}, {@code active} ({@code 1}/{@code 0}), {@code limit}, {@code offset} @return the scope states (empty when none match) */
     List<Map<String, Object>> listScopes(Map<String, String> filters);
 
     /**
@@ -41,7 +41,7 @@ public interface RatingService extends RestService {
     /** Changes a scope (admin), e.g. {@code {"scope_id": …, "active": false}}; @return the scope */
     Map<String, Object> patchScope(Map<String, ?> body);
 
-    /** Creates a scope (admin), e.g. {@code {"scope_id": …, "scope_key": "project_id", "active": true}}; @return the scope */
+    /** Creates a scope (admin), e.g. {@code {"scope_id": …, "scope_key": "project_id", "last_processed_timestamp": "2026-10-01T00:00:00Z", "active": true}}; @return the scope */
     Map<String, Object> createScope(Map<String, ?> body);
 
     /** @param filters {@code begin}, {@code end}, {@code groupby}, {@code filters}, {@code limit}, {@code offset}, {@code response_format} @return {@code total}, {@code columns}/{@code results} */

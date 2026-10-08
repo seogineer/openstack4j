@@ -47,7 +47,19 @@ public class RatingServiceImpl extends BaseOpenStackService implements RatingSer
 
     @Override
     public Map<String, Object> listDataframes(Map<String, String> filters) {
-        return mapOf("/v2/dataframes", filters);
+        Map<String, Object> body = orEmpty("/v2/dataframes", filters);
+        if (body == null) {
+            body = new HashMap<>();
+            body.put("total", 0);
+            body.put("dataframes", Collections.emptyList());
+        }
+        return body;
+    }
+
+    /** CloudKitty answers "no rows" with 404 on dataframes and scope; @return the body, or {@code null} for that 404 */
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> orEmpty(String path, Map<String, String> filters) {
+        return get(Map.class, path).params(filters == null ? Collections.emptyMap() : filters).execute();
     }
 
     @Override
@@ -78,7 +90,8 @@ public class RatingServiceImpl extends BaseOpenStackService implements RatingSer
 
     @Override
     public List<Map<String, Object>> listScopes(Map<String, String> filters) {
-        return list(mapOf("/v2/scope", filters), "results");
+        Map<String, Object> body = orEmpty("/v2/scope", filters);
+        return body == null ? Collections.emptyList() : list(body, "results");
     }
 
     @Override
