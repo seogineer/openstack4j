@@ -403,6 +403,16 @@ os.containerApp().createContainer(Map.of("image", "nginx", "command", List.of("n
 os.containerApp().executeContainer("web", "uname -a", true, false);
 ```
 
+## NFV (Tacker ETSI NFV-SOL)
+
+`os.tacker()` gains the ETSI NFV-SOL APIs next to the legacy v1.0 ones: `vnfPackages()` (`/vnfpkgm/v1`: create, CSAR upload or upload from URI, download content/VNFD/artifacts), `vnfLcm()` (`/vnflcm/v2`) and `vnfLcmV1()` (`/vnflcm/v1`): VNF instances, instantiate/terminate/heal/scale/change_ext_conn/change_vnfpkg, operation occurrences (retry, rollback, fail, cancel), subscriptions; `vnfFaults()` (`/vnffm/v1`) and `vnfPerformance()` (`/vnfpm/v2`). The required `Version` header is sent for you; lifecycle operations return the id of their operation occurrence; lists return `items` and `next` (the `nextpage_opaque_marker`). `vim().update(...)` is added too.
+
+```java
+String instanceId = (String) os.tacker().vnfLcm().createVnfInstance(Map.of("vnfdId", vnfdId)).get("id");
+String opOccId = os.tacker().vnfLcm().instantiate(instanceId, Map.of("flavourId", "simple"));
+os.tacker().vnfLcm().getLcmOpOcc(opOccId).get("operationState");
+```
+
 ## Build
 
 ```bash

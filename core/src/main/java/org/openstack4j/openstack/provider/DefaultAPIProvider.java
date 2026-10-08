@@ -405,6 +405,10 @@ public class DefaultAPIProvider implements APIProvider {
         bind(org.openstack4j.api.barbican.ext.BarbicanQuotaService.class, org.openstack4j.openstack.barbican.internal.ext.BarbicanQuotaServiceImpl.class);
         bind(org.openstack4j.api.barbican.ext.SecretStoreService.class, org.openstack4j.openstack.barbican.internal.ext.SecretStoreServiceImpl.class);
         bind(TackerService.class, TackerServiceImpl.class);
+        bind(org.openstack4j.api.tacker.VnfPackageService.class, org.openstack4j.openstack.tacker.internal.sol.VnfPackageServiceImpl.class);
+        bind(org.openstack4j.api.tacker.VnfLcmService.class, org.openstack4j.openstack.tacker.internal.sol.VnfLcmServiceImpl.class);
+        bind(org.openstack4j.api.tacker.VnfFmService.class, org.openstack4j.openstack.tacker.internal.sol.VnfFmServiceImpl.class);
+        bind(org.openstack4j.api.tacker.VnfPmService.class, org.openstack4j.openstack.tacker.internal.sol.VnfPmServiceImpl.class);
         bind(VnfdService.class, VnfdServiceImpl.class);
         bind(VnfService.class, VnfServiceImpl.class);
         bind(VimService.class, VimServiceImpl.class);
