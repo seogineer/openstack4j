@@ -203,6 +203,13 @@ public interface OSClient<T extends OSClient<T>> {
     org.openstack4j.api.baremetal.BaremetalService baremetal();
 
     /**
+     * Returns the reservation (Blazar) service API
+     *
+     * @return the reservation (Blazar) service
+     */
+    org.openstack4j.api.reservation.ReservationService reservation();
+
+    /**
      * Returns the instance HA (Masakari) service API
      *
      * @return the instance HA (Masakari) service

@@ -110,6 +110,15 @@ public class Apis {
         return get(org.openstack4j.api.instanceha.InstanceHaService.class);
     }
 
+    /**
+     * Gets the reservation (Blazar) services API
+     *
+     * @return the reservation (Blazar) services
+     */
+    public static org.openstack4j.api.reservation.ReservationService getReservationService() {
+        return get(org.openstack4j.api.reservation.ReservationService.class);
+    }
+
     public static org.openstack4j.api.baremetal.BaremetalService getBaremetalService() {
         return get(org.openstack4j.api.baremetal.BaremetalService.class);
     }

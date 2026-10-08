@@ -293,6 +293,7 @@ public abstract class AbstractTest {
         APP_CATALOG(8082),
         DNS(9001),
         BAREMETAL(6385),
+        RESERVATION(1234),
         INSTANCE_HA(15868),
         WORKFLOW(8989),
         PLACEMENT(8780);

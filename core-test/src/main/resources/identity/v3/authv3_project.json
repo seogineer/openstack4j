@@ -415,6 +415,20 @@
                 "endpoints": [
                     {
                         "region_id": "RegionOne",
+                        "url": "http://127.0.0.1:1234/v1",
+                        "region": "RegionOne",
+                        "interface": "public",
+                        "id": "e1a2c3d4e5f60718293a4b5c6d7e1234"
+                    }
+                ],
+                "type": "reservation",
+                "id": "e1a2c3d4e5f60718293a4b5c6d7f1234",
+                "name": "blazar"
+            },
+            {
+                "endpoints": [
+                    {
+                        "region_id": "RegionOne",
                         "url": "http://127.0.0.1:15868/v1/26decac97b67478f9f64ff2c2c1b778e",
                         "region": "RegionOne",
                         "interface": "public",

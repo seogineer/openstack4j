@@ -344,6 +344,17 @@ os.instanceHa().hosts().create(segment.getUuid(), HostOptions.create("compute-01
 os.instanceHa().notifications().listVMoves(notificationId, null);    // instance-ha 1.3 header added for you
 ```
 
+## Reservation (Blazar)
+
+New service `os.reservation()` (Blazar v1): leases and the host and floating IP pools that leases reserve from.
+
+```java
+Lease lease = os.reservation().leases().create(Map.of("name", "gpu-week", "start_date", "now", "end_date", "2026-10-15 12:00",
+        "reservations", List.of(Map.of("resource_type", "physical:host", "min", 1, "max", 2, "hypervisor_properties", "", "resource_properties", "")),
+        "events", List.of()));
+os.reservation().hosts().create(Map.of("name", "compute-07", "gpu", "a100"));   // admin
+```
+
 ## Build
 
 ```bash
