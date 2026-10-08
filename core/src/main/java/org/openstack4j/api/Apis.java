@@ -97,11 +97,6 @@ public class Apis {
     }
 
     /**
-     * Gets the bare metal (Ironic) services API
-     *
-     * @return the bare metal services
-     */
-    /**
      * Gets the instance HA (Masakari) services API
      *
      * @return the instance HA (Masakari) services
@@ -119,6 +114,11 @@ public class Apis {
         return get(org.openstack4j.api.reservation.ReservationService.class);
     }
 
+    /**
+     * Gets the bare metal (Ironic) services API
+     *
+     * @return the bare metal services
+     */
     public static org.openstack4j.api.baremetal.BaremetalService getBaremetalService() {
         return get(org.openstack4j.api.baremetal.BaremetalService.class);
     }
