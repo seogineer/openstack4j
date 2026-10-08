@@ -285,6 +285,22 @@ os.share().shareBackups().create(ShareBackupCreate.create(shareId)); // experime
 - experimental API(2.96 미만의 migration, share server migration, share backups)는 `X-OpenStack-Manila-API-Experimental: True` 를 자동으로 보냅니다
 - 새 모델은 상태를 문자열로 갖고, 나머지 필드는 `getAttributes()` 에 있습니다
 
+## Key manager(Barbican) 확장
+
+같은 릴리스에서 Barbican v1 의 나머지 API 를 지원합니다. 기존 `secrets()`, `containers()` 메서드는 그대로입니다.
+
+```java
+os.barbican().acls().setSecretAcl(secretId, List.of(userId), false);      // read ACL: 이 사용자만
+os.barbican().secretsExt().storeTextPayload(secretId, "s3cr3t");          // 2 단계 secret 생성
+String payload = os.barbican().secretsExt().getTextPayload(secretId);
+os.barbican().secretsExt().addMetadataItem(secretId, "owner", "team-a");
+String orderRef = os.barbican().orders().create("key", Map.of("name", "aes", "algorithm", "AES", "bit_length", 256));
+os.barbican().quotas().setProjectQuotas(projectId, Map.of("secrets", 50));
+```
+
+- 새 accessor: `acls()`(secret·container 의 read ACL), `secretsExt()`(payload, 사용자 metadata, consumers — API 1.1 헤더 자동), `containersExt()`(secrets, consumers), `orders()`, `quotas()`(실효·project quota), `secretStores()`(여러 back end, preferred store)
+- 모델은 자주 쓰는 필드만 getter 가 있고, 나머지는 `getAttributes()` 에 있습니다
+
 ## 빌드
 
 ```bash

@@ -285,6 +285,22 @@ os.share().shareBackups().create(ShareBackupCreate.create(shareId)); // experime
 - Experimental APIs (migration below 2.96, share server migration, share backups) send `X-OpenStack-Manila-API-Experimental: True` for you
 - The new models keep status as text; the other fields are in `getAttributes()`
 
+## Key manager (Barbican) extensions
+
+The same release supports the rest of the Barbican v1 API. The existing `secrets()` and `containers()` methods are unchanged.
+
+```java
+os.barbican().acls().setSecretAcl(secretId, List.of(userId), false);      // read ACL: only these users
+os.barbican().secretsExt().storeTextPayload(secretId, "s3cr3t");          // two-step secret creation
+String payload = os.barbican().secretsExt().getTextPayload(secretId);
+os.barbican().secretsExt().addMetadataItem(secretId, "owner", "team-a");
+String orderRef = os.barbican().orders().create("key", Map.of("name", "aes", "algorithm", "AES", "bit_length", 256));
+os.barbican().quotas().setProjectQuotas(projectId, Map.of("secrets", 50));
+```
+
+- New accessors: `acls()` (secret and container read ACLs), `secretsExt()` (payload, user metadata, consumers — API 1.1 header added for you), `containersExt()` (secrets, consumers), `orders()`, `quotas()` (effective and project quotas), `secretStores()` (multiple back ends, preferred store)
+- Models have getters for the common fields; the rest are in `getAttributes()`
+
 ## Build
 
 ```bash
