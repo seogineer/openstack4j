@@ -386,7 +386,7 @@ os.registration().submitToken(token, Map.of("password", newPassword));
 
 ## Resource optimization (Watcher)
 
-New service `os.optimization()` (Watcher v1): audit templates, audits, action plans (start), actions (skip), goals, strategies (state), scoring engines, services, the compute data model and webhooks. Lists return their page (`next` holds the following page's URL). Methods that need a newer API send `OpenStack-API-Version: infra-optim <version>` themselves.
+New service `os.optimization()` (Watcher v1): audit templates, audits, action plans (start), actions (skip), goals, strategies (state), scoring engines, services, the compute data model and webhooks. Lists return their page (`next` holds the following page's URL). Methods that need a newer API send `OpenStack-API-Version: infra-optim <version>` themselves; `useApiVersion("1.7")` (or `latest`) opts every request into a version so newer fields such as `status_message` come back.
 
 ```java
 os.optimization().createAudit(Map.of("goal", "server_consolidation", "audit_type", "ONESHOT"));

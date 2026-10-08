@@ -386,7 +386,7 @@ os.registration().submitToken(token, Map.of("password", newPassword));
 
 ## Resource optimization(Watcher)
 
-새 서비스 `os.optimization()`(Watcher v1): audit templates, audits, action plans(start), actions(skip), goals, strategies(state), scoring engines, services, compute data model, webhooks. 목록은 페이지를 돌려줍니다(`next` 에 다음 페이지 URL). 새 API 가 필요한 메서드는 `OpenStack-API-Version: infra-optim <version>` 을 직접 붙입니다.
+새 서비스 `os.optimization()`(Watcher v1): audit templates, audits, action plans(start), actions(skip), goals, strategies(state), scoring engines, services, compute data model, webhooks. 목록은 페이지를 돌려줍니다(`next` 에 다음 페이지 URL). 새 API 가 필요한 메서드는 `OpenStack-API-Version: infra-optim <version>` 을 직접 붙입니다. `useApiVersion("1.7")`(또는 `latest`)로 모든 요청에 버전을 지정하면 `status_message` 같은 새 필드도 받습니다.
 
 ```java
 os.optimization().createAudit(Map.of("goal", "server_consolidation", "audit_type", "ONESHOT"));

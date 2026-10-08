@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.WeakHashMap;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.openstack4j.api.optimization.OptimizationService;
@@ -14,11 +15,15 @@ import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.ModelEntity;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.internal.BaseOpenStackService;
+import org.openstack4j.openstack.internal.OSClientSession;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 public class OptimizationServiceImpl extends BaseOpenStackService implements OptimizationService {
 
     private static final String VERSION_HEADER = "OpenStack-API-Version";
+
+    /** API versions chosen with {@link #useApiVersion} per session (client). */
+    private static final Map<Object, String> VERSIONS = Collections.synchronizedMap(new WeakHashMap<>());
 
     public OptimizationServiceImpl() {
         // catalogs register http://host:9322 (or with /v1); paths carry /v1 themselves
@@ -36,8 +41,32 @@ public class OptimizationServiceImpl extends BaseOpenStackService implements Opt
         return value;
     }
 
-    private static <R> Invocation<R> at(Invocation<R> invocation, String version) {
-        return invocation.header(VERSION_HEADER, "infra-optim " + version);
+    @Override
+    public void useApiVersion(String version) {
+        if (version == null) {
+            VERSIONS.remove(OSClientSession.getCurrent());
+            return;
+        }
+        if (!version.equals("latest") && !version.matches("1\\.\\d+"))
+            throw new IllegalArgumentException("Not an infra-optim API version: '" + version + "'");
+        VERSIONS.put(OSClientSession.getCurrent(), version);
+    }
+
+    @Override
+    protected <R> Invocation<R> decorate(Invocation<R> invocation) {
+        String version = VERSIONS.get(OSClientSession.getCurrent());
+        return version == null ? invocation : invocation.header(VERSION_HEADER, "infra-optim " + version);
+    }
+
+    /** Sends at least {@code floor}: the session's version when it is newer, else {@code floor}. */
+    private static <R> Invocation<R> at(Invocation<R> invocation, String floor) {
+        String chosen = VERSIONS.get(OSClientSession.getCurrent());
+        boolean newer = chosen != null && (chosen.equals("latest") || minor(chosen) >= minor(floor));
+        return invocation.header(VERSION_HEADER, "infra-optim " + (newer ? chosen : floor));
+    }
+
+    private static int minor(String version) {
+        return Integer.parseInt(version.substring(version.indexOf('.') + 1));
     }
 
     @SuppressWarnings("unchecked")
@@ -97,7 +126,11 @@ public class OptimizationServiceImpl extends BaseOpenStackService implements Opt
 
     @Override
     public Map<String, Object> updateAuditTemplate(String auditTemplateIdent, List<Map<String, Object>> patch) {
-        return patched("/v1/audit_templates/" + id(auditTemplateIdent), patch);
+        Objects.requireNonNull(patch, "patch");
+        Invocation<Map> invocation = patch(Map.class, "/v1/audit_templates/" + id(auditTemplateIdent)).entity(new ListBody(patch));
+        if (patch.stream().anyMatch(op -> "/default_parameters".equals(op.get("path"))))
+            at(invocation, "1.7");
+        return strict(invocation);
     }
 
     @Override
@@ -275,7 +308,8 @@ public class OptimizationServiceImpl extends BaseOpenStackService implements Opt
 
     @Override
     public ActionResponse triggerWebhook(String auditIdent) {
-        return at(postWithResponse("/v1/webhooks/" + id(auditIdent)), "1.4").execute();
+        // Watcher requires a JSON body (any object)
+        return at(postWithResponse("/v1/webhooks/" + id(auditIdent)).entity(JsonBody.of(Map.of())), "1.4").execute();
     }
 
     /** A request body that is a JSON list. */

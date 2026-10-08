@@ -14,9 +14,19 @@ import org.openstack4j.model.common.ActionResponse;
  * Methods that need a newer API send {@code OpenStack-API-Version: infra-optim <version>} themselves (audit
  * {@code start_time}/{@code end_time} 1.1, audit {@code force} 1.2, data model 1.3, webhooks 1.4, action updates 1.5,
  * audit template {@code default_parameters} 1.7);
- * the rest send no version header.
+ * the rest send no version header, so Watcher answers at 1.0 and leaves out the fields added later (audit
+ * {@code start_time}, {@code end_time}, {@code force}, {@code status_message}, template {@code default_parameters},
+ * action and action plan {@code status_message}). Call {@link #useApiVersion} to send a version on every request.
  */
 public interface OptimizationService extends RestService {
+
+    /**
+     * Sends {@code OpenStack-API-Version: infra-optim <version>} on the current client's requests (a method needing a
+     * newer version still sends its own).
+     *
+     * @param version e.g. {@code 1.7} or {@code latest}, or {@code null} to send none again
+     */
+    void useApiVersion(String version);
 
     /** @return the API versions ({@code GET /}) */
     Map<String, Object> versions();
