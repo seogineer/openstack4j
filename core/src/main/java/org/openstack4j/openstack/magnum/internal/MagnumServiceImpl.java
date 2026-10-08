@@ -294,5 +294,8 @@ public class MagnumServiceImpl extends BaseOpenStackService implements MagnumSer
         return patch(MagnumPod.class, MAGNUM_PODS, "/", id).serviceType(ServiceType.MAGNUM).json(operations).execute();
     }
 
-
+    @Override
+    public org.openstack4j.api.magnum.ext.MagnumExtService extensions() {
+        return org.openstack4j.api.Apis.get(org.openstack4j.api.magnum.ext.MagnumExtService.class);
+    }
 }

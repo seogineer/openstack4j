@@ -413,6 +413,8 @@ public class DefaultAPIProvider implements APIProvider {
         bind(ServicesService.class, ServicesServiceImpl.class);
         bind(BlockStorageServiceService.class, BlockStorageServiceServiceImpl.class);
         bind(MagnumService.class, MagnumServiceImpl.class);
+        bind(org.openstack4j.api.magnum.ext.MagnumExtService.class, org.openstack4j.openstack.magnum.internal.ext.MagnumExtServiceImpl.class);
+        bind(org.openstack4j.api.telemetry.ext.AodhAlarmExtService.class, org.openstack4j.openstack.telemetry.internal.ext.AodhAlarmExtServiceImpl.class);
         bind(WorkflowService.class, WorkflowServiceImpl.class);
         bind(WorkflowDefinitionService.class, WorkflowDefinitionServiceImpl.class);
         bind(DNSService.class, DNSServiceImpl.class);

@@ -50,4 +50,7 @@ public interface TelemetryService extends RestService {
      * @return the capabilities service API
      */
     CapabilitiesService capabilities();
+
+    /** @return Aodh alarm history, state, complex queries and quotas */
+    org.openstack4j.api.telemetry.ext.AodhAlarmExtService alarmsExt();
 }

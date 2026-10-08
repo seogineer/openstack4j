@@ -301,5 +301,6 @@ public interface MagnumService extends RestService {
      */
     Pod updatePod(String bayUuid, String id, String operations);
 
-
+    /** @return cluster resize/upgrade, CA certificates by type, quotas and stats */
+    org.openstack4j.api.magnum.ext.MagnumExtService extensions();
 }

@@ -37,4 +37,13 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
         return Apis.get(ObjectStorageObjectService.class);
     }
 
+    @Override
+    public java.util.Map<String, Object> info() {
+        return org.openstack4j.openstack.storage.object.internal.ext.SwiftInfoService.info();
+    }
+
+    @Override
+    public java.util.List<String> listEndpoints(String container, String object) {
+        return org.openstack4j.openstack.storage.object.internal.ext.SwiftInfoService.endpoints(container, object);
+    }
 }
