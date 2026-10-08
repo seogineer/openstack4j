@@ -42,7 +42,8 @@ public class MagnumExtServiceImpl extends BaseOpenStackService implements Magnum
             body.put("nodes_to_remove", nodesToRemove);
         if (nodegroup != null)
             body.put("nodegroup", nodegroup);
-        return clusterAction(clusterId, "resize", "container-infra 1.7", body);
+        // Magnum accepts resizing a node group to 0 nodes only from 1.10
+        return clusterAction(clusterId, "resize", nodeCount == 0 ? "container-infra 1.10" : "container-infra 1.7", body);
     }
 
     @Override

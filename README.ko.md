@@ -318,7 +318,7 @@ os.trove().troveAdmin().getQuotas(projectId);                     // 관리자
 - 새 accessor: `instancesExt()`(detail 목록, 이름 변경, configuration 연결/해제, datastore upgrade, replica 분리, access, restart/resize/promote/eject/reset status, instance backups, configuration 기본값, logs, SSL, root), `backups()`, `backupStrategies()`, `configurations()`, `datastoresExt()`(id 로 version 조회, configuration parameters, datastore 삭제, limits), `troveAdmin()`(`/mgmt` instances, 동작, root 이력, datastore versions, parameters, quotas)
 - datastore 마다 모양이 다른 응답(logs, SSL, parameters, 관리자 view)은 `Map` 으로 돌려줍니다
 
-## Object storage, alarming, container infra 보강
+## Object storage, alarming, container infra, workflow 보강
 
 ```java
 os.objectStorage().info();                                         // GET /info (클러스터 기능)

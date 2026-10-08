@@ -318,7 +318,7 @@ os.trove().troveAdmin().getQuotas(projectId);                     // admin
 - New accessors: `instancesExt()` (detail list, rename, configuration attach/detach, datastore upgrade, replica detach, access, restart/resize/promote/eject/reset status, instance backups, configuration defaults, logs, SSL, root), `backups()`, `backupStrategies()`, `configurations()`, `datastoresExt()` (version by id, configuration parameters, delete datastore, limits), `troveAdmin()` (`/mgmt` instances, actions, root history, datastore versions, parameters, quotas)
 - Responses whose shape varies by datastore (logs, SSL, parameters, admin views) are returned as `Map`s
 
-## Object storage, alarming and container infra additions
+## Object storage, alarming, container infra and workflow additions
 
 ```java
 os.objectStorage().info();                                         // GET /info (cluster capabilities)
