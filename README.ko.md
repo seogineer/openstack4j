@@ -355,6 +355,15 @@ Lease lease = os.reservation().leases().create(Map.of("name", "gpu-week", "start
 os.reservation().hosts().create(Map.of("name", "compute-07", "gpu", "a100"));   // 관리자
 ```
 
+## Rating(CloudKitty), accelerator(Cyborg)
+
+새 서비스 `os.rating()`(CloudKitty v2: rated dataframes, rating modules, scopes, summary, reprocessing)과 `os.accelerator()`(Cyborg v2: accelerator requests, device profiles, devices, deployables, attributes). 응답 모양이 배포의 collector·driver 에 따라 달라서 결과는 `Map` 으로 돌려줍니다.
+
+```java
+os.rating().summary(Map.of("groupby", "project_id", "begin", "2026-10-01T00:00:00Z"));
+os.accelerator().createArqs("fpga-profile");                         // 필요한 곳에 accelerator microversion 자동
+```
+
 ## 빌드
 
 ```bash

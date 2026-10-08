@@ -203,6 +203,20 @@ public interface OSClient<T extends OSClient<T>> {
     org.openstack4j.api.baremetal.BaremetalService baremetal();
 
     /**
+     * Returns the accelerator (Cyborg) service API
+     *
+     * @return the accelerator (Cyborg) service
+     */
+    org.openstack4j.api.accelerator.AcceleratorService accelerator();
+
+    /**
+     * Returns the rating (CloudKitty) service API
+     *
+     * @return the rating (CloudKitty) service
+     */
+    org.openstack4j.api.rating.RatingService rating();
+
+    /**
      * Returns the reservation (Blazar) service API
      *
      * @return the reservation (Blazar) service

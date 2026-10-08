@@ -154,6 +154,20 @@ public abstract class OSClientSession<R, T extends OSClient<T>> implements Endpo
     /**
      * {@inheritDoc}
      */
+    public org.openstack4j.api.rating.RatingService rating() {
+        return Apis.getRatingService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public org.openstack4j.api.accelerator.AcceleratorService accelerator() {
+        return Apis.getAcceleratorService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public org.openstack4j.api.baremetal.BaremetalService baremetal() {
         return Apis.getBaremetalService();
     }

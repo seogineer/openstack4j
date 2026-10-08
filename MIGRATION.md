@@ -137,6 +137,6 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - `BarbicanService` 에 추상 accessor(`acls()`, `secretsExt()`, `containersExt()`, `orders()`, `quotas()`, `secretStores()`)가 추가되었습니다.
 - `TroveService` 에 추상 accessor(`instancesExt()`, `backups()`, `backupStrategies()`, `configurations()`, `datastoresExt()`, `troveAdmin()`)가 추가되었습니다.
 - `ObjectStorageService`(`info()`, `listEndpoints`), `TelemetryService`(`alarmsExt()`), `MagnumService`(`extensions()`), `WorkflowService`(`extensions()`)에 추상 메서드가 추가되었습니다.
-- `OSClient` 에 추상 accessor `instanceHa()`, `reservation()`, `ServiceType` 에 `INSTANCE_HA`, `RESERVATION` 이 추가되었습니다(Masakari, Blazar).
+- `OSClient` 에 추상 accessor `instanceHa()`, `reservation()`, `rating()`, `accelerator()`, `ServiceType` 에 `INSTANCE_HA`, `RESERVATION`, `RATING`, `ACCELERATOR` 가 추가되었습니다(Masakari, Blazar, CloudKitty, Cyborg). `OSClient` 를 직접 구현한 가짜 구현은 새 메서드가 필요하고, `ServiceType.values()` 를 순회하는 코드에는 값이 늘어납니다.
 - 오류 메시지: 응답 본문의 최상위 `message`(Designate) 와 `error_message` 안의 `faultstring`(Ironic, Magnum) 을 `ActionResponse.getFault()`·예외 메시지로 씁니다. 이전에는 `Status: 404, Reason: Not Found` 같은 상태 줄이나 JSON 원문이었습니다.
 - httpclient connector: 요청에 `Accept` 헤더를 주면 기본값 `application/json` 을 대체합니다(이전에는 `Accept` 가 두 개 전송되었습니다). http-connector 는 원래 이렇게 동작했습니다.

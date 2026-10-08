@@ -355,6 +355,15 @@ Lease lease = os.reservation().leases().create(Map.of("name", "gpu-week", "start
 os.reservation().hosts().create(Map.of("name", "compute-07", "gpu", "a100"));   // admin
 ```
 
+## Rating (CloudKitty) and accelerators (Cyborg)
+
+New services `os.rating()` (CloudKitty v2: rated dataframes, rating modules, scopes, summaries, reprocessing) and `os.accelerator()` (Cyborg v2: accelerator requests, device profiles, devices, deployables, attributes). Results are `Map`s, as their shapes depend on the deployment's collectors and drivers.
+
+```java
+os.rating().summary(Map.of("groupby", "project_id", "begin", "2026-10-01T00:00:00Z"));
+os.accelerator().createArqs("fpga-profile");                         // accelerator microversions added where needed
+```
+
 ## Build
 
 ```bash
