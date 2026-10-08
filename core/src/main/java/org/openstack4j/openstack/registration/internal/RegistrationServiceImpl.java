@@ -1,5 +1,8 @@
 package org.openstack4j.openstack.registration.internal;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -8,10 +11,13 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.openstack4j.api.registration.RegistrationService;
 import org.openstack4j.api.types.ServiceType;
 import org.openstack4j.core.transport.ExecutionOptions;
+import org.openstack4j.core.transport.HttpEntityHandler;
+import org.openstack4j.core.transport.HttpResponse;
 import org.openstack4j.core.transport.ObjectMapperSingleton;
 import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.common.ActionResponse;
@@ -60,7 +66,55 @@ public class RegistrationServiceImpl extends BaseOpenStackService implements Reg
     }
 
     private ActionResponse post(String path, Map<String, ?> body) {
-        return postWithResponse(path).entity(JsonBody.of(body)).execute();
+        return act(postWithResponse(path).entity(JsonBody.of(body)));
+    }
+
+    /**
+     * Executes an action. Adjutant answers with {@code {"notes": [...]}}, {@code {"errors": [...]}},
+     * {@code {"errors": {"field": [...]}}} or a bare JSON string; a failure carries the errors (or the string) as its fault.
+     */
+    private static ActionResponse act(Invocation<ActionResponse> invocation) {
+        HttpResponse response = invocation.executeWithResponse();
+        int status = response.getStatus();
+        if (status < 400) {
+            HttpEntityHandler.closeQuietly(response);
+            return ActionResponse.actionSuccess(status);
+        }
+        String fault = null;
+        try (InputStream in = response.getInputStream()) {
+            if (in != null)
+                fault = fault(ObjectMapperSingleton.getContext(Map.class).readTree(in));
+        } catch (IOException | RuntimeException e) {
+            // not JSON: fall back to the status line
+        } finally {
+            HttpEntityHandler.closeQuietly(response);
+        }
+        return ActionResponse.actionFailed(fault != null && !fault.isBlank() ? fault : "Status: " + status + ", Reason: " + response.getStatusMessage(), status);
+    }
+
+    private static String fault(JsonNode body) {
+        if (body == null)
+            return null;
+        if (body.isTextual())
+            return body.asText();
+        JsonNode errors = body.get("errors");
+        if (errors == null)
+            return null;
+        List<String> messages = new ArrayList<>();
+        if (errors.isObject()) {
+            errors.fields().forEachRemaining(e -> messages.add(e.getKey() + ": " + text(e.getValue())));
+        } else {
+            messages.add(text(errors));
+        }
+        return String.join("; ", messages);
+    }
+
+    private static String text(JsonNode node) {
+        if (!node.isArray())
+            return node.asText();
+        List<String> parts = new ArrayList<>();
+        node.forEach(n -> parts.add(n.isTextual() ? n.asText() : n.toString()));
+        return String.join("; ", parts);
     }
 
     @Override
@@ -94,7 +148,7 @@ public class RegistrationServiceImpl extends BaseOpenStackService implements Reg
 
     @Override
     public ActionResponse updateTask(String taskId, Map<String, ?> data) {
-        return putWithResponse("/v1/tasks/" + id(taskId)).entity(JsonBody.of(Objects.requireNonNull(data, "data"))).execute();
+        return act(putWithResponse("/v1/tasks/" + id(taskId)).entity(JsonBody.of(Objects.requireNonNull(data, "data"))));
     }
 
     @Override
@@ -104,7 +158,7 @@ public class RegistrationServiceImpl extends BaseOpenStackService implements Reg
 
     @Override
     public ActionResponse cancelTask(String taskId) {
-        return deleteWithResponse("/v1/tasks/" + id(taskId)).execute();
+        return act(deleteWithResponse("/v1/tasks/" + id(taskId)));
     }
 
     @Override
@@ -119,7 +173,7 @@ public class RegistrationServiceImpl extends BaseOpenStackService implements Reg
 
     @Override
     public ActionResponse deleteExpiredTokens() {
-        return deleteWithResponse("/v1/tokens").execute();
+        return act(deleteWithResponse("/v1/tokens"));
     }
 
     @SuppressWarnings("unchecked")
@@ -179,7 +233,7 @@ public class RegistrationServiceImpl extends BaseOpenStackService implements Reg
 
     @Override
     public ActionResponse cancelInvite(String userId) {
-        return deleteWithResponse("/v1/openstack/users/" + id(userId)).execute();
+        return act(deleteWithResponse("/v1/openstack/users/" + id(userId)));
     }
 
     @Override
@@ -197,12 +251,12 @@ public class RegistrationServiceImpl extends BaseOpenStackService implements Reg
 
     @Override
     public ActionResponse addUserRoles(String userId, List<String> roles, List<String> inheritedRoles) {
-        return putWithResponse("/v1/openstack/users/" + id(userId) + "/roles").entity(JsonBody.of(roles(roles, inheritedRoles))).execute();
+        return act(putWithResponse("/v1/openstack/users/" + id(userId) + "/roles").entity(JsonBody.of(roles(roles, inheritedRoles))));
     }
 
     @Override
     public ActionResponse removeUserRoles(String userId, List<String> roles, List<String> inheritedRoles) {
-        return deleteWithResponse("/v1/openstack/users/" + id(userId) + "/roles").entity(JsonBody.of(roles(roles, inheritedRoles))).execute();
+        return act(deleteWithResponse("/v1/openstack/users/" + id(userId) + "/roles").entity(JsonBody.of(roles(roles, inheritedRoles))));
     }
 
     @Override

@@ -189,6 +189,29 @@ public class RegistrationTests extends AbstractTest {
         takeRequest();
     }
 
+    public void failuresCarryAdjutantErrors() throws Exception {
+        respondWith(404, "\"Not found.\"");
+        respondWith(501, "\"Revoking keystone users not implemented. Try removing all roles instead.\"");
+        respondWith(400, "{\"errors\": [\"Task already approved.\"]}");
+        respondWith(400, "{\"errors\": {\"email\": [\"Enter a valid email address.\"]}}");
+        respondWith(200, "\"Cancelled pending invite task!\"");
+
+        var reg = osv3().registration();
+        var notFound = reg.cancelInvite("deadbeef");
+        Assert.assertFalse(notFound.isSuccess());
+        Assert.assertEquals(notFound.getCode(), 404);
+        Assert.assertEquals(notFound.getFault(), "Not found.");
+        var notImplemented = reg.cancelInvite("u1");
+        Assert.assertFalse(notImplemented.isSuccess());
+        Assert.assertEquals(notImplemented.getCode(), 501);
+        Assert.assertTrue(notImplemented.getFault().startsWith("Revoking keystone users"), notImplemented.getFault());
+        Assert.assertEquals(reg.approveTask("t1").getFault(), "Task already approved.");
+        Assert.assertEquals(reg.inviteUser("bad", List.of("member"), null, null).getFault(), "email: Enter a valid email address.");
+        Assert.assertTrue(reg.cancelInvite("u2").isSuccess());
+        for (int i = 0; i < 5; i++)
+            takeRequest();
+    }
+
     public void failedActionsReportTheError() throws Exception {
         respondWith(400, "{\"errors\": [\"Task already approved.\"]}");
         respondWith(500, "{\"errors\": [\"boom\"]}");
