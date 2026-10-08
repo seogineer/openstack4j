@@ -21,7 +21,7 @@ public class NeutronBgpPeer implements BgpPeer {
     @JsonProperty("id") private String id;
     @JsonProperty("name") private String name;
     @JsonProperty("peer_ip") private String peerIp;
-    @JsonProperty("remote_as") private Integer remoteAs;
+    @JsonProperty("remote_as") private Long remoteAs;
     @JsonProperty("auth_type") private String authType;
     @JsonProperty("project_id") private String projectId;
 
@@ -31,7 +31,7 @@ public class NeutronBgpPeer implements BgpPeer {
     @Override public String getId() { return id; }
     @Override public String getName() { return name; }
     @Override public String getPeerIp() { return peerIp; }
-    @Override public Integer getRemoteAs() { return remoteAs; }
+    @Override public Long getRemoteAs() { return remoteAs; }
     @Override public String getAuthType() { return authType; }
     @Override public String getProjectId() { return projectId; }
 

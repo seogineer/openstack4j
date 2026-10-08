@@ -9,7 +9,7 @@ public interface BgpPeer extends ModelEntity {
     String getId();
     String getName();
     String getPeerIp();
-    Integer getRemoteAs();
+    Long getRemoteAs();
     String getAuthType();
     String getProjectId();
     /** @return the response fields that have no getter */

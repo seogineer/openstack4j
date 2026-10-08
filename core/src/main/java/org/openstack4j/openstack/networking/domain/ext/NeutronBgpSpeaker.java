@@ -20,7 +20,7 @@ public class NeutronBgpSpeaker implements BgpSpeaker {
 
     @JsonProperty("id") private String id;
     @JsonProperty("name") private String name;
-    @JsonProperty("local_as") private Integer localAs;
+    @JsonProperty("local_as") private Long localAs;
     @JsonProperty("ip_version") private Integer ipVersion;
     @JsonProperty("peers") private List<String> peers;
     @JsonProperty("networks") private List<String> networks;
@@ -33,7 +33,7 @@ public class NeutronBgpSpeaker implements BgpSpeaker {
 
     @Override public String getId() { return id; }
     @Override public String getName() { return name; }
-    @Override public Integer getLocalAs() { return localAs; }
+    @Override public Long getLocalAs() { return localAs; }
     @Override public Integer getIpVersion() { return ipVersion; }
     @Override public List<String> getPeers() { return peers; }
     @Override public List<String> getNetworks() { return networks; }

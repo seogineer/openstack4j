@@ -5,8 +5,8 @@ import java.util.Objects;
 /** Body of a BGP peer create or update; only the fields set are sent. */
 public class BgpPeerOptions extends NeutronAttributes<BgpPeerOptions> {
 
-    public static BgpPeerOptions create(String name, String peerIp, Integer remoteAs) {
-        return new BgpPeerOptions().put("name", Objects.requireNonNull(name, "name")).put("peer_ip", Objects.requireNonNull(peerIp, "peerIp")).put("remote_as", Objects.requireNonNull(remoteAs, "remoteAs"));
+    public static BgpPeerOptions create(String name, String peerIp, Long remoteAs, String authType) {
+        return new BgpPeerOptions().put("name", Objects.requireNonNull(name, "name")).put("peer_ip", Objects.requireNonNull(peerIp, "peerIp")).put("remote_as", Objects.requireNonNull(remoteAs, "remoteAs")).put("auth_type", Objects.requireNonNull(authType, "authType"));
     }
 
     /** An update that sends only the fields set afterwards. */
@@ -27,11 +27,10 @@ public class BgpPeerOptions extends NeutronAttributes<BgpPeerOptions> {
         return put("peer_ip", value);
     }
 
-    public BgpPeerOptions remoteAs(Integer value) {
+    public BgpPeerOptions remoteAs(Long value) {
         return put("remote_as", value);
     }
 
-    /** {@code none} or {@code md5}. */
     public BgpPeerOptions authType(String value) {
         return put("auth_type", value);
     }

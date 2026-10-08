@@ -161,7 +161,7 @@ os.networking().port().listBindings(portId);
 
 ## Neutron stadium projects
 
-The same release supports the separately installed Neutron projects. Each needs its plugin on the server; check with `extensions().isEnabled(alias)` (`vpnaas`, `fwaas_v2`, `bgp`, `bgpvpn`, `taas`, `sfc`).
+The same release supports the separately installed Neutron projects. Each needs its plugin on the server; check with `extensions().isEnabled(alias)` (`vpnaas`, `fwaas_v2`, `bgp`, `bgpvpn`, `taas`, `tap-mirror`, `service_graph`).
 
 ```java
 VpnService vpn = os.networking().vpnServices().create(VpnServiceOptions.create(routerId).name("vpn"));

@@ -33,8 +33,8 @@ public class BgpBgpvpnTests extends AbstractNetworkingExtTest {
         respondWith(200, "{\"bgp_peer_id\": \"pe1\"}");
 
         var speakers = osv3().networking().bgpSpeakers();
-        BgpSpeaker speaker = speakers.create(BgpSpeakerOptions.create("bgp-speaker", 1000).ipVersion(4));
-        BgpPeer peer = osv3().networking().bgpPeers().create(BgpPeerOptions.create("bgp-peer", "10.0.0.3", 1001).authType("none"));
+        BgpSpeaker speaker = speakers.create(BgpSpeakerOptions.create("bgp-speaker", 1000L, 4));
+        BgpPeer peer = osv3().networking().bgpPeers().create(BgpPeerOptions.create("bgp-peer", "10.0.0.3", 1001L, "none"));
         Assert.assertTrue(speakers.addPeer("sp1", "pe1").isSuccess());
         Assert.assertTrue(speakers.addGatewayNetwork("sp1", "n1").isSuccess());
         List<Map<String, Object>> routes = speakers.advertisedRoutes("sp1");
@@ -54,8 +54,8 @@ public class BgpBgpvpnTests extends AbstractNetworkingExtTest {
         expect("GET", "/v2.0/agents/a1/bgp-drinstances");
         expect("DELETE", "/v2.0/agents/a1/bgp-drinstances/sp1");
         expect("PUT", "/v2.0/bgp-speakers/sp1/remove_bgp_peer");
-        Assert.assertEquals(speaker.getLocalAs(), Integer.valueOf(1000));
-        Assert.assertEquals(peer.getRemoteAs(), Integer.valueOf(1001));
+        Assert.assertEquals(speaker.getLocalAs(), Long.valueOf(1000));
+        Assert.assertEquals(peer.getRemoteAs(), Long.valueOf(1001));
         Assert.assertEquals(routes.get(0).get("nexthop"), "10.0.0.1");
         Assert.assertEquals(agents.get(0).get("alive"), Boolean.TRUE);
         Assert.assertEquals(hosted.get(0).isAdvertiseTenantNetworks(), Boolean.TRUE);
@@ -90,5 +90,22 @@ public class BgpBgpvpnTests extends AbstractNetworkingExtTest {
         Assert.assertEquals(vpn.getVni(), Integer.valueOf(1000));
         Assert.assertEquals(updated.isAdvertiseExtraRoutes(), Boolean.FALSE);
         Assert.assertEquals(port.getRoutes().get(0).get("prefix"), "20.1.0.0/16");
+    }
+
+    public void fourByteAsNumbersAndLocalPref() throws Exception {
+        respondWith(200, "{\"bgp_speaker\": {\"id\": \"sp2\", \"local_as\": 4200000000, \"ip_version\": 4}}");
+        respondWith(201, "{\"bgp_peer\": {\"id\": \"pe2\", \"remote_as\": 4294967294, \"peer_ip\": \"10.0.0.4\", \"auth_type\": \"none\"}}");
+        respondWith(200, "{\"bgpvpns\": [{\"id\": \"v2\", \"local_pref\": 4294967295}]}");
+
+        BgpSpeaker speaker = osv3().networking().bgpSpeakers().get("sp2");
+        BgpPeer peer = osv3().networking().bgpPeers().create(BgpPeerOptions.create("p", "10.0.0.4", 4294967294L, "none"));
+        List<? extends Bgpvpn> vpns = osv3().networking().bgpvpns().list();
+
+        takeRequest();
+        Assert.assertEquals(body(takeRequest()).get("bgp_peer").get("remote_as").asLong(), 4294967294L);
+        takeRequest();
+        Assert.assertEquals(speaker.getLocalAs(), Long.valueOf(4200000000L));
+        Assert.assertEquals(peer.getRemoteAs(), Long.valueOf(4294967294L));
+        Assert.assertEquals(vpns.get(0).getLocalPref(), Long.valueOf(4294967295L));
     }
 }

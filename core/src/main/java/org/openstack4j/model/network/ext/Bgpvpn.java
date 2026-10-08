@@ -18,7 +18,7 @@ public interface Bgpvpn extends ModelEntity {
     List<String> getRouters();
     List<String> getPorts();
     Integer getVni();
-    Integer getLocalPref();
+    Long getLocalPref();
     String getProjectId();
     /** @return the response fields that have no getter */
     Map<String, Object> getAttributes();
