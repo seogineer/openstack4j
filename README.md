@@ -156,8 +156,28 @@ os.networking().port().listBindings(portId);
 - Existing services extended: router (extra routes, external gateways, conntrack helpers, l3 agents), agent (scheduling), port (bindings), quotas (default, details), floating IP pools, port forwarding update
 - Option classes (`*Options`) send only the fields you set. Use `attribute("field", null)` to clear a value.
 - When the extension is off or a parent resource is missing (404): methods that return a model or a list (lists, create, update, and actions that return a result such as adding prefixes or addresses) throw the 404 as an exception. Methods that return an `ActionResponse` (delete, import/stage/cache actions, agent scheduling, linking a profile to a flavor) return a failed `ActionResponse` (code 404), and a single `get(id)` returns `null` for a missing resource. Check first with `extensions().isEnabled(alias)`.
-- VPNaaS, FWaaS v2, BGP, BGPVPN, TaaS and SFC (stadium projects) come in a later release.
+- The stadium projects (VPNaaS, FWaaS v2, BGP, BGPVPN, TaaS, SFC service graphs) are supported from 4.6.0 — see below.
 - 4.5.0 added `NetQosPolicy.getId()` (before, you had to cast to the implementation class).
+
+## Neutron stadium projects
+
+The same release supports the separately installed Neutron projects. Each needs its plugin on the server; check with `extensions().isEnabled(alias)` (`vpnaas`, `fwaas_v2`, `bgp`, `bgpvpn`, `taas`, `sfc`).
+
+```java
+VpnService vpn = os.networking().vpnServices().create(VpnServiceOptions.create(routerId).name("vpn"));
+os.networking().ipsecSiteConnections().create(IpsecSiteConnectionOptions.create(vpn.getId(), ikeId, ipsecId, peerIp, peerId, psk)
+        .localEpGroupId(localGroupId).peerEpGroupId(peerGroupId));
+os.networking().firewallPoliciesV2().insertRule(policyId, ruleId, null, null);
+os.networking().bgpSpeakers().addPeer(speakerId, peerId);
+os.networking().bgpvpnAssociations().associateNetwork(bgpvpnId, networkId);
+os.networking().tapFlows().create(TapFlowOptions.create(tapServiceId, sourcePortId, "BOTH"));
+```
+
+- VPNaaS: `vpnServices()`, `ikePolicies()`, `ipsecPolicies()`, `ipsecSiteConnections()`, `vpnEndpointGroups()`
+- FWaaS v2: `firewallGroups()`, `firewallPoliciesV2()` (insert/remove rule), `firewallRulesV2()` — the FWaaS v1 `firewalls()` methods are unchanged
+- BGP dynamic routing: `bgpSpeakers()` (peers, gateway networks, advertised routes, dynamic routing agents), `bgpPeers()`; BGPVPN: `bgpvpns()`, `bgpvpnAssociations()` (network, router, port)
+- TaaS: `tapServices()`, `tapFlows()`, `tapMirrors()`; SFC: `sfcServiceGraphs()`
+- Models have getters for the common fields; the rest are in `getAttributes()`. The 404 rules are those of the networking extensions.
 
 ## Image extensions
 

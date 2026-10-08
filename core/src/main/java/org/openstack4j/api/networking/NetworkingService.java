@@ -253,4 +253,59 @@ public interface NetworkingService extends RestService {
      * @return VPN endpoint groups (VPNaaS)
      */
     org.openstack4j.api.networking.ext.VpnEndpointGroupService vpnEndpointGroups();
+
+    /**
+     * @return FWaaS v2 firewall groups
+     */
+    org.openstack4j.api.networking.ext.FirewallGroupService firewallGroups();
+
+    /**
+     * @return FWaaS v2 firewall policies (rule insert/remove)
+     */
+    org.openstack4j.api.networking.ext.FirewallPolicyV2Service firewallPoliciesV2();
+
+    /**
+     * @return FWaaS v2 firewall rules
+     */
+    org.openstack4j.api.networking.ext.FirewallRuleV2Service firewallRulesV2();
+
+    /**
+     * @return TaaS tap services
+     */
+    org.openstack4j.api.networking.ext.TapServiceService tapServices();
+
+    /**
+     * @return TaaS tap flows
+     */
+    org.openstack4j.api.networking.ext.TapFlowService tapFlows();
+
+    /**
+     * @return TaaS tap mirrors
+     */
+    org.openstack4j.api.networking.ext.TapMirrorService tapMirrors();
+
+    /**
+     * @return SFC service graphs
+     */
+    org.openstack4j.api.networking.ext.SfcServiceGraphService sfcServiceGraphs();
+
+    /**
+     * @return BGP speakers and their dynamic routing agent scheduling
+     */
+    org.openstack4j.api.networking.ext.BgpSpeakerService bgpSpeakers();
+
+    /**
+     * @return BGP peers
+     */
+    org.openstack4j.api.networking.ext.BgpPeerService bgpPeers();
+
+    /**
+     * @return BGP VPNs
+     */
+    org.openstack4j.api.networking.ext.BgpvpnService bgpvpns();
+
+    /**
+     * @return network, router and port associations of BGP VPNs
+     */
+    org.openstack4j.api.networking.ext.BgpvpnAssociationService bgpvpnAssociations();
 }

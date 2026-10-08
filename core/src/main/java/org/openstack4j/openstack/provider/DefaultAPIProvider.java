@@ -146,6 +146,17 @@ public class DefaultAPIProvider implements APIProvider {
         bind(org.openstack4j.api.networking.ext.RbacPolicyService.class, org.openstack4j.openstack.networking.internal.ext.RbacPolicyServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.AddressGroupService.class, org.openstack4j.openstack.networking.internal.ext.AddressGroupServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.AddressScopeService.class, org.openstack4j.openstack.networking.internal.ext.AddressScopeServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.FirewallGroupService.class, org.openstack4j.openstack.networking.internal.ext.FirewallGroupServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.FirewallPolicyV2Service.class, org.openstack4j.openstack.networking.internal.ext.FirewallPolicyV2ServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.FirewallRuleV2Service.class, org.openstack4j.openstack.networking.internal.ext.FirewallRuleV2ServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.TapServiceService.class, org.openstack4j.openstack.networking.internal.ext.TapServiceServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.TapFlowService.class, org.openstack4j.openstack.networking.internal.ext.TapFlowServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.TapMirrorService.class, org.openstack4j.openstack.networking.internal.ext.TapMirrorServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.SfcServiceGraphService.class, org.openstack4j.openstack.networking.internal.ext.SfcServiceGraphServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.BgpSpeakerService.class, org.openstack4j.openstack.networking.internal.ext.BgpSpeakerServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.BgpPeerService.class, org.openstack4j.openstack.networking.internal.ext.BgpPeerServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.BgpvpnService.class, org.openstack4j.openstack.networking.internal.ext.BgpvpnServiceImpl.class);
+        bind(org.openstack4j.api.networking.ext.BgpvpnAssociationService.class, org.openstack4j.openstack.networking.internal.ext.BgpvpnAssociationServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.VpnServiceService.class, org.openstack4j.openstack.networking.internal.ext.VpnServiceServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.IkePolicyService.class, org.openstack4j.openstack.networking.internal.ext.IkePolicyServiceImpl.class);
         bind(org.openstack4j.api.networking.ext.IpsecPolicyService.class, org.openstack4j.openstack.networking.internal.ext.IpsecPolicyServiceImpl.class);

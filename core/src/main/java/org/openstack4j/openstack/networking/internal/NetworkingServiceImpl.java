@@ -270,4 +270,59 @@ public class NetworkingServiceImpl implements NetworkingService {
     public org.openstack4j.api.networking.ext.VpnEndpointGroupService vpnEndpointGroups() {
         return Apis.get(org.openstack4j.api.networking.ext.VpnEndpointGroupService.class);
     }
+
+    @Override
+    public org.openstack4j.api.networking.ext.FirewallGroupService firewallGroups() {
+        return Apis.get(org.openstack4j.api.networking.ext.FirewallGroupService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.FirewallPolicyV2Service firewallPoliciesV2() {
+        return Apis.get(org.openstack4j.api.networking.ext.FirewallPolicyV2Service.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.FirewallRuleV2Service firewallRulesV2() {
+        return Apis.get(org.openstack4j.api.networking.ext.FirewallRuleV2Service.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.TapServiceService tapServices() {
+        return Apis.get(org.openstack4j.api.networking.ext.TapServiceService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.TapFlowService tapFlows() {
+        return Apis.get(org.openstack4j.api.networking.ext.TapFlowService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.TapMirrorService tapMirrors() {
+        return Apis.get(org.openstack4j.api.networking.ext.TapMirrorService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.SfcServiceGraphService sfcServiceGraphs() {
+        return Apis.get(org.openstack4j.api.networking.ext.SfcServiceGraphService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.BgpSpeakerService bgpSpeakers() {
+        return Apis.get(org.openstack4j.api.networking.ext.BgpSpeakerService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.BgpPeerService bgpPeers() {
+        return Apis.get(org.openstack4j.api.networking.ext.BgpPeerService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.BgpvpnService bgpvpns() {
+        return Apis.get(org.openstack4j.api.networking.ext.BgpvpnService.class);
+    }
+
+    @Override
+    public org.openstack4j.api.networking.ext.BgpvpnAssociationService bgpvpnAssociations() {
+        return Apis.get(org.openstack4j.api.networking.ext.BgpvpnAssociationService.class);
+    }
 }
