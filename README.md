@@ -364,6 +364,16 @@ os.rating().summary(Map.of("groupby", "project_id", "begin", "2026-10-01T00:00:0
 os.accelerator().getDeviceProfile("fpga-profile");                   // by name: accelerator 2.2 header added for you
 ```
 
+## Messaging (Zaqar)
+
+New service `os.messaging()` (Zaqar v2): queues (metadata, JSON Patch, stats, pre-signed share, purge), messages (post, list, by ids, pop, delete), claims, subscriptions (incl. confirm), pools, flavors and health. Every request carries a `Client-ID` header: a UUID generated once per JVM, or the one you set.
+
+```java
+os.messaging().useClientId("3381af92-2b9e-11e3-b191-71861300734c");
+os.messaging().postMessages("demo", List.of(Map.of("body", Map.of("event", "BackupStarted"), "ttl", 300)));
+os.messaging().claimMessages("demo", 300, 300, 5);                   // empty list when nothing is available
+```
+
 ## Build
 
 ```bash

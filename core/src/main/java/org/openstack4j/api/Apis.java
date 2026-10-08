@@ -133,6 +133,15 @@ public class Apis {
     }
 
     /**
+     * Gets the messaging (Zaqar) services API
+     *
+     * @return the messaging (Zaqar) services
+     */
+    public static org.openstack4j.api.messaging.MessagingService getMessagingService() {
+        return get(org.openstack4j.api.messaging.MessagingService.class);
+    }
+
+    /**
      * Gets the bare metal (Ironic) services API
      *
      * @return the bare metal services

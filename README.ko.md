@@ -364,6 +364,16 @@ os.rating().summary(Map.of("groupby", "project_id", "begin", "2026-10-01T00:00:0
 os.accelerator().getDeviceProfile("fpga-profile");                   // 이름으로 조회: accelerator 2.2 헤더 자동
 ```
 
+## Messaging(Zaqar)
+
+새 서비스 `os.messaging()`(Zaqar v2): queues(metadata, JSON Patch, stats, pre-signed share, purge), messages(post, list, id 조회, pop, delete), claims, subscriptions(confirm 포함), pools, flavors, health. 모든 요청에 `Client-ID` 헤더가 붙습니다: JVM 당 한 번 생성한 UUID, 또는 직접 지정한 값.
+
+```java
+os.messaging().useClientId("3381af92-2b9e-11e3-b191-71861300734c");
+os.messaging().postMessages("demo", List.of(Map.of("body", Map.of("event", "BackupStarted"), "ttl", 300)));
+os.messaging().claimMessages("demo", 300, 300, 5);                   // 가져올 메시지가 없으면 빈 리스트
+```
+
 ## 빌드
 
 ```bash
