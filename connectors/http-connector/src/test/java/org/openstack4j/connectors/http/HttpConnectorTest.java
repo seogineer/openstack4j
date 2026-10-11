@@ -58,6 +58,17 @@ public class HttpConnectorTest {
         Assert.assertEquals(recorded.getBody().readUtf8(), "{\"name\":\"x\"}");
     }
 
+    /** pecan/WSME services (Octavia, Tacker SOL) answer 406 to an Accept with a charset parameter. */
+    @Test
+    public void defaultAcceptIsPlainJson() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody("{}"));
+
+        execute(request(HttpMethod.GET).build());
+        RecordedRequest recorded = server.takeRequest(5, TimeUnit.SECONDS);
+
+        Assert.assertEquals(recorded.getHeader("Accept"), "application/json");
+    }
+
     @Test
     public void callerSuppliedContentLengthHeaderIsIgnored() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(201));

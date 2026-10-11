@@ -130,7 +130,10 @@ public interface StackService {
     Map<String, Object> environment(String stackName, String stackId);
 
     /**
-     * @throws org.openstack4j.api.exceptions.ResponseException if the stack does not exist (404)
+     * Heat guards export with the same {@code enable_stack_abandon} setting as abandon: when it is off the
+     * server answers 400 "Stack Abandon is not supported".
+     *
+     * @throws org.openstack4j.api.exceptions.ResponseException if the stack does not exist (404) or abandon is disabled (400)
      * @param stackName the stack name
      * @param stackId   the stack id
      * @return the exported stack data, usable for adopt

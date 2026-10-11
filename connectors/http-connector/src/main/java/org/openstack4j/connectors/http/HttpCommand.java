@@ -62,7 +62,7 @@ public final class HttpCommand<R> {
 
         if (request.getContentType() != null)
             builder.setHeader("Content-Type", request.getContentType());
-        builder.setHeader("Accept", "application/json; charset=utf-8");
+        builder.setHeader("Accept", "application/json");
 
         if (request.hasHeaders()) {
             for (Map.Entry<String, Object> h : request.getHeaders().entrySet()) {

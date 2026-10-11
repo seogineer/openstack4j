@@ -2,12 +2,14 @@ package org.openstack4j.openstack.octavia.domain.ext;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.model.octavia.ext.OctaviaQuota;
 import org.openstack4j.openstack.common.ListResult;
 
+/** Octavia answers single quotas with {@code load_balancer}/{@code health_monitor}; the list carries both spellings. */
 @JsonRootName("quota")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OctaviaQuotaEntity implements OctaviaQuota {
@@ -15,11 +17,11 @@ public class OctaviaQuotaEntity implements OctaviaQuota {
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("project_id") private String projectId;
-    @JsonProperty("loadbalancer") private Integer loadbalancer;
+    @JsonProperty("load_balancer") @JsonAlias("loadbalancer") private Integer loadbalancer;
     @JsonProperty("listener") private Integer listener;
     @JsonProperty("member") private Integer member;
     @JsonProperty("pool") private Integer pool;
-    @JsonProperty("healthmonitor") private Integer healthmonitor;
+    @JsonProperty("health_monitor") @JsonAlias("healthmonitor") private Integer healthmonitor;
     @JsonProperty("l7policy") private Integer l7policy;
     @JsonProperty("l7rule") private Integer l7rule;
 
