@@ -2,7 +2,7 @@ package org.openstack4j.model.octavia.options;
 
 import java.util.Objects;
 
-/** Body of an Octavia quota update; only the quotas set are sent (-1 = unlimited). */
+/** Body of an Octavia quota update; only the quotas set are sent (-1 = unlimited), with the {@code load_balancer}/{@code health_monitor} keys Octavia documents. */
 public class OctaviaQuotaOptions extends OctaviaAttributes<OctaviaQuotaOptions> {
 
     public static OctaviaQuotaOptions create() {
@@ -14,11 +14,11 @@ public class OctaviaQuotaOptions extends OctaviaAttributes<OctaviaQuotaOptions> 
         return this;
     }
 
-    public OctaviaQuotaOptions loadbalancer(Integer value) { return put("loadbalancer", value); }
+    public OctaviaQuotaOptions loadbalancer(Integer value) { return put("load_balancer", value); }
     public OctaviaQuotaOptions listener(Integer value) { return put("listener", value); }
     public OctaviaQuotaOptions member(Integer value) { return put("member", value); }
     public OctaviaQuotaOptions pool(Integer value) { return put("pool", value); }
-    public OctaviaQuotaOptions healthmonitor(Integer value) { return put("healthmonitor", value); }
+    public OctaviaQuotaOptions healthmonitor(Integer value) { return put("health_monitor", value); }
     public OctaviaQuotaOptions l7policy(Integer value) { return put("l7policy", value); }
     public OctaviaQuotaOptions l7rule(Integer value) { return put("l7rule", value); }
 }

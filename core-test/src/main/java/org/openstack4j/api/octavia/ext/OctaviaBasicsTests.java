@@ -29,10 +29,10 @@ public class OctaviaBasicsTests extends AbstractOctaviaExtTest {
     }
 
     public void quotasDistinguishNullFromUnlimited() throws Exception {
-        respondWith(200, "{\"quotas\": [{\"loadbalancer\": 5, \"member\": 50, \"healthmonitor\": -1, \"listener\": null, \"project_id\": \"" + PROJECT + "\", \"pool\": null, \"l7policy\": 3, \"l7rule\": null}]}");
-        respondWith(200, "{\"quota\": {\"loadbalancer\": 50, \"listener\": -1, \"member\": -1, \"pool\": -1, \"healthmonitor\": -1, \"l7policy\": -1, \"l7rule\": -1}}");
-        respondWith(200, "{\"quota\": {\"loadbalancer\": 5, \"listener\": -1, \"member\": 50, \"pool\": -1, \"healthmonitor\": -1, \"l7policy\": 20, \"l7rule\": -1}}");
-        respondWith(202, "{\"quota\": {\"loadbalancer\": 10, \"listener\": -1, \"member\": 50, \"pool\": -1, \"healthmonitor\": -1, \"l7policy\": 15, \"l7rule\": 25}}");
+        respondWith(200, "{\"quotas\": [{\"loadbalancer\": 5, \"load_balancer\": 5, \"member\": 50, \"healthmonitor\": -1, \"health_monitor\": -1, \"listener\": null, \"project_id\": \"" + PROJECT + "\", \"pool\": null, \"l7policy\": 3, \"l7rule\": null}]}");
+        respondWith(200, "{\"quota\": {\"load_balancer\": 50, \"listener\": -1, \"member\": -1, \"pool\": -1, \"health_monitor\": -1, \"l7policy\": -1, \"l7rule\": -1}}");
+        respondWith(200, "{\"quota\": {\"load_balancer\": 5, \"listener\": -1, \"member\": 50, \"pool\": -1, \"health_monitor\": -1, \"l7policy\": 20, \"l7rule\": -1}}");
+        respondWith(202, "{\"quota\": {\"load_balancer\": 10, \"listener\": -1, \"member\": 50, \"pool\": -1, \"health_monitor\": -1, \"l7policy\": 15, \"l7rule\": 25}}");
         respondWith(202);
 
         var quotas = osv3().octavia().quotas();
@@ -46,12 +46,14 @@ public class OctaviaBasicsTests extends AbstractOctaviaExtTest {
         expect("GET", "/v2.0/lbaas/quotas/defaults");
         expect("GET", "/v2.0/lbaas/quotas/" + PROJECT);
         RecordedRequest update = expect("PUT", "/v2.0/lbaas/quotas/" + PROJECT);
-        Assert.assertEquals(body(update).toString(), "{\"quota\":{\"loadbalancer\":10,\"l7rule\":25}}");
+        Assert.assertEquals(body(update).toString(), "{\"quota\":{\"load_balancer\":10,\"l7rule\":25}}");
         expect("DELETE", "/v2.0/lbaas/quotas/" + PROJECT);
         Assert.assertNull(all.get(0).getListener());
         Assert.assertEquals(all.get(0).getHealthmonitor(), Integer.valueOf(-1));
         Assert.assertEquals(all.get(0).getProjectId(), PROJECT);
         Assert.assertEquals(defaults.getLoadbalancer(), Integer.valueOf(50));
+        Assert.assertEquals(defaults.getHealthmonitor(), Integer.valueOf(-1));
+        Assert.assertEquals(all.get(0).getLoadbalancer(), Integer.valueOf(5));
         Assert.assertEquals(updated.getL7rule(), Integer.valueOf(25));
     }
 }

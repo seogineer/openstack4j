@@ -3,6 +3,7 @@ package org.openstack4j.api.heat.ext;
 import java.util.Map;
 
 import org.openstack4j.api.OSClient.OSClientV3;
+import org.openstack4j.api.exceptions.ClientResponseException;
 import org.openstack4j.model.common.Identifier;
 import org.openstack4j.model.heat.Stack;
 import org.openstack4j.openstack.OSFactory;
@@ -68,12 +69,24 @@ public class HeatExtensionsLiveTests {
             waitFor(name, stack.getId(), "SUSPEND_COMPLETE");
             Assert.assertTrue(os.heat().stacks().resume(name, stack.getId()).isSuccess());
             waitFor(name, stack.getId(), "RESUME_COMPLETE");
-            Map<String, Object> export = os.heat().stacks().export(name, stack.getId());
-            Assert.assertEquals(export.get("name"), name);
+            exportUnlessAbandonDisabled(name, stack.getId());
         } finally {
             deleted = os.heat().stacks().delete(name).isSuccess();
         }
         Assert.assertTrue(deleted, "stack not deleted");
+    }
+
+    /** Export shares Heat's enable_stack_abandon gate; a cloud with it off answers 400 "Stack Abandon is not supported". */
+    private void exportUnlessAbandonDisabled(String name, String id) {
+        Map<String, Object> export;
+        try {
+            export = os.heat().stacks().export(name, id);
+        } catch (ClientResponseException e) {
+            if (e.getStatus() == 400 && String.valueOf(e.getMessage()).contains("Abandon"))
+                return;
+            throw e;
+        }
+        Assert.assertEquals(export.get("name"), name);
     }
 
     private void waitFor(String name, String id, String status) throws InterruptedException {

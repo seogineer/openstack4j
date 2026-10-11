@@ -55,7 +55,7 @@ public class OctaviaExtensionsLiveTests {
 
     public void quotas() {
         Assert.assertNotNull(os.octavia().quotas().defaults().getLoadbalancer());
-        Assert.assertNotNull(os.octavia().quotas().get(os.getToken().getProject().getId()));
+        Assert.assertNotNull(os.octavia().quotas().get(os.getToken().getProject().getId()).getLoadbalancer());
     }
 
     public void flavorProfileAndFlavor() {

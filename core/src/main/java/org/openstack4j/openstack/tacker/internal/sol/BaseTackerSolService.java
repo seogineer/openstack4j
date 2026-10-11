@@ -43,7 +43,7 @@ public abstract class BaseTackerSolService extends BaseOpenStackService {
 
     @Override
     protected <R> Invocation<R> decorate(Invocation<R> invocation) {
-        // SOL controllers answer 406 to "application/json; charset=utf-8" (the http-connector's default Accept)
+        // SOL controllers answer 406 to an Accept with a charset parameter (the http-connector's default before 4.6.0); sent explicitly so a caller-configured Accept cannot reintroduce it
         invocation.header("Accept", "application/json");
         return version == null ? invocation : invocation.header("Version", version);
     }
