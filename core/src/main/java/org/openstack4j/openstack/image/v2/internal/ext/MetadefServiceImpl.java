@@ -28,6 +28,7 @@ import org.openstack4j.openstack.image.v2.domain.ext.GlanceMetadefNamespace.Name
 import org.openstack4j.openstack.image.v2.domain.ext.GlanceMetadefResourceType.ResourceTypes;
 import org.openstack4j.openstack.image.v2.domain.ext.GlanceMetadefResourceTypeAssociation;
 import org.openstack4j.openstack.image.v2.domain.ext.GlanceMetadefResourceTypeAssociation.Associations;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 public class MetadefServiceImpl extends BaseImageExtService implements MetadefService {
@@ -51,7 +52,7 @@ public class MetadefServiceImpl extends BaseImageExtService implements MetadefSe
     @Override
     public MetadefResourceTypeAssociation associateResourceType(String namespace, String name, String prefix, String propertiesTarget) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("name", id(name));
+        body.put("name", PathSegment.validate(name));
         if (prefix != null) body.put("prefix", prefix);
         if (propertiesTarget != null) body.put("properties_target", propertiesTarget);
         return post(GlanceMetadefResourceTypeAssociation.class, ns(namespace) + "/resource_types").entity(JsonBody.of(body)).execute(propagate404());
@@ -98,7 +99,7 @@ public class MetadefServiceImpl extends BaseImageExtService implements MetadefSe
     @Override
     public MetadefTag updateTag(String namespace, String name, String newName) {
         return put(GlanceMetadefTag.class, tags(namespace) + "/" + id(name))
-                .entity(JsonBody.of(Collections.singletonMap("name", id(newName)))).execute(propagate404());
+                .entity(JsonBody.of(Collections.singletonMap("name", PathSegment.validate(newName)))).execute(propagate404());
     }
 
     @Override public ActionResponse deleteTag(String namespace, String name) { return remove(tags(namespace) + "/" + id(name)); }

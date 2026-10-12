@@ -7,6 +7,7 @@ import org.openstack4j.api.networking.ext.FirewallPolicyV2Service;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.ext.FirewallPolicyV2;
 import org.openstack4j.model.network.options.FirewallPolicyV2Options;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.networking.domain.ext.NeutronFirewallPolicyV2;
 import org.openstack4j.openstack.networking.domain.ext.NeutronFirewallPolicyV2.NeutronFirewallPolicyV2List;
 
@@ -43,7 +44,7 @@ public class FirewallPolicyV2ServiceImpl extends BaseNeutronExtService implement
     @Override
     public FirewallPolicyV2 insertRule(String id, String ruleId, String insertBefore, String insertAfter) {
         Map<String, Object> body = new java.util.LinkedHashMap<>();
-        body.put("firewall_rule_id", id(ruleId));
+        body.put("firewall_rule_id", PathSegment.validate(ruleId));
         body.put("insert_before", insertBefore == null ? "" : insertBefore);
         body.put("insert_after", insertAfter == null ? "" : insertAfter);
         return ruleAction(id, "insert_rule", body);
@@ -51,7 +52,7 @@ public class FirewallPolicyV2ServiceImpl extends BaseNeutronExtService implement
 
     @Override
     public FirewallPolicyV2 removeRule(String id, String ruleId) {
-        return ruleAction(id, "remove_rule", Map.of("firewall_rule_id", id(ruleId)));
+        return ruleAction(id, "remove_rule", Map.of("firewall_rule_id", PathSegment.validate(ruleId)));
     }
 
     /** These actions answer with the policy itself, without the {@code firewall_policy} root. */

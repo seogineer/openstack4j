@@ -12,6 +12,7 @@ import org.openstack4j.core.transport.ExecutionOptions;
 import org.openstack4j.core.transport.HttpResponse;
 import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.openstack.barbican.internal.BaseBarbicanServices;
+import org.openstack4j.openstack.internal.PathSegment;
 
 /**
  * Shared helpers of the Barbican services added in 4.6. A 404 from a list, create, update or a call that returns a
@@ -26,7 +27,7 @@ public abstract class BaseBarbicanExtService extends BaseBarbicanServices {
     /**
      * @param value an id, or a Barbican reference URL such as {@code https://host:9311/v1/secrets/<id>} (its last
      *              path segment is used)
-     * @return the id, which must be a non-blank path segment (no {@code /}, {@code ?} or {@code #})
+     * @return the id as an encoded path segment
      */
     protected static String id(String value) {
         Objects.requireNonNull(value, "id");
@@ -34,9 +35,7 @@ public abstract class BaseBarbicanExtService extends BaseBarbicanServices {
             String path = value.replaceAll("[?#].*$", "").replaceAll("/+$", "");
             value = path.substring(path.lastIndexOf('/') + 1);
         }
-        if (value.isBlank() || value.indexOf('/') >= 0 || value.indexOf('?') >= 0 || value.indexOf('#') >= 0)
-            throw new IllegalArgumentException("Not a valid identifier: '" + value + "'");
-        return value;
+        return PathSegment.encode(value);
     }
 
     @SuppressWarnings("unchecked")

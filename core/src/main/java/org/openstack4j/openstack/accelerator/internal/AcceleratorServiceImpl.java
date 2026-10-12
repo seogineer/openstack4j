@@ -14,6 +14,7 @@ import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.ModelEntity;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.internal.BaseOpenStackService;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 public class AcceleratorServiceImpl extends BaseOpenStackService implements AcceleratorService {
@@ -31,10 +32,7 @@ public class AcceleratorServiceImpl extends BaseOpenStackService implements Acce
     }
 
     private static String id(String value) {
-        Objects.requireNonNull(value, "id");
-        if (value.isBlank() || value.indexOf('/') >= 0 || value.indexOf('?') >= 0 || value.indexOf('#') >= 0)
-            throw new IllegalArgumentException("Not a valid identifier: '" + value + "'");
-        return value;
+        return PathSegment.encode(value);
     }
 
     @SuppressWarnings("unchecked")
@@ -81,7 +79,7 @@ public class AcceleratorServiceImpl extends BaseOpenStackService implements Acce
 
     @Override
     public ActionResponse deleteArqsOfInstance(String instanceId) {
-        return deleteWithResponse("/v2/accelerator_requests").param("instance", id(instanceId)).execute();
+        return deleteWithResponse("/v2/accelerator_requests").param("instance", PathSegment.validate(instanceId)).execute();
     }
 
     @Override
@@ -153,7 +151,7 @@ public class AcceleratorServiceImpl extends BaseOpenStackService implements Acce
     public Map<String, Object> programDeployable(String deployableId, String imageId) {
         Map<String, Object> op = new LinkedHashMap<>();
         op.put("path", "/program");
-        op.put("value", List.of(Map.of("image_uuid", id(imageId))));
+        op.put("value", List.of(Map.of("image_uuid", PathSegment.validate(imageId))));
         op.put("op", "replace");
         return patch(Map.class, "/v2/deployables/" + id(deployableId) + "/program").entity(new ListBody(List.of(op))).execute(propagate404());
     }
@@ -172,7 +170,7 @@ public class AcceleratorServiceImpl extends BaseOpenStackService implements Acce
     @SuppressWarnings("unchecked")
     public Map<String, Object> createAttribute(String deployableId, String key, String value) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("deployable_id", id(deployableId));
+        body.put("deployable_id", PathSegment.validate(deployableId));
         body.put("key", Objects.requireNonNull(key, "key"));
         body.put("value", Objects.requireNonNull(value, "value"));
         return post(Map.class, "/v2/attributes").entity(JsonBody.of(body)).execute(propagate404());

@@ -15,6 +15,7 @@ import org.openstack4j.openstack.identity.v3.domain.KeystoneEndpointGroup;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneEndpointGroup.EndpointGroups;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneProject;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneProject.Projects;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 public class EndpointFilterServiceImpl extends BaseIdentityServices implements EndpointFilterService {
@@ -23,7 +24,7 @@ public class EndpointFilterServiceImpl extends BaseIdentityServices implements E
     private static final String PROJECTS = "/OS-EP-FILTER/projects/";
 
     private static String id(String value) {
-        return Objects.requireNonNull(value);
+        return PathSegment.encode(value);
     }
 
     private static Map<String, Object> group(String name, String description, Map<String, Object> filters) {
@@ -41,7 +42,7 @@ public class EndpointFilterServiceImpl extends BaseIdentityServices implements E
     @Override
     public EndpointGroup createEndpointGroup(String name, String description, Map<String, Object> filters) {
         return post(KeystoneEndpointGroup.class, "/OS-EP-FILTER/endpoint_groups")
-                .entity(JsonBody.of("endpoint_group", group(id(name), description, Objects.requireNonNull(filters)))).execute();
+                .entity(JsonBody.of("endpoint_group", group(Objects.requireNonNull(name, "name"), description, Objects.requireNonNull(filters)))).execute();
     }
 
     @Override

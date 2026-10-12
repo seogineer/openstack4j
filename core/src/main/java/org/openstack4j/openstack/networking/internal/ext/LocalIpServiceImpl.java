@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.networking.internal.ext;
 
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.networking.domain.ext.NeutronLocalIpPortAssociation.Associations;
 import org.openstack4j.openstack.networking.domain.ext.NeutronLocalIpPortAssociation;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
@@ -35,7 +36,7 @@ public class LocalIpServiceImpl extends BaseNeutronExtService implements LocalIp
     @Override
     public LocalIpPortAssociation associatePort(String localIpId, String fixedPortId, String fixedIp) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("fixed_port_id", id(fixedPortId));
+        body.put("fixed_port_id", PathSegment.validate(fixedPortId));
         if (fixedIp != null)
             body.put("fixed_ip", fixedIp);
         return post(NeutronLocalIpPortAssociation.class, PATH + "/" + id(localIpId) + "/port_associations").entity(JsonBody.of("port_association", body)).execute(NeutronExecution.propagate404());

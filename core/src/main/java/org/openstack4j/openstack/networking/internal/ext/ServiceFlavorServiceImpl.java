@@ -8,6 +8,7 @@ import org.openstack4j.api.networking.ext.ServiceFlavorService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.ext.ServiceFlavor;
 import org.openstack4j.model.network.options.ServiceFlavorOptions;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.networking.domain.ext.NeutronServiceFlavor;
 import org.openstack4j.openstack.networking.domain.ext.NeutronServiceFlavor.Flavors;
@@ -27,7 +28,7 @@ public class ServiceFlavorServiceImpl extends BaseNeutronExtService implements S
     @Override
     public ActionResponse associateProfile(String flavorId, String profileId) {
         return postWithResponse(PATH + "/" + id(flavorId) + "/service_profiles")
-                .entity(JsonBody.of("service_profile", Collections.singletonMap("id", id(profileId)))).execute();
+                .entity(JsonBody.of("service_profile", Collections.singletonMap("id", PathSegment.validate(profileId)))).execute();
     }
 
     @Override

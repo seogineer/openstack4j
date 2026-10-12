@@ -11,6 +11,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.image.v2.options.ImageAttributes;
 import org.openstack4j.openstack.common.ListResult;
 import org.openstack4j.openstack.image.v2.internal.BaseImageServices;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 /**
@@ -25,7 +26,7 @@ public abstract class BaseImageExtService extends BaseImageServices {
     }
 
     protected static String id(String value) {
-        return Objects.requireNonNull(value, "id");
+        return PathSegment.encode(value);
     }
 
     protected <E> List<E> listOf(Class<? extends ListResult<E>> type, String path, Map<String, String> filters) {

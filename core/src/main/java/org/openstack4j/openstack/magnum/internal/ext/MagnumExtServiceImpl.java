@@ -13,6 +13,7 @@ import org.openstack4j.core.transport.ExecutionOptions;
 import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.internal.BaseOpenStackService;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 public class MagnumExtServiceImpl extends BaseOpenStackService implements MagnumExtService {
@@ -28,10 +29,7 @@ public class MagnumExtServiceImpl extends BaseOpenStackService implements Magnum
     }
 
     private static String id(String value) {
-        Objects.requireNonNull(value, "id");
-        if (value.isBlank() || value.indexOf('/') >= 0 || value.indexOf('?') >= 0 || value.indexOf('#') >= 0)
-            throw new IllegalArgumentException("Not a valid identifier: '" + value + "'");
-        return value;
+        return PathSegment.encode(value);
     }
 
     @Override

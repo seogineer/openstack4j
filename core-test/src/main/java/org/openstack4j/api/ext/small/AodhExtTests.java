@@ -69,4 +69,17 @@ public class AodhExtTests extends AbstractTest {
         Assert.assertEquals(quotas.get("alarms"), Integer.valueOf(30));
         Assert.assertEquals(updated.get("alarms"), Integer.valueOf(50));
     }
+
+    public void projectIdOutsideThePathIsNotPathEncoded() throws Exception {
+        respondWith(200, "{\"project_id\": \"p 1+2\", \"quotas\": [{\"resource\": \"alarms\", \"limit\": 30}]}");
+        respondWith(201, "{\"project_id\": \"p 1+2\", \"quotas\": [{\"resource\": \"alarms\", \"limit\": 50}]}");
+
+        var ext = osv3().telemetry().alarmsExt();
+        ext.getQuotas("p 1+2");
+        ext.setQuotas("p 1+2", Map.of("alarms", 50));
+
+        String query = takeRequest().getPath();
+        Assert.assertTrue(URLDecoder.decode(query, StandardCharsets.UTF_8).endsWith("/quotas?project_id=p 1+2"), query);
+        Assert.assertEquals(new ObjectMapper().readTree(takeRequest().getBody().readUtf8()).get("project_id").asText(), "p 1+2");
+    }
 }

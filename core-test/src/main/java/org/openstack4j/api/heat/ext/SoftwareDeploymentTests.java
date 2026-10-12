@@ -58,4 +58,11 @@ public class SoftwareDeploymentTests extends AbstractHeatExtTest {
         Assert.assertNull(all.get(0).getOutputValues());
         Assert.assertEquals(metadata.get(0).get("group"), "script");
     }
+
+    public void deploymentIdIsEncoded() throws Exception {
+        respondWith(200, "{\"software_deployment\": " + DEP + "}");
+        osv3().heat().softwareDeployments().get("dep 1+2");
+        RecordedRequest request = takeRequest();
+        Assert.assertTrue(request.getPath().endsWith("/software_deployments/dep%201%2B2"), request.getPath());
+    }
 }

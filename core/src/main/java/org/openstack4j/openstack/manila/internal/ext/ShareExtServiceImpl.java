@@ -17,6 +17,7 @@ import org.openstack4j.model.manila.ext.ShareInstanceInfo;
 import org.openstack4j.model.manila.ext.options.ShareAccessCreate;
 import org.openstack4j.model.manila.ext.options.ShareMigration;
 import org.openstack4j.openstack.internal.MicroVersion;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.manila.domain.ext.ManilaExportLocation;
 import org.openstack4j.openstack.manila.domain.ext.ManilaExportLocation.ManilaExportLocationList;
@@ -121,13 +122,13 @@ public class ShareExtServiceImpl extends BaseManilaExtService implements ShareEx
 
     @Override
     public ActionResponse revokeAccess(String shareId, String accessId) {
-        return action(V(7), share(shareId), "deny_access", Map.of("access_id", id(accessId)));
+        return action(V(7), share(shareId), "deny_access", Map.of("access_id", PathSegment.validate(accessId)));
     }
 
     @Override
     public List<? extends ShareAccessRule> listAccessRules(String shareId, Map<String, String> filters) {
         Map<String, String> query = filters == null ? new HashMap<>() : new HashMap<>(filters);
-        query.put("share_id", id(shareId));
+        query.put("share_id", PathSegment.validate(shareId));
         return listOf(V(45), ManilaShareAccessRuleList.class, "/share-access-rules", query);
     }
 
