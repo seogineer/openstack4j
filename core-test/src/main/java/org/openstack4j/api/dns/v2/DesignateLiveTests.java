@@ -314,18 +314,18 @@ public class DesignateLiveTests {
         String pid = os.getToken().getProject().getId();
         int n = adminOnly(() -> os.dns().quotas().get(pid)).get("zones");
         boolean reset;
+        String restoreError = null;
         try {
             Assert.assertEquals(adminOnly(() -> os.dns().quotas().update(pid, Map.of("zones", n + 1))).get("zones"), Integer.valueOf(n + 1));
             Assert.assertEquals(os.dns().quotas().get(pid).get("zones"), Integer.valueOf(n + 1));
         } finally {
             reset = os.dns().quotas().reset(pid).isSuccess();
-        }
-        String restoreError = null;
-        try {
-            if (!Objects.equals(os.dns().quotas().get(pid).get("zones"), n))
-                os.dns().quotas().update(pid, Map.of("zones", n));
-        } catch (RuntimeException e) {
-            restoreError = e.toString();
+            try {
+                if (!Objects.equals(os.dns().quotas().get(pid).get("zones"), n))
+                    os.dns().quotas().update(pid, Map.of("zones", n));
+            } catch (RuntimeException e) {
+                restoreError = e.toString();
+            }
         }
         Assert.assertTrue(reset, "quota not reset");
         Assert.assertNull(restoreError, "quota not restored to " + n + ": " + restoreError);
