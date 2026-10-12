@@ -25,7 +25,7 @@ public abstract class BaseTroveExtService extends BaseTroveServices {
         return ExecutionOptions.create(PropagateOnStatus.on(404));
     }
 
-    /** @return {@code value}, which must be a non-blank path segment (no {@code /}, {@code ?} or {@code #}) */
+    /** @return the id as an encoded path segment */
     protected static String id(String value) {
         return PathSegment.encode(value);
     }
