@@ -13,6 +13,7 @@ import org.openstack4j.openstack.dns.v2.domain.ext.DesignateZoneTransferAccept;
 import org.openstack4j.openstack.dns.v2.domain.ext.DesignateZoneTransferAccept.DesignateZoneTransferAcceptList;
 import org.openstack4j.openstack.dns.v2.domain.ext.DesignateZoneTransferRequest;
 import org.openstack4j.openstack.dns.v2.domain.ext.DesignateZoneTransferRequest.DesignateZoneTransferRequestList;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 public class ZoneTransferServiceImpl extends BaseDesignateExtService implements ZoneTransferService {
@@ -65,7 +66,7 @@ public class ZoneTransferServiceImpl extends BaseDesignateExtService implements 
     public ZoneTransferAccept accept(String requestId, String key) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("key", Objects.requireNonNull(key, "key"));
-        body.put("zone_transfer_request_id", id(requestId));
+        body.put("zone_transfer_request_id", PathSegment.validate(requestId));
         return post(DesignateZoneTransferAccept.class, ACCEPTS).entity(JsonBody.of(body)).execute(propagate404());
     }
 

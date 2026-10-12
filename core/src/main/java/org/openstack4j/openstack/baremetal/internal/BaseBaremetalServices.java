@@ -17,6 +17,7 @@ import org.openstack4j.openstack.common.ListResult;
 import org.openstack4j.openstack.common.functions.EnforceVersionToURL;
 import org.openstack4j.openstack.internal.BaseOpenStackService;
 import org.openstack4j.openstack.internal.MicroVersion;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 /**
@@ -69,10 +70,7 @@ public class BaseBaremetalServices extends BaseOpenStackService {
 
     /** @return {@code value}, which must be a non-blank path segment (no {@code /}, {@code ?} or {@code #}) */
     protected static String id(String value) {
-        Objects.requireNonNull(value, "id");
-        if (value.isBlank() || value.indexOf('/') >= 0 || value.indexOf('?') >= 0 || value.indexOf('#') >= 0)
-            throw new IllegalArgumentException("Not a valid identifier: '" + value + "'");
-        return value;
+        return PathSegment.encode(value);
     }
 
     protected <E> List<E> listOf(Class<? extends ListResult<E>> type, String path, Map<String, String> filters) {

@@ -10,6 +10,7 @@ import java.util.Objects;
 import org.openstack4j.api.trove.ext.TroveInstanceExtService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.trove.Instance;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.trove.domain.TroveInstance.DBInstances;
 
@@ -43,7 +44,7 @@ public class TroveInstanceExtServiceImpl extends BaseTroveExtService implements 
 
     @Override
     public ActionResponse attachConfiguration(String instanceId, String configurationId) {
-        return update(instanceId, "configuration", id(configurationId));
+        return update(instanceId, "configuration", PathSegment.validate(configurationId));
     }
 
     @Override

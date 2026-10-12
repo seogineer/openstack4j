@@ -21,6 +21,7 @@ import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Payloads;
 import org.openstack4j.openstack.internal.BaseOpenStackService;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 public class MistralExtServiceImpl extends BaseOpenStackService implements MistralExtService {
@@ -36,10 +37,7 @@ public class MistralExtServiceImpl extends BaseOpenStackService implements Mistr
     }
 
     private static String id(String value) {
-        Objects.requireNonNull(value, "id");
-        if (value.isBlank() || value.indexOf('/') >= 0 || value.indexOf('?') >= 0 || value.indexOf('#') >= 0)
-            throw new IllegalArgumentException("Not a valid identifier: '" + value + "'");
-        return value;
+        return PathSegment.encode(value);
     }
 
     /** Reads a JSON object from a body Mistral may label text/plain. */
@@ -110,7 +108,7 @@ public class MistralExtServiceImpl extends BaseOpenStackService implements Mistr
 
     @Override
     public Map<String, Object> createCodeSource(String name, String content, String scope) {
-        Invocation<Map> invocation = post(Map.class, "/code_sources").param("name", id(name));
+        Invocation<Map> invocation = post(Map.class, "/code_sources").param("name", PathSegment.validate(name));
         if (scope != null)
             invocation.param("scope", scope);
         return text(invocation, content);
@@ -118,7 +116,7 @@ public class MistralExtServiceImpl extends BaseOpenStackService implements Mistr
 
     @Override
     public Map<String, Object> updateCodeSource(String identifier, String content, String scope) {
-        Invocation<Map> invocation = put(Map.class, "/code_sources").param("identifier", id(identifier));
+        Invocation<Map> invocation = put(Map.class, "/code_sources").param("identifier", PathSegment.validate(identifier));
         if (scope != null)
             invocation.param("scope", scope);
         return text(invocation, content);
@@ -207,7 +205,7 @@ public class MistralExtServiceImpl extends BaseOpenStackService implements Mistr
 
     @Override
     public Map<String, Object> addMember(String workflowId, String memberId) {
-        return send(post(Map.class, "/workflows/" + id(workflowId) + "/members"), Map.of("member_id", id(memberId)));
+        return send(post(Map.class, "/workflows/" + id(workflowId) + "/members"), Map.of("member_id", PathSegment.validate(memberId)));
     }
 
     @Override

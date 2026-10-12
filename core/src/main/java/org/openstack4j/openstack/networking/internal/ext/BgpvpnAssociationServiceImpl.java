@@ -10,6 +10,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.ext.BgpvpnNetworkAssociation;
 import org.openstack4j.model.network.ext.BgpvpnPortAssociation;
 import org.openstack4j.model.network.ext.BgpvpnRouterAssociation;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.networking.domain.ext.NeutronBgpvpnNetworkAssociation;
 import org.openstack4j.openstack.networking.domain.ext.NeutronBgpvpnNetworkAssociation.NeutronBgpvpnNetworkAssociationList;
@@ -44,7 +45,7 @@ public class BgpvpnAssociationServiceImpl extends BaseNeutronExtService implemen
 
     @Override
     public BgpvpnNetworkAssociation associateNetwork(String bgpvpnId, String networkId) {
-        return postTo(NeutronBgpvpnNetworkAssociation.class, path(bgpvpnId, "network_associations"), "network_association", Map.of("network_id", id(networkId)));
+        return postTo(NeutronBgpvpnNetworkAssociation.class, path(bgpvpnId, "network_associations"), "network_association", Map.of("network_id", PathSegment.validate(networkId)));
     }
 
     @Override
@@ -65,7 +66,7 @@ public class BgpvpnAssociationServiceImpl extends BaseNeutronExtService implemen
     @Override
     public BgpvpnRouterAssociation associateRouter(String bgpvpnId, String routerId, Boolean advertiseExtraRoutes) {
         Map<String, Object> fields = new LinkedHashMap<>();
-        fields.put("router_id", id(routerId));
+        fields.put("router_id", PathSegment.validate(routerId));
         if (advertiseExtraRoutes != null)
             fields.put("advertise_extra_routes", advertiseExtraRoutes);
         return postTo(NeutronBgpvpnRouterAssociation.class, path(bgpvpnId, "router_associations"), "router_association", fields);

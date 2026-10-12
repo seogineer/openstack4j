@@ -75,4 +75,13 @@ public class DnsShareTransferTests extends AbstractDnsExtTest {
         osv3().dns().zoneTransfers().createRequest("z1", null, null);
         Assert.assertEquals(body(expect("POST", "/v2/zones/z1/tasks/transfer_requests")).toString(), "{}");
     }
+
+    public void zoneIdIsEncoded() throws Exception {
+        respondWith(200, "{\"shared_zones\": [], \"links\": {}}");
+        respondWith(200, "{\"recordsets\": [], \"links\": {}}");
+        osv3().dns().zoneShares().list("zone ü+1", null);
+        osv3().dns().recordsets().list("zone ü+1", null);
+        Assert.assertTrue(takeRequest().getPath().endsWith("/v2/zones/zone%20%C3%BC%2B1/shares"));
+        Assert.assertTrue(takeRequest().getPath().endsWith("/v2/zones/zone%20%C3%BC%2B1/recordsets"));
+    }
 }

@@ -13,6 +13,7 @@ import org.openstack4j.api.telemetry.ext.AodhAlarmExtService;
 import org.openstack4j.core.transport.ExecutionOptions;
 import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.common.ActionResponse;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.telemetry.internal.BaseTelemetryAodhServices;
 
@@ -25,10 +26,7 @@ public class AodhAlarmExtServiceImpl extends BaseTelemetryAodhServices implement
     }
 
     private static String id(String value) {
-        Objects.requireNonNull(value, "id");
-        if (value.isBlank() || value.indexOf('/') >= 0 || value.indexOf('?') >= 0 || value.indexOf('#') >= 0)
-            throw new IllegalArgumentException("Not a valid identifier: '" + value + "'");
-        return value;
+        return PathSegment.encode(value);
     }
 
     @SuppressWarnings("unchecked")
@@ -80,7 +78,7 @@ public class AodhAlarmExtServiceImpl extends BaseTelemetryAodhServices implement
     @SuppressWarnings("unchecked")
     @Override
     public Map<String, Integer> getQuotas(String projectId) {
-        return quotas(get(Map.class, "/quotas").param("project_id", id(projectId)).execute(propagate404()));
+        return quotas(get(Map.class, "/quotas").param("project_id", PathSegment.validate(projectId)).execute(propagate404()));
     }
 
     @SuppressWarnings("unchecked")
@@ -94,14 +92,14 @@ public class AodhAlarmExtServiceImpl extends BaseTelemetryAodhServices implement
             entries.add(entry);
         });
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("project_id", id(projectId));
+        body.put("project_id", PathSegment.validate(projectId));
         body.put("quotas", entries);
         return quotas(post(Map.class, "/quotas").entity(JsonBody.of(body)).execute(propagate404()));
     }
 
     @Override
     public ActionResponse deleteQuotas(String projectId) {
-        return deleteWithResponse("/quotas").param("project_id", id(projectId)).execute();
+        return deleteWithResponse("/quotas").param("project_id", PathSegment.validate(projectId)).execute();
     }
 
     private static Map<String, Integer> quotas(Map<?, ?> body) {

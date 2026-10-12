@@ -10,6 +10,7 @@ import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.heat.options.HeatAttributes;
 import org.openstack4j.openstack.common.ListResult;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.heat.internal.BaseHeatServices;
 
@@ -24,7 +25,7 @@ public abstract class BaseHeatExtService extends BaseHeatServices {
     }
 
     protected static String id(String value) {
-        return Objects.requireNonNull(value, "id");
+        return PathSegment.encode(value);
     }
 
     protected <E> List<E> listOf(Class<? extends ListResult<E>> type, String path, Map<String, String> filters) {

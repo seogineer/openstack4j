@@ -219,4 +219,21 @@ public class MessagingTests extends AbstractTest {
         Assert.assertEquals(takeRequest().getPath(), "/v2/ping");
         Assert.assertEquals(takeRequest().getPath(), "/v2/ping");
     }
+
+    public void identifiersAreEncodedAsOneSegment() throws Exception {
+        respondWith(200, "{}");
+        respondWith(200, "{}");
+        respondWith(200, "{}");
+
+        var mq = osv3().messaging();
+        mq.getQueue("billing report+100%");
+        mq.getQueue("큐");
+        mq.getQueue("a%20b");
+        Assert.assertThrows(IllegalArgumentException.class, () -> mq.getQueue("a/b"));
+        Assert.assertThrows(IllegalArgumentException.class, () -> mq.getQueue(".."));
+
+        Assert.assertTrue(takeRequest().getPath().endsWith("/v2/queues/billing%20report%2B100%25"));
+        Assert.assertTrue(takeRequest().getPath().endsWith("/v2/queues/%ED%81%90"));
+        Assert.assertTrue(takeRequest().getPath().endsWith("/v2/queues/a%20b"));
+    }
 }

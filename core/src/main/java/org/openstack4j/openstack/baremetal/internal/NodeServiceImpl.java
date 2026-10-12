@@ -20,6 +20,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.baremetal.domain.IronicNode.Nodes;
 import org.openstack4j.openstack.baremetal.domain.IronicNode;
 import org.openstack4j.openstack.baremetal.domain.IronicNodeStates;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 public class NodeServiceImpl extends BaseBaremetalServices implements NodeService {
@@ -202,7 +203,7 @@ public class NodeServiceImpl extends BaseBaremetalServices implements NodeServic
     @Override
     public ActionResponse attachVif(String nodeIdent, String vifId, Map<String, ?> options) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("id", id(vifId));
+        body.put("id", PathSegment.validate(vifId));
         if (options != null)
             body.putAll(options);
         return postWithResponse(node(nodeIdent) + "/vifs").entity(JsonBody.of(body)).execute();
@@ -327,7 +328,7 @@ public class NodeServiceImpl extends BaseBaremetalServices implements NodeServic
 
     @Override
     public ActionResponse vendorPassthru(String nodeIdent, String method, Map<String, ?> args) {
-        return postWithResponse(node(nodeIdent) + "/vendor_passthru").param("method", id(method))
+        return postWithResponse(node(nodeIdent) + "/vendor_passthru").param("method", PathSegment.validate(method))
                 .entity(JsonBody.of(args == null ? Map.of() : args)).execute();
     }
 

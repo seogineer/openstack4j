@@ -13,6 +13,7 @@ import org.openstack4j.model.manila.ext.options.ManilaAttributes;
 import org.openstack4j.openstack.common.ListResult;
 import org.openstack4j.openstack.internal.BaseOpenStackService;
 import org.openstack4j.openstack.internal.MicroVersion;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.manila.internal.ManilaMicroVersions;
 
@@ -33,10 +34,7 @@ public abstract class BaseManilaExtService extends BaseOpenStackService {
 
     /** @return {@code value}, which must be a non-blank path segment (no {@code /}, {@code ?} or {@code #}) */
     protected static String id(String value) {
-        Objects.requireNonNull(value, "id");
-        if (value.isBlank() || value.indexOf('/') >= 0 || value.indexOf('?') >= 0 || value.indexOf('#') >= 0)
-            throw new IllegalArgumentException("Not a valid identifier: '" + value + "'");
-        return value;
+        return PathSegment.encode(value);
     }
 
     /** @return the microversion a request with this floor carries */

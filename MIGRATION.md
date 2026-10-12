@@ -149,3 +149,6 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - `ServiceType` 별칭은 이름·type 일치 판정(`forName`, `forCatalogEntry`, v3 catalog)에만 쓰입니다. `getType()` 키로 집계 catalog 를 찾는 v2 type fallback 과 `getServiceVersion()` 에는 적용되지 않습니다.
 - Zaqar `ping()` 은 5xx 에서 예외 대신 `false` 를 돌려줍니다. connector 가 따라가지 않은 3xx 최종 응답도 이제 `false`(이전 `true`)입니다.
 - `executeWithResponse()` 경로의 요청도 `User-Agent` 를 `OpenStack4j / OpenStack Client` 로 덮어씁니다(세션 헤더에 `User-Agent` 를 넣은 경우 포함).
+- 식별자 인코딩: 위 서비스들이 경로에 넣는 id·이름은 영문자·숫자·`-._~:@` 외의 문자를 UTF-8 percent 인코딩합니다(공백 → `%20`, `+` → `%2B`, `%` → `%25`, `큐` → `%ED%81%90`). 이미 `%XX` 로 인코딩된 부분은 그대로 두므로, 직접 인코딩해 넘기던 코드도 두 번 인코딩되지 않습니다. 대신 리터럴 `%` 뒤에 16진수 두 자리가 오는 이름(`a%20b`)은 디코딩된 이름으로 해석됩니다.
+- 빈 문자열, `/`·`?`·`#` 를 포함한 값, `.`·`..`, `%2F` 를 포함한 값은 `IllegalArgumentException` 입니다. Heat·Octavia·Glance·Neutron 확장과 Keystone endpoint filter 는 이전에 null 만 거부했습니다.
+- `BaseDesignateExtService.validId` 는 인코딩된 segment 를 돌려줍니다.

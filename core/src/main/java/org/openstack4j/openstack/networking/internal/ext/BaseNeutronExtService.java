@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.options.NeutronAttributes;
 import org.openstack4j.openstack.common.ListResult;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
 
@@ -15,7 +16,7 @@ import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
 public abstract class BaseNeutronExtService extends BaseNetworkingServices {
 
     protected static String id(String value) {
-        return Objects.requireNonNull(value, "id");
+        return PathSegment.encode(value);
     }
 
     protected <E> List<E> listOf(Class<? extends ListResult<E>> type, String path, Map<String, String> filters) {

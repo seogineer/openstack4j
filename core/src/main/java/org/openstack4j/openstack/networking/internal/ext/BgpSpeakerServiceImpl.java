@@ -7,6 +7,7 @@ import org.openstack4j.api.networking.ext.BgpSpeakerService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.ext.BgpSpeaker;
 import org.openstack4j.model.network.options.BgpSpeakerOptions;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.networking.domain.ext.NeutronBgpSpeaker;
 import org.openstack4j.openstack.networking.domain.ext.NeutronBgpSpeaker.NeutronBgpSpeakerList;
 
@@ -42,22 +43,22 @@ public class BgpSpeakerServiceImpl extends BaseNeutronExtService implements BgpS
 
     @Override
     public ActionResponse addPeer(String id, String bgpPeerId) {
-        return change(id, "add_bgp_peer", Map.of("bgp_peer_id", id(bgpPeerId)));
+        return change(id, "add_bgp_peer", Map.of("bgp_peer_id", PathSegment.validate(bgpPeerId)));
     }
 
     @Override
     public ActionResponse removePeer(String id, String bgpPeerId) {
-        return change(id, "remove_bgp_peer", Map.of("bgp_peer_id", id(bgpPeerId)));
+        return change(id, "remove_bgp_peer", Map.of("bgp_peer_id", PathSegment.validate(bgpPeerId)));
     }
 
     @Override
     public ActionResponse addGatewayNetwork(String id, String networkId) {
-        return change(id, "add_gateway_network", Map.of("network_id", id(networkId)));
+        return change(id, "add_gateway_network", Map.of("network_id", PathSegment.validate(networkId)));
     }
 
     @Override
     public ActionResponse removeGatewayNetwork(String id, String networkId) {
-        return change(id, "remove_gateway_network", Map.of("network_id", id(networkId)));
+        return change(id, "remove_gateway_network", Map.of("network_id", PathSegment.validate(networkId)));
     }
 
     private ActionResponse change(String id, String action, Map<String, ?> body) {
@@ -84,7 +85,7 @@ public class BgpSpeakerServiceImpl extends BaseNeutronExtService implements BgpS
     @Override
     public ActionResponse addToDragent(String agentId, String bgpSpeakerId) {
         return postWithResponse("/agents/" + id(agentId) + "/bgp-drinstances")
-                .entity(org.openstack4j.openstack.internal.microversion.JsonBody.of(Map.of("bgp_speaker_id", id(bgpSpeakerId)))).execute();
+                .entity(org.openstack4j.openstack.internal.microversion.JsonBody.of(Map.of("bgp_speaker_id", PathSegment.validate(bgpSpeakerId)))).execute();
     }
 
     @Override
