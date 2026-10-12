@@ -14,7 +14,7 @@ public interface NotificationService extends RestService {
     /** @param filters e.g. {@code source_host_uuid}, {@code type}, {@code status}, {@code generated-since}, {@code limit}, {@code marker} */
     List<? extends Notification> list(Map<String, String> filters);
 
-    /** @return the notification with its recovery progress (instance-ha 1.1), or {@code null} when it does not exist */
+    /** @return the notification with its recovery progress, or {@code null} when it does not exist. Always sent at instance-ha 1.1; a Masakari without 1.1 (before Stein) answers 406. */
     Notification get(String notificationId);
 
     Notification create(NotificationOptions options);

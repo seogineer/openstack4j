@@ -172,7 +172,7 @@ public class ShareExtServiceImpl extends BaseManilaExtService implements ShareEx
         String path = share(shareId) + "/action";
         Map<String, Object> wrapper = new HashMap<>();
         wrapper.put("migration_get_progress", null);
-        Map<String, Object> body = experimentalHeader(V(29), MIGRATION_STABLE, at(V(29), post(Map.class, path), path + " migration_get_progress"), path)
+        Map<String, Object> body = experimentalHeader(V(29), MIGRATION_STABLE, at(V(29), post(Map.class, path), feature), feature)
                 .entity(JsonBody.of(wrapper)).execute(propagate404());
         return body == null ? new LinkedHashMap<>() : body;
     }

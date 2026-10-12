@@ -18,7 +18,7 @@ public interface SecretStoreService extends RestService {
     /** @return the global default secret store */
     SecretStore globalDefault();
 
-    /** @return the project's preferred secret store, or {@code null} when none is set */
+    /** @return the project's preferred secret store, or {@code null} when none is set — also when the server has multiple back ends turned off (both answer 404) */
     SecretStore preferred();
 
     /** Makes a secret store the project's preferred one (admin). */

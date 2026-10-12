@@ -84,7 +84,7 @@ public interface ShareExtService extends RestService {
     /** Starts migrating a share (2.29; experimental below 2.96, the header is sent for you). */
     ActionResponse migrationStart(String shareId, ShareMigration migration);
 
-    /** @return {@code total_progress} and {@code task_state} (2.29; from 2.98 via {@code GET /shares/{id}/migration-progress}) */
+    /** @return {@code total_progress} and {@code task_state} (2.29; experimental below 2.96, the header is sent for you; from 2.98 via {@code GET /shares/{id}/migration-progress}) */
     Map<String, Object> migrationProgress(String shareId);
 
     ActionResponse migrationComplete(String shareId);

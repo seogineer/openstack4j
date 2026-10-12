@@ -19,7 +19,7 @@ OpenStack4j is a fluent OpenStack client that allows provisioning and control of
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j</artifactId>
-    <version>4.5.0</version>
+    <version>4.7.0</version>
 </dependency>
 ```
 
@@ -40,6 +40,16 @@ CI also checks a build together with Spring Boot 3.5 (`examples/spring-boot-smok
 
 The upstream documentation ([openstack4j.github.io](https://openstack4j.github.io/)) and the usage examples below still apply; just use the Maven coordinates above.
 See [MIGRATION.md](MIGRATION.md) for moving from 3.x and [CHANGELOG.md](CHANGELOG.md) for the changes.
+
+### Missing resources (404)
+
+APIs added in this fork follow one rule when the server answers 404, and each method's Javadoc states its own behaviour:
+
+- a single `get` of an entity returns `null`;
+- lists, creates, updates and methods that read a part of an entity (its state, console, indicators, parameters, outputs …) throw `ResponseException` with status 404, so a missing parent is not mistaken for an empty value;
+- methods that return `ActionResponse` return a failed response with code 404.
+
+APIs inherited from upstream keep their earlier behaviour (a 404 usually gives `null` or an empty list).
 
 ## Placement
 
@@ -301,6 +311,7 @@ os.barbican().quotas().setProjectQuotas(projectId, Map.of("secrets", 50));
 - New accessors: `acls()` (secret and container read ACLs), `secretsExt()` (payload, user metadata, consumers — API 1.1 header added for you), `containersExt()` (secrets, consumers), `orders()`, `quotas()` (effective and project quotas), `secretStores()` (multiple back ends, preferred store)
 - Methods take an id or the `*_ref` URL Barbican returns (its last path segment is used)
 - Models have getters for the common fields; the rest are in `getAttributes()`
+- `OSFactory.enableHttpLoggingFilter(true)` with the okhttp connector logs request and response bodies and headers (okhttp `HttpLoggingInterceptor` at `BODY` level), so secret payloads and the `X-Auth-Token` end up in the log; keep it off outside debugging
 
 ## Database (Trove) extensions
 
@@ -377,6 +388,8 @@ os.messaging().claimMessages("demo", 300, 300, 5);                   // claim_id
 ## Registration (Adjutant)
 
 New service `os.registration()` (Adjutant v1): admin tasks (list with filters, approve, update, cancel), tokens (reissue, submit, purge expired) and notifications (acknowledge), plus project self-service: users (invite, cancel invite), user roles, grantable roles, password reset, email update, sign-up and quota sizes.
+
+Sign-up, email update and quota updates exist only when the operator turns on their delegate APIs (`active_delegate_apis`). The calls Adjutant accepts without a token (sign-up, password reset, token submit) still go through an authenticated `os` client here.
 
 ```java
 os.registration().inviteUser("alice@example.com", List.of("member"), null, null);

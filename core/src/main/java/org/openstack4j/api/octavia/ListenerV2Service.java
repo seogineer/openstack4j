@@ -1,6 +1,5 @@
 package org.openstack4j.api.octavia;
 
-import org.openstack4j.model.octavia.LoadBalancerV2Stats;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +7,7 @@ import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.octavia.ListenerV2;
 import org.openstack4j.model.octavia.ListenerV2Update;
+import org.openstack4j.model.octavia.LoadBalancerV2Stats;
 
 /**
  * Octavia V2 listener Extension API

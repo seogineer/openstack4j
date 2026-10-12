@@ -34,6 +34,12 @@ public interface MistralExtService extends RestService {
      */
     Map<String, Object> createCodeSource(String name, String content, String scope);
 
+    /**
+     * Replaces the code of a code source.
+     *
+     * @param scope {@code private} or {@code public}; {@code null} leaves it out of the request and Mistral then resets
+     *              the scope to {@code private}, so pass the current scope to keep a public code source public
+     */
     Map<String, Object> updateCodeSource(String identifier, String content, String scope);
 
     ActionResponse deleteCodeSource(String identifier);
@@ -46,7 +52,7 @@ public interface MistralExtService extends RestService {
     /** @param action {@code name}, {@code class_name}, {@code code_source_id} (or name), optional {@code scope}, {@code namespace} */
     Map<String, Object> createDynamicAction(Map<String, ?> action);
 
-    /** @param action {@code id} or {@code name} plus the fields to change */
+    /** @param action {@code id} or {@code name} plus the fields to change; Mistral also needs {@code class_name} on every update */
     Map<String, Object> updateDynamicAction(Map<String, ?> action);
 
     ActionResponse deleteDynamicAction(String identifier);
@@ -73,17 +79,35 @@ public interface MistralExtService extends RestService {
     /** @return the workflow executions started by a task */
     List<Map<String, Object>> listTaskExecutions(String taskExecutionId);
 
-    /** @return the projects a workflow is shared with ({@code member_id}, {@code status} …) */
+    /**
+     * @param workflowId the workflow UUID (not its name)
+     * @return the projects a workflow is shared with ({@code member_id}, {@code status} …)
+     */
     List<Map<String, Object>> listMembers(String workflowId);
 
-    /** @return the membership, or {@code null} when it does not exist */
+    /**
+     * @param workflowId the workflow UUID (not its name)
+     * @return the membership, or {@code null} when it does not exist
+     */
     Map<String, Object> getMember(String workflowId, String memberId);
 
-    /** Shares a workflow with a project. */
+    /**
+     * Shares a workflow with a project.
+     *
+     * @param workflowId the workflow UUID (not its name)
+     */
     Map<String, Object> addMember(String workflowId, String memberId);
 
-    /** @param status {@code accepted} or {@code rejected} (by the member project) */
+    /**
+     * @param workflowId the workflow UUID (not its name)
+     * @param status {@code accepted} or {@code rejected} (by the member project)
+     */
     Map<String, Object> updateMember(String workflowId, String memberId, String status);
 
+    /**
+     * Removes the membership.
+     *
+     * @param workflowId the workflow UUID (not its name)
+     */
     ActionResponse removeMember(String workflowId, String memberId);
 }

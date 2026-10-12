@@ -14,15 +14,16 @@ public interface TemplateVersionService extends RestService {
     /**
      * Lists the template versions Heat understands.
      *
-     * @return the result
+     * @return the template versions
      */
     List<? extends TemplateVersion> list();
 
     /**
      * Lists the intrinsic functions of a template version.
      *
+     * @throws org.openstack4j.api.exceptions.ResponseException if the version is unknown (404)
      * @param version the version
-     * @return the result
+     * @return the functions of the version
      */
     List<? extends TemplateFunction> functions(String version);
 }

@@ -11,7 +11,7 @@ public class IpsecSiteConnectionOptions extends NeutronAttributes<IpsecSiteConne
         return new IpsecSiteConnectionOptions().put("vpnservice_id", Objects.requireNonNull(vpnserviceId, "vpnserviceId")).put("ikepolicy_id", Objects.requireNonNull(ikepolicyId, "ikepolicyId")).put("ipsecpolicy_id", Objects.requireNonNull(ipsecpolicyId, "ipsecpolicyId")).put("peer_address", Objects.requireNonNull(peerAddress, "peerAddress")).put("peer_id", Objects.requireNonNull(peerId, "peerId")).put("psk", Objects.requireNonNull(psk, "psk"));
     }
 
-    /** An update that sends only the fields set afterwards. */
+    /** An update that sends only the fields set afterwards; setters marked "create only" are rejected by Neutron on update (400). */
     public static IpsecSiteConnectionOptions update() {
         return new IpsecSiteConnectionOptions();
     }
@@ -21,14 +21,17 @@ public class IpsecSiteConnectionOptions extends NeutronAttributes<IpsecSiteConne
         return this;
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public IpsecSiteConnectionOptions vpnserviceId(String value) {
         return put("vpnservice_id", value);
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public IpsecSiteConnectionOptions ikepolicyId(String value) {
         return put("ikepolicy_id", value);
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public IpsecSiteConnectionOptions ipsecpolicyId(String value) {
         return put("ipsecpolicy_id", value);
     }

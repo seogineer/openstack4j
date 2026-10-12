@@ -9,7 +9,7 @@ public class TapServiceOptions extends NeutronAttributes<TapServiceOptions> {
         return new TapServiceOptions().put("port_id", Objects.requireNonNull(portId, "portId"));
     }
 
-    /** An update that sends only the fields set afterwards. */
+    /** An update that sends only the fields set afterwards; setters marked "create only" are rejected by Neutron on update (400). */
     public static TapServiceOptions update() {
         return new TapServiceOptions();
     }
@@ -19,6 +19,7 @@ public class TapServiceOptions extends NeutronAttributes<TapServiceOptions> {
         return this;
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public TapServiceOptions portId(String value) {
         return put("port_id", value);
     }

@@ -1,8 +1,5 @@
 package org.openstack4j.openstack.octavia.internal;
 
-import org.openstack4j.openstack.octavia.internal.ext.BaseOctaviaExtService;
-import org.openstack4j.openstack.octavia.domain.OctaviaLoadBalancerV2Stats;
-import org.openstack4j.model.octavia.LoadBalancerV2Stats;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -11,8 +8,11 @@ import org.openstack4j.api.octavia.ListenerV2Service;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.octavia.ListenerV2;
 import org.openstack4j.model.octavia.ListenerV2Update;
+import org.openstack4j.model.octavia.LoadBalancerV2Stats;
 import org.openstack4j.openstack.compute.functions.ToActionResponseFunction;
 import org.openstack4j.openstack.octavia.domain.OctaviaListenerV2;
+import org.openstack4j.openstack.octavia.domain.OctaviaLoadBalancerV2Stats;
+import org.openstack4j.openstack.octavia.internal.ext.BaseOctaviaExtService;
 
 /**
  * Lbaas listener imlementation

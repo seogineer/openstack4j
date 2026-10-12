@@ -9,7 +9,7 @@ public class BgpSpeakerOptions extends NeutronAttributes<BgpSpeakerOptions> {
         return new BgpSpeakerOptions().put("name", Objects.requireNonNull(name, "name")).put("local_as", Objects.requireNonNull(localAs, "localAs")).put("ip_version", Objects.requireNonNull(ipVersion, "ipVersion"));
     }
 
-    /** An update that sends only the fields set afterwards. */
+    /** An update that sends only the fields set afterwards; setters marked "create only" are rejected by Neutron on update (400). */
     public static BgpSpeakerOptions update() {
         return new BgpSpeakerOptions();
     }
@@ -23,10 +23,12 @@ public class BgpSpeakerOptions extends NeutronAttributes<BgpSpeakerOptions> {
         return put("name", value);
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public BgpSpeakerOptions localAs(Long value) {
         return put("local_as", value);
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public BgpSpeakerOptions ipVersion(Integer value) {
         return put("ip_version", value);
     }

@@ -9,7 +9,7 @@ public class VpnServiceOptions extends NeutronAttributes<VpnServiceOptions> {
         return new VpnServiceOptions().put("router_id", Objects.requireNonNull(routerId, "routerId"));
     }
 
-    /** An update that sends only the fields set afterwards. */
+    /** An update that sends only the fields set afterwards; setters marked "create only" are rejected by Neutron on update (400). */
     public static VpnServiceOptions update() {
         return new VpnServiceOptions();
     }
@@ -19,6 +19,7 @@ public class VpnServiceOptions extends NeutronAttributes<VpnServiceOptions> {
         return this;
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public VpnServiceOptions routerId(String value) {
         return put("router_id", value);
     }
@@ -31,11 +32,12 @@ public class VpnServiceOptions extends NeutronAttributes<VpnServiceOptions> {
         return put("description", value);
     }
 
-    /** Only for VPN services without endpoint groups (deprecated by Neutron). */
+    /** Create only (Neutron rejects it on update). Only for VPN services without endpoint groups (deprecated by Neutron). */
     public VpnServiceOptions subnetId(String value) {
         return put("subnet_id", value);
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public VpnServiceOptions flavorId(String value) {
         return put("flavor_id", value);
     }

@@ -152,3 +152,8 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - 식별자 인코딩: 위 서비스들이 경로에 넣는 id·이름은 영문자·숫자·`-._~:@` 외의 문자를 UTF-8 percent 인코딩합니다(공백 → `%20`, `+` → `%2B`, `%` → `%25`, `큐` → `%ED%81%90`). 이미 `%XX` 로 인코딩된 부분은 그대로 두므로, 직접 인코딩해 넘기던 코드도 두 번 인코딩되지 않습니다. 대신 리터럴 `%` 뒤에 16진수 두 자리가 오는 이름(`a%20b`)은 디코딩된 이름으로 해석됩니다.
 - 빈 문자열(공백만 있는 값 포함), `/`·`?`·`#` 를 포함한 값, `.`·`..`(`%2E` 표기 포함), `%2F` 를 포함한 값은 `IllegalArgumentException` 입니다. Heat·Octavia·Glance·Neutron 확장과 Keystone endpoint filter 는 이전에 null 만 거부했습니다.
 - `BaseDesignateExtService.validId` 는 인코딩된 segment 를 돌려줍니다.
+
+# 4.7 → 4.8
+
+- `BaseBaremetalServices.requireMicroVersion`(internal 패키지, protected)을 삭제했습니다. 쓰는 곳이 없었습니다.
+- Neutron FWaaS v2 `insertRule`·`removeRule` 이 돌려주는 정책 객체의 `getAttributes()` 에는 값이 null 인 속성이 더 이상 들어 있지 않습니다(공용 `ObjectMapperSingleton` 의 NON_NULL 직렬화 규칙). `create`·`get` 은 이전과 같습니다.

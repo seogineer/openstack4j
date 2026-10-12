@@ -14,6 +14,7 @@ public interface Backup extends ModelEntity {
     Double getSize();
     String getParentId();
     String getLocationRef();
+    /** @return the storage driver; Trove 2026.2 no longer returns it, so this is usually {@code null} */
     String getStorageDriver();
     Map<String, Object> getDatastore();
     String getProjectId();
