@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.api.AbstractTest;
-import okhttp3.HttpUrl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
