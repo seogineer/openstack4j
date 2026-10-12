@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 import org.openstack4j.api.placement.v1.exceptions.PlacementException;
 import org.openstack4j.api.placement.v1.exceptions.PlacementMicroVersionException;
 import org.openstack4j.api.types.ServiceType;
-import org.openstack4j.core.transport.ClientConstants;
 import org.openstack4j.core.transport.ExecutionOptions;
 import org.openstack4j.core.transport.HttpMethod;
 import org.openstack4j.core.transport.HttpResponse;
@@ -81,7 +80,7 @@ public abstract class BasePlacementV1Service extends BaseOpenStackService {
      * error bodies, not Placement's {@code errors} list).
      */
     protected ActionResponse executeAction(Invocation<ActionResponse> invocation) {
-        HttpResponse response = invocation.header(ClientConstants.HEADER_USER_AGENT, ClientConstants.USER_AGENT).executeWithResponse();
+        HttpResponse response = invocation.executeWithResponse();
         try {
             if (response.getStatus() < 400)
                 return ActionResponse.actionSuccess(response.getStatus());
@@ -97,7 +96,7 @@ public abstract class BasePlacementV1Service extends BaseOpenStackService {
      * {@link PlacementException} instead of hiding it behind {@code false}.
      */
     protected boolean existsByStatus(Invocation<ActionResponse> invocation) {
-        HttpResponse response = invocation.header(ClientConstants.HEADER_USER_AGENT, ClientConstants.USER_AGENT).executeWithResponse();
+        HttpResponse response = invocation.executeWithResponse();
         try {
             if (response.getStatus() < 400)
                 return true;

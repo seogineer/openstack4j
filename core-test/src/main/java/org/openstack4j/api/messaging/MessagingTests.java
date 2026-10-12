@@ -194,4 +194,29 @@ public class MessagingTests extends AbstractTest {
         Assert.assertNotEquals(other, "3381af92-2b9e-11e3-b191-71861300734c");
         Assert.assertThrows(IllegalArgumentException.class, () -> second.messaging().useClientId("not-a-uuid"));
     }
+
+    public void userAgentOnEveryRequest() throws Exception {
+        respondWith(200, "{\"_default_message_ttl\": 3600}");
+        respondWith(204);
+
+        var mq = osv3().messaging();
+        mq.getQueue("ua");
+        mq.listMessages("ua", null);
+
+        // getQueue goes through execute(), listMessages through executeWithResponse()
+        for (int i = 0; i < 2; i++)
+            Assert.assertEquals(takeRequest().getHeaders().values("User-Agent"), List.of(org.openstack4j.core.transport.ClientConstants.USER_AGENT));
+    }
+
+    /** 500 rather than 503: httpclient retries a 503 once by itself, which would use up the next queued response. */
+    public void pingIsFalseOnErrorStatus() throws Exception {
+        respondWith(500, "{\"title\":\"Internal server error\"}");
+        respondWith(404);
+
+        var mq = osv3().messaging();
+        Assert.assertFalse(mq.ping());
+        Assert.assertFalse(mq.ping());
+        Assert.assertEquals(takeRequest().getPath(), "/v2/ping");
+        Assert.assertEquals(takeRequest().getPath(), "/v2/ping");
+    }
 }

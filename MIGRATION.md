@@ -147,3 +147,5 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 
 - Keystone v2 catalog 해석: 서비스 이름으로 찾지 못해 type 으로 찾을 때, 그 항목이 이름으로 다른 알려진 서비스를 가리키면 쓰지 않습니다(v3 의 `ServiceType.forCatalogEntry` 규칙과 같음). Zun 만 있는 v2 클라우드에서 `os.magnum()` 은 더 이상 Zun endpoint 로 가지 않습니다.
 - `ServiceType` 별칭은 이름·type 일치 판정(`forName`, `forCatalogEntry`, v3 catalog)에만 쓰입니다. `getType()` 키로 집계 catalog 를 찾는 v2 type fallback 과 `getServiceVersion()` 에는 적용되지 않습니다.
+- Zaqar `ping()` 은 5xx 에서 예외 대신 `false` 를, 3xx 에서는 `false` 를 돌려줍니다.
+- `executeWithResponse()` 경로의 요청도 `User-Agent` 를 `OpenStack4j / OpenStack Client` 로 덮어씁니다(세션 헤더에 `User-Agent` 를 넣은 경우 포함).

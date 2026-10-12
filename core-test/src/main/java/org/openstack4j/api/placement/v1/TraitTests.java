@@ -33,7 +33,9 @@ public class TraitTests extends AbstractPlacementTest {
 
         Assert.assertTrue(osv3().placement().traits().exists("HW_CPU_X86_AVX"));
         Assert.assertFalse(osv3().placement().traits().exists("CUSTOM_NOPE"));
-        Assert.assertEquals(takeVersionAndRequest().getPath(), "/traits/HW_CPU_X86_AVX");
+        RecordedRequest exists = takeVersionAndRequest();
+        Assert.assertEquals(exists.getPath(), "/traits/HW_CPU_X86_AVX");
+        Assert.assertEquals(exists.getHeader("User-Agent"), org.openstack4j.core.transport.ClientConstants.USER_AGENT);
         takeRequest();
     }
 

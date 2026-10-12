@@ -131,7 +131,7 @@ public interface MessagingService extends RestService {
 
     ActionResponse deleteFlavor(String flavorName);
 
-    /** @return whether the service answers {@code GET /v2/ping} */
+    /** @return {@code true} when {@code GET /v2/ping} answers 2xx; {@code false} on any other status or when the service cannot be reached. Authentication failures propagate. */
     boolean ping();
 
     /** @return the detailed health of the service (admin) */

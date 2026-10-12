@@ -233,8 +233,7 @@ public class BaseOpenStackService {
         }
 
         public R execute(ExecutionOptions<R> options) {
-            header(HEADER_USER_AGENT, USER_AGENT);
-            HttpRequest<R> request = req.build();
+            HttpRequest<R> request = buildRequest();
             HttpResponse res = HttpExecutor.create().execute(request);
 
             reqIdContainer.remove();
@@ -243,10 +242,16 @@ public class BaseOpenStackService {
         }
 
         public HttpResponse executeWithResponse() {
-            HttpResponse res = HttpExecutor.create().execute(req.build());
+            HttpResponse res = HttpExecutor.create().execute(buildRequest());
             reqIdContainer.remove();
             reqIdContainer.set(getRequestId(res));
             return res;
+        }
+
+        /** Every request carries the openstack4j User-Agent, whichever execute method sends it. */
+        private HttpRequest<R> buildRequest() {
+            header(HEADER_USER_AGENT, USER_AGENT);
+            return req.build();
         }
 
         private String getRequestId(HttpResponse res) {
