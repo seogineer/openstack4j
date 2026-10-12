@@ -113,4 +113,20 @@ public class ReservationTests extends AbstractTest {
         Assert.assertEquals(property.get("private"), Boolean.TRUE);
         Assert.assertEquals(fip.getFloatingIpAddress(), "172.24.4.101");
     }
+
+    public void hostPropertiesIncludingPrivate() throws Exception {
+        respondWith(200, "{\"resource_properties\": [{\"property\": \"gpu\", \"private\": true, \"values\": [\"a100\"]}]}");
+        respondWith(200, "{\"resource_properties\": []}");
+        var hosts = osv3().reservation().hosts();
+        List<Map<String, Object>> all = hosts.listProperties(true, true);
+        hosts.listProperties(false, true);
+        RecordedRequest first = takeRequest();
+        Assert.assertTrue(path(first).contains("/v1/os-hosts/properties?"));
+        Assert.assertEquals(first.getRequestUrl().queryParameter("detail"), "True");
+        Assert.assertEquals(first.getRequestUrl().queryParameter("all"), "True");
+        RecordedRequest second = takeRequest();
+        Assert.assertNull(second.getRequestUrl().queryParameter("detail"));
+        Assert.assertEquals(second.getRequestUrl().queryParameter("all"), "True");
+        Assert.assertEquals(all.get(0).get("private"), Boolean.TRUE);
+    }
 }

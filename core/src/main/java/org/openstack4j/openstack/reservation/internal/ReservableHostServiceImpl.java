@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.reservation.internal;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +53,17 @@ public class ReservableHostServiceImpl extends BaseBlazarService implements Rese
 
     @Override
     public List<Map<String, Object>> listProperties(boolean detail) {
-        return mapsOf(PATH + "/properties", "resource_properties", detail ? Map.of("detail", "True") : null);
+        return listProperties(detail, false);
+    }
+
+    @Override
+    public List<Map<String, Object>> listProperties(boolean detail, boolean all) {
+        Map<String, String> query = new LinkedHashMap<>();
+        if (detail)
+            query.put("detail", "True");
+        if (all)
+            query.put("all", "True");
+        return mapsOf(PATH + "/properties", "resource_properties", query.isEmpty() ? null : query);
     }
 
     @SuppressWarnings("unchecked")

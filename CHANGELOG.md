@@ -4,6 +4,10 @@
 - `FirewallPolicyV2ServiceImpl` 의 개별 `ObjectMapper` 를 `ObjectMapperSingleton` 으로(insertRule·removeRule 이 돌려주는 객체의 `getAttributes()` 에는 값이 null 인 속성이 빠짐), Octavia listener·Heat stack 서비스 import 정리
 - 내부: 쓰이지 않던 `BaseBaremetalServices.requireMicroVersion` 삭제
 - README·connectors/README 의 설치 예제 버전을 4.7.0 으로 갱신
+- Aodh `alarmsExt().history(alarmId, conditions, params)`: 여러 조건을 반복 `q.field`/`q.op`/`q.value`(/`q.type`) 로 전송
+- Mistral `listTaskExecutions(taskExecutionId, filters)`, Blazar `hosts().listProperties(detail, all)`(`all=True` 로 private 속성 포함, admin), Masakari `HostOptions.type()`·`controlAttributes()`(host 수정 시)
+- Manila: catalog endpoint 가 `/v1/<project>/…` 처럼 project 뒤에 경로가 더 있어도 v2 로 바꿈(이전에는 v1 그대로)
+- Glance `versions()`: `v2.17-beta` 처럼 숫자 아닌 부분이 있는 version id 를 앞자리 숫자로 비교(이전에는 `NumberFormatException`)
 
 ## 4.7.0
 

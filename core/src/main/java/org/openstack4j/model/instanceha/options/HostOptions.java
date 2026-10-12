@@ -29,6 +29,16 @@ public class HostOptions extends MasakariAttributes<HostOptions> {
         return put("name", value);
     }
 
+    /** e.g. {@code COMPUTE}. */
+    public HostOptions type(String value) {
+        return put("type", value);
+    }
+
+    /** e.g. {@code SSH}. */
+    public HostOptions controlAttributes(String value) {
+        return put("control_attributes", value);
+    }
+
     /** A reserved host takes over the instances of a failed host. */
     public HostOptions reserved(Boolean value) {
         return put("reserved", value);

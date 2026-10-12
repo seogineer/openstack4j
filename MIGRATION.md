@@ -157,3 +157,6 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 
 - `BaseBaremetalServices.requireMicroVersion`(internal 패키지, protected)을 삭제했습니다. 쓰는 곳이 없었습니다.
 - Neutron FWaaS v2 `insertRule`·`removeRule` 이 돌려주는 정책 객체의 `getAttributes()` 에는 값이 null 인 속성이 더 이상 들어 있지 않습니다(공용 `ObjectMapperSingleton` 의 NON_NULL 직렬화 규칙). `create`·`get` 은 이전과 같습니다.
+- Manila v2 URL: `/v1/<project>/<extra>` 모양 endpoint 도 `/v2/<project>/<extra>` 로 바뀝니다(이전에는 v1 endpoint 를 그대로 써서 새 API 가 v1 으로 갔습니다).
+- `ImageVersions.supports()`·`getCurrent()` 는 숫자 아닌 version 조각에서 예외 대신 앞자리 숫자(없으면 0)로 비교합니다. 숫자가 없는 입력(빈 문자열 등)은 0 으로 비교되므로 `supports()` 가 `true` 를 돌려줍니다.
+- `MistralExtService.listTaskExecutions(String, Map)`, `ReservableHostService.listProperties(boolean, boolean)`, `AodhAlarmExtService.history(String, List, Map)` 추상 메서드가 추가되었습니다. 이 인터페이스를 직접 구현한 코드는 새 메서드가 필요합니다.

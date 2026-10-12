@@ -40,6 +40,38 @@ public class AodhAlarmExtServiceImpl extends BaseTelemetryAodhServices implement
     }
 
     @Override
+    public List<Map<String, Object>> history(String alarmId, List<Map<String, String>> conditions, Map<String, String> params) {
+        Map<String, List<String>> query = new LinkedHashMap<>();
+        if (conditions != null && !conditions.isEmpty()) {
+            if (params != null && params.keySet().stream().anyMatch(k -> k.startsWith("q.")))
+                throw new IllegalArgumentException("q.* parameters belong in conditions");
+            long typed = conditions.stream().filter(c -> c.get("type") != null).count();
+            if (typed != 0 && typed != conditions.size())
+                throw new IllegalArgumentException("give a type for every condition or for none");
+            for (Map<String, String> condition : conditions) {
+                add(query, "q.field", required(condition, "field"));
+                add(query, "q.op", condition.get("op") == null ? "eq" : condition.get("op"));
+                add(query, "q.value", required(condition, "value"));
+                if (typed != 0)
+                    add(query, "q.type", condition.get("type"));
+            }
+        }
+        return maps(get(List.class, "/alarms/" + id(alarmId) + "/history").params(params == null ? Collections.emptyMap() : params)
+                .paramLists(query).execute(propagate404()));
+    }
+
+    private static void add(Map<String, List<String>> query, String key, String value) {
+        query.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
+    }
+
+    private static String required(Map<String, String> condition, String key) {
+        String value = condition.get(key);
+        if (value == null)
+            throw new IllegalArgumentException("condition without " + key + ": " + condition);
+        return value;
+    }
+
+    @Override
     public String getState(String alarmId) {
         return get(String.class, "/alarms/" + id(alarmId) + "/state").execute(propagate404());
     }

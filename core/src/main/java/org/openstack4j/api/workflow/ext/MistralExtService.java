@@ -80,6 +80,12 @@ public interface MistralExtService extends RestService {
     List<Map<String, Object>> listTaskExecutions(String taskExecutionId);
 
     /**
+     * @param filters e.g. {@code state}, {@code workflow_name}, {@code limit}, {@code marker}, {@code sort_keys}, or {@code null}
+     * @return the workflow executions started by a task
+     */
+    List<Map<String, Object>> listTaskExecutions(String taskExecutionId, Map<String, String> filters);
+
+    /**
      * @param workflowId the workflow UUID (not its name)
      * @return the projects a workflow is shared with ({@code member_id}, {@code status} …)
      */

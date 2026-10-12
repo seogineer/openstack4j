@@ -116,4 +116,11 @@ public class InstanceHaTests extends AbstractTest {
         Assert.assertEquals(moves.get(0).getDestHost(), "host2");
         Assert.assertEquals(move.getInstanceName(), "vm1");
     }
+
+    public void hostUpdateSendsTypeAndControlAttributes() throws Exception {
+        respondWith(200, "{\"host\": " + HOST.replace("\"SSH\"", "\"IPMI\"") + "}");
+        Host updated = osv3().instanceHa().hosts().update("seg1", "h1", HostOptions.update().type("COMPUTE").controlAttributes("IPMI"));
+        Assert.assertEquals(json(takeRequest()), "{\"host\":{\"type\":\"COMPUTE\",\"control_attributes\":\"IPMI\"}}");
+        Assert.assertEquals(updated.getControlAttributes(), "IPMI");
+    }
 }

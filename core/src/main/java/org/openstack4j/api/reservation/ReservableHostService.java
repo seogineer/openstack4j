@@ -29,8 +29,15 @@ public interface ReservableHostService extends RestService {
     /** @return the reservations of a host; a missing host raises */
     Map<String, Object> getAllocation(String hostId);
 
-    /** @param detail whether to include private properties and values @return the host properties */
+    /** @param detail include each property's values and whether it is private @return the public host properties */
     List<Map<String, Object>> listProperties(boolean detail);
+
+    /**
+     * @param detail include each property's values and whether it is private
+     * @param all    include private properties too (admin)
+     * @return the host properties
+     */
+    List<Map<String, Object>> listProperties(boolean detail, boolean all);
 
     /** Makes a host property private (hidden from non-admins) or public; @return the property */
     Map<String, Object> updateProperty(String propertyName, boolean isPrivate);

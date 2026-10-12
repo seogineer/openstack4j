@@ -35,13 +35,13 @@ public final class ManilaMicroVersions {
         return trimmed.replaceAll("/v[12](/.*)?$", "");
     }
 
-    /** Points a Manila endpoint at the v2 API, keeping a project id: {@code .../v1/<p>} becomes {@code .../v2/<p>}. */
+    /** Points a Manila endpoint at the v2 API, keeping what follows the version: {@code .../v1/<p>} becomes {@code .../v2/<p>}. */
     public static String v2Url(String endpoint) {
         String trimmed = endpoint.replaceAll("/+$", "");
         if (trimmed.matches(".*/v2(/.*)?$"))
             return trimmed;
         if (trimmed.matches(".*/v1(/.*)?$"))
-            return trimmed.replaceFirst("/v1(/[^/]*)?$", "/v2$1");
+            return trimmed.replaceFirst("/v1(/.*)?$", "/v2$1");
         return trimmed + "/v2";
     }
 }
