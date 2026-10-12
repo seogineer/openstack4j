@@ -11,6 +11,8 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.openstack4j.api.exceptions.ConnectionException;
+import org.openstack4j.api.exceptions.ResponseException;
 import org.openstack4j.api.messaging.MessagingService;
 import org.openstack4j.api.types.ServiceType;
 import org.openstack4j.core.transport.ExecutionOptions;
@@ -325,7 +327,21 @@ public class MessagingServiceImpl extends BaseOpenStackService implements Messag
 
     @Override
     public boolean ping() {
-        return getWithResponse("/v2/ping").execute().isSuccess();
+        HttpResponse response;
+        try {
+            response = getWithResponse("/v2/ping").executeWithResponse();
+        } catch (ConnectionException e) {
+            // okhttp wraps every failure of a call in a ConnectionException, a failed re-authentication included
+            if (e.getCause() instanceof ResponseException && !(e.getCause() instanceof ConnectionException))
+                throw (ResponseException) e.getCause();
+            return false;
+        }
+        try {
+            int status = response.getStatus();
+            return status >= 200 && status < 300;
+        } finally {
+            HttpEntityHandler.closeQuietly(response);
+        }
     }
 
     @Override

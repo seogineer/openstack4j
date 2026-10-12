@@ -1,5 +1,7 @@
 ## 4.7.0
 
+- Zaqar `ping()`: 2xx 면 `true`, 그 밖의 상태(503 등)나 연결 실패면 `false`(이전에는 5xx 에서 예외). 인증 실패는 예외로 전달
+- `executeWithResponse()` 로 보내는 요청에도 `User-Agent: OpenStack4j / OpenStack Client`(이전에는 connector 기본값). 세션 헤더의 `User-Agent` 는 `execute()` 경로와 마찬가지로 덮어씀
 - `ServiceType` 별칭: catalog type `admin-logic`, `data-processing`, `container-infrastructure-management`·`container-infra`, `shared-file-system`, `block-storage`, `resource-optimization`, `message`, `alarm` 도 인식(`getType()` 은 그대로), `ServiceType.getAliases()`
 - Keystone v2 catalog: 서비스 이름이 없을 때의 type fallback 이 그 type 을 다른 서비스로 등록한 항목(Zun 의 `container`)을 고르지 않음
 
