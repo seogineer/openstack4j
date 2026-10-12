@@ -110,4 +110,11 @@ public class MistralExtTests extends AbstractTest {
         Assert.assertEquals(member.get("status"), "pending");
         Assert.assertEquals(members.get(0).get("status"), "accepted");
     }
+
+    public void taskExecutionsWithFilters() throws Exception {
+        respondWith(200, "{\"executions\": [{\"id\": \"sub3\", \"state\": \"ERROR\"}]}");
+        List<Map<String, Object>> executions = osv3().workflow().extensions().listTaskExecutions("t1", Map.of("state", "ERROR"));
+        Assert.assertTrue(path(takeRequest()).endsWith("/tasks/t1/executions?state=ERROR"));
+        Assert.assertEquals(executions.get(0).get("id"), "sub3");
+    }
 }

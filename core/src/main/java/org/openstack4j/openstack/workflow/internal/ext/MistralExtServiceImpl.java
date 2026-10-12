@@ -190,7 +190,12 @@ public class MistralExtServiceImpl extends BaseOpenStackService implements Mistr
 
     @Override
     public List<Map<String, Object>> listTaskExecutions(String taskExecutionId) {
-        return listOf("/tasks/" + id(taskExecutionId) + "/executions", "executions", null);
+        return listTaskExecutions(taskExecutionId, null);
+    }
+
+    @Override
+    public List<Map<String, Object>> listTaskExecutions(String taskExecutionId, Map<String, String> filters) {
+        return listOf("/tasks/" + id(taskExecutionId) + "/executions", "executions", filters);
     }
 
     @Override

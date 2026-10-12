@@ -18,4 +18,16 @@ public class ImageQualityFixTests extends AbstractImageExtTest {
             Assert.assertEquals(expected.getMessage(), "version");
         }
     }
+
+    public void nonNumericVersionPartsCompareByTheirDigits() throws Exception {
+        respondWith(300, "{\"versions\": [{\"id\": \"v2.17-beta\", \"status\": \"CURRENT\"}]}");
+        var versions = osv3().imagesV2().versions();
+        takeRequest();
+        Assert.assertTrue(versions.supports("2.6"));
+        Assert.assertTrue(versions.supports("2.17"));
+        Assert.assertFalse(versions.supports("2.18"));
+        respondWith(300, "{\"versions\": [{\"id\": \"v2.x\", \"status\": \"SUPPORTED\"}, {\"id\": \"v2.9\", \"status\": \"SUPPORTED\"}]}");
+        Assert.assertEquals(osv3().imagesV2().versions().getCurrent(), "2.9");
+        takeRequest();
+    }
 }

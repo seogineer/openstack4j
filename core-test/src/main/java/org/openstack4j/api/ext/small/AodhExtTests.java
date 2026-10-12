@@ -8,6 +8,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.api.AbstractTest;
+import okhttp3.HttpUrl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -81,5 +82,24 @@ public class AodhExtTests extends AbstractTest {
         String query = takeRequest().getPath();
         Assert.assertTrue(URLDecoder.decode(query, StandardCharsets.UTF_8).endsWith("/quotas?project_id=p 1+2"), query);
         Assert.assertEquals(new ObjectMapper().readTree(takeRequest().getBody().readUtf8()).get("project_id").asText(), "p 1+2");
+    }
+
+    public void historyWithSeveralConditions() throws Exception {
+        respondWith(200, "[]");
+        var ext = osv3().telemetry().alarmsExt();
+        ext.history("a1", List.of(Map.of("field", "timestamp", "op", "gt", "value", "2024-01-01T00:00:00"),
+                Map.of("field", "type", "value", "state transition")), Map.of("limit", "5"));
+        RecordedRequest r = takeRequest();
+        Assert.assertTrue(path(r).contains("/v2/alarms/a1/history?"), path(r));
+        HttpUrl url = r.getRequestUrl();
+        Assert.assertEquals(url.queryParameterValues("q.field"), List.of("timestamp", "type"));
+        Assert.assertEquals(url.queryParameterValues("q.op"), List.of("gt", "eq"));
+        Assert.assertEquals(url.queryParameterValues("q.value"), List.of("2024-01-01T00:00:00", "state transition"));
+        Assert.assertTrue(url.queryParameterValues("q.type").isEmpty());
+        Assert.assertEquals(url.queryParameter("limit"), "5");
+        Assert.assertThrows(IllegalArgumentException.class, () -> ext.history("a1",
+                List.of(Map.of("field", "a", "value", "1", "type", "integer"), Map.of("field", "b", "value", "2")), null));
+        Assert.assertThrows(IllegalArgumentException.class, () -> ext.history("a1",
+                List.of(Map.of("field", "a", "value", "1")), Map.of("q.field", "x")));
     }
 }
