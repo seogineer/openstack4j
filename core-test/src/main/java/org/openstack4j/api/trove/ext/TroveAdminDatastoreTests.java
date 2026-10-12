@@ -70,7 +70,7 @@ public class TroveAdminDatastoreTests extends AbstractTroveExtTest {
         Assert.assertTrue(admin.updateDatastoreVersion("v1", Map.of("active", true)).isSuccess());
         Assert.assertTrue(admin.deleteDatastoreVersion("v1").isSuccess());
         Map<String, Object> created = admin.createParameter("v1", Map.of("name", "connect_timeout", "data_type", "integer"));
-        Map<String, Object> updated = admin.updateParameter("v1", "connect_timeout", Map.of("restart_required", 1));
+        Map<String, Object> updated = admin.updateParameter("v1", "connect_timeout", Map.of("name", "connect_timeout", "data_type", "integer", "restart_required", true, "min_size", 64, "max_size", 65535));
         Assert.assertTrue(admin.deleteParameter("v1", "connect_timeout").isSuccess());
         List<Map<String, Object>> quotas = admin.getQuotas("p2");
         Map<String, Object> newQuotas = admin.updateQuotas("p2", Map.of("instances", 10));
@@ -89,7 +89,12 @@ public class TroveAdminDatastoreTests extends AbstractTroveExtTest {
         expect("DELETE", P + "/mgmt/datastore-versions/v1");
         RecordedRequest param = expect("POST", P + "/mgmt/datastores/versions/v1/parameters");
         Assert.assertEquals(body(param).get("configuration-parameter").get("data_type").asText(), "integer");
-        Assert.assertEquals(body(expect("PUT", P + "/mgmt/datastores/versions/v1/parameters/connect_timeout")).toString(), "{\"configuration-parameter\":{\"restart_required\":1}}");
+        var whole = body(expect("PUT", P + "/mgmt/datastores/versions/v1/parameters/connect_timeout")).get("configuration-parameter");
+        Assert.assertEquals(whole.get("name").asText(), "connect_timeout");
+        Assert.assertEquals(whole.get("data_type").asText(), "integer");
+        Assert.assertTrue(whole.get("restart_required").asBoolean());
+        Assert.assertEquals(whole.get("min_size").asInt(), 64);
+        Assert.assertEquals(whole.get("max_size").asInt(), 65535);
         expect("DELETE", P + "/mgmt/datastores/versions/v1/parameters/connect_timeout");
         expect("GET", P + "/mgmt/quotas/p2");
         Assert.assertEquals(body(expect("PUT", P + "/mgmt/quotas/p2")).toString(), "{\"quotas\":{\"instances\":10}}");

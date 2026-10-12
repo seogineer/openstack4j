@@ -42,7 +42,7 @@ public class ShareMicroVersionTests extends AbstractManilaExtTest {
     }
 
     public void negotiateRaisesNewMethodsButNotLegacyOnes() throws Exception {
-        respondWith(200, ROOT);
+        respondWith(300, ROOT);
         respondWith(200, "{\"message\": " + MESSAGE + "}");
         respondWith(200, "{\"shares\": []}");
 

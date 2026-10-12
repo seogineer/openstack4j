@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient.OSClientV3;
+import org.openstack4j.api.exceptions.ResponseException;
 import org.openstack4j.model.common.Identifier;
 import org.openstack4j.model.common.Payloads;
 import org.openstack4j.model.image.v2.ContainerFormat;
@@ -60,6 +61,7 @@ public class ImageExtensionsLiveTests {
 
     public void stageAndImport() throws Exception {
         Image image = os.imagesV2().create(Builders.imageV2().name("os4j-live-import").containerFormat(ContainerFormat.BARE).diskFormat(DiskFormat.RAW).build());
+        boolean deleted;
         try {
             Assert.assertTrue(os.imagesV2().stage(image.getId(), Payloads.create(new ByteArrayInputStream(new byte[1024]))).isSuccess());
             Assert.assertTrue(os.imagesV2().importImage(image.getId(), ImageImportOptions.glanceDirect()).isSuccess());
@@ -71,13 +73,14 @@ public class ImageExtensionsLiveTests {
                 // GET locations is service-to-service (policy role:service); an admin/member token gets 403
                 try {
                     Assert.assertNotNull(os.imagesV2().listLocations(image.getId()));
-                } catch (org.openstack4j.api.exceptions.ResponseException e) {
+                } catch (ResponseException e) {
                     if (e.getStatus() != 403) throw e;
                 }
             }
         } finally {
-            Assert.assertTrue(os.imagesV2().delete(image.getId()).isSuccess());
+            deleted = os.imagesV2().delete(image.getId()).isSuccess();
         }
+        Assert.assertTrue(deleted, "image not deleted");
     }
 
     public void schemas() {
@@ -89,6 +92,7 @@ public class ImageExtensionsLiveTests {
         String ns = "OS4J::Live::" + System.nanoTime();
         var metadefs = os.imagesV2().metadefs();
         metadefs.createNamespace(MetadefNamespaceOptions.create(ns).displayName("os4j live").visibility("private"));
+        boolean deleted;
         try {
             metadefs.createObject(ns, MetadefObjectOptions.create("obj").description("o"));
             metadefs.createProperty(ns, MetadefPropertyOptions.create("prop", "Prop", "string"));
@@ -99,15 +103,19 @@ public class ImageExtensionsLiveTests {
             Assert.assertEquals(metadefs.listTags(ns).size(), 2);
             Assert.assertEquals(metadefs.listResourceTypeAssociations(ns).get(0).getName(), "OS::Glance::Image");
         } finally {
-            Assert.assertTrue(metadefs.deleteNamespace(ns).isSuccess());
+            deleted = metadefs.deleteNamespace(ns).isSuccess();
         }
+        Assert.assertTrue(deleted, "namespace not deleted");
     }
 
     public void cacheWhenEnabled() {
         try {
             Assert.assertNotNull(os.imagesV2().cache().list());
-        } catch (RuntimeException e) {
-            throw new SkipException("image cache API not enabled: " + e.getMessage());
+        } catch (ResponseException e) {
+            // the cache middleware is off (404), denied by policy (403) or not implemented (501)
+            if (e.getStatus() == 404 || e.getStatus() == 403 || e.getStatus() == 501)
+                throw new SkipException("image cache API not enabled: " + e.getMessage());
+            throw e;
         }
     }
 }
