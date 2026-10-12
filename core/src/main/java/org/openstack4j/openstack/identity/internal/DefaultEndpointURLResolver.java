@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.collect.Sets;
 import com.google.common.collect.SortedSetMultimap;
 import org.openstack4j.api.exceptions.RegionEndpointNotFoundException;
 import org.openstack4j.api.identity.EndpointURLResolver;
@@ -78,12 +79,18 @@ public class DefaultEndpointURLResolver implements EndpointURLResolver {
         return p.token.getEndpoint();
     }
 
+    private static <S extends Access.Service> SortedSet<S> ofServiceType(SortedSet<S> services, ServiceType type) {
+        return Sets.filter(services, s -> s.getServiceType() == type);
+    }
+
     private String resolveV2(URLResolverParams p) {
         SortedSetMultimap<String, ? extends Access.Service> catalog = p.access.getAggregatedCatalog();
         SortedSet<? extends Access.Service> services = catalog.get(p.type.getServiceName());
 
         if (services.isEmpty()) {
-            services = catalog.get(p.type.getType());
+            // the type key also collects other services registered under the same type (Zun's "container" next to
+            // Magnum's); only entries that resolve to the requested service may answer for it
+            services = ofServiceType(catalog.get(p.type.getType()), p.type);
         }
 
         if (!services.isEmpty()) {

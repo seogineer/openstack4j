@@ -247,7 +247,7 @@ public class OptimizationTests extends AbstractTest {
 
     public void catalogTypeIsInfraOptim() {
         Assert.assertEquals(org.openstack4j.api.types.ServiceType.OPTIMIZATION.getType(), "infra-optim");
-        Assert.assertEquals(org.openstack4j.api.types.ServiceType.forName("resource-optimization"), org.openstack4j.api.types.ServiceType.UNKNOWN);
+        Assert.assertEquals(org.openstack4j.api.types.ServiceType.forName("resource-optimization"), org.openstack4j.api.types.ServiceType.OPTIMIZATION);
     }
 
     public void listRaisesOn404AndDeleteFailureIsReported() throws Exception {

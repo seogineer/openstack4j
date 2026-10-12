@@ -1,3 +1,8 @@
+## 4.7.0
+
+- `ServiceType` 별칭: catalog type `admin-logic`, `data-processing`, `container-infrastructure-management`·`container-infra`, `shared-file-system`, `block-storage`, `resource-optimization`, `message`, `alarm` 도 인식(`getType()` 은 그대로), `ServiceType.getAliases()`
+- Keystone v2 catalog: 서비스 이름이 없을 때의 type fallback 이 그 type 을 다른 서비스로 등록한 항목(Zun 의 `container`)을 고르지 않음
+
 ## 4.6.0
 
 - Glance v2 누락 API 59 개: `imagesV2().versions()`(root `/versions`, `supports()`), `info()`(import methods, stores, stores detail, usage), interoperable image import(`stage`, `importImage`: glance-direct/web-download/copy-image/glance-download), `listLocations`/`addLocation`, `listTasks`, `deleteFromStore`, `cache()`(list/queue/delete/clear/clean/prune), `schemas()`(16), `metadefs()`(namespaces, resource types, objects, properties, tags)
