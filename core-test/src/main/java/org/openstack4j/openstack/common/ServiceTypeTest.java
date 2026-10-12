@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openstack4j.api.types.ServiceType;
+import org.openstack4j.core.transport.ObjectMapperSingleton;
+import org.openstack4j.model.identity.URLResolverParams;
+import org.openstack4j.openstack.identity.internal.DefaultEndpointURLResolver;
+import org.openstack4j.openstack.identity.v3.domain.KeystoneToken;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -63,5 +67,46 @@ public class ServiceTypeTest {
                 assertEquals(ServiceType.UNKNOWN, ServiceType.forName(type));
             }
         }
+    }
+
+    @Test
+    public void aliasesResolve() {
+        for (String n : new String[]{"admin-logic", "ADMIN-LOGIC", "admin-logicv1"})
+            assertEquals(ServiceType.forName(n), ServiceType.REGISTRATION);
+        assertEquals(ServiceType.forName("data-processing"), ServiceType.SAHARA);
+        assertEquals(ServiceType.forName("container-infra"), ServiceType.MAGNUM);
+        assertEquals(ServiceType.forName("container-infrastructure-management"), ServiceType.MAGNUM);
+        assertEquals(ServiceType.forName("shared-file-system"), ServiceType.SHARE);
+        assertEquals(ServiceType.forName("block-storage"), ServiceType.BLOCK_STORAGE);
+        assertEquals(ServiceType.forName("block-storagev3"), ServiceType.BLOCK_STORAGE);
+        assertEquals(ServiceType.forName("resource-optimization"), ServiceType.OPTIMIZATION);
+        assertEquals(ServiceType.forName("message"), ServiceType.MESSAGING);
+        assertEquals(ServiceType.forName("alarm"), ServiceType.TELEMETRY_AODH);
+        assertEquals(ServiceType.forCatalogEntry("admin-logic", "renamed"), ServiceType.REGISTRATION);
+
+        assertEquals(ServiceType.forName("container"), ServiceType.MAGNUM);
+        assertEquals(ServiceType.REGISTRATION.getType(), "registration");
+        assertEquals(ServiceType.MAGNUM.getType(), "container");
+    }
+
+    @Test
+    public void everyIdentifierResolvesToItsOwnConstant() {
+        for (ServiceType t : ServiceType.values()) {
+            assertEquals(ServiceType.forName(t.getServiceName()), t);
+            assertEquals(ServiceType.forName(t.getType()), t);
+            assertEquals(ServiceType.forName(t.name()), t);
+            for (String alias : t.getAliases())
+                assertEquals(ServiceType.forName(alias), t, alias);
+        }
+    }
+
+    @Test
+    public void aliasTypeResolvesInV3Catalog() throws Exception {
+        String json = "{\"token\":{\"project\":{\"id\":\"service-type-alias-test\",\"name\":\"p\",\"domain\":{\"id\":\"default\"}},"
+                + "\"catalog\":[{\"type\":\"admin-logic\",\"name\":\"custom\",\"endpoints\":[{\"interface\":\"public\","
+                + "\"region\":\"RegionOne\",\"region_id\":\"RegionOne\",\"url\":\"http://127.0.0.1:5050/v1\"}]}]}}";
+        KeystoneToken token = ObjectMapperSingleton.getContext(KeystoneToken.class).readValue(json, KeystoneToken.class);
+        assertEquals(new DefaultEndpointURLResolver().findURLV3(URLResolverParams.create(token, ServiceType.REGISTRATION)),
+                "http://127.0.0.1:5050/v1");
     }
 }
