@@ -4,6 +4,7 @@ import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.api.exceptions.ResponseException;
 import org.openstack4j.api.types.ServiceType;
+import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Identifier;
 import org.openstack4j.model.dns.v2.Recordset;
 import org.openstack4j.model.dns.v2.Status;
@@ -28,6 +29,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -188,12 +190,12 @@ public class DesignateLiveTests {
     @AfterClass(alwaysRun = true)
     public void deleteZone() throws InterruptedException {
         if (zoneId == null) return;
-        os.dns().zones().delete(zoneId);
+        ActionResponse deleted = os.dns().zones().delete(zoneId);
         if (poll(60, () -> os.dns().zones().get(zoneId), z -> z == null)) return;
         // delete is asynchronous and bind9 may be slow; abandon drops the zone from Designate without waiting for the backend
-        os.dns().zones().abandon(zoneId);
+        ActionResponse abandoned = os.dns().zones().abandon(zoneId);
         if (poll(10, () -> os.dns().zones().get(zoneId), z -> z == null)) return;
-        Assert.fail("zone " + zoneName + " left behind");
+        Assert.fail("zone " + zoneName + " left behind; delete: " + deleted + ", abandon: " + abandoned);
     }
 
     public void readOnly() {
@@ -262,10 +264,10 @@ public class DesignateLiveTests {
     public void zoneTransferRequest() throws InterruptedException {
         String id = zone();
         ZoneTransferRequest request = os.dns().zoneTransfers().createRequest(id, null, "os4j live " + SUFFIX);
-        Assert.assertNotNull(request.getKey());
-        Assert.assertEquals(request.getZoneId(), id);
         boolean deleted;
         try {
+            Assert.assertNotNull(request.getKey());
+            Assert.assertEquals(request.getZoneId(), id);
             Assert.assertEquals(os.dns().zoneTransfers().getRequest(request.getId()).getDescription(), "os4j live " + SUFFIX);
             Assert.assertEquals(os.dns().zoneTransfers().updateRequest(request.getId(), null, "os4j live updated").getDescription(), "os4j live updated");
             Assert.assertTrue(os.dns().zoneTransfers().listRequests().stream().anyMatch(r -> request.getId().equals(r.getId())));
@@ -313,13 +315,19 @@ public class DesignateLiveTests {
         int n = adminOnly(() -> os.dns().quotas().get(pid)).get("zones");
         boolean reset;
         try {
-            Assert.assertEquals(os.dns().quotas().update(pid, Map.of("zones", n + 1)).get("zones"), Integer.valueOf(n + 1));
+            Assert.assertEquals(adminOnly(() -> os.dns().quotas().update(pid, Map.of("zones", n + 1))).get("zones"), Integer.valueOf(n + 1));
             Assert.assertEquals(os.dns().quotas().get(pid).get("zones"), Integer.valueOf(n + 1));
         } finally {
             reset = os.dns().quotas().reset(pid).isSuccess();
-            if (os.dns().quotas().get(pid).get("zones") != n)
+        }
+        String restoreError = null;
+        try {
+            if (!Objects.equals(os.dns().quotas().get(pid).get("zones"), n))
                 os.dns().quotas().update(pid, Map.of("zones", n));
+        } catch (RuntimeException e) {
+            restoreError = e.toString();
         }
         Assert.assertTrue(reset, "quota not reset");
+        Assert.assertNull(restoreError, "quota not restored to " + n + ": " + restoreError);
     }
 }

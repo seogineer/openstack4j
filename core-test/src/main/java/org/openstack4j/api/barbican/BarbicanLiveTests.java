@@ -212,6 +212,7 @@ public class BarbicanLiveTests {
         String secretRef = null;
         boolean orderDeleted;
         boolean secretDeleted = true;
+        String readError = null;
         try {
             Order order = waitUntil("order ACTIVE", 15, () -> os.barbican().orders().get(orderRef),
                     o -> "ACTIVE".equals(o.getStatus()), o -> "ERROR".equals(o.getStatus()));
@@ -220,12 +221,20 @@ public class BarbicanLiveTests {
             Assert.assertTrue("aes".equalsIgnoreCase(os.barbican().secrets().get(idOf(secretRef)).getAlgorithm()));
             Assert.assertEquals(os.barbican().secrets().get(idOf(secretRef)).getBitLength(), Integer.valueOf(256));
         } finally {
+            if (secretRef == null) {
+                // the order may have produced its secret even though the checks above did not get that far
+                try {
+                    secretRef = os.barbican().orders().get(orderRef).getSecretRef();
+                } catch (RuntimeException e) {
+                    readError = e.toString();
+                }
+            }
             orderDeleted = os.barbican().orders().delete(orderRef).isSuccess();
             if (secretRef != null)
                 secretDeleted = os.barbican().secrets().delete(idOf(secretRef)).isSuccess();
         }
         Assert.assertTrue(orderDeleted, "order not deleted");
-        Assert.assertTrue(secretDeleted, "generated secret not deleted");
+        Assert.assertTrue(secretDeleted, "generated secret not deleted (order re-read error: " + readError + ")");
     }
 
     public void twoStepPayload() {

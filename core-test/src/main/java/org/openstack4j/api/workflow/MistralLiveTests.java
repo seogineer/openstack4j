@@ -124,11 +124,11 @@ public class MistralLiveTests {
     public void workflowDefinitionAndExecution() throws InterruptedException {
         String wf = "os4j_live_" + SUFFIX;
         List<? extends WorkflowDefinition> defs = os.workflow().workflowDefinitions().create(stream(workflowYaml(wf)), Scope.PRIVATE);
-        Assert.assertEquals(defs.size(), 1);
-        Assert.assertEquals(defs.get(0).getName(), wf);
-        Assert.assertEquals(defs.get(0).getScope(), Scope.PRIVATE);
         boolean defDeleted;
         try {
+            Assert.assertEquals(defs.size(), 1);
+            Assert.assertEquals(defs.get(0).getName(), wf);
+            Assert.assertEquals(defs.get(0).getScope(), Scope.PRIVATE);
             Assert.assertTrue(os.workflow().workflowDefinitions().get(wf).getDefinition().contains("std.echo"));
             WorkflowExecution exec = os.workflow().workflowExecutions().create(
                     MistralWorkflowExecution.builder().workflowName(wf).description("os4j live").build());
@@ -198,10 +198,10 @@ public class MistralLiveTests {
                 + "  input:\n"
                 + "    - msg\n";
         List<? extends ActionDefinition> defs = os.workflow().actionDefinitions().create(stream(yaml), Scope.PRIVATE);
-        Assert.assertEquals(defs.size(), 1);
-        Assert.assertEquals(defs.get(0).getName(), name);
         boolean deleted;
         try {
+            Assert.assertEquals(defs.size(), 1);
+            Assert.assertEquals(defs.get(0).getName(), name);
             Assert.assertTrue(os.workflow().actionDefinitions().get(name).getInput().contains("msg"));
         } finally {
             deleted = os.workflow().actionDefinitions().delete(name).isSuccess();
