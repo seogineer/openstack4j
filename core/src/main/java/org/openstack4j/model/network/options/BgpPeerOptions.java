@@ -9,7 +9,7 @@ public class BgpPeerOptions extends NeutronAttributes<BgpPeerOptions> {
         return new BgpPeerOptions().put("name", Objects.requireNonNull(name, "name")).put("peer_ip", Objects.requireNonNull(peerIp, "peerIp")).put("remote_as", Objects.requireNonNull(remoteAs, "remoteAs")).put("auth_type", Objects.requireNonNull(authType, "authType"));
     }
 
-    /** An update that sends only the fields set afterwards. */
+    /** An update that sends only the fields set afterwards; setters marked "create only" are rejected by Neutron on update (400). */
     public static BgpPeerOptions update() {
         return new BgpPeerOptions();
     }
@@ -23,14 +23,17 @@ public class BgpPeerOptions extends NeutronAttributes<BgpPeerOptions> {
         return put("name", value);
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public BgpPeerOptions peerIp(String value) {
         return put("peer_ip", value);
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public BgpPeerOptions remoteAs(Long value) {
         return put("remote_as", value);
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public BgpPeerOptions authType(String value) {
         return put("auth_type", value);
     }

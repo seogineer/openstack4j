@@ -190,10 +190,11 @@ public interface MetadefService extends RestService {
     ActionResponse deleteProperty(String namespace, String name);
 
     /**
-     * Lists the tags of a namespace.
+     * Lists the tags of a namespace. Glance returns one page (its default limit, 25 unless configured), and this method
+     * has no paging parameters.
      *
      * @param namespace the namespace
-     * @return the result
+     * @return the tags of the first page
      */
     List<? extends MetadefTag> listTags(String namespace);
 

@@ -12,7 +12,7 @@ public interface LeaseService extends RestService {
 
     List<? extends Lease> list();
 
-    /** @param filters query parameters, e.g. {@code project_id} (admin) */
+    /** @param filters query parameters, e.g. {@code project_id} (admin); Blazar may ignore filters it does not support and return every lease */
     List<? extends Lease> list(Map<String, String> filters);
 
     /** @return the lease, or {@code null} when it does not exist */

@@ -27,10 +27,10 @@ public interface AcceleratorService extends RestService {
      */
     ActionResponse patchArqs(Map<String, List<Map<String, Object>>> patches);
 
-    /** Deletes ARQs by uuid. */
+    /** Deletes ARQs by uuid; an ARQ bound to an instance can only be deleted with a service token (403 otherwise). */
     ActionResponse deleteArqs(List<String> arqIds);
 
-    /** Deletes the ARQs of an instance. */
+    /** Deletes the ARQs of an instance. Cyborg requires a service token (as Nova sends), so a user token gets 403. */
     ActionResponse deleteArqsOfInstance(String instanceId);
 
     /** @return the device profiles */
@@ -65,12 +65,13 @@ public interface AcceleratorService extends RestService {
     /** Programs an FPGA deployable with a bitstream image; @return the deployable */
     Map<String, Object> programDeployable(String deployableId, String imageId);
 
+    /** @return the attributes */
     List<Map<String, Object>> listAttributes(Map<String, String> filters);
 
     /** @return the attribute, or {@code null} when it does not exist */
     Map<String, Object> getAttribute(String attributeId);
 
-    /** @return the created attribute */
+    /** @param deployableId the deployable's integer {@code id} (not its uuid), as a string @return the created attribute */
     Map<String, Object> createAttribute(String deployableId, String key, String value);
 
     ActionResponse deleteAttribute(String attributeId);

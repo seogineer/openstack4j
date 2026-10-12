@@ -19,7 +19,7 @@ OpenStack4j is a fluent OpenStack client that allows provisioning and control of
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j</artifactId>
-    <version>4.5.0</version>
+    <version>4.7.0</version>
 </dependency>
 ```
 
@@ -40,6 +40,16 @@ Spring Boot 3.5 와 함께 쓰는 구성을 CI 에서 확인합니다(`examples/
 
 원본 문서([openstack4j.github.io](https://openstack4j.github.io/))와 아래 사용 예가 그대로 적용됩니다. Maven 좌표만 위의 것으로 바꾸세요.
 3.x 에서 옮겨 오는 방법은 [MIGRATION.md](MIGRATION.md), 변경 내역은 [CHANGELOG.md](CHANGELOG.md) 를 보세요.
+
+### 없는 자원(404)
+
+이 포크에서 추가한 API 는 서버가 404 를 줄 때 다음 규칙을 따르고, 메서드마다 Javadoc 에 자기 동작을 적어 둡니다.
+
+- 엔티티 단건 `get` 은 `null` 을 돌려줍니다.
+- 목록, 생성, 수정, 그리고 엔티티의 일부(state, console, indicator, parameter, output …)를 읽는 메서드는 상태 404 의 `ResponseException` 을 던집니다. 부모가 없는 것을 빈 값으로 오해하지 않게 하기 위해서입니다.
+- `ActionResponse` 를 돌려주는 메서드는 코드 404 의 실패 응답을 돌려줍니다.
+
+원본(upstream)에서 이어받은 API 는 예전 동작(대개 404 에 `null` 이나 빈 목록)을 유지합니다.
 
 ## Placement
 
@@ -301,6 +311,7 @@ os.barbican().quotas().setProjectQuotas(projectId, Map.of("secrets", 50));
 - 새 accessor: `acls()`(secret·container 의 read ACL), `secretsExt()`(payload, 사용자 metadata, consumers — API 1.1 헤더 자동), `containersExt()`(secrets, consumers), `orders()`, `quotas()`(실효·project quota), `secretStores()`(여러 back end, preferred store)
 - 메서드는 id 나 Barbican 이 돌려주는 `*_ref` URL 을 받습니다(마지막 경로 조각을 씁니다)
 - 모델은 자주 쓰는 필드만 getter 가 있고, 나머지는 `getAttributes()` 에 있습니다
+- okhttp connector 에서 `OSFactory.enableHttpLoggingFilter(true)` 를 켜면 요청·응답의 본문과 헤더가 그대로 로그에 남습니다(okhttp `HttpLoggingInterceptor` `BODY` 수준). secret payload 와 `X-Auth-Token` 도 기록되므로 디버깅 때만 켜세요
 
 ## Database(Trove) 확장
 
@@ -377,6 +388,8 @@ os.messaging().claimMessages("demo", 300, 300, 5);                   // claim_id
 ## Registration(Adjutant)
 
 새 서비스 `os.registration()`(Adjutant v1): admin 용 tasks(필터 조회, 승인, 수정, 취소), tokens(재발급, 제출, 만료 삭제), notifications(확인 처리)와 프로젝트 셀프서비스: users(초대, 초대 취소), 사용자 role, 부여 가능한 role, 비밀번호 재설정, 이메일 변경, sign-up, quota size.
+
+sign-up, 이메일 변경, quota 변경은 운영자가 해당 delegate API(`active_delegate_apis`)를 켰을 때만 있습니다. Adjutant 가 토큰 없이 받는 호출(sign-up, 비밀번호 재설정, token 제출)도 여기서는 인증된 `os` client 로 보냅니다.
 
 ```java
 os.registration().inviteUser("alice@example.com", List.of("member"), null, null);

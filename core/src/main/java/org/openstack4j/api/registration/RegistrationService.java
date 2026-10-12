@@ -11,6 +11,9 @@ import org.openstack4j.model.common.ActionResponse;
  * roles, sign-up, password reset, email update and quotas. Results are {@code Map}s, as their shapes depend on the
  * deployment's configured task types and actions. Most actions create a task that may need admin approval before a
  * token is emailed; the response's {@code notes} say what happened.
+ * Sign-up, email update and quota updates are delegate APIs the operator must turn on ({@code active_delegate_apis});
+ * the endpoints Adjutant serves without authentication (sign-up, password reset, token submit) are still called
+ * through this authenticated client.
  */
 public interface RegistrationService extends RestService {
 

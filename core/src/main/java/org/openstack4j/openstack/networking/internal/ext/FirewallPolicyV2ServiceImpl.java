@@ -1,13 +1,16 @@
 package org.openstack4j.openstack.networking.internal.ext;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.openstack4j.api.networking.ext.FirewallPolicyV2Service;
+import org.openstack4j.core.transport.ObjectMapperSingleton;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.ext.FirewallPolicyV2;
 import org.openstack4j.model.network.options.FirewallPolicyV2Options;
 import org.openstack4j.openstack.internal.PathSegment;
+import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.networking.domain.ext.NeutronFirewallPolicyV2;
 import org.openstack4j.openstack.networking.domain.ext.NeutronFirewallPolicyV2.NeutronFirewallPolicyV2List;
 
@@ -43,7 +46,7 @@ public class FirewallPolicyV2ServiceImpl extends BaseNeutronExtService implement
 
     @Override
     public FirewallPolicyV2 insertRule(String id, String ruleId, String insertBefore, String insertAfter) {
-        Map<String, Object> body = new java.util.LinkedHashMap<>();
+        Map<String, Object> body = new LinkedHashMap<>();
         body.put("firewall_rule_id", PathSegment.validate(ruleId));
         body.put("insert_before", insertBefore == null ? "" : insertBefore);
         body.put("insert_after", insertAfter == null ? "" : insertAfter);
@@ -59,12 +62,9 @@ public class FirewallPolicyV2ServiceImpl extends BaseNeutronExtService implement
     @SuppressWarnings("unchecked")
     private FirewallPolicyV2 ruleAction(String id, String action, Map<String, ?> body) {
         Map<String, Object> policy = put(Map.class, PATH + "/" + id(id) + "/" + action)
-                .entity(org.openstack4j.openstack.internal.microversion.JsonBody.of(body)).execute(NeutronExecution.propagate404());
-        return policy == null ? null : PLAIN.convertValue(policy, NeutronFirewallPolicyV2.class);
+                .entity(JsonBody.of(body)).execute(NeutronExecution.propagate404());
+        return policy == null ? null : ObjectMapperSingleton.getContext(Map.class).convertValue(policy, NeutronFirewallPolicyV2.class);
     }
-
-    private static final com.fasterxml.jackson.databind.ObjectMapper PLAIN = new com.fasterxml.jackson.databind.ObjectMapper()
-            .configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     @Override
     public ActionResponse delete(String id) {

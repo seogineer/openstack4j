@@ -148,9 +148,11 @@ public abstract class OSFactory<T extends OSFactory<T>> {
     }
 
     /**
-     * Globally enables or disables verbose HTTP Request and Response logging useful for debugging
+     * Globally enables or disables verbose HTTP request and response logging, useful for debugging.
+     * With the okhttp connector this logs whole requests and responses at body level, including the
+     * {@code X-Auth-Token} header and secret payloads (for example Barbican secrets); do not enable it in production.
      *
-     * @param enabled true to enable, false to enable
+     * @param enabled true to enable, false to disable
      */
     public static void enableHttpLoggingFilter(boolean enabled) {
         HttpLoggingFilter.toggleLogging(enabled);

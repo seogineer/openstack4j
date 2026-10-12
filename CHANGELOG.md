@@ -1,3 +1,10 @@
+## 4.8.0
+
+- 문서: README 에 404 처리 규칙(단건 get 은 `null`, 목록·생성·수정·하위 속성 조회는 예외, `ActionResponse` 는 실패 응답), Neutron stadium options 의 create 전용 세터 표시(VPNaaS·TaaS·SFC·BGP·BGPVPN), Heat 확장 인터페이스의 404 동작, Barbican consumers·preferred store, Trove backup·SSL, Mistral code source scope·dynamic action·members, Masakari notification 1.1, Cyborg service token, Adjutant delegate API, okhttp 로깅 시 본문·토큰 노출 경고
+- `FirewallPolicyV2ServiceImpl` 의 개별 `ObjectMapper` 를 `ObjectMapperSingleton` 으로, Octavia listener·Heat stack 서비스 import 정리
+- 내부: 쓰이지 않던 `BaseBaremetalServices.requireMicroVersion` 삭제
+- README·connectors/README 의 설치 예제 버전을 4.7.0 으로 갱신
+
 ## 4.7.0
 
 - Zaqar `ping()`: 2xx 면 `true`, 그 밖의 상태(503 등)나 연결 실패면 `false`(이전에는 5xx 에서 예외). 인증 실패는 예외로 전달
@@ -32,7 +39,7 @@
 - 오류 메시지: `error_message` 가 JSON 문서 문자열인 응답(Ironic, Magnum)은 그 `faultstring` 을, 최상위 `message` 만 있는 응답(Designate)은 그 `message` 를 `ActionResponse.getFault()`·예외 메시지로 쓴다(이전에는 JSON 원문 또는 상태 줄)
 - 공용 기반 `BaseOctaviaExtService`·`OctaviaAttributes`(내부/옵션)
 - 공용 기반 `BaseImageExtService`(내부, 404 전달), `ImageAttributes`(설정한 필드만 보내는 옵션 기반)
-- 테스트: `ImageExtensionsLiveTests`, `OctaviaExtensionsLiveTests`, `HeatExtensionsLiveTests`(`OS_AUTH_URL`·`OS_TOKEN` 있을 때)
+- 테스트: `ImageExtensionsLiveTests`, `OctaviaExtensionsLiveTests`, `HeatExtensionsLiveTests`(`OS_AUTH_URL`·`OS_PROJECT_NAME` 과 `OS_TOKEN` 또는 `OS_USERNAME`/`OS_PASSWORD` 가 있을 때)
 
 ## 4.5.0
 

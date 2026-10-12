@@ -10,7 +10,7 @@ public class VpnEndpointGroupOptions extends NeutronAttributes<VpnEndpointGroupO
         return new VpnEndpointGroupOptions().put("type", Objects.requireNonNull(type, "type")).put("endpoints", Objects.requireNonNull(endpoints, "endpoints"));
     }
 
-    /** An update that sends only the fields set afterwards. */
+    /** An update that sends only the fields set afterwards; setters marked "create only" are rejected by Neutron on update (400). */
     public static VpnEndpointGroupOptions update() {
         return new VpnEndpointGroupOptions();
     }
@@ -20,10 +20,12 @@ public class VpnEndpointGroupOptions extends NeutronAttributes<VpnEndpointGroupO
         return this;
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public VpnEndpointGroupOptions type(String value) {
         return put("type", value);
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public VpnEndpointGroupOptions endpoints(List<String> value) {
         return put("endpoints", value);
     }

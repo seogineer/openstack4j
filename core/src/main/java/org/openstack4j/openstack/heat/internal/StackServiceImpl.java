@@ -1,14 +1,5 @@
 package org.openstack4j.openstack.heat.internal;
 
-import org.openstack4j.core.transport.ObjectMapperSingleton;
-import org.openstack4j.openstack.heat.domain.ext.HeatStackSnapshot.Snapshots;
-import org.openstack4j.openstack.heat.domain.ext.HeatStackSnapshot;
-import org.openstack4j.model.heat.ext.StackSnapshot;
-import org.openstack4j.openstack.internal.microversion.JsonBody;
-import org.openstack4j.openstack.heat.internal.ext.BaseHeatExtService;
-import org.openstack4j.openstack.heat.domain.ext.HeatStackOutput.Outputs;
-import org.openstack4j.openstack.heat.domain.ext.HeatStackOutput;
-import org.openstack4j.model.heat.ext.StackOutput;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -16,16 +7,25 @@ import java.util.Objects;
 
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.heat.StackService;
+import org.openstack4j.core.transport.ObjectMapperSingleton;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.heat.AdoptStackData;
 import org.openstack4j.model.heat.Stack;
 import org.openstack4j.model.heat.StackCreate;
 import org.openstack4j.model.heat.StackUpdate;
+import org.openstack4j.model.heat.ext.StackOutput;
+import org.openstack4j.model.heat.ext.StackSnapshot;
 import org.openstack4j.openstack.compute.functions.ToActionResponseFunction;
 import org.openstack4j.openstack.heat.domain.HeatAdoptStackData;
 import org.openstack4j.openstack.heat.domain.HeatStack;
 import org.openstack4j.openstack.heat.domain.HeatStack.Stacks;
 import org.openstack4j.openstack.heat.domain.HeatStackAdopt;
+import org.openstack4j.openstack.heat.domain.ext.HeatStackOutput;
+import org.openstack4j.openstack.heat.domain.ext.HeatStackOutput.Outputs;
+import org.openstack4j.openstack.heat.domain.ext.HeatStackSnapshot;
+import org.openstack4j.openstack.heat.domain.ext.HeatStackSnapshot.Snapshots;
+import org.openstack4j.openstack.heat.internal.ext.BaseHeatExtService;
+import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 /**
  * This class implements all methods for manipulation of {@link HeatStack} objects. The

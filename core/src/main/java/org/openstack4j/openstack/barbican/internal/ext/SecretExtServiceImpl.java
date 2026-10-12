@@ -17,7 +17,7 @@ import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 public class SecretExtServiceImpl extends BaseBarbicanExtService implements SecretExtService {
 
-    /** Secret consumers need key manager API 1.1. */
+    /** Sent on consumer register/remove; Barbican without secret consumers rejects the call, there is no version check before it. */
     private static final String API_VERSION_1_1 = "key-manager 1.1";
 
     private static String secret(String secretId) {

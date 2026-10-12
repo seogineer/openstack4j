@@ -7,7 +7,7 @@ OpenStack4j Connectors
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-core</artifactId>
-    <version>4.0.0</version>
+    <version>4.7.0</version>
 </dependency>
 ```
 
@@ -16,7 +16,7 @@ OpenStack4j Connectors
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-httpclient</artifactId>
-    <version>4.0.0</version>
+    <version>4.7.0</version>
 </dependency>
 ```
 
@@ -25,7 +25,7 @@ OpenStack4j Connectors
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-okhttp</artifactId>
-    <version>4.0.0</version>
+    <version>4.7.0</version>
 </dependency>
 ```
 
@@ -34,7 +34,7 @@ OpenStack4j Connectors
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-http-connector</artifactId>
-    <version>4.0.0</version>
+    <version>4.7.0</version>
 </dependency>
 ```
 

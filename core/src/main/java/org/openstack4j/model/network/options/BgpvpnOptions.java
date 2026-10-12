@@ -9,7 +9,7 @@ public class BgpvpnOptions extends NeutronAttributes<BgpvpnOptions> {
         return new BgpvpnOptions();
     }
 
-    /** An update that sends only the fields set afterwards. */
+    /** An update that sends only the fields set afterwards; setters marked "create only" are rejected by Neutron on update (400). */
     public static BgpvpnOptions update() {
         return new BgpvpnOptions();
     }
@@ -23,7 +23,7 @@ public class BgpvpnOptions extends NeutronAttributes<BgpvpnOptions> {
         return put("name", value);
     }
 
-    /** {@code l3} (default) or {@code l2}. */
+    /** Create only (Neutron rejects it on update). {@code l3} (default) or {@code l2}. */
     public BgpvpnOptions type(String value) {
         return put("type", value);
     }
@@ -44,6 +44,7 @@ public class BgpvpnOptions extends NeutronAttributes<BgpvpnOptions> {
         return put("route_distinguishers", value);
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public BgpvpnOptions vni(Integer value) {
         return put("vni", value);
     }
@@ -52,7 +53,7 @@ public class BgpvpnOptions extends NeutronAttributes<BgpvpnOptions> {
         return put("local_pref", value);
     }
 
-    /** Admin only: the owner project. */
+    /** Create only (Neutron rejects it on update). Admin only: the owner project. */
     public BgpvpnOptions projectId(String value) {
         return put("project_id", value);
     }

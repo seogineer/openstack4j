@@ -9,7 +9,7 @@ public class TapFlowOptions extends NeutronAttributes<TapFlowOptions> {
         return new TapFlowOptions().put("tap_service_id", Objects.requireNonNull(tapServiceId, "tapServiceId")).put("source_port", Objects.requireNonNull(sourcePort, "sourcePort")).put("direction", Objects.requireNonNull(direction, "direction"));
     }
 
-    /** An update that sends only the fields set afterwards. */
+    /** An update that sends only the fields set afterwards; setters marked "create only" are rejected by Neutron on update (400). */
     public static TapFlowOptions update() {
         return new TapFlowOptions();
     }
@@ -19,14 +19,17 @@ public class TapFlowOptions extends NeutronAttributes<TapFlowOptions> {
         return this;
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public TapFlowOptions tapServiceId(String value) {
         return put("tap_service_id", value);
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public TapFlowOptions sourcePort(String value) {
         return put("source_port", value);
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public TapFlowOptions direction(String value) {
         return put("direction", value);
     }
@@ -39,7 +42,7 @@ public class TapFlowOptions extends NeutronAttributes<TapFlowOptions> {
         return put("description", value);
     }
 
-    /** e.g. {@code 9,18,27-36}. */
+    /** Create only (Neutron rejects it on update). e.g. {@code 9,18,27-36}. */
     public TapFlowOptions vlanFilter(String value) {
         return put("vlan_filter", value);
     }

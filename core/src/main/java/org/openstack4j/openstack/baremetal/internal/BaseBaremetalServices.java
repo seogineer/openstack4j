@@ -59,11 +59,6 @@ public class BaseBaremetalServices extends BaseOpenStackService {
         return effective != null && effective.compareTo(version) >= 0;
     }
 
-    /** Fails before any request when {@code feature} needs a microversion the session does not send. */
-    protected void requireMicroVersion(String feature, MicroVersion floor) {
-        BaremetalMicroVersions.SUPPORT.require(feature, floor, effectiveMicroVersion(null));
-    }
-
     public static <T> ExecutionOptions<T> propagate404() {
         return ExecutionOptions.create(PropagateOnStatus.on(404));
     }

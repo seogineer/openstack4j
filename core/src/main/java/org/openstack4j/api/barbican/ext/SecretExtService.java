@@ -37,13 +37,13 @@ public interface SecretExtService extends RestService {
 
     ActionResponse deleteMetadataItem(String secretId, String key);
 
-    /** @return the consumers of a secret ({@code service}, {@code resource_type}, {@code resource_id} …; API 1.1) */
+    /** @return the consumers of a secret ({@code service}, {@code resource_type}, {@code resource_id} …); needs a Barbican with secret consumers (API 1.1), the client does not check the server version first */
     List<Map<String, Object>> listConsumers(String secretId);
 
     /** @param filters {@code limit} (server default 10, max 100) and {@code offset} @return one page of consumers */
     List<Map<String, Object>> listConsumers(String secretId, Map<String, String> filters);
 
-    /** Registers a consumer of a secret (API 1.1, e.g. {@code image}, {@code image}, an image id). */
+    /** Registers a consumer of a secret, e.g. service {@code image}, resource type {@code image} and the image id. Sends {@code OpenStack-API-Version: key-manager 1.1}; a Barbican without secret consumers answers with an error (the client does not check the server version first). */
     ActionResponse registerConsumer(String secretId, String service, String resourceType, String resourceId);
 
     ActionResponse removeConsumer(String secretId, String service, String resourceType, String resourceId);

@@ -77,7 +77,7 @@ public interface TroveInstanceExtService extends RestService {
     /** @return the SSL {@code status}, {@code mode} and {@code certificate}; a missing instance raises */
     Map<String, Object> sslStatus(String instanceId);
 
-    /** @param options e.g. {@code mode}, {@code container_ref}, {@code password_ref} @return the SSL status */
+    /** @param options {@code container_ref} (required, Trove answers 400 without it), optional {@code mode} and {@code password_ref} @return the SSL status */
     Map<String, Object> enableSsl(String instanceId, Map<String, ?> options);
 
     Map<String, Object> disableSsl(String instanceId);

@@ -11,7 +11,7 @@ public class SfcServiceGraphOptions extends NeutronAttributes<SfcServiceGraphOpt
         return new SfcServiceGraphOptions().put("port_chains", Objects.requireNonNull(portChains, "portChains"));
     }
 
-    /** An update that sends only the fields set afterwards. */
+    /** An update that sends only the fields set afterwards; setters marked "create only" are rejected by Neutron on update (400). */
     public static SfcServiceGraphOptions update() {
         return new SfcServiceGraphOptions();
     }
@@ -21,6 +21,7 @@ public class SfcServiceGraphOptions extends NeutronAttributes<SfcServiceGraphOpt
         return this;
     }
 
+    /** Create only: Neutron rejects it on update (400). */
     public SfcServiceGraphOptions portChains(Map<String, List<String>> value) {
         return put("port_chains", value);
     }

@@ -14,14 +14,16 @@ public interface HeatInfoService extends RestService {
     /**
      * Returns the API and engine build revisions.
      *
-     * @return the result
+     * @throws org.openstack4j.api.exceptions.ResponseException on an error status, including 404
+     * @return the build information
      */
     Map<String, Object> buildInfo();
 
     /**
      * Lists the heat-engine services (admin).
      *
-     * @return the result
+     * @throws org.openstack4j.api.exceptions.ResponseException for a non-admin (403) or another error status
+     * @return the engine services
      */
     List<? extends HeatEngineService> services();
 }
