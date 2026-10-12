@@ -156,3 +156,4 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 # 4.7 → 4.8
 
 - `BaseBaremetalServices.requireMicroVersion`(internal 패키지, protected)을 삭제했습니다. 쓰는 곳이 없었습니다.
+- Neutron FWaaS v2 `insertRule`·`removeRule` 이 돌려주는 정책 객체의 `getAttributes()` 에는 값이 null 인 속성이 더 이상 들어 있지 않습니다(공용 `ObjectMapperSingleton` 의 NON_NULL 직렬화 규칙). `create`·`get` 은 이전과 같습니다.

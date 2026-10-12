@@ -1,7 +1,7 @@
 ## 4.8.0
 
 - 문서: README 에 404 처리 규칙(단건 get 은 `null`, 목록·생성·수정·하위 속성 조회는 예외, `ActionResponse` 는 실패 응답), Neutron stadium options 의 create 전용 세터 표시(VPNaaS·TaaS·SFC·BGP·BGPVPN), Heat 확장 인터페이스의 404 동작, Barbican consumers·preferred store, Trove backup·SSL, Mistral code source scope·dynamic action·members, Masakari notification 1.1, Cyborg service token, Adjutant delegate API, okhttp 로깅 시 본문·토큰 노출 경고
-- `FirewallPolicyV2ServiceImpl` 의 개별 `ObjectMapper` 를 `ObjectMapperSingleton` 으로, Octavia listener·Heat stack 서비스 import 정리
+- `FirewallPolicyV2ServiceImpl` 의 개별 `ObjectMapper` 를 `ObjectMapperSingleton` 으로(insertRule·removeRule 이 돌려주는 객체의 `getAttributes()` 에는 값이 null 인 속성이 빠짐), Octavia listener·Heat stack 서비스 import 정리
 - 내부: 쓰이지 않던 `BaseBaremetalServices.requireMicroVersion` 삭제
 - README·connectors/README 의 설치 예제 버전을 4.7.0 으로 갱신
 
