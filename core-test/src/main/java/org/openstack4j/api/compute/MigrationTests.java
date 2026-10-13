@@ -40,8 +40,7 @@ public class MigrationTests extends AbstractTest {
         assertEquals(migrations.get(4).getStatus(), Status.COMPLETED);
         assertEquals(migrations.get(5).getStatus(), Status.CANCELLED);
         assertEquals(migrations.get(6).getStatus(), Status.REVERTED);
-        // unknown values keep falling back to MIGRATING
-        assertEquals(migrations.get(7).getStatus(), Status.MIGRATING);
+        assertEquals(migrations.get(7).getStatus(), Status.MIGRATING); // unknown values keep falling back to MIGRATING
         assertEquals(migrations.get(8).getStatus(), Status.MIGRATING);
     }
 
