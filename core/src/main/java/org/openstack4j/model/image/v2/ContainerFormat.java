@@ -50,6 +50,11 @@ public enum ContainerFormat {
     DOCKER,
 
     /**
+     * Compressed archive; glance api-ref container_format, Train+
+     */
+    COMPRESSED,
+
+    /**
      * Type unknown
      */
     UNRECOGNIZED;

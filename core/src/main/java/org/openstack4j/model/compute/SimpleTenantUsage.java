@@ -94,6 +94,16 @@ public interface SimpleTenantUsage extends ModelEntity {
         Status getState();
 
         /**
+         * @return the raw {@code state} value of the server usage, i.e. the nova vm_state
+         *         (e.g. {@code active}, {@code building}, {@code stopped}, {@code soft-delete}, {@code shelved_offloaded}).
+         *         {@link #getState()} maps this onto {@link Status}, which is the server API status set and
+         *         returns {@code UNRECOGNIZED} for vm_states such as {@code building}, {@code rescued}, {@code resized}, {@code soft-delete}.
+         */
+        default String getVmState() {
+            return null;
+        }
+
+        /**
          * @return the hours of usage
          */
         double getHours();

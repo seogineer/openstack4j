@@ -287,6 +287,10 @@ public interface Server extends ModelEntity {
          */
         RESCUE,
         /**
+         * The server is soft deleted (reclaim_instance_interval); nova api-ref servers status
+         */
+        SOFT_DELETED,
+        /**
          * OpenStack4j could not find a Status mapping for the current reported Status.  File an issue indicating the missing state
          */
         UNRECOGNIZED;

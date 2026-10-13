@@ -52,6 +52,34 @@ public class ImageV2Tests extends AbstractTest {
         assertEquals(list.get(0).getId(), "7541b8be-c62b-46c3-b5a5-5bb5ce43ce01");
     }
 
+    public void testListImagesNewEnumValues() throws IOException {
+        respondWith("/image/v2/images-visibility.json");
+        List<? extends Image> list = osv3().imagesV2().list();
+        assertEquals(list.size(), 2);
+        assertEquals(list.get(0).getVisibility(), Image.ImageVisibility.COMMUNITY);
+        assertEquals(list.get(0).getDiskFormat(), DiskFormat.PLOOP);
+        assertEquals(list.get(0).getContainerFormat(), ContainerFormat.COMPRESSED);
+        assertEquals(list.get(1).getVisibility(), Image.ImageVisibility.SHARED);
+    }
+
+    public void testNewEnumValues() {
+        assertEquals(Image.ImageVisibility.forValue("shared"), Image.ImageVisibility.SHARED);
+        assertEquals(Image.ImageVisibility.forValue("community"), Image.ImageVisibility.COMMUNITY);
+        assertEquals(Image.ImageVisibility.forValue("COMMUNITY"), Image.ImageVisibility.COMMUNITY);
+        assertEquals(Image.ImageVisibility.forValue("foo"), Image.ImageVisibility.UNKNOWN);
+        assertEquals(Image.ImageVisibility.forValue(null), Image.ImageVisibility.UNKNOWN);
+        assertEquals(Image.ImageVisibility.SHARED.value(), "shared");
+        assertEquals(Image.ImageVisibility.COMMUNITY.value(), "community");
+        assertEquals(Image.ImageVisibility.PUBLIC.value(), "public");
+
+        assertEquals(DiskFormat.value("ploop"), DiskFormat.PLOOP);
+        assertEquals(DiskFormat.PLOOP.value(), "ploop");
+        assertEquals(DiskFormat.value("qcow2"), DiskFormat.QCOW2);
+        assertEquals(ContainerFormat.value("compressed"), ContainerFormat.COMPRESSED);
+        assertEquals(ContainerFormat.COMPRESSED.value(), "compressed");
+        assertEquals(ContainerFormat.value("bare"), ContainerFormat.BARE);
+    }
+
     public void testListImagesFilter() throws IOException {
         respondWith(IMAGES_JSON);
         Map<String, String> map = new HashMap<>();

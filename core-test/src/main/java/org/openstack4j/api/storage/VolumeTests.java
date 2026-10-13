@@ -179,6 +179,37 @@ public class VolumeTests extends AbstractTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
+    public void statusFromValueCinderValues() {
+        assertEquals(Volume.Status.fromValue("reserved"), Volume.Status.RESERVED);
+        assertEquals(Volume.Status.fromValue("reserverd"), Volume.Status.RESERVERD);
+        assertEquals(Volume.Status.fromValue("maintenance"), Volume.Status.MAINTENANCE);
+        assertEquals(Volume.Status.fromValue("awaiting-transfer"), Volume.Status.AWAITING_TRANSFER);
+        assertEquals(Volume.Status.fromValue("error_backing-up"), Volume.Status.ERROR_BACKING_UP);
+        assertEquals(Volume.Status.fromValue("error_extending"), Volume.Status.ERROR_EXTENDING);
+        assertEquals(Volume.Status.fromValue("error_managing"), Volume.Status.ERROR_MANAGING);
+        assertEquals(Volume.Status.fromValue("managing"), Volume.Status.MANAGING);
+        assertEquals(Volume.Status.fromValue("retyping"), Volume.Status.RETYPING);
+        assertEquals(Volume.Status.fromValue("extending"), Volume.Status.EXTENDING);
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void statusValueUnchanged() {
+        String[][] expected = {
+                {"AVAILABLE", "available"}, {"ATTACHING", "attaching"}, {"BACKING_UP", "backing-up"},
+                {"CREATING", "creating"}, {"DELETING", "deleting"}, {"DOWNLOADING", "downloading"},
+                {"UPLOADING", "uploading"}, {"ERROR", "error"}, {"ERROR_DELETING", "error-deleting"},
+                {"ERROR_RESTORING", "error-restoring"}, {"IN_USE", "in-use"},
+                {"RESTORING_BACKUP", "restoring-backup"}, {"DETACHING", "detaching"},
+                {"UNRECOGNIZED", "unrecognized"}, {"RESERVERD", "reserverd"}
+        };
+        for (String[] e : expected) {
+            assertEquals(Volume.Status.valueOf(e[0]).value(), e[1]);
+        }
+    }
+
+    @Test
     public void migrationStatusFromValue() {
         assertEquals(Volume.MigrationStatus.NONE, Volume.MigrationStatus.fromValue("foo"));
         assertEquals(Volume.MigrationStatus.NONE, Volume.MigrationStatus.fromValue("none"));

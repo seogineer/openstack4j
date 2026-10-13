@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.util.ToStringHelper;
@@ -138,7 +139,7 @@ public class NovaSimpleTenantUsage implements SimpleTenantUsage {
         private int memoryMb;
         @JsonProperty("tenant_id")
         private String tenantId;
-        private Status state;
+        private String state; // raw vm_state
         private double hours;
         private int vcpus;
         private String flavor;
@@ -199,6 +200,12 @@ public class NovaSimpleTenantUsage implements SimpleTenantUsage {
          */
         @Override
         public Status getState() {
+            return state == null ? null : Status.forValue(state);
+        }
+
+        @JsonIgnore
+        @Override
+        public String getVmState() {
             return state;
         }
 

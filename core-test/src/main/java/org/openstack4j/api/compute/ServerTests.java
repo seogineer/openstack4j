@@ -173,4 +173,11 @@ public class ServerTests extends AbstractTest {
         takeRequest();
     }
 
+    @Test
+    public void softDeletedStatus() {
+        assertEquals(Status.forValue("SOFT_DELETED"), Status.SOFT_DELETED);
+        assertEquals(Status.forValue("soft_deleted"), Status.SOFT_DELETED);
+        assertEquals(Status.SOFT_DELETED.value(), "soft_deleted");
+    }
+
 }
