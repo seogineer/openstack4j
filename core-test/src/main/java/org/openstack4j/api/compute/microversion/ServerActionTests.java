@@ -5,6 +5,7 @@ import java.util.Collections;
 import com.fasterxml.jackson.databind.JsonNode;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.api.exceptions.MicroVersionException;
+import org.openstack4j.model.compute.Server.DiskConfig;
 import org.openstack4j.model.compute.actions.BackupOptions;
 import org.openstack4j.model.compute.actions.EvacuateRequest;
 import org.openstack4j.model.compute.actions.LiveMigrateRequest;
@@ -115,6 +116,34 @@ public class ServerActionTests extends AbstractComputeMicroVersionTest {
         JsonNode body = sentAction("2.100").get("rebuild");
         Assert.assertTrue(body.has("key_name"));
         Assert.assertTrue(body.get("key_name").isNull());
+    }
+
+    public void resizeWithDiskConfig() throws Exception {
+        negotiate("2.100");
+        respondWith(202);
+        Assert.assertTrue(osv3().compute().servers().resize(SERVER, "f2", DiskConfig.MANUAL).isSuccess());
+        JsonNode resize = sentAction("2.100").get("resize");
+        Assert.assertEquals(resize.get("flavorRef").asText(), "f2");
+        Assert.assertEquals(resize.get("OS-DCF:diskConfig").asText(), "MANUAL");
+    }
+
+    public void resizeNullDiskConfigSendsLegacyBody() throws Exception {
+        negotiate("2.100");
+        respondWith(202);
+        respondWith(202);
+        osv3().compute().servers().resize(SERVER, "f2", null);
+        osv3().compute().servers().resize(SERVER, "f2");
+        JsonNode withNull = sentAction("2.100");
+        JsonNode legacy = sentAction("2.100");
+        Assert.assertEquals(withNull, legacy);
+        Assert.assertFalse(withNull.get("resize").has("OS-DCF:diskConfig"));
+    }
+
+    public void rebuildWithDiskConfig() throws Exception {
+        negotiate("2.100");
+        respondWith(202, "{\"server\": {\"id\": \"" + SERVER + "\"}}");
+        osv3().compute().servers().rebuild(SERVER, RebuildRequest.create("img-2").diskConfig(DiskConfig.AUTO));
+        Assert.assertEquals(sentAction("2.100").get("rebuild").get("OS-DCF:diskConfig").asText(), "AUTO");
     }
 
     public void unshelveToZoneAndHostAndUnpin() throws Exception {

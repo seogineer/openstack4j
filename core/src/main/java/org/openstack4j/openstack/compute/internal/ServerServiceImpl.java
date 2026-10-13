@@ -287,6 +287,17 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
      * {@inheritDoc}
      */
     @Override
+    public ActionResponse resize(String serverId, String flavorId, Server.DiskConfig diskConfig) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(flavorId);
+
+        return invokeAction(serverId, new Resize(flavorId, diskConfig));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ActionResponse addSecurityGroup(String serverId, String secGroupName) {
         Objects.requireNonNull(serverId);
         Objects.requireNonNull(secGroupName);
@@ -637,6 +648,7 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
         if (request.getPreserveEphemeral() != null) body.put("preserve_ephemeral", request.getPreserveEphemeral());
         if (request.getAccessIPv4() != null) body.put("accessIPv4", request.getAccessIPv4());
         if (request.getAccessIPv6() != null) body.put("accessIPv6", request.getAccessIPv6());
+        if (request.getDiskConfig() != null) body.put("OS-DCF:diskConfig", request.getDiskConfig().name());
         if (request.getDescription() != null) {
             requireMicroVersion("Rebuild description", V(19));
             body.put("description", request.getDescription());
