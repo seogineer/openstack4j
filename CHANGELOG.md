@@ -1,3 +1,8 @@
+## 4.9.1
+
+- httpclient connector: httpclient5 5.4 미만(예: 애플리케이션이 5.3.x 로 고정)에서 SSL 검증을 끄거나 `SSLContext`·`HostnameVerifier` 를 지정하면 `NoClassDefFoundError: TlsSocketStrategy` 로 실패하던 문제를 고침(5.4 미만이면 `SSLConnectionSocketFactory` 사용)
+- httpclient connector(httpclient5 5.4+): `withSSLVerificationDisabled()`·`withHostnameVerifier(...)` 에서도 JSSE 기본 호스트명 검사가 함께 돌아 인증서 이름이 맞지 않으면 `No subject alternative names present` 로 거부되던 문제를 고침(지정한 verifier 만 검사, `HostnameVerificationPolicy.CLIENT`)
+
 ## 4.9.0
 
 - README·README.ko·connectors/README: Gradle(Kotlin/Groovy DSL) 설치 예제 추가, 설치 예제 버전을 4.9.0 으로 갱신
