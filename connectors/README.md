@@ -7,7 +7,7 @@ OpenStack4j Connectors
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-core</artifactId>
-    <version>4.7.0</version>
+    <version>4.9.0</version>
 </dependency>
 ```
 
@@ -16,7 +16,7 @@ OpenStack4j Connectors
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-httpclient</artifactId>
-    <version>4.7.0</version>
+    <version>4.9.0</version>
 </dependency>
 ```
 
@@ -25,7 +25,7 @@ OpenStack4j Connectors
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-okhttp</artifactId>
-    <version>4.7.0</version>
+    <version>4.9.0</version>
 </dependency>
 ```
 
@@ -34,8 +34,15 @@ OpenStack4j Connectors
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j-http-connector</artifactId>
-    <version>4.7.0</version>
+    <version>4.9.0</version>
 </dependency>
+```
+
+Gradle 에서는 같은 좌표를 씁니다(예: OkHttp).
+
+```kotlin
+implementation("io.github.seogineer:openstack4j-core:4.9.0")
+implementation("io.github.seogineer:openstack4j-okhttp:4.9.0")
 ```
 
 http-connector 의 TLS 제약:
