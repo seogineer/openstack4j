@@ -18,6 +18,7 @@
 - Keystone `roles().listRoleAssignments(projectId, includeNames)` — `include_names=true` 로 이름도 받음. `RoleAssignment.getRoleName()`·`getUserName()`·`getGroupName()`·`getProjectName()`·`getDomainName()`(scope 의 domain)
 - Nova `OS-DCF:diskConfig`: `ServerCreateBuilder.diskConfig(DiskConfig)`, `servers().resize(serverId, flavorId, DiskConfig)`, `RebuildRequest.diskConfig(DiskConfig)`(`AUTO`/`MANUAL`, 기존 `Server.DiskConfig`)
 - Neutron 응답 필드: `Network.getQosPolicyId()`, `Port.getQosPolicyId()`·`getQosNetworkPolicyId()`, `Router.getProjectId()`, `Agent.getAvailabilityZone()`. Octavia: pool `getCaTlsContainerRef()`·`getTlsCiphers()`·`getTlsVersions()`·`getLoadBalancers()`·`getOperatingStatus()`·`getProvisioningStatus()`, listener `getProvisioningStatus()`·`getOperatingStatus()`, member `getName()`, load balancer stats `getRequestErrors()`. 응답 전용 필드는 생성·수정 본문에 들어가지 않음. pool 생성 빌더 `tlsCiphers`·`tlsVersions`·`caTlsContainerRef`, member 생성 빌더 `name`
+- Manila `sharesExt().list(filters)`·`listDetails(filters)`·`get(id)` — legacy `shares()` 와 달리 세션 microversion(꺼져 있으면 2.7)으로 `ShareInfo` 를 돌려줌. `snapshotsExt().grantAccess(snapshotId, accessType, accessTo)`·`revokeAccess(snapshotId, accessId)`·`listAccess(snapshotId)`(2.32, mount 가능한 snapshot). `securityServicesExt()` — 세션 microversion(최소 2.44)의 security service create/update/get/listDetails 와 `SecurityServiceOptions.ou(...)`, `SecurityService.getOu()`(legacy `securityServices()` 는 2.6 그대로라 응답에 `ou` 가 없음)
 
 ## 4.9.1
 

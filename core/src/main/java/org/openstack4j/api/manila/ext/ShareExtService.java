@@ -15,6 +15,21 @@ import org.openstack4j.model.manila.ext.options.ShareMigration;
 /** The 2.7+ share APIs: export locations, instances, manage, revert, soft delete, access rules and migration. */
 public interface ShareExtService extends RestService {
 
+    /**
+     * @param filters query parameters (name, status, share_type_id, limit, offset, sort_key, is_soft_deleted ...), may be null
+     * @return shares (2.7+, the session's microversion when microversions are on)
+     */
+    List<? extends ShareInfo> list(Map<String, String> filters);
+
+    /**
+     * @param filters query parameters as for {@link #list(Map)}, may be null
+     * @return shares with all fields ({@code GET /shares/detail})
+     */
+    List<? extends ShareInfo> listDetails(Map<String, String> filters);
+
+    /** @return the share, or {@code null} when it does not exist */
+    ShareInfo get(String shareId);
+
     /** @return the export locations of a share (2.9); a missing share raises */
     List<? extends ExportLocation> listExportLocations(String shareId);
 

@@ -24,10 +24,12 @@ import org.openstack4j.openstack.manila.domain.ext.ManilaExportLocation.ManilaEx
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareAccessRule;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareAccessRule.ManilaShareAccessRuleList;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareInfo;
+import org.openstack4j.openstack.manila.domain.ext.ManilaShareInfo.ManilaShareInfoList;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareInstanceInfo.ManilaShareInstanceInfoList;
 
 public class ShareExtServiceImpl extends BaseManilaExtService implements ShareExtService {
 
+    private static final MicroVersion SHARES = V(7);
     private static final MicroVersion MIGRATION_STABLE = V(96);
     private static final MicroVersion MIGRATION_PROGRESS_GET = V(98);
 
@@ -37,6 +39,21 @@ public class ShareExtServiceImpl extends BaseManilaExtService implements ShareEx
 
     private static String location(String shareId, String exportLocationId) {
         return share(shareId) + "/export_locations/" + id(exportLocationId);
+    }
+
+    @Override
+    public List<? extends ShareInfo> list(Map<String, String> filters) {
+        return listOf(SHARES, ManilaShareInfoList.class, "/shares", filters);
+    }
+
+    @Override
+    public List<? extends ShareInfo> listDetails(Map<String, String> filters) {
+        return listOf(SHARES, ManilaShareInfoList.class, "/shares/detail", filters);
+    }
+
+    @Override
+    public ShareInfo get(String shareId) {
+        return show(SHARES, ManilaShareInfo.class, share(shareId));
     }
 
     @Override

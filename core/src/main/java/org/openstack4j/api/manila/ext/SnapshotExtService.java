@@ -6,9 +6,10 @@ import java.util.Map;
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.manila.ext.ShareSnapshotInfo;
+import org.openstack4j.model.manila.ext.SnapshotAccess;
 import org.openstack4j.model.manila.ext.SnapshotInstance;
 
-/** The 2.12+ snapshot APIs: metadata, manage/unmanage and snapshot instances. */
+/** The 2.12+ snapshot APIs: metadata, manage/unmanage, snapshot instances and access rules. */
 public interface SnapshotExtService extends RestService {
 
     /** @return the snapshot's metadata (2.73); a missing snapshot raises */
@@ -47,4 +48,13 @@ public interface SnapshotExtService extends RestService {
 
     /** @param status e.g. {@code available}, {@code error} (2.19, admin) */
     ActionResponse resetInstanceStatus(String snapshotInstanceId, String status);
+
+    /** Grants access to a mountable snapshot (2.32; IPv6 addresses from 2.38). @return the new rule, its state is usually {@code queued_to_apply} */
+    SnapshotAccess grantAccess(String snapshotId, String accessType, String accessTo);
+
+    /** Removes a snapshot access rule (2.32). */
+    ActionResponse revokeAccess(String snapshotId, String accessId);
+
+    /** @return the access rules of the snapshot (2.32); a missing snapshot raises */
+    List<? extends SnapshotAccess> listAccess(String snapshotId);
 }

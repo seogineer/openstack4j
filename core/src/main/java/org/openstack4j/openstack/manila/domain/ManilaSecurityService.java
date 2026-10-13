@@ -29,6 +29,7 @@ public class ManilaSecurityService implements SecurityService {
     private String password;
     private String domain;
     private String server;
+    private String ou;
     @JsonProperty("created_at")
     private String createdAt;
     @JsonProperty("updated_at")
@@ -122,6 +123,14 @@ public class ManilaSecurityService implements SecurityService {
     @Override
     public String getServer() {
         return server;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getOu() {
+        return ou;
     }
 
     /**
