@@ -152,23 +152,36 @@ public class MistralLiveTests {
                 // Mistral lists the root execution itself among its sub-executions
                 Assert.assertEquals(os.workflow().extensions().listSubExecutions(execId, null).stream()
                         .map(e -> e.get("id")).collect(Collectors.toList()), List.of(execId));
-
-                String cron = "os4j_live_cron_" + SUFFIX;
-                os.workflow().cronTriggers().create(MistralCronTrigger.builder().name(cron).pattern("0 0 1 1 *").workflowName(wf).build());
-                boolean cronDeleted;
-                try {
-                    Assert.assertEquals(os.workflow().cronTriggers().get(cron).getPattern(), "0 0 1 1 *");
-                    Assert.assertEquals(os.workflow().cronTriggers().get(cron).getWorkflowName(), wf);
-                } finally {
-                    cronDeleted = os.workflow().cronTriggers().delete(cron).isSuccess();
-                }
-                Assert.assertTrue(cronDeleted, "cron trigger not deleted");
             } finally {
                 execDeleted = os.workflow().workflowExecutions().delete(execId).isSuccess();
             }
             Assert.assertTrue(execDeleted, "execution not deleted");
         } finally {
             // last: Mistral refuses to delete a workflow that a trigger or execution still uses
+            defDeleted = os.workflow().workflowDefinitions().delete(wf).isSuccess();
+        }
+        Assert.assertTrue(defDeleted, "workflow definition not deleted");
+    }
+
+    /** Mistral creates a Keystone trust for a cron trigger; a 500 there is the deployment's trust setup, not the client. */
+    public void cronTriggerLifecycle() {
+        String wf = "os4j_live_crwf_" + SUFFIX;
+        os.workflow().workflowDefinitions().create(stream(workflowYaml(wf)), Scope.PRIVATE);
+        boolean defDeleted;
+        try {
+            String cron = "os4j_live_cron_" + SUFFIX;
+            skipOn(500, "Mistral could not create the Keystone trust for a cron trigger", () -> os.workflow().cronTriggers()
+                    .create(MistralCronTrigger.builder().name(cron).pattern("0 0 1 1 *").workflowName(wf).build()));
+            boolean cronDeleted;
+            try {
+                Assert.assertEquals(os.workflow().cronTriggers().get(cron).getPattern(), "0 0 1 1 *");
+                Assert.assertEquals(os.workflow().cronTriggers().get(cron).getWorkflowName(), wf);
+            } finally {
+                cronDeleted = os.workflow().cronTriggers().delete(cron).isSuccess();
+            }
+            Assert.assertTrue(cronDeleted, "cron trigger not deleted");
+        } finally {
+            // last: Mistral refuses to delete a workflow that a trigger still uses
             defDeleted = os.workflow().workflowDefinitions().delete(wf).isSuccess();
         }
         Assert.assertTrue(defDeleted, "workflow definition not deleted");
