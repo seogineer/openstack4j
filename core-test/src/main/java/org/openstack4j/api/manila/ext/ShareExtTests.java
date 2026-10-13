@@ -4,18 +4,22 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.mockwebserver.RecordedRequest;
+import org.openstack4j.api.exceptions.ResponseException;
 import org.openstack4j.model.manila.ext.ShareInfo;
 import org.openstack4j.model.manila.ext.ExportLocation;
 import org.openstack4j.model.manila.ext.ShareAccessRule;
 import org.openstack4j.model.manila.ext.options.ShareAccessCreate;
 import org.openstack4j.model.manila.ext.options.ShareMigration;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 @Test(suiteName = "Manila/SharesExt")
 public class ShareExtTests extends AbstractManilaExtTest {
 
     private static final String P = "/v2/b80f8d4e28b74188858b654cb1fccf7d";
+    private static final String ROOT = "{\"versions\": [{\"id\": \"v1.0\", \"status\": \"DEPRECATED\", \"version\": \"\", \"min_version\": \"\"},"
+            + " {\"id\": \"v2.0\", \"status\": \"CURRENT\", \"version\": \"2.99\", \"min_version\": \"2.0\"}]}";
     private static final String EL = "{\"path\": \"10.254.0.3:/shares/share-e1c2\", \"share_instance_id\": \"e1c2\", \"is_admin_only\": false,"
             + " \"id\": \"b6bd76ce\", \"preferred\": true}";
     private static final String RULE = "{\"access_level\": \"rw\", \"state\": \"active\", \"id\": \"507bf114\", \"share_id\": \"s1\", \"access_type\": \"ip\","
@@ -155,5 +159,60 @@ public class ShareExtTests extends AbstractManilaExtTest {
         Assert.assertEquals(one.getId(), "b6bd76ce");
         expect("GET", P + "/share_instances/e1c2/export_locations/nope");
         Assert.assertNull(missing);
+    }
+
+    @AfterMethod
+    public void clearMicroVersions() {
+        osv3().share().microVersions().clear();
+    }
+
+    public void listAndGetShares() throws Exception {
+        respondWith(200, "{\"shares\": [{\"id\": \"s1\", \"name\": \"a\"}]}");
+        respondWith(200, "{\"shares\": [{\"id\": \"s1\", \"name\": \"a\", \"status\": \"available\"}, {\"id\": \"s2\"}]}");
+        respondWith(200, "{\"share\": {\"id\": \"s1\", \"name\": \"a\", \"status\": \"available\"}}");
+        respondWith(404, "{\"itemNotFound\": {\"message\": \"not found\", \"code\": 404}}");
+
+        var ext = osv3().share().sharesExt();
+        List<? extends ShareInfo> shares = ext.list(Map.of("status", "available"));
+        List<? extends ShareInfo> details = ext.listDetails(null);
+        ShareInfo one = ext.get("s1");
+        ShareInfo missing = ext.get("missing");
+
+        RecordedRequest list = expect("GET", P + "/shares?status=available");
+        Assert.assertEquals(list.getHeader("X-OpenStack-Manila-API-Version"), "2.7");
+        Assert.assertEquals(expect("GET", P + "/shares/detail").getHeader("X-OpenStack-Manila-API-Version"), "2.7");
+        expect("GET", P + "/shares/s1");
+        expect("GET", P + "/shares/missing");
+        Assert.assertEquals(shares.size(), 1);
+        Assert.assertEquals(details.size(), 2);
+        Assert.assertEquals(one.getStatus(), "available");
+        Assert.assertNull(missing);
+    }
+
+    public void listSharesUsesSessionMicroVersion() throws Exception {
+        respondWith(300, ROOT);
+        respondWith(200, "{\"shares\": []}");
+
+        osv3().share().microVersions().use("2.80");
+        ext().list(null);
+
+        Assert.assertEquals(decodedPath(takeRequest()), "/");
+        Assert.assertEquals(expect("GET", P + "/shares").getHeader("X-OpenStack-Manila-API-Version"), "2.80");
+    }
+
+    public void list404Raises() throws Exception {
+        respondWith(404, "{\"itemNotFound\": {\"message\": \"not found\", \"code\": 404}}");
+
+        try {
+            ext().list(null);
+            Assert.fail("expected a ResponseException");
+        } catch (ResponseException expected) {
+            Assert.assertEquals(expected.getStatus(), 404);
+        }
+        expect("GET", P + "/shares");
+    }
+
+    private org.openstack4j.api.manila.ext.ShareExtService ext() {
+        return osv3().share().sharesExt();
     }
 }

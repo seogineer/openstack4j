@@ -230,6 +230,11 @@ public class ShareServiceImpl extends BaseShareServices implements ShareService 
     }
 
     @Override
+    public org.openstack4j.api.manila.ext.SecurityServiceExtService securityServicesExt() {
+        return Apis.get(org.openstack4j.api.manila.ext.SecurityServiceExtService.class);
+    }
+
+    @Override
     public org.openstack4j.api.manila.ext.ShareBackupService shareBackups() {
         return Apis.get(org.openstack4j.api.manila.ext.ShareBackupService.class);
     }

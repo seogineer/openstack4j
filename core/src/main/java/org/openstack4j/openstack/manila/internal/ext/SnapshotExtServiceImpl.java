@@ -2,6 +2,7 @@ package org.openstack4j.openstack.manila.internal.ext;
 
 import static org.openstack4j.openstack.manila.internal.ManilaMicroVersions.V;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -9,10 +10,14 @@ import java.util.Objects;
 import org.openstack4j.api.manila.ext.SnapshotExtService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.manila.ext.ShareSnapshotInfo;
+import org.openstack4j.model.manila.ext.SnapshotAccess;
 import org.openstack4j.model.manila.ext.SnapshotInstance;
 import org.openstack4j.openstack.internal.MicroVersion;
+import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareSnapshotInfo;
+import org.openstack4j.openstack.manila.domain.ext.ManilaSnapshotAccess;
+import org.openstack4j.openstack.manila.domain.ext.ManilaSnapshotAccess.ManilaSnapshotAccessList;
 import org.openstack4j.openstack.manila.domain.ext.ManilaSnapshotInstance;
 import org.openstack4j.openstack.manila.domain.ext.ManilaSnapshotInstance.ManilaSnapshotInstanceList;
 
@@ -21,6 +26,7 @@ public class SnapshotExtServiceImpl extends BaseManilaExtService implements Snap
     private static final MicroVersion METADATA = V(73);
     private static final MicroVersion MANAGE = V(12);
     private static final MicroVersion INSTANCES = V(19);
+    private static final MicroVersion ACCESS = V(32);
 
     private static String metadata(String snapshotId) {
         return "/snapshots/" + id(snapshotId) + "/metadata";
@@ -80,5 +86,25 @@ public class SnapshotExtServiceImpl extends BaseManilaExtService implements Snap
     @Override
     public ActionResponse resetInstanceStatus(String snapshotInstanceId, String status) {
         return action(INSTANCES, "/snapshot-instances/" + id(snapshotInstanceId), "reset_status", Map.of("status", Objects.requireNonNull(status, "status")));
+    }
+
+    @Override
+    public SnapshotAccess grantAccess(String snapshotId, String accessType, String accessTo) {
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("access_type", Objects.requireNonNull(accessType, "accessType"));
+        fields.put("access_to", Objects.requireNonNull(accessTo, "accessTo"));
+        String path = "/snapshots/" + id(snapshotId) + "/action";
+        return at(ACCESS, post(ManilaSnapshotAccess.class, path), path + " allow_access")
+                .entity(JsonBody.of("allow_access", fields)).execute(propagate404());
+    }
+
+    @Override
+    public ActionResponse revokeAccess(String snapshotId, String accessId) {
+        return action(ACCESS, "/snapshots/" + id(snapshotId), "deny_access", Map.of("access_id", PathSegment.validate(accessId)));
+    }
+
+    @Override
+    public List<? extends SnapshotAccess> listAccess(String snapshotId) {
+        return listOf(ACCESS, ManilaSnapshotAccessList.class, "/snapshots/" + id(snapshotId) + "/access-list", null);
     }
 }

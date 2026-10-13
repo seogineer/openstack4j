@@ -152,6 +152,9 @@ public interface ShareService extends RestService {
     /** @return the 2.49+ share server APIs and share network security service updates */
     org.openstack4j.api.manila.ext.ShareServerExtService shareServersExt();
 
+    /** @return security services at the session's microversion, at least 2.44 (returns {@code ou}) */
+    org.openstack4j.api.manila.ext.SecurityServiceExtService securityServicesExt();
+
     /** @return share backups (2.80, experimental) */
     org.openstack4j.api.manila.ext.ShareBackupService shareBackups();
 

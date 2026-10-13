@@ -68,6 +68,13 @@ public interface SecurityService extends ModelEntity {
     String getServer();
 
     /**
+     * @return the organizational unit (2.44+ responses), or null
+     */
+    default String getOu() {
+        return null;
+    }
+
+    /**
      * @return the date and time stamp when the security service was created
      */
     String getCreatedAt();
