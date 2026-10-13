@@ -1,12 +1,16 @@
 package org.openstack4j.openstack.heat.internal;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.heat.TemplateService;
+import org.openstack4j.core.transport.ExecutionOptions;
+import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.heat.Template;
 import org.openstack4j.model.heat.TemplateResponse;
+import org.openstack4j.model.heat.TemplateValidateOptions;
 import org.openstack4j.openstack.heat.domain.HeatTemplate;
 
 /**
@@ -49,6 +53,22 @@ public class TemplateServiceImpl extends BaseHeatServices implements TemplateSer
             return TemplateResponse.fail(re.getMessage());
         }
         return TemplateResponse.success();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<String, Object> validate(Template template, TemplateValidateOptions options) {
+        Objects.requireNonNull(template);
+        Invocation<Map> request = post(Map.class, uri("/validate")).entity(template);
+        if (options != null) {
+            request.param(options.isShowNested(), "show_nested", "true");
+            request.param(!options.getIgnoreErrors().isEmpty(), "ignore_errors", String.join(",", options.getIgnoreErrors()));
+        }
+        Map<String, Object> result = request.execute(ExecutionOptions.create(PropagateOnStatus.on(404)));
+        return result == null ? new LinkedHashMap<>() : result;
     }
 
     /**

@@ -1,6 +1,7 @@
 package org.openstack4j.openstack.heat.domain.ext;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,5 +26,22 @@ public class HeatResourceTypes implements ModelEntity {
         if (types == null)
             return Collections.emptyList();
         return types.stream().map(t -> t instanceof Map ? String.valueOf(((Map<?, ?>) t).get("resource_type")) : String.valueOf(t)).collect(Collectors.toList());
+    }
+
+    /** @return type name to description in server order; the description is null for a bare name or a JSON null */
+    public Map<String, String> getDescriptions() {
+        Map<String, String> result = new LinkedHashMap<>();
+        if (types == null)
+            return result;
+        for (Object type : types) {
+            if (type instanceof Map) {
+                Map<?, ?> entry = (Map<?, ?>) type;
+                Object description = entry.get("description");
+                result.put(String.valueOf(entry.get("resource_type")), description == null ? null : description.toString());
+            } else {
+                result.put(String.valueOf(type), null);
+            }
+        }
+        return result;
     }
 }

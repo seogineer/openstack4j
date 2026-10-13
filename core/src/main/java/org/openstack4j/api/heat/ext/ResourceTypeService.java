@@ -26,6 +26,14 @@ public interface ResourceTypeService extends RestService {
     List<String> list(Map<String, String> filters);
 
     /**
+     * Lists resource types with their descriptions ({@code with_description=true}).
+     *
+     * @param filters name, version, support_status (may be null); with_description is always sent
+     * @return type name to description in server order (description null when the server sends names only)
+     */
+    Map<String, String> listWithDescription(Map<String, String> filters);
+
+    /**
      * Returns the schema (properties, attributes) of a resource type.
      *
      * @throws org.openstack4j.api.exceptions.ResponseException if the resource type does not exist (404)

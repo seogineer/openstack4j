@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.openstack4j.model.heat.Template;
 import org.openstack4j.model.heat.TemplateResponse;
+import org.openstack4j.model.heat.TemplateValidateOptions;
 
 /**
  * This Interface contains a non-exhaustive list of methods for the manipulation of Heat Templates
@@ -35,6 +36,18 @@ public interface TemplateService {
      * @return TemplateResponse indicating valid or the error condition if not valid
      */
     TemplateResponse validateTemplateByURL(String templateURL);
+
+    /**
+     * Validates a template and returns the server's answer (Description, Parameters, ParameterGroups, Environment ...).
+     * Unlike {@link #validateTemplate(Template)}, an invalid template (400) raises a ResponseException carrying the
+     * server's message.
+     *
+     * @param template the template to validate, with the optional environment, files and parameters
+     * @param options show_nested / ignore_errors query options, may be null
+     * @return the server's answer
+     * @throws org.openstack4j.api.exceptions.ResponseException if the template is invalid or an error occurs
+     */
+    Map<String, Object> validate(Template template, TemplateValidateOptions options);
 
     /**
      * Retrieves the original template in original String form JSON or YAML

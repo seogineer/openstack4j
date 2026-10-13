@@ -1,5 +1,8 @@
 package org.openstack4j.openstack.heat.domain;
 
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
@@ -23,6 +26,19 @@ public class HeatTemplate implements Template {
     @JsonProperty("template_url")
     private String templateURL;
 
+    /** YAML or JSON text, so not a raw value. */
+    @JsonProperty("environment")
+    private String environment;
+
+    @JsonProperty("environment_files")
+    private List<String> environmentFiles;
+
+    @JsonProperty("files")
+    private Map<String, String> files;
+
+    @JsonProperty("parameters")
+    private Map<String, String> parameters;
+
     /**
      * returns a {@link HeatTemplateConcreteBuilder} for configuration and
      * creation of a {@link HeatTemplate}
@@ -41,6 +57,26 @@ public class HeatTemplate implements Template {
     @Override
     public String getTemplateURL() {
         return templateURL;
+    }
+
+    @Override
+    public String getEnvironment() {
+        return environment;
+    }
+
+    @Override
+    public List<String> getEnvironmentFiles() {
+        return environmentFiles;
+    }
+
+    @Override
+    public Map<String, String> getFiles() {
+        return files;
+    }
+
+    @Override
+    public Map<String, String> getParameters() {
+        return parameters;
     }
 
     @Override
@@ -95,6 +131,30 @@ public class HeatTemplate implements Template {
         @Override
         public TemplateBuilder templateURL(String templateURL) {
             model.templateURL = templateURL;
+            return this;
+        }
+
+        @Override
+        public TemplateBuilder environment(String environment) {
+            model.environment = environment;
+            return this;
+        }
+
+        @Override
+        public TemplateBuilder environmentFiles(List<String> environmentFiles) {
+            model.environmentFiles = environmentFiles;
+            return this;
+        }
+
+        @Override
+        public TemplateBuilder files(Map<String, String> files) {
+            model.files = files;
+            return this;
+        }
+
+        @Override
+        public TemplateBuilder parameters(Map<String, String> parameters) {
+            model.parameters = parameters;
             return this;
         }
     }
