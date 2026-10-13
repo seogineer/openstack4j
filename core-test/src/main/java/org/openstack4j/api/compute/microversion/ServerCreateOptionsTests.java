@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.exceptions.MicroVersionException;
+import org.openstack4j.model.compute.Server.DiskConfig;
 import org.openstack4j.model.compute.ServerCreate;
 import org.openstack4j.model.compute.ServerListOptions;
 import org.testng.Assert;
@@ -42,6 +43,22 @@ public class ServerCreateOptionsTests extends AbstractComputeMicroVersionTest {
         Assert.assertEquals(server.get("networks").get(0).get("tag").asText(), "nic0");
         Assert.assertEquals(server.get("block_device_mapping_v2").get(0).get("tag").asText(), "root");
         Assert.assertEquals(server.get("block_device_mapping_v2").get(0).get("volume_type").asText(), "ssd");
+    }
+
+    public void createWithAndWithoutDiskConfig() throws Exception {
+        negotiate("2.100");
+        respondWith(202, CREATED);
+        respondWith(202, CREATED);
+
+        osv3().compute().servers().boot(Builders.server().name("a").flavor("f").image("i").diskConfig(DiskConfig.AUTO).build());
+        osv3().compute().servers().boot(Builders.server().name("b").flavor("f").image("i").build());
+
+        JsonNode with = body(takeRequest()).get("server");
+        Assert.assertEquals(with.get("OS-DCF:diskConfig").asText(), "AUTO");
+        Assert.assertFalse(with.has("diskConfig"), with.toString());
+        JsonNode without = body(takeRequest()).get("server");
+        Assert.assertFalse(without.has("OS-DCF:diskConfig"), without.toString());
+        Assert.assertFalse(without.has("diskConfig"), without.toString());
     }
 
     public void autoAndNoneNetworksAreStringsAndNotCapped() throws Exception {

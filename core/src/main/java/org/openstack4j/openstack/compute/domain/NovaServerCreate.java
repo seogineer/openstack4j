@@ -24,6 +24,7 @@ public class NovaServerCreate implements ServerCreate {
     private String accessIPv6;
     private Integer min;
     private Integer max;
+    @JsonProperty("OS-DCF:diskConfig")
     private DiskConfig diskConfig;
     @JsonProperty("metadata")
     private Map<String, String> metadata;
@@ -280,6 +281,12 @@ public class NovaServerCreate implements ServerCreate {
 
         ServerCreateConcreteBuilder(NovaServerCreate m) {
             this.m = m;
+        }
+
+        @Override
+        public ServerCreateBuilder diskConfig(DiskConfig diskConfig) {
+            m.diskConfig = diskConfig;
+            return this;
         }
 
         @Override

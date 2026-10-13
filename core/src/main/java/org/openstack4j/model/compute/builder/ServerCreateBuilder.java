@@ -193,4 +193,7 @@ public interface ServerCreateBuilder extends Buildable.Builder<ServerCreateBuild
 
     /** Adds a network with a device tag (2.42+). */
     ServerCreateBuilder addTaggedNetwork(String networkId, String tag);
+
+    /** {@code OS-DCF:diskConfig}: AUTO resizes the root partition to the flavor's disk, MANUAL leaves it. */
+    ServerCreateBuilder diskConfig(Server.DiskConfig diskConfig);
 }

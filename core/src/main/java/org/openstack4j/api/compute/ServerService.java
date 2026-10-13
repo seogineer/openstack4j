@@ -131,6 +131,16 @@ public interface ServerService {
     ActionResponse resize(String serverId, String flavorId);
 
     /**
+     * Resizes with {@code OS-DCF:diskConfig}; a null diskConfig sends the same body as {@link #resize(String, String)}.
+     *
+     * @param serverId   the server identifier
+     * @param flavorId   the new flavor id to resize to
+     * @param diskConfig AUTO or MANUAL; may be null
+     * @return the action response
+     */
+    ActionResponse resize(String serverId, String flavorId, Server.DiskConfig diskConfig);
+
+    /**
      * Confirm that the resize worked, thus removing the original server
      *
      * @param serverId the server identifier

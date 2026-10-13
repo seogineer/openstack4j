@@ -3,6 +3,8 @@ package org.openstack4j.model.compute.actions;
 import java.util.List;
 import java.util.Map;
 
+import org.openstack4j.model.compute.Server;
+
 /** Rebuild request for microversion-aware sessions. Personality is not supported here (removed in 2.57). */
 public class RebuildRequest {
 
@@ -19,6 +21,7 @@ public class RebuildRequest {
     private String userData;
     private List<String> trustedImageCertificates;
     private String hostname;
+    private Server.DiskConfig diskConfig;
 
     private RebuildRequest(String imageRef) {
         this.imageRef = imageRef;
@@ -47,6 +50,9 @@ public class RebuildRequest {
     /** 2.90+ */
     public RebuildRequest hostname(String hostname) { this.hostname = hostname; return this; }
 
+    /** {@code OS-DCF:diskConfig}: AUTO or MANUAL */
+    public RebuildRequest diskConfig(Server.DiskConfig diskConfig) { this.diskConfig = diskConfig; return this; }
+
     public String getImageRef() { return imageRef; }
     public String getName() { return name; }
     public String getAdminPass() { return adminPass; }
@@ -60,4 +66,5 @@ public class RebuildRequest {
     public String getUserData() { return userData; }
     public List<String> getTrustedImageCertificates() { return trustedImageCertificates; }
     public String getHostname() { return hostname; }
+    public Server.DiskConfig getDiskConfig() { return diskConfig; }
 }

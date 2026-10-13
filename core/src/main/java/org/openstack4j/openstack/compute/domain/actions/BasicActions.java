@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.model.compute.Action;
 import org.openstack4j.model.compute.RebootType;
+import org.openstack4j.model.compute.Server;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -151,8 +152,16 @@ public final class BasicActions {
         @JsonProperty("flavorRef")
         public String flavorRef;
 
+        @JsonProperty("OS-DCF:diskConfig")
+        public String diskConfig;
+
         public Resize(String flavorRef) {
             this.flavorRef = flavorRef;
+        }
+
+        public Resize(String flavorRef, Server.DiskConfig diskConfig) {
+            this.flavorRef = flavorRef;
+            this.diskConfig = diskConfig == null ? null : diskConfig.name();
         }
     }
 
