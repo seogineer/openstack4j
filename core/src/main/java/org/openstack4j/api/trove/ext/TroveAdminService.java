@@ -6,7 +6,7 @@ import java.util.Map;
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
 
-/** Trove management (admin) APIs: {@code /mgmt/instances}, {@code /mgmt/datastore-versions}, parameters and quotas. */
+/** Trove management (admin) APIs: {@code /mgmt/instances}, {@code /mgmt/datastore-versions} (+ flavors, volume types), parameters and quotas. */
 public interface TroveAdminService extends RestService {
 
     /** @param filters query parameters such as {@code deleted}, {@code include_clustered}, {@code project_id} @return all instances with server details */
@@ -59,6 +59,36 @@ public interface TroveAdminService extends RestService {
     Map<String, Object> updateParameter(String versionId, String parameterName, Map<String, ?> parameter);
 
     ActionResponse deleteParameter(String versionId, String parameterName);
+
+    /** @return the flavor ids a datastore version is limited to (empty: all flavors) (admin; Trove after 2026.1); a missing version raises */
+    List<String> listDatastoreVersionFlavors(String versionId);
+
+    /** Limits a datastore version to these flavors as well, keeping existing associations (admin; Trove after 2026.1). An older Trove answers 404. */
+    ActionResponse addDatastoreVersionFlavors(String versionId, List<String> flavorIds);
+
+    /** Removes one flavor association (admin; Trove after 2026.1). */
+    ActionResponse removeDatastoreVersionFlavor(String versionId, String flavorId);
+
+    /** @return the volume type ids a datastore version is limited to (admin; Trove after 2026.1); a missing version raises */
+    List<String> listDatastoreVersionVolumeTypes(String versionId);
+
+    /** Limits a datastore version to these volume types as well, keeping existing associations (admin; Trove after 2026.1). An older Trove answers 404. */
+    ActionResponse addDatastoreVersionVolumeTypes(String versionId, List<String> volumeTypeIds);
+
+    /** Removes one volume type association (admin; Trove after 2026.1). */
+    ActionResponse removeDatastoreVersionVolumeType(String versionId, String volumeTypeId);
+
+    /**
+     * Creates or updates every given configuration parameter of a datastore version (admin; Trove after 2026.1).
+     *
+     * @param parameters each with {@code name}, {@code restart_required} (boolean), {@code type} ({@code boolean}, {@code float},
+     *                   {@code integer}, {@code list} or {@code string}) and optional {@code min}/{@code max} (numbers) - not the
+     *                   {@code data_type}/{@code min_size}/{@code max_size} keys of {@link #createParameter}
+     */
+    ActionResponse updateAllParameters(String versionId, List<? extends Map<String, ?>> parameters);
+
+    /** Deletes all configuration parameters of a datastore version (admin; Trove after 2026.1). */
+    ActionResponse deleteAllParameters(String versionId);
 
     /** @return the quotas of a project ({@code resource}, {@code in_use}, {@code limit}, {@code reserved}) */
     List<Map<String, Object>> getQuotas(String projectId);

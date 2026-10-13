@@ -166,3 +166,4 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 런타임 동작을 바꾸는 변경은 없습니다.
 
 - `DriverService`(`listVendorPassthruMethods`, `vendorPassthru` 2개), `NodeService`(`vendorPassthru(String, HttpMethod, String, Map)`) 에 추상 메서드가 추가되었습니다. 이 인터페이스를 직접 구현한 코드는 새 메서드가 필요합니다.
+- `TroveAdminService` 에 추상 메서드(`listDatastoreVersionFlavors`, `addDatastoreVersionFlavors`, `removeDatastoreVersionFlavor`, `listDatastoreVersionVolumeTypes`, `addDatastoreVersionVolumeTypes`, `removeDatastoreVersionVolumeType`, `updateAllParameters`, `deleteAllParameters`)가 추가되었습니다.
