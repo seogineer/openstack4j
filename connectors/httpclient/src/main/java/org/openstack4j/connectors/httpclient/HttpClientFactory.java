@@ -138,7 +138,7 @@ public class HttpClientFactory {
         }
     }
 
-    /** httpclient5 5.0–5.3; deprecated since 5.4. */
+    /** httpclient5 before 5.4 (5.2–5.3 in practice); deprecated since 5.4. */
     @SuppressWarnings("deprecation")
     private static void setSslSocketFactory(PoolingHttpClientConnectionManagerBuilder cmb, SSLContext ctx, HostnameVerifier verifier) {
         cmb.setSSLSocketFactory(new SSLConnectionSocketFactory(ctx, verifier));
