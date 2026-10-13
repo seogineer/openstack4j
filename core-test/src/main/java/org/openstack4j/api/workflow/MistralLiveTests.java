@@ -149,7 +149,9 @@ public class MistralLiveTests {
                 Assert.assertTrue(os.workflow().extensions().listTaskExecutions(tasks.get(0).getId()).isEmpty());
 
                 Assert.assertTrue(os.workflow().extensions().executionReport(execId, null).containsKey("root_workflow_execution"));
-                Assert.assertTrue(os.workflow().extensions().listSubExecutions(execId, null).isEmpty());
+                // Mistral lists the root execution itself among its sub-executions
+                Assert.assertEquals(os.workflow().extensions().listSubExecutions(execId, null).stream()
+                        .map(e -> e.get("id")).collect(Collectors.toList()), List.of(execId));
 
                 String cron = "os4j_live_cron_" + SUFFIX;
                 os.workflow().cronTriggers().create(MistralCronTrigger.builder().name(cron).pattern("0 0 1 1 *").workflowName(wf).build());
