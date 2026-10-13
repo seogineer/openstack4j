@@ -21,18 +21,18 @@ Maven:
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j</artifactId>
-    <version>4.9.1</version>
+    <version>4.10.0</version>
 </dependency>
 ```
 
 Gradle (Kotlin DSL / Groovy DSL):
 
 ```kotlin
-implementation("io.github.seogineer:openstack4j:4.9.1")
+implementation("io.github.seogineer:openstack4j:4.10.0")
 ```
 
 ```groovy
-implementation 'io.github.seogineer:openstack4j:4.9.1'
+implementation 'io.github.seogineer:openstack4j:4.10.0'
 ```
 
 `openstack4j` pulls in the core together with the Apache HttpClient 5 connector. To use another connector, see [connectors/README.md](connectors/README.md).
