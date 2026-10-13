@@ -15,6 +15,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openstack4j.api.types.ServiceType;
 import org.openstack4j.api.workflow.ext.MistralExtService;
+import org.openstack4j.core.transport.ClientConstants;
 import org.openstack4j.core.transport.ExecutionOptions;
 import org.openstack4j.core.transport.HttpResponse;
 import org.openstack4j.core.transport.propagation.PropagateOnStatus;
@@ -27,6 +28,9 @@ import org.openstack4j.openstack.internal.microversion.JsonBody;
 public class MistralExtServiceImpl extends BaseOpenStackService implements MistralExtService {
 
     private static final ObjectMapper PLAIN = new ObjectMapper();
+
+    /** Mistral exposes its DSL and code source controllers as text/plain; pecan answers 406 to an Accept that excludes it. */
+    private static final String DSL_ACCEPT = "application/json, text/plain";
 
     public MistralExtServiceImpl() {
         super(ServiceType.WORKFLOW);
@@ -59,7 +63,7 @@ public class MistralExtServiceImpl extends BaseOpenStackService implements Mistr
     private Map<String, Object> text(Invocation<Map> invocation, String content) {
         byte[] bytes = Objects.requireNonNull(content, "content").getBytes(StandardCharsets.UTF_8);
         return (Map<String, Object>) (Map) invocation.entity(Payloads.create(new ByteArrayInputStream(bytes))).contentType("text/plain")
-                .execute((ExecutionOptions) jsonOptions());
+                .header(ClientConstants.HEADER_ACCEPT, DSL_ACCEPT).execute((ExecutionOptions) jsonOptions());
     }
 
     @SuppressWarnings("unchecked")

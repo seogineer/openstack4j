@@ -7,9 +7,11 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.openstack4j.model.workflow.Scope;
 import org.openstack4j.model.workflow.WorkflowEnvironment;
 import org.openstack4j.model.workflow.builder.WorkflowEnvironmentBuilder;
+import org.openstack4j.openstack.common.JsonStringToMapDeserializer;
 import org.openstack4j.openstack.common.ListResult;
 
 /**
@@ -40,6 +42,7 @@ public class MistralWorkflowEnvironment implements WorkflowEnvironment {
 
     private String description;
 
+    @JsonDeserialize(using = JsonStringToMapDeserializer.class)
     private Map<String, Object> variables;
 
     public static MistralWorkflowEnvironmentBuilder builder() {

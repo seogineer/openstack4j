@@ -7,9 +7,11 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.openstack4j.model.workflow.CronTrigger;
 import org.openstack4j.model.workflow.Scope;
 import org.openstack4j.model.workflow.builder.CronTriggerBuilder;
+import org.openstack4j.openstack.common.JsonStringToMapDeserializer;
 import org.openstack4j.openstack.common.ListResult;
 
 /**
@@ -38,27 +40,29 @@ public class MistralCronTrigger implements CronTrigger {
     private String pattern;
 
     @JsonProperty("workflow_name")
-    private String wfName;
+    private String workflowName;
 
     @JsonProperty("workflow_id")
-    private String wfId;
+    private String workflowId;
 
     @JsonProperty("workflow_input")
-    private Map<String, Object> wfInput;
+    @JsonDeserialize(using = JsonStringToMapDeserializer.class)
+    private Map<String, Object> workflowInput;
 
     @JsonProperty("workflow_params")
-    private Map<String, Object> wfParams;
+    @JsonDeserialize(using = JsonStringToMapDeserializer.class)
+    private Map<String, Object> workflowParameters;
 
     @JsonProperty("remaining_executions")
     private Integer remainingExecutionsCount;
 
     @JsonProperty("first_execution_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date firstExecTime;
+    private Date firstExecutionTime;
 
     @JsonProperty("next_execution_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date nextExecTime;
+    private Date nextExecutionTime;
 
     public static MistralCronTriggerBuilder builder() {
         return new MistralCronTriggerBuilder();
@@ -101,37 +105,37 @@ public class MistralCronTrigger implements CronTrigger {
 
     @Override
     public String getWorkflowName() {
-        return wfName;
+        return workflowName;
     }
 
     @Override
     public String getWorkflowId() {
-        return wfId;
+        return workflowId;
     }
 
     @Override
     public Map<String, ?> getWorkflowInput() {
-        return wfInput;
+        return workflowInput;
     }
 
     @Override
     public Map<String, ?> getWorkflowParameters() {
-        return wfParams;
+        return workflowParameters;
     }
 
     @Override
     public Integer getRemainingExecutionsCount() {
-        return null;
+        return remainingExecutionsCount;
     }
 
     @Override
     public Date getFirstExecutionTime() {
-        return firstExecTime;
+        return firstExecutionTime;
     }
 
     @Override
     public Date getNextExecutionTime() {
-        return nextExecTime;
+        return nextExecutionTime;
     }
 
     /**
@@ -205,29 +209,29 @@ public class MistralCronTrigger implements CronTrigger {
         }
 
         @Override
-        public MistralCronTriggerBuilder workflowName(String wfName) {
-            this.model.wfName = wfName;
+        public MistralCronTriggerBuilder workflowName(String workflowName) {
+            this.model.workflowName = workflowName;
 
             return this;
         }
 
         @Override
-        public MistralCronTriggerBuilder workflowId(String wfId) {
-            this.model.wfId = wfId;
+        public MistralCronTriggerBuilder workflowId(String workflowId) {
+            this.model.workflowId = workflowId;
 
             return this;
         }
 
         @Override
-        public MistralCronTriggerBuilder workflowInput(Map<String, Object> wfInput) {
-            this.model.wfInput = wfInput;
+        public MistralCronTriggerBuilder workflowInput(Map<String, Object> workflowInput) {
+            this.model.workflowInput = workflowInput;
 
             return this;
         }
 
         @Override
-        public MistralCronTriggerBuilder workflowParameters(Map<String, Object> wfParams) {
-            this.model.wfParams = wfParams;
+        public MistralCronTriggerBuilder workflowParameters(Map<String, Object> workflowParameters) {
+            this.model.workflowParameters = workflowParameters;
 
             return this;
         }
@@ -240,15 +244,15 @@ public class MistralCronTrigger implements CronTrigger {
         }
 
         @Override
-        public MistralCronTriggerBuilder firstExecutionTime(Date firstExecTime) {
-            this.model.firstExecTime = firstExecTime;
+        public MistralCronTriggerBuilder firstExecutionTime(Date firstExecutionTime) {
+            this.model.firstExecutionTime = firstExecutionTime;
 
             return this;
         }
 
         @Override
-        public MistralCronTriggerBuilder nextExecutionTime(Date nextExecTime) {
-            this.model.nextExecTime = nextExecTime;
+        public MistralCronTriggerBuilder nextExecutionTime(Date nextExecutionTime) {
+            this.model.nextExecutionTime = nextExecutionTime;
 
             return this;
         }

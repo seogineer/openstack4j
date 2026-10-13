@@ -5,9 +5,10 @@
     "updated_at": "2016-08-17 10:34:02",
     "workflow_id": "0169affc-e6a1-4013-a59e-c89dfd5523f2",
     "workflow_name": "parallel_join_2",
-    "params": {},
-    "input": {},
+    "params": "{}",
+    "input": "{}",
+    "output": "{\"out\": \"os4j\"}",
     "state": "SUCCESS",
     "state_info": null,
-    "task_execution_id": null
+    "task_execution_id": "c40c26cb-f695-4f20-8455-c57ca5c0770a"
 }

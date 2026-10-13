@@ -1,3 +1,11 @@
+## 4.9.0
+
+- Masakari: catalog endpoint 에 버전이 없으면(`http://host:15868`) `/v1` 을 붙임(이전에는 version 문서를 받아 `Root name ('choices')` 예외). 버전·project 가 있는 endpoint(`/v1/<project>`)는 그대로
+- Mistral workflow·action·workbook 정의 생성과 code source 생성·수정·검증: `Accept: application/json, text/plain` 로 보냄(httpclient·http-connector 에서 406). 정의 스트림은 미리 읽어 길이를 정해 보내며(chunked 본문 거부 대응) 닫지 않음
+- Mistral workflow execution·action execution·task execution·cron trigger 요청이 `workflowName`/`taskExecutionId` 등 camelCase 키를 snake_case 키와 함께 보내던 문제(서버 400 "Unknown attribute")를 고침. `WorkflowExecution.getTaskExecutionId()`·`TaskExecution.getEnvironment()`·`CronTrigger.getRemainingExecutionsCount()` 가 응답 값을 읽음(이전에는 항상 null)
+- Mistral 응답의 `input`/`output`/`params`/`published`/`runtime_context`/`env`/`workflow_input`/`workflow_params`/`variables` 가 JSON 문자열이어도 Map 으로 읽음(`JsonStringToMapDeserializer`; 객체가 아닌 값이나 깨진 JSON 은 null)
+- 테스트: `BarbicanLiveTests`, `DesignateLiveTests`, `MistralLiveTests`, `InstanceHaLiveTests`(서비스가 catalog 에 없으면 skip, admin 전용 단계는 403 이면 skip; `OS_COMPUTE_HOST`·`OS_DNS_ZONE_SUFFIX` 선택). 개발용 kolla 2025.1 에서 세 connector 모두 실패 0 — skip 은 Barbican project quota(403, key-manager 전용 role)·secret stores(404, 다중 백엔드 꺼짐), Mistral cron trigger(서버의 Keystone trust 생성 500)
+
 ## 4.8.0
 
 - 문서: README 에 404 처리 규칙(단건 get 은 `null`, 목록·생성·수정·하위 속성 조회는 예외, `ActionResponse` 는 실패 응답), Neutron stadium options 의 create 전용 세터 표시(VPNaaS·TaaS·SFC·BGP·BGPVPN), Heat 확장 인터페이스의 404 동작, Barbican consumers·preferred store, Trove backup·SSL, Mistral code source scope·dynamic action·members, Masakari notification 1.1, Cyborg service token, Adjutant delegate API, okhttp 로깅 시 본문·토큰 노출 경고

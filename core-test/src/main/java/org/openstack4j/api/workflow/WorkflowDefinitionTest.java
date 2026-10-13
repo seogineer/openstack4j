@@ -1,5 +1,7 @@
 package org.openstack4j.api.workflow;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import org.openstack4j.model.common.ActionResponse;
@@ -105,6 +107,7 @@ public class WorkflowDefinitionTest extends WorkflowBaseTest {
                 Scope.PRIVATE
         );
 
+        assertDefinitionUpload(NEW_WF);
         assertEquals(wfDefs.size(), 1);
 
         WorkflowDefinition wfDef = wfDefs.get(0);
@@ -122,6 +125,16 @@ public class WorkflowDefinitionTest extends WorkflowBaseTest {
         assertTrue(wfDef.getDefinition().contains("with-items: i in <% range(0, 40) %>"));
         assertNotNull(wfDef.getInput());
         assertEquals(wfDef.getInput().length(), 0);
+    }
+
+    @Test
+    public void createSendsFixedLengthForAnyStream() throws Exception {
+        respondWith(JSON_WF_DEF_CREATE);
+
+        byte[] text = getClass().getResourceAsStream(NEW_WF).readAllBytes();
+        service.create(new BufferedInputStream(new ByteArrayInputStream(text)), Scope.PRIVATE);
+
+        assertDefinitionUpload(NEW_WF);
     }
 
     @Test

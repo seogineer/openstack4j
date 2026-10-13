@@ -5,9 +5,11 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.openstack4j.util.ToStringHelper;
 import org.openstack4j.model.workflow.ActionExecution;
 import org.openstack4j.model.workflow.builder.ActionExecutionBuilder;
+import org.openstack4j.openstack.common.JsonStringToMapDeserializer;
 import org.openstack4j.openstack.common.ListResult;
 
 /**
@@ -28,10 +30,12 @@ public class MistralActionExecution extends BaseExecution implements ActionExecu
     private String taskName;
 
     @JsonProperty("task_execution_id")
-    private String taskExecId;
+    private String taskExecutionId;
 
+    @JsonDeserialize(using = JsonStringToMapDeserializer.class)
     private Map<String, Object> input;
 
+    @JsonDeserialize(using = JsonStringToMapDeserializer.class)
     private Map<String, Object> output;
 
     private Boolean accepted;
@@ -57,7 +61,7 @@ public class MistralActionExecution extends BaseExecution implements ActionExecu
 
     @Override
     public String getTaskExecutionId() {
-        return taskExecId;
+        return taskExecutionId;
     }
 
 
@@ -123,8 +127,8 @@ public class MistralActionExecution extends BaseExecution implements ActionExecu
         }
 
         @Override
-        public MistralActionExecutionBuilder taskExecutionId(String taskExecId) {
-            this.model.taskExecId = taskExecId;
+        public MistralActionExecutionBuilder taskExecutionId(String taskExecutionId) {
+            this.model.taskExecutionId = taskExecutionId;
 
             return this;
         }

@@ -3,6 +3,8 @@ package org.openstack4j.api.workflow;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.workflow.State;
 import org.openstack4j.model.workflow.WorkflowExecution;
@@ -93,6 +95,9 @@ public class WorkflowExecutionTest extends WorkflowBaseTest {
         assertEquals(wfExec.getParameters().size(), 0);
         assertEquals(wfExec.getState(), State.SUCCESS);
         assertNull(wfExec.getStateInfo());
+        // wf_exec.json sends output and task_execution_id as JSON strings / values Mistral may encode
+        assertEquals(wfExec.getOutput().get("out"), "os4j");
+        assertEquals(wfExec.getTaskExecutionId(), "c40c26cb-f695-4f20-8455-c57ca5c0770a");
     }
 
     @Test
@@ -105,6 +110,9 @@ public class WorkflowExecutionTest extends WorkflowBaseTest {
                 build();
 
         wfExec = service.create(wfExec);
+
+        JsonNode sent = assertSnakeCaseKeys(lastRequest().getBody().readUtf8());
+        assertEquals(sent, new ObjectMapper().readTree("{\"workflow_name\":\"parallel_join_2\",\"params\":{\"env\":\"my_env\"}}"));
 
         assertNotNull(wfExec);
         assertIsUUID(wfExec.getId());

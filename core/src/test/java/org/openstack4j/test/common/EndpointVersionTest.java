@@ -3,6 +3,7 @@ package org.openstack4j.test.common;
 import org.openstack4j.openstack.common.functions.EnforceVersionToURL;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -41,5 +42,12 @@ public class EndpointVersionTest {
         for (String ep : ENDPOINTS) {
             assertTrue(func.apply(ep).endsWith("/v2.0"));
         }
+    }
+
+    public void endpointVersionIfAbsentTest() {
+        EnforceVersionToURL func = EnforceVersionToURL.instance("/v1", true);
+        assertEquals(func.apply("http://h:15868"), "http://h:15868/v1");
+        assertEquals(func.apply("http://h:15868/"), "http://h:15868/v1");
+        assertEquals(func.apply("http://h:15868/v1/pid"), "http://h:15868/v1/pid");
     }
 }

@@ -8,12 +8,8 @@
     "workflow_name": "parallel_join_2",
     "task_execution_id": "c40c26cb-f695-4f20-8455-c57ca5c0770a",
     "tags": null,
-    "input": {
-        "param1": "val1"
-    },
-    "output": {
-        "result": null
-    },
+    "input": "{\"param1\": \"val1\"}",
+    "output": "{\"result\": null}",
     "state": "SUCCESS",
     "state_info": null,
     "accepted": true

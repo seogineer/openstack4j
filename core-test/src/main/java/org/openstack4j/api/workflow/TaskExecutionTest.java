@@ -106,5 +106,6 @@ public class TaskExecutionTest extends WorkflowBaseTest {
         assertEquals(taskExec.getPublished().get("my_var"), "my_val");
         assertEquals(taskExec.getResult(), "my task result");
         assertTrue(taskExec.isProcessed());
+        assertEquals(taskExec.getEnvironment().get("a"), 1);
     }
 }

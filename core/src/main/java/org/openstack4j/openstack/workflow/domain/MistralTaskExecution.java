@@ -5,9 +5,11 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.openstack4j.util.ToStringHelper;
 import org.openstack4j.model.workflow.TaskExecution;
 import org.openstack4j.model.workflow.builder.TaskExecutionBuilder;
+import org.openstack4j.openstack.common.JsonStringToMapDeserializer;
 import org.openstack4j.openstack.common.ListResult;
 
 /**
@@ -25,14 +27,16 @@ public class MistralTaskExecution extends BaseExecution implements TaskExecution
     private String type;
 
     @JsonProperty("workflow_id")
-    private String wfDefId;
+    private String workflowDefinitionId;
 
     @JsonProperty("workflow_execution_id")
-    private String wfExecId;
+    private String workflowExecutionId;
 
+    @JsonDeserialize(using = JsonStringToMapDeserializer.class)
     private Map<String, Object> published;
 
     @JsonProperty("runtime_context")
+    @JsonDeserialize(using = JsonStringToMapDeserializer.class)
     private Map<String, Object> runtimeContext;
 
     private Object result;
@@ -41,7 +45,9 @@ public class MistralTaskExecution extends BaseExecution implements TaskExecution
 
     private Boolean reset;
 
-    private Map<String, Object> env;
+    @JsonProperty("env")
+    @JsonDeserialize(using = JsonStringToMapDeserializer.class)
+    private Map<String, Object> environment;
 
 
     public static MistralTaskExecutionBuilder builder() {
@@ -65,12 +71,12 @@ public class MistralTaskExecution extends BaseExecution implements TaskExecution
 
     @Override
     public String getWorkflowDefinitionId() {
-        return wfDefId;
+        return workflowDefinitionId;
     }
 
     @Override
     public String getWorkflowExecutionId() {
-        return wfExecId;
+        return workflowExecutionId;
     }
 
     @Override
@@ -100,7 +106,7 @@ public class MistralTaskExecution extends BaseExecution implements TaskExecution
 
     @Override
     public Map<String, Object> getEnvironment() {
-        return env;
+        return environment;
     }
 
     @Override
@@ -143,15 +149,15 @@ public class MistralTaskExecution extends BaseExecution implements TaskExecution
         }
 
         @Override
-        public MistralTaskExecutionBuilder workflowDefinitionId(String wfDefId) {
-            this.model.wfDefId = wfDefId;
+        public MistralTaskExecutionBuilder workflowDefinitionId(String workflowDefinitionId) {
+            this.model.workflowDefinitionId = workflowDefinitionId;
 
             return this;
         }
 
         @Override
-        public MistralTaskExecutionBuilder workflowExecutionId(String wfExecId) {
-            this.model.wfExecId = wfExecId;
+        public MistralTaskExecutionBuilder workflowExecutionId(String workflowExecutionId) {
+            this.model.workflowExecutionId = workflowExecutionId;
 
             return this;
         }
@@ -193,7 +199,7 @@ public class MistralTaskExecution extends BaseExecution implements TaskExecution
 
         @Override
         public MistralTaskExecutionBuilder environment(Map<String, Object> env) {
-            this.model.env = env;
+            this.model.environment = env;
 
             return this;
         }

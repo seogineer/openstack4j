@@ -31,7 +31,7 @@ public abstract class BaseExecution implements Execution {
     List<String> tags;
 
     @JsonProperty("workflow_name")
-    String wfName;
+    String workflowName;
 
     State state;
 
@@ -50,7 +50,7 @@ public abstract class BaseExecution implements Execution {
 
     @Override
     public String getWorkflowName() {
-        return wfName;
+        return workflowName;
     }
 
     public Date getCreatedAt() {
@@ -111,8 +111,8 @@ public abstract class BaseExecution implements Execution {
             return (T) this;
         }
 
-        public T workflowName(String wfName) {
-            model.wfName = wfName;
+        public T workflowName(String workflowName) {
+            model.workflowName = workflowName;
 
             return (T) this;
         }
