@@ -7,6 +7,7 @@ import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Role;
 import org.openstack4j.model.identity.v3.RoleAssignment;
+import org.openstack4j.model.identity.v3.options.RoleAssignmentListOptions;
 
 /**
  * Identity Role based Operations
@@ -85,6 +86,15 @@ public interface RoleService extends RestService {
      * @return the list<? extends RoleAssignment>
      */
     List<? extends RoleAssignment> listRoleAssignments(String projectId, boolean includeNames);
+
+    /**
+     * {@code GET /v3/role_assignments} with the given filters only (no implicit {@code effective}); e.g. domain scope:
+     * {@code RoleAssignmentListOptions.create().scopeDomainId(d).includeNames()}.
+     *
+     * @param options the filters
+     * @return the list<? extends RoleAssignment>
+     */
+    List<? extends RoleAssignment> listRoleAssignments(RoleAssignmentListOptions options);
 
 
     /**

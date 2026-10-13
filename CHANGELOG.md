@@ -5,6 +5,7 @@
 - Neutron subnet `description`: `Subnet.getDescription()`, `SubnetBuilder.description(String)`(create·update)
 - Cinder `resetState(volumeId, Status)` javadoc: `error_*` 상태는 `setStatus(volumeId, String, …)` 사용
 - Octavia pool 수정 빌더 `tlsCiphers`·`tlsVersions`·`caTlsContainerRef`. listener `getLoadBalancers()` 가 응답의 `loadbalancers` 를 읽음(이전에는 항상 `null`; neutron-lbaas `ListenerV2` 도 같음)
+- Keystone `roles().listRoleAssignments(RoleAssignmentListOptions)` — `scope.domain.id`·`scope.system`·`user.id`·`group.id`·`role.id`·`inherited_to`·`effective`·`include_names`·`include_subtree`
 
 ## 4.10.0
 
