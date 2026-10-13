@@ -1,9 +1,11 @@
 package org.openstack4j.api.trove.ext;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import okhttp3.mockwebserver.RecordedRequest;
+import org.openstack4j.api.exceptions.ResponseException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -104,5 +106,85 @@ public class TroveAdminDatastoreTests extends AbstractTroveExtTest {
         Assert.assertEquals(updated.get("restart_required"), Boolean.TRUE);
         Assert.assertEquals(quotas.get(0).get("limit"), 15);
         Assert.assertEquals(newQuotas.get("backups"), 30);
+    }
+
+    public void datastoreVersionFlavorsAndVolumeTypes() throws Exception {
+        respondWith(200, "{\"flavor_ids\": [\"1\", \"2\"]}");
+        respondWith(202);
+        respondWith(204);
+        respondWith(200, "{\"volume_type_ids\": [\"vt1\"]}");
+        respondWith(202);
+        respondWith(204);
+
+        var admin = osv3().trove().troveAdmin();
+        List<String> flavors = admin.listDatastoreVersionFlavors("v1");
+        var addFlavors = admin.addDatastoreVersionFlavors("v1", List.of("3", "4"));
+        var removeFlavor = admin.removeDatastoreVersionFlavor("v1", "3");
+        List<String> volumeTypes = admin.listDatastoreVersionVolumeTypes("v1");
+        var addTypes = admin.addDatastoreVersionVolumeTypes("v1", List.of("vt2"));
+        var removeType = admin.removeDatastoreVersionVolumeType("v1", "vt2");
+
+        expect("GET", P + "/mgmt/datastore-versions/v1/flavors");
+        Assert.assertEquals(body(expect("POST", P + "/mgmt/datastore-versions/v1/flavors")).toString(), "{\"flavor_ids\":[\"3\",\"4\"]}");
+        expect("DELETE", P + "/mgmt/datastore-versions/v1/flavors/3");
+        expect("GET", P + "/mgmt/datastore-versions/v1/volume-types");
+        Assert.assertEquals(body(expect("POST", P + "/mgmt/datastore-versions/v1/volume-types")).toString(), "{\"volume_type_ids\":[\"vt2\"]}");
+        expect("DELETE", P + "/mgmt/datastore-versions/v1/volume-types/vt2");
+        Assert.assertEquals(flavors, List.of("1", "2"));
+        Assert.assertEquals(volumeTypes, List.of("vt1"));
+        Assert.assertTrue(addFlavors.isSuccess());
+        Assert.assertTrue(removeFlavor.isSuccess());
+        Assert.assertTrue(addTypes.isSuccess());
+        Assert.assertTrue(removeType.isSuccess());
+    }
+
+    public void bulkParameters() throws Exception {
+        respondWith(202);
+        respondWith(204);
+        respondWith(202);
+
+        var admin = osv3().trove().troveAdmin();
+        Assert.assertTrue(admin.updateAllParameters("v1", List.of(Map.of("name", "max_connections", "restart_required", false, "type", "integer", "min", 1, "max", 100000))).isSuccess());
+        Assert.assertTrue(admin.deleteAllParameters("v1").isSuccess());
+        // a List<Map<String, Object>> must compile too
+        List<Map<String, Object>> typed = new ArrayList<>();
+        Assert.assertTrue(admin.updateAllParameters("v1", typed).isSuccess());
+
+        var first = body(expect("PATCH", P + "/mgmt/datastores/versions/v1/parameters/update_all")).get("configuration-parameters").get(0);
+        Assert.assertEquals(first.get("name").asText(), "max_connections");
+        Assert.assertEquals(first.get("type").asText(), "integer");
+        Assert.assertFalse(first.get("restart_required").asBoolean());
+        Assert.assertEquals(first.get("max").asInt(), 100000);
+        expect("DELETE", P + "/mgmt/datastores/versions/v1/parameters/delete_all");
+        Assert.assertEquals(body(expect("PATCH", P + "/mgmt/datastores/versions/v1/parameters/update_all")).toString(), "{\"configuration-parameters\":[]}");
+    }
+
+    public void missingVersionAssociationsRaise() throws Exception {
+        String notFound = "{\"itemNotFound\": {\"message\": \"not found\", \"code\": 404}}";
+        respondWith(404, notFound);
+        respondWith(404, notFound);
+        respondWith(404, notFound);
+
+        var admin = osv3().trove().troveAdmin();
+        Assert.assertThrows(ResponseException.class, () -> admin.listDatastoreVersionFlavors("nope"));
+        var added = admin.addDatastoreVersionFlavors("nope", List.of("1"));
+        Assert.assertFalse(added.isSuccess());
+        Assert.assertEquals(added.getCode(), 404);
+        Assert.assertFalse(admin.deleteAllParameters("nope").isSuccess());
+        expect("GET", P + "/mgmt/datastore-versions/nope/flavors");
+        expect("POST", P + "/mgmt/datastore-versions/nope/flavors");
+        expect("DELETE", P + "/mgmt/datastores/versions/nope/parameters/delete_all");
+    }
+
+    public void associationIdsArePathEncoded() throws Exception {
+        respondWith(204);
+
+        var admin = osv3().trove().troveAdmin();
+        Assert.assertTrue(admin.removeDatastoreVersionFlavor("v1", "a b").isSuccess());
+        Assert.assertThrows(IllegalArgumentException.class, () -> admin.removeDatastoreVersionFlavor("v1", ".."));
+
+        RecordedRequest request = takeRequest();
+        Assert.assertEquals(request.getMethod(), "DELETE");
+        Assert.assertTrue(request.getPath().endsWith("/flavors/a%20b"), request.getPath());
     }
 }

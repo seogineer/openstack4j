@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.trove.internal.ext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,31 @@ public class TroveAdminServiceImpl extends BaseTroveExtService implements TroveA
 
     private static String instance(String instanceId) {
         return "/mgmt/instances/" + id(instanceId);
+    }
+
+    private static String version(String versionId) {
+        return "/mgmt/datastore-versions/" + id(versionId);
+    }
+
+    private static String parameters(String versionId) {
+        return "/mgmt/datastores/versions/" + id(versionId) + "/parameters";
+    }
+
+    /** @return the strings under key of GET path; a missing version raises */
+    private List<String> ids(String path, String key) {
+        Map<String, Object> body = mapOf(path, null);
+        Object list = body == null ? null : body.get(key);
+        List<String> out = new ArrayList<>();
+        if (list instanceof List) {
+            for (Object o : (List<?>) list) {
+                if (o != null) out.add(String.valueOf(o));
+            }
+        }
+        return out;
+    }
+
+    private ActionResponse addIds(String path, String key, List<String> ids) {
+        return postWithResponse(path).entity(JsonBody.of(Map.of(key, Objects.requireNonNull(ids, key)))).execute();
     }
 
     @Override
@@ -100,6 +126,47 @@ public class TroveAdminServiceImpl extends BaseTroveExtService implements TroveA
     @Override
     public ActionResponse deleteParameter(String versionId, String parameterName) {
         return remove("/mgmt/datastores/versions/" + id(versionId) + "/parameters/" + id(parameterName));
+    }
+
+    @Override
+    public List<String> listDatastoreVersionFlavors(String versionId) {
+        return ids(version(versionId) + "/flavors", "flavor_ids");
+    }
+
+    @Override
+    public ActionResponse addDatastoreVersionFlavors(String versionId, List<String> flavorIds) {
+        return addIds(version(versionId) + "/flavors", "flavor_ids", flavorIds);
+    }
+
+    @Override
+    public ActionResponse removeDatastoreVersionFlavor(String versionId, String flavorId) {
+        return remove(version(versionId) + "/flavors/" + id(flavorId));
+    }
+
+    @Override
+    public List<String> listDatastoreVersionVolumeTypes(String versionId) {
+        return ids(version(versionId) + "/volume-types", "volume_type_ids");
+    }
+
+    @Override
+    public ActionResponse addDatastoreVersionVolumeTypes(String versionId, List<String> volumeTypeIds) {
+        return addIds(version(versionId) + "/volume-types", "volume_type_ids", volumeTypeIds);
+    }
+
+    @Override
+    public ActionResponse removeDatastoreVersionVolumeType(String versionId, String volumeTypeId) {
+        return remove(version(versionId) + "/volume-types/" + id(volumeTypeId));
+    }
+
+    @Override
+    public ActionResponse updateAllParameters(String versionId, List<? extends Map<String, ?>> parameters) {
+        return patchWithResponse(parameters(versionId) + "/update_all")
+                .entity(JsonBody.of(Map.of("configuration-parameters", Objects.requireNonNull(parameters, "parameters")))).execute();
+    }
+
+    @Override
+    public ActionResponse deleteAllParameters(String versionId) {
+        return remove(parameters(versionId) + "/delete_all");
     }
 
     @Override
