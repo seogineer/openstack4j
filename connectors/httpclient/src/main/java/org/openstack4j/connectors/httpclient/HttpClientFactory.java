@@ -11,8 +11,10 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
+import org.apache.hc.client5.http.ssl.HostnameVerificationPolicy;
 import org.apache.hc.client5.http.ssl.HttpsSupport;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.TimeValue;
@@ -86,9 +88,15 @@ public class HttpClientFactory {
         if (config.getHostNameVerifier() != null)
             hostnameVerifier = config.getHostNameVerifier();
         if (sslContext != null || hostnameVerifier != null) {
-            cmb.setTlsSocketStrategy(new DefaultClientTlsStrategy(
-                    sslContext != null ? sslContext : SSLContexts.createDefault(),
-                    hostnameVerifier != null ? hostnameVerifier : HttpsSupport.getDefaultHostnameVerifier()));
+            SSLContext ctx = sslContext != null ? sslContext : SSLContexts.createDefault();
+            HostnameVerifier verifier = hostnameVerifier != null ? hostnameVerifier : HttpsSupport.getDefaultHostnameVerifier();
+            try {
+                TlsStrategy54.apply(cmb, ctx, verifier);
+            } catch (NoClassDefFoundError | NoSuchMethodError e) {
+                // httpclient5 before 5.4 (e.g. pinned by the application) has no TlsSocketStrategy
+                LOG.debug("httpclient5 < 5.4 on the classpath, using SSLConnectionSocketFactory: {}", e.toString());
+                setSslSocketFactory(cmb, ctx, verifier);
+            }
         }
 
         if (config.getMaxConnections() > 0)
@@ -116,5 +124,23 @@ public class HttpClientFactory {
         }
 
         return cb.setDefaultRequestConfig(rcb.build()).build();
+    }
+
+    /**
+     * httpclient5 5.4+. A separate class so that the verifier only resolves {@code TlsSocketStrategy} when this is
+     * used; inside {@link HttpClientFactory} it would fail the whole factory on an older httpclient5.
+     */
+    private static final class TlsStrategy54 {
+        static void apply(PoolingHttpClientConnectionManagerBuilder cmb, SSLContext ctx, HostnameVerifier verifier) {
+            // CLIENT: only the given verifier checks the host name. The (SSLContext, HostnameVerifier) constructor
+            // means BOTH, so the JSSE built-in check still rejected a mismatched certificate with SSL verification off
+            cmb.setTlsSocketStrategy(new DefaultClientTlsStrategy(ctx, HostnameVerificationPolicy.CLIENT, verifier));
+        }
+    }
+
+    /** httpclient5 before 5.4 (5.2–5.3 in practice); deprecated since 5.4. */
+    @SuppressWarnings("deprecation")
+    private static void setSslSocketFactory(PoolingHttpClientConnectionManagerBuilder cmb, SSLContext ctx, HostnameVerifier verifier) {
+        cmb.setSSLSocketFactory(new SSLConnectionSocketFactory(ctx, verifier));
     }
 }
