@@ -1,5 +1,7 @@
 package org.openstack4j.model.octavia;
 
+import java.util.List;
+
 import org.openstack4j.common.Buildable;
 import org.openstack4j.model.ModelEntity;
 import org.openstack4j.model.octavia.builder.LbPoolV2UpdateBuilder;
@@ -38,5 +40,26 @@ public interface LbPoolV2Update extends ModelEntity, Buildable<LbPoolV2UpdateBui
      * @see Vip#getSessionPersistence()
      */
     public SessionPersistence getSessionPersistence();
+
+    /**
+     * @return the OpenSSL cipher string set through the builder (Octavia API 2.15+), or null
+     */
+    default String getTlsCiphers() {
+        return null;
+    }
+
+    /**
+     * @return the TLS versions set through the builder (Octavia API 2.17+), or null
+     */
+    default List<String> getTlsVersions() {
+        return null;
+    }
+
+    /**
+     * @return the CA certificate container ref set through the builder (Octavia API 2.8+), or null
+     */
+    default String getCaTlsContainerRef() {
+        return null;
+    }
 
 }

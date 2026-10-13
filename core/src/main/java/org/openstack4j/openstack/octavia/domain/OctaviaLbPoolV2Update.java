@@ -1,5 +1,7 @@
 package org.openstack4j.openstack.octavia.domain;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -31,6 +33,15 @@ public class OctaviaLbPoolV2Update implements LbPoolV2Update {
 
     @JsonProperty("session_persistence")
     private SessionPersistence sessionPersistence;
+
+    @JsonProperty("tls_ciphers")
+    private String tlsCiphers;
+
+    @JsonProperty("tls_versions")
+    private List<String> tlsVersions;
+
+    @JsonProperty("ca_tls_container_ref")
+    private String caTlsContainerRef;
 
     public static LbPoolV2UpdateBuilder builder() {
         return new LbPoolV2UpdateContreteBuilder();
@@ -70,12 +81,30 @@ public class OctaviaLbPoolV2Update implements LbPoolV2Update {
     }
 
     @Override
+    public String getTlsCiphers() {
+        return tlsCiphers;
+    }
+
+    @Override
+    public List<String> getTlsVersions() {
+        return tlsVersions;
+    }
+
+    @Override
+    public String getCaTlsContainerRef() {
+        return caTlsContainerRef;
+    }
+
+    @Override
     public String toString() {
         return new ToStringHelper(this)
                 .add("adminStateUp", adminStateUp)
                 .add("description", description)
                 .add("lbMethod", lbMethod)
                 .add("name", name)
+                .add("tlsCiphers", tlsCiphers)
+                .add("tlsVersions", tlsVersions)
+                .add("caTlsContainerRef", caTlsContainerRef)
                 .toString();
     }
 
@@ -136,6 +165,24 @@ public class OctaviaLbPoolV2Update implements LbPoolV2Update {
         @Override
         public LbPoolV2UpdateBuilder sessionPersistence(SessionPersistence sessionPersistence) {
             m.sessionPersistence = sessionPersistence;
+            return this;
+        }
+
+        @Override
+        public LbPoolV2UpdateBuilder tlsCiphers(String tlsCiphers) {
+            m.tlsCiphers = tlsCiphers;
+            return this;
+        }
+
+        @Override
+        public LbPoolV2UpdateBuilder tlsVersions(List<String> tlsVersions) {
+            m.tlsVersions = tlsVersions;
+            return this;
+        }
+
+        @Override
+        public LbPoolV2UpdateBuilder caTlsContainerRef(String caTlsContainerRef) {
+            m.caTlsContainerRef = caTlsContainerRef;
             return this;
         }
 

@@ -1,5 +1,7 @@
 package org.openstack4j.model.octavia.builder;
 
+import java.util.List;
+
 import org.openstack4j.common.Buildable;
 import org.openstack4j.model.octavia.LbMethod;
 import org.openstack4j.model.octavia.LbPoolV2Update;
@@ -51,4 +53,20 @@ public interface LbPoolV2UpdateBuilder extends Buildable.Builder<LbPoolV2UpdateB
      * @return LbPoolV2UpdateBuilder
      */
     LbPoolV2UpdateBuilder sessionPersistence(SessionPersistence sessionPersistence);
+
+    /**
+     * OpenSSL cipher string (Octavia API 2.15+). Null is not sent (the value is left unchanged).
+     */
+    LbPoolV2UpdateBuilder tlsCiphers(String tlsCiphers);
+
+    /**
+     * e.g. ["TLSv1.2","TLSv1.3"] (Octavia API 2.17+). Null is not sent (the value is left unchanged).
+     */
+    LbPoolV2UpdateBuilder tlsVersions(List<String> tlsVersions);
+
+    /**
+     * Barbican container of the CA certificate used to validate members (Octavia API 2.8+). Null is not sent
+     * (the value is left unchanged).
+     */
+    LbPoolV2UpdateBuilder caTlsContainerRef(String caTlsContainerRef);
 }

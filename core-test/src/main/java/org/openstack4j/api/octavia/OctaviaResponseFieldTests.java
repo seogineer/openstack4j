@@ -3,6 +3,7 @@ package org.openstack4j.api.octavia;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.octavia.ext.AbstractOctaviaExtTest;
 import org.openstack4j.model.octavia.LbOperatingStatus;
@@ -11,6 +12,7 @@ import org.openstack4j.model.octavia.LbProvisioningStatus;
 import org.openstack4j.model.octavia.ListenerV2;
 import org.openstack4j.model.octavia.LoadBalancerV2Stats;
 import org.openstack4j.model.octavia.MemberV2;
+import org.openstack4j.openstack.octavia.domain.OctaviaLbPoolV2Update;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -95,5 +97,49 @@ public class OctaviaResponseFieldTests extends AbstractOctaviaExtTest {
         expect("GET", "/lbaas/loadbalancers/lb1/stats");
         Assert.assertEquals(stats.getRequestErrors(), Long.valueOf(5));
         Assert.assertEquals(stats.getTotalConnections(), Integer.valueOf(4));
+    }
+
+    public void poolUpdateSendsTlsFields() throws Exception {
+        respondWith(200, POOL);
+        osv3().octavia().lbPoolV2().update("p1", OctaviaLbPoolV2Update.builder()
+                .tlsCiphers("ECDHE-ECDSA-AES256-GCM-SHA384").tlsVersions(Arrays.asList("TLSv1.2", "TLSv1.3"))
+                .caTlsContainerRef("ref").build());
+        String raw = expect("PUT", "/lbaas/pools/p1").getBody().readUtf8();
+        JsonNode sent = new ObjectMapper().readTree(raw).get("pool");
+        Assert.assertEquals(sent.get("tls_ciphers").asText(), "ECDHE-ECDSA-AES256-GCM-SHA384");
+        Assert.assertEquals(sent.get("tls_versions").get(1).asText(), "TLSv1.3");
+        Assert.assertEquals(sent.get("ca_tls_container_ref").asText(), "ref");
+        for (String leaked : new String[]{"tlsCiphers", "tlsVersions", "caTlsContainerRef"}) {
+            Assert.assertFalse(raw.contains("\"" + leaked + "\""), raw);
+        }
+    }
+
+    public void poolUpdateWithoutTlsUnchanged() throws Exception {
+        respondWith(200, POOL);
+        osv3().octavia().lbPoolV2().update("p1", OctaviaLbPoolV2Update.builder().name("x").build());
+        JsonNode sent = new ObjectMapper().readTree(expect("PUT", "/lbaas/pools/p1").getBody().readUtf8()).get("pool");
+        Assert.assertEquals(sent.get("name").asText(), "x");
+        Assert.assertTrue(sent.get("admin_state_up").asBoolean(), sent.toString());
+        for (String key : new String[]{"tls_ciphers", "tls_versions", "ca_tls_container_ref"}) {
+            Assert.assertFalse(sent.has(key), sent.toString());
+        }
+    }
+
+    public void listenerLoadBalancers() throws Exception {
+        respondWith(200, "{\"listener\":{\"id\":\"l1\",\"loadbalancers\":[{\"id\":\"lb1\"}]}}");
+        ListenerV2 listener = osv3().octavia().listenerV2().get("l1");
+        expect("GET", "/lbaas/listeners/l1");
+        Assert.assertEquals(listener.getLoadBalancers().get(0).getId(), "lb1");
+    }
+
+    public void listenerCreateDoesNotSendLoadBalancers() throws Exception {
+        respondWith(200, "{\"listener\":{\"id\":\"l1\",\"loadbalancers\":[{\"id\":\"lb1\"}]}}");
+        respondWith(200, "{\"listener\":{\"id\":\"l2\"}}");
+        ListenerV2 listener = osv3().octavia().listenerV2().get("l1");
+        expect("GET", "/lbaas/listeners/l1");
+        osv3().octavia().listenerV2().create(listener.toBuilder().name("copy").build());
+        String raw = expect("POST", "/lbaas/listeners").getBody().readUtf8();
+        Assert.assertFalse(raw.toLowerCase(java.util.Locale.ROOT).contains("loadbalancers\""), raw);
+        Assert.assertTrue(raw.contains("\"copy\""), raw);
     }
 }
