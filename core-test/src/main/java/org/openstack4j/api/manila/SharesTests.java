@@ -1,5 +1,6 @@
 package org.openstack4j.api.manila;
 
+import java.util.Locale;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -525,8 +526,8 @@ public class SharesTests extends AbstractTest {
                 "unmanage_starting", "unmanage_error", "unmanaged", "extending", "extending_error", "shrinking",
                 "shrinking_error", "shrinking_possible_data_loss_error"};
         for (String v : statuses) {
-            assertEquals(Share.Status.valueOf(v.toUpperCase()).value(), v);
-            assertEquals(Share.Status.value(v), Share.Status.valueOf(v.toUpperCase()));
+            assertEquals(Share.Status.valueOf(v.toUpperCase(Locale.ROOT)).value(), v);
+            assertEquals(Share.Status.value(v), Share.Status.valueOf(v.toUpperCase(Locale.ROOT)));
         }
         assertEquals(Share.Status.value("ERROR"), Share.Status.ERROR);
         assertEquals(Share.Status.value("error"), Share.Status.ERROR);
@@ -536,7 +537,7 @@ public class SharesTests extends AbstractTest {
         String[] tasks = {"null", "migration_starting", "migration_error", "migration_success", "migration_completing",
                 "migrating"};
         for (String v : tasks) {
-            assertEquals(Share.TaskState.valueOf(v.toUpperCase()).value(), v);
+            assertEquals(Share.TaskState.valueOf(v.toUpperCase(Locale.ROOT)).value(), v);
         }
         assertEquals(Share.TaskState.value(null), Share.TaskState.NULL);
         assertEquals(Share.TaskState.value(""), Share.TaskState.NULL);
