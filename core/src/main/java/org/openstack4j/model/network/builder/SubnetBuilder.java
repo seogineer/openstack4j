@@ -93,4 +93,10 @@ public interface SubnetBuilder extends Builder<SubnetBuilder, Subnet> {
      * @see Subnet#getIpv6RaMode()
      */
     SubnetBuilder ipv6RaMode(Ipv6RaMode ipv6RaMode);
+
+    /**
+     * {@code description}, sent on create and on update ({@code subnets().update(subnet)}). Null is not sent. A description read
+     * from a response is never sent back; only a value set through this method is.
+     */
+    SubnetBuilder description(String description);
 }

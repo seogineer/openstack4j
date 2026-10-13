@@ -1,8 +1,10 @@
 package org.openstack4j.openstack.networking.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.*;
 import org.openstack4j.util.ToStringHelper;
@@ -49,6 +51,10 @@ public class NeutronSubnet implements Subnet {
     private Date createdTime;
     @JsonProperty("updated_at")
     private Date updatedTime;
+    @JsonProperty(value = "description", access = JsonProperty.Access.WRITE_ONLY)
+    private String description;
+    @JsonIgnore
+    private boolean descriptionSet;
 
     public NeutronSubnet() {
     }
@@ -240,6 +246,22 @@ public class NeutronSubnet implements Subnet {
                 .toString();
     }
 
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    /** True when {@code description} was set through the builder (not a response value). */
+    boolean descriptionRequested() {
+        return descriptionSet && description != null;
+    }
+
+    /** Request-only keys set through the builder. */
+    @JsonAnyGetter
+    Map<String, Object> requestOnlyFields() {
+        return descriptionRequested() ? Collections.singletonMap("description", description) : Collections.emptyMap();
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -387,10 +409,20 @@ public class NeutronSubnet implements Subnet {
         }
 
         @Override
+        public SubnetBuilder description(String description) {
+            m.description = description;
+            m.descriptionSet = description != null;
+            return this;
+        }
+
+        @Override
         public Subnet build() {
             if (isNoGateway) {
-                return new NeutronSubnetNoGateway(m.id, m.name, m.enableDHCP, m.networkId,
+                NeutronSubnet ng = new NeutronSubnetNoGateway(m.id, m.name, m.enableDHCP, m.networkId,
                         m.tenantId, m.dnsNames, m.pools, m.hostRoutes, m.ipVersion, m.cidr, m.ipv6AddressMode, m.ipv6RaMode);
+                ng.description = m.description;
+                ng.descriptionSet = m.descriptionSet;
+                return ng;
             }
             return m;
         }
