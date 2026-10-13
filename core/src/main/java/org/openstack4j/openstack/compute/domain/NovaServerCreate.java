@@ -22,7 +22,9 @@ public class NovaServerCreate implements ServerCreate {
     private String flavorRef;
     private String accessIPv4;
     private String accessIPv6;
+    @JsonProperty("min_count")
     private Integer min;
+    @JsonProperty("max_count")
     private Integer max;
     @JsonProperty("OS-DCF:diskConfig")
     private DiskConfig diskConfig;
@@ -286,6 +288,18 @@ public class NovaServerCreate implements ServerCreate {
         @Override
         public ServerCreateBuilder diskConfig(DiskConfig diskConfig) {
             m.diskConfig = diskConfig;
+            return this;
+        }
+
+        @Override
+        public ServerCreateBuilder minCount(Integer minCount) {
+            m.min = minCount;
+            return this;
+        }
+
+        @Override
+        public ServerCreateBuilder maxCount(Integer maxCount) {
+            m.max = maxCount;
             return this;
         }
 

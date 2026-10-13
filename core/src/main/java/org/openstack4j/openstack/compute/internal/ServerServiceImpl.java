@@ -518,6 +518,8 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
     public Server update(String serverId, ServerUpdateOptions options) {
         Objects.requireNonNull(serverId);
         Objects.requireNonNull(options);
+        if (options.getDescription() != null)
+            requireMicroVersion("Server update description", V(19));
 
         return put(NovaServer.class, uri("/servers/%s", serverId)).entity(NovaServerUpdate.fromOptions(options)).execute();
     }

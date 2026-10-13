@@ -141,4 +141,70 @@ public class ServerCreateOptionsTests extends AbstractComputeMicroVersionTest {
             assertNoMoreRequests();
         }
     }
+
+    public void minMaxCountAreSent() throws Exception {
+        negotiate("2.100");
+        respondWith(202, CREATED);
+
+        osv3().compute().servers().boot(Builders.server().name("a").flavor("f").image("i").networks(Collections.singletonList("n1")).minCount(2).maxCount(3).build());
+
+        RecordedRequest request = takeRequest();
+        assertVersionHeaders(request, "2.100");
+        JsonNode server = body(request).get("server");
+        Assert.assertEquals(server.get("min_count").asInt(), 2);
+        Assert.assertEquals(server.get("max_count").asInt(), 3);
+        Assert.assertFalse(server.has("min"), server.toString());
+        Assert.assertFalse(server.has("max"), server.toString());
+    }
+
+    public void minMaxCountWithSchedulerHints() throws Exception {
+        negotiate("2.100");
+        respondWith(202, CREATED);
+
+        osv3().compute().servers().boot(Builders.server().name("a").flavor("f").image("i").minCount(2).maxCount(3)
+                .addSchedulerHint("group", "g1").build());
+
+        JsonNode root = body(takeRequest());
+        JsonNode server = root.get("server");
+        Assert.assertEquals(server.get("min_count").asInt(), 2);
+        Assert.assertEquals(server.get("max_count").asInt(), 3);
+        Assert.assertFalse(server.has("min"), root.toString());
+        Assert.assertFalse(server.has("max"), root.toString());
+        Assert.assertEquals(root.get("os:scheduler_hints").get("group").asText(), "g1");
+    }
+
+    public void minMaxCountWithoutMicroVersion() throws Exception {
+        respondWith(202, CREATED);
+
+        osv3().compute().servers().boot(Builders.server().name("a").flavor("f").image("i").minCount(1).maxCount(2).build());
+
+        RecordedRequest request = takeRequest();
+        assertNoVersionHeaders(request);
+        JsonNode server = body(request).get("server");
+        Assert.assertEquals(server.get("min_count").asInt(), 1);
+        Assert.assertEquals(server.get("max_count").asInt(), 2);
+    }
+
+    public void createWithoutCountsUnchanged() throws Exception {
+        negotiate("2.100");
+        respondWith(202, CREATED);
+
+        osv3().compute().servers().boot(Builders.server().name("a").flavor("f").image("i").build());
+
+        JsonNode server = body(takeRequest()).get("server");
+        for (String key : new String[]{"min_count", "max_count", "min", "max"}) {
+            Assert.assertFalse(server.has(key), server.toString());
+        }
+    }
+
+    public void reservationIdFilterIsAQueryWithoutVersion() throws Exception {
+        respondWith(200, "{\"servers\": []}");
+
+        osv3().compute().servers().list(ServerListOptions.create().reservationId("r-1"));
+
+        RecordedRequest request = takeRequest();
+        assertNoVersionHeaders(request);
+        Assert.assertTrue(request.getPath().contains("reservation_id=r-1"), request.getPath());
+        Assert.assertNull(ServerListOptions.create().reservationId("r-1").getRequiredMicroVersion());
+    }
 }

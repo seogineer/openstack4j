@@ -52,14 +52,12 @@ public interface ServerCreate extends ModelEntity, Buildable<ServerCreateBuilder
     String getAccessIPv6();
 
     /**
-     * @return the min
+     * @return the {@code min_count}
      */
     Integer getMin();
 
     /**
-     * Gets the max.
-     *
-     * @return the max
+     * @return the {@code max_count}
      */
     Integer getMax();
 
