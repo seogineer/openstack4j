@@ -31,7 +31,8 @@ public class MigrationsFilter extends BaseFilter {
     /**
      * Filters the response by status.
      *
-     * @param status the status to filter by
+     * @param status the status to filter by; note the constant name is sent as is, so the hyphenated nova values
+     *               ({@code PRE_MIGRATING}, {@code POST_MIGRATING}) cannot be filtered with this method
      * @return MigrationsFilter
      */
     public MigrationsFilter status(Status status) {

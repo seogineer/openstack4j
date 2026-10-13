@@ -77,13 +77,32 @@ public interface Migration extends ModelEntity {
         ERROR,
         DONE,
         FINISHED, 
-        CONFIRMED;
+        CONFIRMED,
+        /** evacuation accepted */
+        ACCEPTED,
+        /** live migration queued (2.65 abort allowed) */
+        QUEUED,
+        /** live migration preparing */
+        PREPARING,
+        /** live migration running */
+        RUNNING,
+        /** {@code pre-migrating} (cold migrate/resize) */
+        PRE_MIGRATING,
+        /** {@code post-migrating} */
+        POST_MIGRATING,
+        COMPLETED,
+        CONFIRMING,
+        REVERTING,
+        REVERTED,
+        FAILED,
+        CANCELLED;
 
         @JsonCreator
         public static Status forValue(String value) {
             if (value != null) {
+                String v = value.replace('-', '_');
                 for (Status s : Status.values()) {
-                    if (s.name().equalsIgnoreCase(value))
+                    if (s.name().equalsIgnoreCase(v))
                         return s;
                 }
             }

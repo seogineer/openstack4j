@@ -6,6 +6,7 @@
 - Nova `Server.Status.SOFT_DELETED`(이전에는 `UNRECOGNIZED`). simple tenant usage `ServerUsage.getVmState()` — 응답 `state`(vm_state) 원문(`soft-delete`·`building`·`rescued` 등). `getState()` 는 이전처럼 `Server.Status` 로 바꾼 값
 - enum 상수가 늘어 `default` 없는 switch 표현식은 컴파일되지 않을 수 있음
 - Manila: `Share.Status`·`ShareInstance.Status`·`ShareSnapshot.Status`·`Share.TaskState`·`Share.Protocol` 이 모르는 값이나 대문자 프로토콜(`GLUSTERFS`)에서 예외를 던져 목록 조회 전체가 실패하던 문제를 고침 — 대소문자를 무시하고 모르는 값은 `UNRECOGNIZED`. api-ref·서버 소스의 상태(`ensuring`, `deferred_deleting`, `backup_creating`, `reverting`, `awaiting_transfer` 등), task state(`migration_in_progress`, `data_copying_*` 등), 프로토콜 `CEPHFS`·`MAPRFS`·`LUSTRE`·`WEKAFS` 추가. 요청에 보내는 값(reset state 의 `status`, 생성·manage 의 `share_proto`)은 이전과 같음
+- Nova `Migration.Status` 에 `ACCEPTED`·`QUEUED`·`PREPARING`·`RUNNING`·`PRE_MIGRATING`·`POST_MIGRATING`·`COMPLETED`·`CONFIRMING`·`REVERTING`·`REVERTED`·`FAILED`·`CANCELLED` 추가, `pre-migrating` 처럼 하이픈이 든 값도 인식(이전에는 이 값들이 모두 `MIGRATING` 으로 읽힘 — `getStatus() == MIGRATING` 으로 진행 중을 판단하던 코드는 결과가 달라짐). 모르는 값은 이전처럼 `MIGRATING`
 
 ## 4.9.1
 
