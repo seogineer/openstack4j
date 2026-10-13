@@ -23,6 +23,11 @@ public class MistralExtTests extends AbstractTest {
         return URLDecoder.decode(r.getPath(), StandardCharsets.UTF_8);
     }
 
+    private static void assertAcceptsText(RecordedRequest r) {
+        String accept = r.getHeader("Accept");
+        Assert.assertTrue(accept != null && accept.contains("text/plain"), "Accept: " + accept);
+    }
+
     private static String json(RecordedRequest r) throws Exception {
         return new ObjectMapper().readTree(r.getBody().readUtf8()).toString();
     }
@@ -47,11 +52,17 @@ public class MistralExtTests extends AbstractTest {
         Assert.assertTrue(path(validate).endsWith("/workflows/validate"));
         Assert.assertTrue(validate.getHeader("Content-Type").startsWith("text/plain"), validate.getHeader("Content-Type"));
         Assert.assertEquals(validate.getBody().readUtf8(), "version: '2.0'\nwf:\n  tasks: {}\n");
-        Assert.assertTrue(path(takeRequest()).endsWith("/workbooks/validate"));
+        assertAcceptsText(validate);
+        RecordedRequest workbook = takeRequest();
+        Assert.assertTrue(path(workbook).endsWith("/workbooks/validate"));
+        assertAcceptsText(workbook);
         RecordedRequest create = takeRequest();
         Assert.assertTrue(path(create).endsWith("/code_sources?name=my_actions"), path(create));
         Assert.assertEquals(create.getBody().readUtf8(), "class A: pass\n");
-        String update = path(takeRequest());
+        assertAcceptsText(create);
+        RecordedRequest put = takeRequest();
+        assertAcceptsText(put);
+        String update = path(put);
         Assert.assertTrue(update.contains("/code_sources?") && update.contains("identifier=my_actions") && update.contains("scope=private"), update);
         Assert.assertTrue(path(takeRequest()).endsWith("/code_sources?scope=private"));
         Assert.assertEquals(takeRequest().getMethod(), "DELETE");

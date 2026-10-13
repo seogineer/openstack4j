@@ -5,9 +5,11 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.openstack4j.util.ToStringHelper;
 import org.openstack4j.model.workflow.WorkflowExecution;
 import org.openstack4j.model.workflow.builder.WorkflowExecutionBuilder;
+import org.openstack4j.openstack.common.JsonStringToMapDeserializer;
 import org.openstack4j.openstack.common.ListResult;
 
 /**
@@ -21,13 +23,17 @@ public class MistralWorkflowExecution extends BaseExecution implements WorkflowE
     private static final long serialVersionUID = 1L;
 
     @JsonProperty("params")
+    @JsonDeserialize(using = JsonStringToMapDeserializer.class)
     private Map<String, Object> parameters;
 
     @JsonProperty("input")
+    @JsonDeserialize(using = JsonStringToMapDeserializer.class)
     private Map<String, Object> input;
 
+    @JsonDeserialize(using = JsonStringToMapDeserializer.class)
     private Map<String, Object> output;
 
+    @JsonProperty("task_execution_id")
     private String taskExecutionId;
 
     public static MistralWorkflowExecutionBuilder builder() {

@@ -3,6 +3,7 @@ package org.openstack4j.api.workflow;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.workflow.ActionExecution;
 import org.openstack4j.model.workflow.State;
@@ -113,10 +114,15 @@ public class ActionExecutionTest extends WorkflowBaseTest {
 
         ActionExecution actionExec = new MistralActionExecution.MistralActionExecutionBuilder().
                 name("std.echo").
+                taskExecutionId("c40c26cb-f695-4f20-8455-c57ca5c0770a").
                 input(Collections.<String, Object>singletonMap("output", "Hello Mistral Java Client!")).
                 build();
 
         actionExec = service.create(actionExec);
+
+        JsonNode sent = assertSnakeCaseKeys(lastRequest().getBody().readUtf8());
+        assertEquals(sent.get("task_execution_id").asText(), "c40c26cb-f695-4f20-8455-c57ca5c0770a");
+        assertEquals(sent.get("name").asText(), "std.echo");
 
         assertNotNull(actionExec);
         assertIsUUID(actionExec.getId());

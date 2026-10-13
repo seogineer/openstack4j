@@ -102,6 +102,7 @@ public class ActionDefinitionTest extends WorkflowBaseTest {
                 Scope.PRIVATE
         );
 
+        assertDefinitionUpload(NEW_ACTION);
         assertEquals(actionDefs.size(), 1);
 
         ActionDefinition actionDef = actionDefs.get(0);

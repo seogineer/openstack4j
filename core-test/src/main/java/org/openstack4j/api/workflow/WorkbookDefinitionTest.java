@@ -96,6 +96,8 @@ public class WorkbookDefinitionTest extends WorkflowBaseTest {
 
         WorkbookDefinition wbDef = service.create(getClass().getResourceAsStream(NEW_WB), Scope.PRIVATE);
 
+        assertDefinitionUpload(NEW_WB);
+
         assertNotNull(wbDef);
         assertIsUUID(wbDef.getId());
         assertNotEmptyString(wbDef.getProjectId());

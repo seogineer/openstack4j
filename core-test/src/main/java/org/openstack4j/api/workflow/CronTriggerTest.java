@@ -3,6 +3,8 @@ package org.openstack4j.api.workflow;
 import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.workflow.CronTrigger;
 import org.openstack4j.model.workflow.Scope;
@@ -100,6 +102,7 @@ public class CronTriggerTest extends WorkflowBaseTest {
         assertEquals(trigger.getWorkflowInput().get("param2"), "val2");
         assertNotNull(trigger.getFirstExecutionTime());
         assertNotNull(trigger.getNextExecutionTime());
+        assertEquals(trigger.getRemainingExecutionsCount(), Integer.valueOf(2));
     }
 
     @Test
@@ -114,6 +117,9 @@ public class CronTriggerTest extends WorkflowBaseTest {
                 build();
 
         trigger = service.create(trigger);
+
+        JsonNode sent = assertSnakeCaseKeys(lastRequest().getBody().readUtf8());
+        assertEquals(sent, new ObjectMapper().readTree("{\"name\":\"my_trigger\",\"pattern\":\"* * * * *\",\"workflow_name\":\"my_wf\",\"workflow_input\":{\"param1\":\"val1\"}}"));
 
         assertNotNull(trigger);
         assertIsUUID(trigger.getId());

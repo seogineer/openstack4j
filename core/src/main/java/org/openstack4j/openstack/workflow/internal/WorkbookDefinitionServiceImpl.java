@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.openstack4j.api.workflow.WorkbookDefinitionService;
+import org.openstack4j.core.transport.ClientConstants;
 import org.openstack4j.model.common.ActionResponse;
-import org.openstack4j.model.common.payloads.InputStreamPayload;
 import org.openstack4j.model.workflow.Scope;
 import org.openstack4j.model.workflow.WorkbookDefinition;
 import org.openstack4j.openstack.workflow.domain.MistralWorkbookDefinition;
@@ -34,7 +34,7 @@ public class WorkbookDefinitionServiceImpl extends BaseMistralService implements
                 uri("/workbooks?scope=%s", scope.toString().toLowerCase())
         );
 
-        return invocation.entity(new InputStreamPayload(wfText)).execute();
+        return invocation.entity(definition(wfText)).header(ClientConstants.HEADER_ACCEPT, DSL_ACCEPT).execute();
     }
 
     @Override
