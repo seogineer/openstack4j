@@ -1,3 +1,7 @@
+## 4.10.0
+
+- Ironic: `drivers().listVendorPassthruMethods(driver)`, `drivers().vendorPassthru(driver, method, args)`(POST, `ActionResponse`), 본문을 돌려주는 `drivers().vendorPassthru(driver, HttpMethod, method, args)`·`nodes().vendorPassthru(node, HttpMethod, method, args)` — GET/POST/PUT/PATCH/DELETE, POST·PUT·PATCH 만 JSON 본문, 빈 본문(비동기 202·204)은 `null`, 객체가 아닌 JSON 결과는 `"return"` 키 아래로. `ports().list(filters)` javadoc 에 `portgroup`(1.24) 필터
+
 ## 4.9.1
 
 - httpclient connector: httpclient5 5.4 미만(예: 애플리케이션이 5.3.x 로 고정)에서 SSL 검증을 끄거나 `SSLContext`·`HostnameVerifier` 를 지정하면 `NoClassDefFoundError: TlsSocketStrategy` 로 실패하던 문제를 고침(5.4 미만이면 `SSLConnectionSocketFactory` 사용)

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openstack4j.api.baremetal.NodeService;
+import org.openstack4j.api.exceptions.ResponseException;
+import org.openstack4j.core.transport.HttpMethod;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -87,6 +89,29 @@ public class NodeDetailTests extends AbstractBaremetalTest {
     public void missingBiosSettingIsNull() throws Exception {
         respondWith(404, "{\"error_message\": \"not found\"}");
         Assert.assertNull(nodes().getBiosSetting("n1", "nope"));
+        takeRequest();
+    }
+
+    public void nodePassthruReturnsBody() throws Exception {
+        respondWith(200, "{\"ok\": true}");
+        respondWith(202, "");
+        respondWith(200, "null");
+
+        Map<String, Object> created = nodes().vendorPassthru("n1", HttpMethod.POST, "lookup", Map.of("a", 1));
+        Map<String, Object> status = nodes().vendorPassthru("n1", HttpMethod.GET, "status", null);
+        Map<String, Object> put = nodes().vendorPassthru("n1", HttpMethod.PUT, "x", null);
+
+        Assert.assertEquals(body(expect("POST", "/v1/nodes/n1/vendor_passthru?method=lookup")).toString(), "{\"a\":1}");
+        expect("GET", "/v1/nodes/n1/vendor_passthru?method=status");
+        Assert.assertEquals(body(expect("PUT", "/v1/nodes/n1/vendor_passthru?method=x")).toString(), "{}");
+        Assert.assertEquals(created.get("ok"), Boolean.TRUE);
+        Assert.assertNull(status);
+        Assert.assertNull(put);
+    }
+
+    public void missingNodePassthruRaises() throws Exception {
+        respondWith(404, "{\"error_message\": \"not found\"}");
+        Assert.assertThrows(ResponseException.class, () -> nodes().vendorPassthru("nope", HttpMethod.POST, "m", null));
         takeRequest();
     }
 }

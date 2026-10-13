@@ -15,7 +15,7 @@ public interface PortService extends RestService {
     /** @return the ports (summary fields; use {@code listDetail()} for all fields) */
     List<? extends Port> list();
 
-    /** @param filters query parameters such as {@code node}, {@code address}, {@code limit}, {@code marker}, {@code fields} */
+    /** @param filters query parameters such as {@code node}, {@code address}, {@code portgroup} (microversion 1.24), {@code limit}, {@code marker}, {@code fields} */
     List<? extends Port> list(Map<String, String> filters);
 
     /** @return the ports with all fields */

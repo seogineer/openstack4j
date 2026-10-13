@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openstack4j.api.baremetal.NodeService;
+import org.openstack4j.core.transport.HttpMethod;
 import org.openstack4j.model.baremetal.BaremetalPatch;
 import org.openstack4j.model.baremetal.Node;
 import org.openstack4j.model.baremetal.NodeStates;
@@ -328,8 +329,12 @@ public class NodeServiceImpl extends BaseBaremetalServices implements NodeServic
 
     @Override
     public ActionResponse vendorPassthru(String nodeIdent, String method, Map<String, ?> args) {
-        return postWithResponse(node(nodeIdent) + "/vendor_passthru").param("method", PathSegment.validate(method))
-                .entity(JsonBody.of(args == null ? Map.of() : args)).execute();
+        return passthruAction(node(nodeIdent), method, args);
+    }
+
+    @Override
+    public Map<String, Object> vendorPassthru(String nodeIdent, HttpMethod httpMethod, String method, Map<String, ?> args) {
+        return passthru(node(nodeIdent), httpMethod, method, args);
     }
 
     /** A response with one list of objects under a key. */
