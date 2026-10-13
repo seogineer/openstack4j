@@ -179,3 +179,10 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - `TemplateService`(`validate`), `TemplateBuilder`(`environment`, `environmentFiles`, `files`, `parameters`), `ResourceTypeService`(`listWithDescription`)(Heat)에 추상 메서드가 추가되었습니다. `Template` 에는 `default` getter 만 추가되어 그대로 컴파일됩니다.
 - `NetFloatingIPService`(`associateToPort(String, String, String)`), image v2 `ImageService`(`download(String)`)에 추상 메서드가 추가되었습니다.
 - Heat `TemplateService.validateTemplate*`: 유효한 템플릿에 이제 `isValid()==true` 를 돌려줍니다(이전에는 응답 파싱 실패로 항상 `false`). 이 결과를 근거로 분기하던 코드는 동작이 바뀝니다.
+
+# 4.10 → 4.11
+
+컴파일에 영향을 주는 변경(추상 메서드 추가)과 요청·응답 동작이 바뀌는 변경은 아래와 같습니다.
+
+- `ServerCreateBuilder`(`minCount`, `maxCount`)에 추상 메서드가 추가되었습니다. `ServerUpdateOptions`·`ServerListOptions` 는 클래스라 메서드 추가만 있습니다.
+- `ServerCreate.getMin()`·`getMax()` 의 값은 이제 `min_count`·`max_count` 로 전송됩니다(이전에는 Nova 가 거부하는 `min`·`max` 키였고, 설정할 빌더가 없었습니다).

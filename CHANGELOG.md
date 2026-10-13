@@ -1,3 +1,7 @@
+## 4.11.0
+
+- Nova: `ServerCreateBuilder.minCount(Integer)`·`maxCount(Integer)`(`min_count`/`max_count`, 다중 생성; `boot()` 은 첫 서버만 돌려줌), `ServerListOptions.reservationId(String)`. 서버 수정 `ServerUpdateOptions.description(String)`(2.19, microversion 필요)
+
 ## 4.10.0
 
 - Ironic: `drivers().listVendorPassthruMethods(driver)`, `drivers().vendorPassthru(driver, method, args)`(POST, `ActionResponse`), 본문을 돌려주는 `drivers().vendorPassthru(driver, HttpMethod, method, args)`·`nodes().vendorPassthru(node, HttpMethod, method, args)` — GET/POST/PUT/PATCH/DELETE, POST·PUT·PATCH 만 JSON 본문, 빈 본문(비동기 202·204)은 `null`, 객체가 아닌 JSON 결과는 `"return"` 키 아래로. `ports().list(filters)` javadoc 에 `portgroup`(1.24) 필터

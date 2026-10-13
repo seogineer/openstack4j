@@ -10,6 +10,7 @@ public class ServerUpdateOptions {
     private String name;
     private String accessIPv4;
     private String accessIPv6;
+    private String description;
 
     public static ServerUpdateOptions create() {
         return new ServerUpdateOptions();
@@ -51,6 +52,18 @@ public class ServerUpdateOptions {
         return this;
     }
 
+    /**
+     * The server description (2.19+, needs micro-version support enabled). An empty string clears it. Null is not sent
+     * (removing the description with {@code null} is not supported, like the other options).
+     *
+     * @param description the new description
+     * @return ServerUpdateOptions
+     */
+    public ServerUpdateOptions description(String description) {
+        this.description = description;
+        return this;
+    }
+
     public String getName() {
         return name;
     }
@@ -61,5 +74,9 @@ public class ServerUpdateOptions {
 
     public String getAccessIPv6() {
         return accessIPv6;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

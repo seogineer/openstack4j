@@ -21,6 +21,8 @@ public class NovaServerUpdate implements ModelEntity {
     private String accessIPv4;
     @JsonProperty("accessIPv6")
     private String accessIPv6;
+    @JsonProperty("description")
+    private String description;
 
     /**
      * Creates a NovaServerUpdate from Options
@@ -33,6 +35,7 @@ public class NovaServerUpdate implements ModelEntity {
         su.name = options.getName();
         su.accessIPv4 = options.getAccessIPv4();
         su.accessIPv6 = options.getAccessIPv6();
+        su.description = options.getDescription();
         return su;
     }
 

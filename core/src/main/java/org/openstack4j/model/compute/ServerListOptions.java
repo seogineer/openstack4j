@@ -29,6 +29,8 @@ public class ServerListOptions {
     public ServerListOptions flavor(String flavorId) { return put("flavor", flavorId, 0); }
     public ServerListOptions image(String imageId) { return put("image", imageId, 0); }
     public ServerListOptions host(String host) { return put("host", host, 0); }
+    /** Servers created by one multi-create request; the id is the first server's {@code getReservationId()} (2.3+, admin by default). */
+    public ServerListOptions reservationId(String reservationId) { return put("reservation_id", reservationId, 0); }
     public ServerListOptions allTenants(boolean allTenants) { return put("all_tenants", allTenants, 0); }
     public ServerListOptions limit(int limit) { return put("limit", limit, 0); }
     public ServerListOptions marker(String serverId) { return put("marker", serverId, 0); }

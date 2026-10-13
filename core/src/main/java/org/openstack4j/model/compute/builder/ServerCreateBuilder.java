@@ -196,4 +196,19 @@ public interface ServerCreateBuilder extends Buildable.Builder<ServerCreateBuild
 
     /** {@code OS-DCF:diskConfig}: AUTO resizes the root partition to the flavor's disk, MANUAL leaves it. */
     ServerCreateBuilder diskConfig(Server.DiskConfig diskConfig);
+
+    /**
+     * {@code min_count}: the minimum number of servers to create; Nova fails the request if it cannot create this many.
+     * Not set (null): the key is omitted.
+     */
+    ServerCreateBuilder minCount(Integer minCount);
+
+    /**
+     * {@code max_count}: the maximum number of servers to create (defaults to {@code min_count}). {@code boot()} returns the
+     * first server only; Nova names the servers from its {@code multi_instance_display_name_template} option (default
+     * {@code name-1 .. name-N}). Find the others with {@code ServerListOptions.reservationId(...)} using the first server's
+     * reservation id (admin by default) or by name prefix. Nova rejects {@code max_count > 1} together with a fixed port
+     * ({@code addNetworkPort}). Not set (null): the key is omitted.
+     */
+    ServerCreateBuilder maxCount(Integer maxCount);
 }
