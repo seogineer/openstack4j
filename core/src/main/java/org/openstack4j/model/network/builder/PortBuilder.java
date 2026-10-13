@@ -139,5 +139,11 @@ public interface PortBuilder extends Builder<PortBuilder, Port> {
 
     PortBuilder profile(Map<String, Object> profile);
 
+    /**
+     * {@code qos_policy_id} sent on create and update; null detaches the policy. Not set: the key is omitted, and a value
+     * read from a response is never sent back. Setting it on an object also applies to later requests that reuse the object.
+     */
+    PortBuilder qosPolicyId(String qosPolicyId);
+
 
 }

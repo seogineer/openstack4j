@@ -40,4 +40,11 @@ public interface NetworkUpdate extends ModelEntity, Buildable<NetworkUpdateBuild
      */
     @JsonProperty("is_default")
     boolean isDefault();
+
+    /**
+     * @return the {@code qos_policy_id} set through the builder, or null
+     */
+    default String getQosPolicyId() {
+        return null;
+    }
 }

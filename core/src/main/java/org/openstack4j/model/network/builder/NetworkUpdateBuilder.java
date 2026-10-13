@@ -41,4 +41,9 @@ public interface NetworkUpdateBuilder extends Builder<NetworkUpdateBuilder, Netw
      * @return the builder
      */
     NetworkUpdateBuilder isDefault(boolean isDefault);
+
+    /**
+     * {@code qos_policy_id}: null detaches the policy ({@code "qos_policy_id": null}); not calling this method omits the key.
+     */
+    NetworkUpdateBuilder qosPolicyId(String qosPolicyId);
 }

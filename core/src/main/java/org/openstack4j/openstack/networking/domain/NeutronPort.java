@@ -2,7 +2,10 @@ package org.openstack4j.openstack.networking.domain;
 
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.util.ToStringHelper;
@@ -93,6 +96,8 @@ public class NeutronPort implements Port {
 
     @JsonProperty(value = "qos_policy_id", access = JsonProperty.Access.WRITE_ONLY)
     private String qosPolicyId;
+    @JsonIgnore
+    private boolean qosPolicyIdSet;
 
     @JsonProperty(value = "qos_network_policy_id", access = JsonProperty.Access.WRITE_ONLY)
     private String qosNetworkPolicyId;
@@ -337,6 +342,18 @@ public class NeutronPort implements Port {
         return qosPolicyId;
     }
 
+    /** Request-only keys set through the builder; an explicit null is sent as JSON null. */
+    @JsonAnyGetter
+    @JsonInclude(content = JsonInclude.Include.ALWAYS)
+    Map<String, Object> requestOnlyFields() {
+        return qosPolicyIdSet ? Collections.singletonMap("qos_policy_id", qosPolicyId) : Collections.emptyMap();
+    }
+
+    /** True when {@code qosPolicyId} was set through the builder (not a response value). */
+    boolean qosPolicyIdRequested() {
+        return qosPolicyIdSet;
+    }
+
     @Override
     public String getQosNetworkPolicyId() {
         return qosNetworkPolicyId;
@@ -522,6 +539,13 @@ public class NeutronPort implements Port {
         @Override
         public PortBuilder trunkPortVlanId(String vlanId) {
             m.trunkPortVlanId = vlanId;
+            return this;
+        }
+
+        @Override
+        public PortBuilder qosPolicyId(String qosPolicyId) {
+            m.qosPolicyId = qosPolicyId;
+            m.qosPolicyIdSet = true;
             return this;
         }
 
