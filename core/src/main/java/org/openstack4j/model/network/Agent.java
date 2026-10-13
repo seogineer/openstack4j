@@ -72,7 +72,12 @@ public interface Agent extends ModelEntity, Buildable<AgentBuilder> {
      * neutron agent type
      */
     public enum Type {
-        DHCP("DHCP agent"), L3("L3 agent"), OPEN_VSWITCH("Open vSwitch agent"), METADATA("Metadata agent"), UNRECOGNIZED(
+        DHCP("DHCP agent"), L3("L3 agent"), OPEN_VSWITCH("Open vSwitch agent"), METADATA("Metadata agent"),
+        LINUX_BRIDGE("Linux bridge agent"), METERING("Metering agent"), NIC_SWITCH("NIC Switch agent"),
+        MACVTAP("Macvtap agent"), OFA("OFA driver agent"),
+        OVN_CONTROLLER("OVN Controller agent"), OVN_CONTROLLER_GATEWAY("OVN Controller Gateway agent"),
+        OVN_METADATA("OVN Metadata agent"), OVN_NEUTRON("OVN Neutron agent"),
+        BGP_DYNAMIC_ROUTING("BGP dynamic routing agent"), UNRECOGNIZED(
                 "");
 
         private String mValue;
