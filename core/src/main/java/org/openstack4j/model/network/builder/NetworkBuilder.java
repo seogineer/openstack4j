@@ -65,4 +65,10 @@ public interface NetworkBuilder extends Builder<NetworkBuilder, Network> {
      * @see Network#isDefault()
      */
     NetworkBuilder isDefault(Boolean isDefault);
+
+    /**
+     * {@code qos_policy_id} sent on create. Not set: the key is omitted (a value read from a response is never sent back).
+     * On create, Neutron attaches the project's default QoS policy when the value is null or omitted.
+     */
+    NetworkBuilder qosPolicyId(String qosPolicyId);
 }

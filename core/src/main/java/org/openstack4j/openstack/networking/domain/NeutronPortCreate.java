@@ -1,10 +1,14 @@
 package org.openstack4j.openstack.networking.domain;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.model.ModelEntity;
@@ -70,6 +74,19 @@ public class NeutronPortCreate implements ModelEntity {
     @JsonProperty("binding:profile")
     private Map<String, Object> profile;
 
+    @JsonIgnore
+    private String qosPolicyId;
+
+    @JsonIgnore
+    private boolean qosPolicyIdSet;
+
+    /** Request-only keys set through the builder; an explicit null is sent as JSON null. */
+    @JsonAnyGetter
+    @JsonInclude(content = JsonInclude.Include.ALWAYS)
+    Map<String, Object> requestOnlyFields() {
+        return qosPolicyIdSet ? Collections.singletonMap("qos_policy_id", qosPolicyId) : Collections.emptyMap();
+    }
+
 
     public NeutronPortCreate() {
     }
@@ -99,6 +116,10 @@ public class NeutronPortCreate implements ModelEntity {
         c.vifDetails = port.getVifDetails();
         c.vNicType = port.getvNicType();
         c.profile = port.getProfile();
+        if (port instanceof NeutronPort && ((NeutronPort) port).qosPolicyIdRequested()) {
+            c.qosPolicyId = port.getQosPolicyId();
+            c.qosPolicyIdSet = true;
+        }
 
 
         return c;

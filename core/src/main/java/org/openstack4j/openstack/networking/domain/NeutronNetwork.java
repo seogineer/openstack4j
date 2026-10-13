@@ -1,10 +1,14 @@
 package org.openstack4j.openstack.networking.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.util.ToStringHelper;
@@ -67,6 +71,8 @@ public class NeutronNetwork implements Network {
 
     @JsonProperty(value = "qos_policy_id", access = JsonProperty.Access.WRITE_ONLY)
     private String qosPolicyId;
+    @JsonIgnore
+    private boolean qosPolicyIdSet;
 
     public static NetworkBuilder builder() {
         return new NetworkConcreteBuilder();
@@ -273,6 +279,13 @@ public class NeutronNetwork implements Network {
         return qosPolicyId;
     }
 
+    /** Request-only keys set through the builder; an explicit null is sent as JSON null. */
+    @JsonAnyGetter
+    @JsonInclude(content = JsonInclude.Include.ALWAYS)
+    Map<String, Object> requestOnlyFields() {
+        return qosPolicyIdSet ? Collections.singletonMap("qos_policy_id", qosPolicyId) : Collections.emptyMap();
+    }
+
     @Override
     public String toString() {
         return new ToStringHelper(this)
@@ -399,6 +412,13 @@ public class NeutronNetwork implements Network {
         @Override
         public NetworkBuilder isRouterExternal(boolean routerExternal) {
             m.routerExternal = routerExternal;
+            return this;
+        }
+
+        @Override
+        public NetworkBuilder qosPolicyId(String qosPolicyId) {
+            m.qosPolicyId = qosPolicyId;
+            m.qosPolicyIdSet = true;
             return this;
         }
 

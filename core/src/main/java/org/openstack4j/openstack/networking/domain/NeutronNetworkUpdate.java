@@ -1,6 +1,11 @@
 package org.openstack4j.openstack.networking.domain;
 
+import java.util.Collections;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.util.ToStringHelper;
@@ -25,6 +30,10 @@ public class NeutronNetworkUpdate implements NetworkUpdate {
     private Boolean adminStateUp;
     @JsonProperty("is_default")
     private Boolean isDefault;
+    @JsonIgnore
+    private String qosPolicyId;
+    @JsonIgnore
+    private boolean qosPolicyIdSet;
 
     public static NetworkUpdateBuilder builder() {
         return new NetworkUpdateConcreteBuilder();
@@ -59,11 +68,23 @@ public class NeutronNetworkUpdate implements NetworkUpdate {
     }
 
 
+    @JsonIgnore
+    @Override
+    public String getQosPolicyId() {
+        return qosPolicyId;
+    }
+
+    /** Request-only keys set through the builder; an explicit null is sent as JSON null. */
+    @JsonAnyGetter
+    @JsonInclude(content = JsonInclude.Include.ALWAYS)
+    Map<String, Object> requestOnlyFields() {
+        return qosPolicyIdSet ? Collections.singletonMap("qos_policy_id", qosPolicyId) : Collections.emptyMap();
+    }
 
     @Override
     public String toString() {
         return new ToStringHelper(this)
-                .add("name", name).add("adminStateUp", adminStateUp).add("shared", shared).add("isDefault", isDefault)
+                .add("name", name).add("adminStateUp", adminStateUp).add("shared", shared).add("isDefault", isDefault).add("qosPolicyId", qosPolicyId)
                 .toString();
     }
 
@@ -105,6 +126,13 @@ public class NeutronNetworkUpdate implements NetworkUpdate {
         @Override
         public NetworkUpdateBuilder shared(boolean shared) {
             model.shared = shared;
+            return this;
+        }
+
+        @Override
+        public NetworkUpdateBuilder qosPolicyId(String qosPolicyId) {
+            model.qosPolicyId = qosPolicyId;
+            model.qosPolicyIdSet = true;
             return this;
         }
 
