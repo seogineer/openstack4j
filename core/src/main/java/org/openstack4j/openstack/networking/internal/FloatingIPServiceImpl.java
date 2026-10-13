@@ -3,6 +3,7 @@ package org.openstack4j.openstack.networking.internal;
 import org.openstack4j.openstack.networking.internal.ext.NeutronExecution;
 import org.openstack4j.openstack.networking.domain.ext.NeutronFloatingIPPool.FloatingIPPools;
 import org.openstack4j.model.network.ext.FloatingIPPool;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -14,6 +15,7 @@ import org.openstack4j.core.transport.ExecutionOptions;
 import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.NetFloatingIP;
+import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.networking.domain.NeutronFloatingIP;
 import org.openstack4j.openstack.networking.domain.NeutronFloatingIP.FloatingIPs;
 
@@ -85,6 +87,22 @@ public class FloatingIPServiceImpl extends BaseNetworkingServices implements Net
         String inner = String.format("{ \"port_id\":\"%s\" }", portId);
         String json = String.format("{ \"%s\": %s }", "floatingip", inner);
         return put(NeutronFloatingIP.class, uri("/floatingips/%s", fipId)).json(json)
+                .execute(ExecutionOptions.create(PropagateOnStatus.on(404)));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NetFloatingIP associateToPort(String fipId, String portId, String fixedIpAddress) {
+        if (fixedIpAddress == null)
+            return associateToPort(fipId, portId);
+        Objects.requireNonNull(fipId);
+        Objects.requireNonNull(portId);
+        Map<String, Object> fields = new LinkedHashMap<>();
+        fields.put("port_id", portId);
+        fields.put("fixed_ip_address", fixedIpAddress);
+        return put(NeutronFloatingIP.class, uri("/floatingips/%s", fipId)).entity(JsonBody.of("floatingip", fields))
                 .execute(ExecutionOptions.create(PropagateOnStatus.on(404)));
     }
 

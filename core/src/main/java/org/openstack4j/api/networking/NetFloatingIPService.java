@@ -64,6 +64,16 @@ public interface NetFloatingIPService extends RestService {
     NetFloatingIP associateToPort(String fipId, String portId);
 
     /**
+     * Associates a Floating IP with one of the port's fixed IPs.
+     *
+     * @param fipId the floating-ip identifier.
+     * @param portId Id of the port to associate to.
+     * @param fixedIpAddress the port's fixed IP to map; null lets Neutron pick (same as {@link #associateToPort(String, String)})
+     * @return the net floating ip
+     */
+    NetFloatingIP associateToPort(String fipId, String portId, String fixedIpAddress);
+
+    /**
      * Disassociate from port.
      *
      * @param fipId the floating-ip identifier.

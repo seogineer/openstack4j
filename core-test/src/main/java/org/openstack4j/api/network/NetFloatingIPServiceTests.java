@@ -27,6 +27,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.api.AbstractTest;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.exceptions.ClientResponseException;
@@ -97,5 +100,59 @@ public class NetFloatingIPServiceTests extends AbstractTest {
         assertEquals(idle.getId(), "65297c50-2c6e-4c5f-96eb-8b4c228cd54c");
         assertNull(idle.getQosPolicyId());
         assertEquals(0, idle.getRevisionNumber().intValue());
+    }
+
+    private static final String FIP = "{\"floatingip\": {\"id\": \"f1\", \"port_id\": \"p1\", \"fixed_ip_address\": \"10.0.0.5\", \"floating_network_id\": \"n1\"}}";
+
+    private RecordedRequest takePut() throws InterruptedException {
+        RecordedRequest request = takeRequest();
+        assertEquals(request.getMethod(), "PUT");
+        assertTrue(request.getPath().endsWith("/floatingips/f1"), request.getPath());
+        return request;
+    }
+
+    public void associateWithFixedIp() throws Exception {
+        respondWith(200, FIP);
+
+        NetFloatingIP fip = osv3().networking().floatingip().associateToPort("f1", "p1", "10.0.0.5");
+
+        assertEquals(new ObjectMapper().readTree(takePut().getBody().readUtf8()).toString(), "{\"floatingip\":{\"port_id\":\"p1\",\"fixed_ip_address\":\"10.0.0.5\"}}");
+        assertEquals(fip.getFixedIpAddress(), "10.0.0.5");
+        assertEquals(fip.getPortId(), "p1");
+    }
+
+    public void associateNullFixedIpSameAsTwoArg() throws Exception {
+        respondWith(200, FIP);
+        respondWith(200, FIP);
+
+        osv3().networking().floatingip().associateToPort("f1", "p1", null);
+        osv3().networking().floatingip().associateToPort("f1", "p1");
+
+        JsonNode withNull = new ObjectMapper().readTree(takePut().getBody().readUtf8());
+        JsonNode twoArg = new ObjectMapper().readTree(takePut().getBody().readUtf8());
+        assertEquals(withNull.toString(), "{\"floatingip\":{\"port_id\":\"p1\"}}");
+        assertEquals(withNull, twoArg);
+    }
+
+    public void associateQuotesEscaped() throws Exception {
+        respondWith(200, FIP);
+
+        osv3().networking().floatingip().associateToPort("f1", "p\"1", "10.0.0.\"5");
+
+        JsonNode body = new ObjectMapper().readTree(takePut().getBody().readUtf8());
+        assertEquals(body.get("floatingip").get("port_id").asText(), "p\"1");
+        assertEquals(body.get("floatingip").get("fixed_ip_address").asText(), "10.0.0.\"5");
+    }
+
+    public void associate404Raises() throws Exception {
+        respondWith(404, "{\"NeutronError\": {\"message\": \"Floating IP f1 could not be found\", \"type\": \"FloatingIPNotFound\"}}");
+
+        try {
+            osv3().networking().floatingip().associateToPort("f1", "p1", "10.0.0.5");
+            fail("expected a ClientResponseException");
+        } catch (ClientResponseException expected) {
+            assertEquals(expected.getStatus(), 404);
+        }
+        takePut();
     }
 }
