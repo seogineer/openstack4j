@@ -65,4 +65,11 @@ public interface Subnet extends Resource, TimeEntity, Buildable<SubnetBuilder> {
      * @return the IPv6 router advertisement specifies whether the networking service should transmit ICMPv6 packets, for a subnet
      */
     Ipv6RaMode getIpv6RaMode();
+
+    /**
+     * @return the subnet description, or null when the server did not return one
+     */
+    default String getDescription() {
+        return null;
+    }
 }
