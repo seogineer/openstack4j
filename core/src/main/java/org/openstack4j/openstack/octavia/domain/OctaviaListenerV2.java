@@ -1,13 +1,13 @@
 package org.openstack4j.openstack.octavia.domain;
 
-import org.openstack4j.model.octavia.LbProvisioningStatus;
-import org.openstack4j.model.octavia.LbOperatingStatus;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.util.ToStringHelper;
+import org.openstack4j.model.octavia.LbOperatingStatus;
+import org.openstack4j.model.octavia.LbProvisioningStatus;
 import org.openstack4j.model.octavia.ListenerProtocol;
 import org.openstack4j.model.octavia.ListenerV2;
 import org.openstack4j.model.octavia.builder.ListenerV2Builder;

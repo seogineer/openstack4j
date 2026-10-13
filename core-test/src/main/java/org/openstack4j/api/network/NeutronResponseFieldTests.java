@@ -3,8 +3,6 @@ package org.openstack4j.api.network;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.api.network.ext2.AbstractNetworkingExtTest;
 import org.openstack4j.core.transport.ObjectMapperSingleton;
 import org.openstack4j.model.network.Agent;
@@ -97,9 +95,10 @@ public class NeutronResponseFieldTests extends AbstractNetworkingExtTest {
 
     private static void assertNotSerialized(Class<?> type, Object value, String... keys) throws Exception {
         String json = ObjectMapperSingleton.getContext(type).writeValueAsString(value);
-        JsonNode node = new ObjectMapper().readTree(json);
         for (String key : keys) {
-            Assert.assertFalse(node.toString().contains("\"" + key + "\""), key + " was serialized: " + json);
+            String normalized = key.replace("_", "").toLowerCase(java.util.Locale.ROOT);
+            Assert.assertFalse(json.replace("_", "").toLowerCase(java.util.Locale.ROOT).contains("\"" + normalized + "\""),
+                    key + " was serialized: " + json);
         }
     }
 }

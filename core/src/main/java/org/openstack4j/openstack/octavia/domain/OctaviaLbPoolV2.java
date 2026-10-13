@@ -1,13 +1,13 @@
 package org.openstack4j.openstack.octavia.domain;
 
-import org.openstack4j.model.octavia.LbProvisioningStatus;
-import org.openstack4j.model.octavia.LbOperatingStatus;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.util.ToStringHelper;
+import org.openstack4j.model.octavia.LbOperatingStatus;
+import org.openstack4j.model.octavia.LbProvisioningStatus;
 import org.openstack4j.model.octavia.LbMethod;
 import org.openstack4j.model.octavia.LbPoolV2;
 import org.openstack4j.model.octavia.Protocol;
@@ -67,7 +67,7 @@ public class OctaviaLbPoolV2 implements LbPoolV2 {
     private List<String> tlsVersions;
 
     @JsonProperty(value = "loadbalancers", access = JsonProperty.Access.WRITE_ONLY)
-    private List<ListItem> loadbalancers;
+    private List<ListItem> loadBalancers;
 
     @JsonProperty(value = "operating_status", access = JsonProperty.Access.WRITE_ONLY)
     private LbOperatingStatus operatingStatus;
@@ -192,7 +192,7 @@ public class OctaviaLbPoolV2 implements LbPoolV2 {
 
     @Override
     public List<ListItem> getLoadBalancers() {
-        return loadbalancers;
+        return loadBalancers;
     }
 
     @Override

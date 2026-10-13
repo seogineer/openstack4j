@@ -54,9 +54,11 @@ public class OctaviaResponseFieldTests extends AbstractOctaviaExtTest {
         expect("GET", "/lbaas/pools/pool1");
         osv3().octavia().lbPoolV2().create(fetched.toBuilder().name("copy").build());
         JsonNode copy = body(expect("POST", "/lbaas/pools")).get("pool");
-        Assert.assertFalse(copy.has("operating_status"), copy.toString());
-        Assert.assertFalse(copy.has("provisioning_status"), copy.toString());
-        Assert.assertFalse(copy.has("loadbalancers"), copy.toString());
+        copy.fieldNames().forEachRemaining(key -> {
+            String normalized = key.replace("_", "").toLowerCase(java.util.Locale.ROOT);
+            Assert.assertFalse(normalized.equals("operatingstatus") || normalized.equals("provisioningstatus")
+                    || normalized.equals("loadbalancers"), key + " was sent: " + copy);
+        });
         Assert.assertEquals(copy.get("name").asText(), "copy");
     }
 
