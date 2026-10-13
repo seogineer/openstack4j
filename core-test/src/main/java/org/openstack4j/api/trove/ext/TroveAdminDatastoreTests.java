@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.openstack4j.api.exceptions.ResponseException;
 import okhttp3.mockwebserver.RecordedRequest;
+import org.openstack4j.api.exceptions.ResponseException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -171,6 +171,9 @@ public class TroveAdminDatastoreTests extends AbstractTroveExtTest {
         Assert.assertFalse(added.isSuccess());
         Assert.assertEquals(added.getCode(), 404);
         Assert.assertFalse(admin.deleteAllParameters("nope").isSuccess());
+        expect("GET", P + "/mgmt/datastore-versions/nope/flavors");
+        expect("POST", P + "/mgmt/datastore-versions/nope/flavors");
+        expect("DELETE", P + "/mgmt/datastores/versions/nope/parameters/delete_all");
     }
 
     public void associationIdsArePathEncoded() throws Exception {
