@@ -145,7 +145,8 @@ public class MistralLiveTests {
                 Assert.assertEquals(tasks.get(0).getName(), "hello");
                 Assert.assertEquals(tasks.get(0).getState(), State.SUCCESS);
                 Assert.assertEquals(tasks.get(0).getPublished().get("out"), "os4j");
-                Assert.assertFalse(os.workflow().extensions().listTaskExecutions(tasks.get(0).getId()).isEmpty());
+                // hello runs an action, not a sub-workflow, so the task started no workflow executions
+                Assert.assertTrue(os.workflow().extensions().listTaskExecutions(tasks.get(0).getId()).isEmpty());
 
                 Assert.assertTrue(os.workflow().extensions().executionReport(execId, null).containsKey("root_workflow_execution"));
                 Assert.assertTrue(os.workflow().extensions().listSubExecutions(execId, null).isEmpty());
