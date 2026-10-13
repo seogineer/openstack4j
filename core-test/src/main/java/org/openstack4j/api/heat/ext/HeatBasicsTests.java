@@ -3,6 +3,7 @@ package org.openstack4j.api.heat.ext;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.model.heat.ext.HeatEngineService;
 import org.openstack4j.model.heat.ext.TemplateFunction;
 import org.openstack4j.model.heat.ext.TemplateVersion;
@@ -62,5 +63,34 @@ public class HeatBasicsTests extends AbstractHeatExtTest {
         expect("GET", "/resource_types/OS::Heat::RandomString/template");
         Assert.assertTrue(((Map<?, ?>) schema.get("properties")).containsKey("length"));
         Assert.assertEquals(hot.get("heat_template_version"), "2016-10-14");
+    }
+
+    public void resourceTypesWithDescription() throws Exception {
+        respondWith(200, "{\"resource_types\": [{\"resource_type\": \"OS::Nova::Server\", \"description\": \"A server\"},"
+                + " {\"resource_type\": \"OS::Heat::None\", \"description\": null}]}");
+
+        Map<String, String> types = osv3().heat().resourceTypes().listWithDescription(Map.of("support_status", "SUPPORTED"));
+
+        RecordedRequest request = takeRequest();
+        Assert.assertEquals(request.getMethod(), "GET");
+        String path = decodedPath(request);
+        Assert.assertTrue(path.contains("/resource_types?"), path);
+        Assert.assertTrue(path.contains("with_description=true"), path);
+        Assert.assertTrue(path.contains("support_status=SUPPORTED"), path);
+        Assert.assertEquals(types.size(), 2);
+        Assert.assertEquals(List.copyOf(types.keySet()), List.of("OS::Nova::Server", "OS::Heat::None"));
+        Assert.assertEquals(types.get("OS::Nova::Server"), "A server");
+        Assert.assertTrue(types.containsKey("OS::Heat::None"));
+        Assert.assertNull(types.get("OS::Heat::None"));
+    }
+
+    public void resourceTypesNamesOnlyFallback() throws Exception {
+        respondWith(200, "{\"resource_types\": [\"OS::Heat::RandomString\", \"OS::Nova::Server\"]}");
+
+        Map<String, String> types = osv3().heat().resourceTypes().listWithDescription(null);
+
+        Assert.assertTrue(decodedPath(takeRequest()).endsWith("/resource_types?with_description=true"));
+        Assert.assertEquals(List.copyOf(types.keySet()), List.of("OS::Heat::RandomString", "OS::Nova::Server"));
+        Assert.assertNull(types.get("OS::Heat::RandomString"));
     }
 }
