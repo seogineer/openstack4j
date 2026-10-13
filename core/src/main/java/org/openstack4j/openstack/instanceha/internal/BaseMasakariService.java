@@ -11,20 +11,22 @@ import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.instanceha.options.MasakariAttributes;
 import org.openstack4j.openstack.common.ListResult;
+import org.openstack4j.openstack.common.functions.EnforceVersionToURL;
 import org.openstack4j.openstack.internal.BaseOpenStackService;
 import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 /**
  * Base of the Masakari (instance HA v1) services. A 404 from a list, create, update or a call that returns a model is
- * raised; single gets return null and ActionResponse calls report a failed response.
+ * raised; single gets return null and ActionResponse calls report a failed response. An endpoint without a version
+ * (kolla: {@code http://vip:15868}) gets {@code /v1}; one that has it ({@code /v1/<project>}) is kept.
  */
 public abstract class BaseMasakariService extends BaseOpenStackService {
 
     static final String API_VERSION = "OpenStack-API-Version";
 
     protected BaseMasakariService() {
-        super(ServiceType.INSTANCE_HA);
+        super(ServiceType.INSTANCE_HA, EnforceVersionToURL.instance("/v1", true));
     }
 
     public static <T> ExecutionOptions<T> propagate404() {
