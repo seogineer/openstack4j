@@ -1,0 +1,58 @@
+{
+    "role_assignments": [
+        {
+            "links": {
+                "assignment": "http://identity:35357/v3/projects/p1/users/u1/roles/r1"
+            },
+            "role": {
+                "id": "r1",
+                "name": "member"
+            },
+            "scope": {
+                "project": {
+                    "id": "p1",
+                    "name": "demo",
+                    "domain": {
+                        "id": "default",
+                        "name": "Default"
+                    }
+                }
+            },
+            "user": {
+                "id": "u1",
+                "name": "alice",
+                "domain": {
+                    "id": "default",
+                    "name": "Default"
+                }
+            }
+        },
+        {
+            "group": {
+                "id": "g1",
+                "name": "ops",
+                "domain": {
+                    "id": "default",
+                    "name": "Default"
+                }
+            },
+            "links": {
+                "assignment": "http://identity:35357/v3/projects/p1/groups/g1/roles/r1"
+            },
+            "role": {
+                "id": "r1",
+                "name": "member"
+            },
+            "scope": {
+                "project": {
+                    "id": "p1",
+                    "name": "demo",
+                    "domain": {
+                        "id": "default",
+                        "name": "Default"
+                    }
+                }
+            }
+        }
+    ]
+}

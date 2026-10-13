@@ -76,6 +76,16 @@ public interface RoleService extends RestService {
      */
     List<? extends RoleAssignment> listRoleAssignments(String projectId);
 
+    /**
+     * Lists the effective role assignments in a project; with {@code includeNames} the response carries
+     * role, user, group, project and domain names ({@code include_names=true}) as well as ids.
+     *
+     * @param projectId    the project id
+     * @param includeNames whether to request names in addition to ids
+     * @return the list<? extends RoleAssignment>
+     */
+    List<? extends RoleAssignment> listRoleAssignments(String projectId, boolean includeNames);
+
 
     /**
      * grants a role to a specified user in project context

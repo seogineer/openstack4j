@@ -147,6 +147,16 @@ public class RoleServiceImpl extends BaseIdentityServices implements RoleService
     }
 
     @Override
+    public List<? extends RoleAssignment> listRoleAssignments(String projectId, boolean includeNames) {
+        Objects.requireNonNull(projectId);
+        return get(RoleAssignments.class, "role_assignments")
+                .param("scope.project.id", projectId)
+                .param("effective", "true")
+                .param(includeNames, "include_names", "true")
+                .execute().getList();
+    }
+
+    @Override
     public ActionResponse grantProjectGroupRole(String projectId, String groupId, String roleId) {
         Objects.requireNonNull(projectId);
         Objects.requireNonNull(groupId);
