@@ -4,11 +4,13 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.HttpUrl;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.api.AbstractTest;
+import org.openstack4j.api.exceptions.ResponseException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -62,7 +64,8 @@ public class AodhExtTests extends AbstractTest {
         Assert.assertEquals(new ObjectMapper().readTree(post.getBody().readUtf8()).toString(), "{\"project_id\":\"p1\",\"quotas\":[{\"resource\":\"alarms\",\"limit\":50}]}");
         RecordedRequest delete = takeRequest();
         Assert.assertEquals(delete.getMethod(), "DELETE");
-        Assert.assertTrue(path(delete).endsWith("/v2/quotas?project_id=p1"));
+        Assert.assertTrue(path(delete).endsWith("/v2/quotas/p1"));
+        Assert.assertFalse(path(delete).contains("?"));
         Assert.assertEquals(history.get(0).get("type"), "state transition");
         Assert.assertEquals(state, "ok");
         Assert.assertEquals(newState, "alarm");
@@ -101,5 +104,45 @@ public class AodhExtTests extends AbstractTest {
                 List.of(Map.of("field", "a", "value", "1", "type", "integer"), Map.of("field", "b", "value", "2")), null));
         Assert.assertThrows(IllegalArgumentException.class, () -> ext.history("a1",
                 List.of(Map.of("field", "a", "value", "1")), Map.of("q.field", "x")));
+    }
+
+    public void deleteQuotasPathEncodesProjectId() throws Exception {
+        respondWith(204);
+
+        var ext = osv3().telemetry().alarmsExt();
+        Assert.assertTrue(ext.deleteQuotas("p 1+2").isSuccess());
+        String raw = takeRequest().getPath();
+        Assert.assertTrue(raw.endsWith("/v2/quotas/p%201%2B2"), raw);
+
+        Assert.assertThrows(IllegalArgumentException.class, () -> ext.deleteQuotas("a/b"));
+        Assert.assertNull(server.takeRequest(200, TimeUnit.MILLISECONDS), "unexpected extra request");
+    }
+
+    @SuppressWarnings("unchecked")
+    public void capabilitiesAndMetrics() throws Exception {
+        respondWith(200, "{\"api\": {\"alarms:query:simple\": true, \"alarms:query:complex\": true}, \"alarm_storage\": {\"storage:production_ready\": true}}");
+        respondWith(200, "{\"evaluation_results\": [{\"alarm_id\": \"a1\", \"project_id\": \"p1\", \"state_counters\": {\"ok\": 20, \"insufficient data\": 5, \"alarm\": 10}}]}");
+
+        var ext = osv3().telemetry().alarmsExt();
+        Map<String, Object> caps = ext.capabilities();
+        List<Map<String, Object>> m = ext.metrics(Map.of("all_projects", "true"));
+
+        Assert.assertTrue(path(takeRequest()).endsWith("/v2/capabilities"));
+        Assert.assertTrue(path(takeRequest()).endsWith("/v2/metrics?all_projects=true"));
+        Assert.assertEquals(((Map<String, Object>) caps.get("api")).get("alarms:query:complex"), Boolean.TRUE);
+        Assert.assertEquals(m.size(), 1);
+        Assert.assertEquals(((Map<String, Object>) m.get(0).get("state_counters")).get("alarm"), 10);
+    }
+
+    public void metricsDisabledRaises() throws Exception {
+        respondWith(403, "{\"error_message\": {\"faultstring\": \"metrics endpoint is disabled\"}}");
+
+        try {
+            osv3().telemetry().alarmsExt().metrics(null);
+            Assert.fail("expected ResponseException");
+        } catch (ResponseException e) {
+            Assert.assertEquals(e.getStatus(), 403);
+        }
+        Assert.assertTrue(path(takeRequest()).endsWith("/v2/metrics"));
     }
 }

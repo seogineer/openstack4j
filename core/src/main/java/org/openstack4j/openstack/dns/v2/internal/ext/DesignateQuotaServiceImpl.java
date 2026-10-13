@@ -10,6 +10,12 @@ import org.openstack4j.openstack.internal.microversion.JsonBody;
 
 public class DesignateQuotaServiceImpl extends BaseDesignateExtService implements DesignateQuotaService {
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<String, Integer> get() {
+        return quotas(showStrict(Map.class, "/quotas"));
+    }
+
     @Override
     public Map<String, Integer> get(String projectId) {
         return quotas(showStrict(Map.class, "/quotas/" + id(projectId)));

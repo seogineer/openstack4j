@@ -8,6 +8,12 @@
 - Manila: `Share.Status`·`ShareInstance.Status`·`ShareSnapshot.Status`·`Share.TaskState`·`Share.Protocol` 이 모르는 값이나 대문자 프로토콜(`GLUSTERFS`)에서 예외를 던져 목록 조회 전체가 실패하던 문제를 고침 — 대소문자를 무시하고 모르는 값은 `UNRECOGNIZED`. api-ref·서버 소스의 상태(`ensuring`, `deferred_deleting`, `backup_creating`, `reverting`, `awaiting_transfer` 등), task state(`migration_in_progress`, `data_copying_*` 등), 프로토콜 `CEPHFS`·`MAPRFS`·`LUSTRE`·`WEKAFS` 추가. 요청에 보내는 값(reset state 의 `status`, 생성·manage 의 `share_proto`)은 이전과 같음
 - Nova `Migration.Status` 에 `ACCEPTED`·`QUEUED`·`PREPARING`·`RUNNING`·`PRE_MIGRATING`·`POST_MIGRATING`·`COMPLETED`·`CONFIRMING`·`REVERTING`·`REVERTED`·`FAILED`·`CANCELLED` 추가, `pre-migrating` 처럼 하이픈이 든 값도 인식(이전에는 이 값들이 모두 `MIGRATING` 으로 읽힘 — `getStatus() == MIGRATING` 으로 진행 중을 판단하던 코드는 결과가 달라짐). 모르는 값은 이전처럼 `MIGRATING`
 - Trove 관리자 API(Trove 2026.1 다음 릴리스부터, 이전 서버는 404): datastore version 의 flavor·volume type 연결 목록/추가/삭제(`troveAdmin().listDatastoreVersionFlavors`·`addDatastoreVersionFlavors`·`removeDatastoreVersionFlavor`, `…VolumeTypes`), configuration parameter 일괄 생성·수정 `updateAllParameters`(`PATCH …/parameters/update_all`, 항목 키 `name`·`restart_required`·`type`·`min`·`max`)·일괄 삭제 `deleteAllParameters`
+- Aodh `alarmsExt().capabilities()`(`GET /v2/capabilities`; `telemetry().capabilities()` 는 그대로 Ceilometer 모델), `alarmsExt().metrics(params)`(`GET /v2/metrics`, 평가 결과 카운터, `all_projects=true` 는 admin, 서버 설정이 꺼져 있으면 403 예외)
+- Aodh `alarmsExt().deleteQuotas(projectId)`: `DELETE /v2/quotas/{project_id}` 로 보냄(이전 `DELETE /v2/quotas?project_id=`), project id 는 path segment 로 인코딩
+- Manila `sharesExt().getInstanceExportLocation(instanceId, exportLocationId)`(2.9, admin, 없으면 `null`)
+- Barbican `secretsExt().migrateToSecretStore(secretId, secretStoreId)`(`OpenStack-API-Version: key-manager 1.3`, 다중 백엔드, Barbican 2026.1 다음 릴리스부터), `SecretStore.getSecretStoreId()`(default; `secret_store_id` 또는 `secret_store_ref` 마지막 segment)
+- Designate `quotas().get()`: 토큰 project 의 quotas(`GET /v2/quotas`)
+- Nova `hypervisors().listSummary()`·`listSummary(HypervisorListOptions)`: `GET /os-hypervisors` 요약 목록(`list()` 는 그대로 `/detail`)
 
 ## 4.9.1
 

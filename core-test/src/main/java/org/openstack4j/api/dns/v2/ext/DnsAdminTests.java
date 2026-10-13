@@ -84,4 +84,16 @@ public class DnsAdminTests extends AbstractDnsExtTest {
         Assert.assertEquals(current.get("zones"), Integer.valueOf(10));
         Assert.assertEquals(updated.get("zones"), Integer.valueOf(20));
     }
+
+    public void currentProjectQuotas() throws Exception {
+        respondWith(200, "{\"zones\": 10, \"zone_recordsets\": 500, \"zone_records\": 500, \"recordset_records\": 20, \"api_export_size\": 1000}");
+
+        Map<String, Integer> quotas = osv3().dns().quotas().get();
+
+        String path = takeRequest().getPath();
+        Assert.assertTrue(path.endsWith("/v2/quotas"), path);
+        Assert.assertFalse(path.contains("?"), path);
+        Assert.assertEquals(quotas.get("zones"), Integer.valueOf(10));
+        Assert.assertEquals(quotas.size(), 5);
+    }
 }

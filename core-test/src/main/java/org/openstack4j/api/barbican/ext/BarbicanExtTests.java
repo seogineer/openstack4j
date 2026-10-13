@@ -196,4 +196,32 @@ public class BarbicanExtTests extends AbstractBarbicanExtTest {
         Assert.assertNull(osv3().barbican().orders().get("missing"));
         takeRequest();
     }
+
+    public void migrateSecretToStore() throws Exception {
+        respondWith(204);
+        respondWith(404, "{\"code\": 404, \"title\": \"Not Found\", \"description\": \"Not Found. Secret store not found.\"}");
+
+        var ext = osv3().barbican().secretsExt();
+        String uuid = "7a1c5e2b-3c4d-4e5f-8a9b-0c1d2e3f4a5b";
+        Assert.assertTrue(ext.migrateToSecretStore("s1", uuid).isSuccess());
+        RecordedRequest put = expect("PUT", "/v1/secrets/s1/secret-store/" + uuid);
+        Assert.assertEquals(put.getHeader("OpenStack-API-Version"), "key-manager 1.3");
+        Assert.assertEquals(put.getBody().size(), 0L);
+
+        var failed = ext.migrateToSecretStore("s1", "00000000-0000-0000-0000-000000000000");
+        expect("PUT", "/v1/secrets/s1/secret-store/00000000-0000-0000-0000-000000000000");
+        Assert.assertFalse(failed.isSuccess());
+        Assert.assertEquals(failed.getCode(), 404);
+    }
+
+    public void secretStoreIdFromRefOrField() throws Exception {
+        respondWith(200, "{\"secret_stores\": [{\"secret_store_ref\": \"http://kms:9311/v1/secret-stores/aaa-111/\", \"name\": \"a\"},"
+                + " {\"secret_store_ref\": \"http://kms:9311/v1/secret-stores/zzz-999\", \"secret_store_id\": \"bbb-222\", \"name\": \"b\"}, {\"name\": \"c\"}]}");
+
+        List<? extends SecretStore> stores = osv3().barbican().secretStores().list();
+
+        Assert.assertEquals(stores.get(0).getSecretStoreId(), "aaa-111");
+        Assert.assertEquals(stores.get(1).getSecretStoreId(), "bbb-222");
+        Assert.assertNull(stores.get(2).getSecretStoreId());
+    }
 }

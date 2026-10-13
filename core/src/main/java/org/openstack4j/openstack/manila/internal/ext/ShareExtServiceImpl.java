@@ -80,6 +80,11 @@ public class ShareExtServiceImpl extends BaseManilaExtService implements ShareEx
     }
 
     @Override
+    public ExportLocation getInstanceExportLocation(String shareInstanceId, String exportLocationId) {
+        return show(V(9), ManilaExportLocation.class, "/share_instances/" + id(shareInstanceId) + "/export_locations/" + id(exportLocationId));
+    }
+
+    @Override
     public List<? extends ShareInstanceInfo> listInstances(String shareId) {
         return listOf(V(7), ManilaShareInstanceInfoList.class, share(shareId) + "/instances", null);
     }

@@ -142,4 +142,18 @@ public class ShareExtTests extends AbstractManilaExtTest {
         Assert.assertEquals(body(expect("POST", P + "/shares/s1/action")).toString(), "{\"migration_cancel\":null}");
         Assert.assertEquals(progress.get("total_progress"), 50);
     }
+
+    public void instanceExportLocation() throws Exception {
+        respondWith(200, "{\"export_location\": " + EL + "}");
+        respondWith(404, "{\"itemNotFound\": {\"message\": \"not found\", \"code\": 404}}");
+
+        var ext = osv3().share().sharesExt();
+        ExportLocation one = ext.getInstanceExportLocation("e1c2", "b6bd76ce");
+        ExportLocation missing = ext.getInstanceExportLocation("e1c2", "nope");
+
+        Assert.assertEquals(expect("GET", P + "/share_instances/e1c2/export_locations/b6bd76ce").getHeader("X-OpenStack-Manila-API-Version"), "2.9");
+        Assert.assertEquals(one.getId(), "b6bd76ce");
+        expect("GET", P + "/share_instances/e1c2/export_locations/nope");
+        Assert.assertNull(missing);
+    }
 }

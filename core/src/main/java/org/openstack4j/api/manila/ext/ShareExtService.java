@@ -38,6 +38,9 @@ public interface ShareExtService extends RestService {
     /** @return the export locations of a share instance (2.9, admin); a missing instance raises */
     List<? extends ExportLocation> listInstanceExportLocations(String shareInstanceId);
 
+    /** @return the export location of a share instance, or {@code null} when it does not exist (2.9, admin) */
+    ExportLocation getInstanceExportLocation(String shareInstanceId, String exportLocationId);
+
     /** @return the instances of a share (2.7, admin); a missing share raises */
     List<? extends ShareInstanceInfo> listInstances(String shareId);
 

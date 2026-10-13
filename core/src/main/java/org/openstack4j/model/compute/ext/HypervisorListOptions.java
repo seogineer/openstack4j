@@ -3,7 +3,7 @@ package org.openstack4j.model.compute.ext;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** Filters for {@code GET /os-hypervisors/detail}. */
+/** Filters for {@code GET /os-hypervisors} ({@code listSummary}) and {@code GET /os-hypervisors/detail} ({@code list}). */
 public class HypervisorListOptions {
 
     private final Map<String, String> params = new LinkedHashMap<>();

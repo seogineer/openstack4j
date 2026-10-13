@@ -48,6 +48,20 @@ public interface AodhAlarmExtService extends RestService {
     /** Sets quotas of a project (admin) and returns them. */
     Map<String, Integer> setQuotas(String projectId, Map<String, Integer> quotas);
 
-    /** Removes the project's quotas, back to the defaults (admin). */
+    /** Removes the project's quotas, back to the defaults (admin): {@code DELETE /v2/quotas/{project_id}}. */
     ActionResponse deleteQuotas(String projectId);
+
+    /**
+     * @return Aodh's API and alarm storage capabilities ({@code api}, {@code alarm_storage}: flattened names such as
+     *         {@code alarms:query:complex} to booleans) — {@code GET /v2/capabilities}. {@code telemetry().capabilities()} is
+     *         Ceilometer's service, kept as it was.
+     */
+    Map<String, Object> capabilities();
+
+    /**
+     * @param params {@code all_projects=true} for every project (admin), or {@code null}
+     * @return the alarm evaluation counters ({@code alarm_id}, {@code project_id}, {@code state_counters}); the server must enable
+     *         {@code enable_evaluation_results_metrics}, otherwise it answers 403, which raises
+     */
+    List<Map<String, Object>> metrics(Map<String, String> params);
 }

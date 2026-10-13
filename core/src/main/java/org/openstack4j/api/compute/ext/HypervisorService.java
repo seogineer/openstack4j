@@ -47,4 +47,10 @@ public interface HypervisorService extends RestService {
      * Lists hypervisors with details using typed filters ({@code GET /os-hypervisors/detail}).
      */
     List<? extends Hypervisor> list(HypervisorListOptions options);
+
+    /** @return the hypervisors with summary fields only ({@code id}, {@code hypervisor_hostname}, {@code state}, {@code status}) — {@code GET /os-hypervisors}; {@link #list()} gives the details */
+    List<? extends Hypervisor> listSummary();
+
+    /** Lists hypervisor summaries with typed filters ({@code GET /os-hypervisors}); the filters need the microversions noted on {@link HypervisorListOptions}. */
+    List<? extends Hypervisor> listSummary(HypervisorListOptions options);
 }
