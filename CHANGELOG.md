@@ -4,6 +4,7 @@
 - Neutron `qos_policy_id` 를 요청에 보냄: `NetworkBuilder`·`NetworkUpdateBuilder`·`PortBuilder` 의 `qosPolicyId(String)`(null = 해제). 응답에서 읽은 값은 이전처럼 다시 보내지 않음. `qos_network_policy_id`, router `project_id`, agent `availability_zone` 은 응답 전용 그대로
 - Neutron subnet `description`: `Subnet.getDescription()`, `SubnetBuilder.description(String)`(create·update)
 - Cinder `resetState(volumeId, Status)` javadoc: `error_*` 상태는 `setStatus(volumeId, String, …)` 사용
+- Octavia pool 수정 빌더 `tlsCiphers`·`tlsVersions`·`caTlsContainerRef`. listener `getLoadBalancers()` 가 응답의 `loadbalancers` 를 읽음(이전에는 항상 `null`; neutron-lbaas `ListenerV2` 도 같음)
 
 ## 4.10.0
 

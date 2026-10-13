@@ -188,3 +188,5 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - `ServerCreate.getMin()`·`getMax()` 의 값은 이제 `min_count`·`max_count` 로 전송됩니다(이전에는 Nova 가 거부하는 `min`·`max` 키였고, 설정할 빌더가 없었습니다).
 - Neutron `qos_policy_id`(동작 변경): 4.10.0 은 이 필드를 응답 전용으로 두어 요청에 보낼 수 없었습니다. 이제 `NetworkBuilder`·`NetworkUpdateBuilder`·`PortBuilder` 에 추상 메서드 `qosPolicyId(String)` 가 추가되었고, 이 메서드로 설정한 값(null 이면 해제)만 생성·수정 본문에 들어갑니다. 응답에서 읽은 객체를 그대로 `update` 에 넘기면 이전처럼 `qos_policy_id` 를 보내지 않습니다(Neutron 은 키가 있으면 같은 값이어도 기존 정책을 떼고 다시 붙이며, 기존 정책에 대한 권한이 없으면 실패합니다). `NetworkUpdate` 에는 `default` getter 만 추가되었습니다.
 - `SubnetBuilder`(`description`)에 추상 메서드가 추가되었습니다. `Subnet` 에는 `default` getter `getDescription()` 만 추가되었습니다. 응답에서 읽은 description 은 다시 보내지 않습니다. `subnets().update` 가 `gateway_ip` 를 항상 보내는 동작은 그대로입니다.
+- Octavia `LbPoolV2UpdateBuilder`(`tlsCiphers`, `tlsVersions`, `caTlsContainerRef`)에 추상 메서드가, `LbPoolV2Update` 에 `default` getter 가 추가되었습니다.
+- Octavia·neutron-lbaas `ListenerV2.getLoadBalancers()` 는 이제 응답의 `loadbalancers` 를 돌려줍니다(이전에는 항상 `null`). null 로 분기하던 코드는 결과가 달라집니다.

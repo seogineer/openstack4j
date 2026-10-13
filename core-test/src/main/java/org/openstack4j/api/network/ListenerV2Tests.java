@@ -44,6 +44,12 @@ public class ListenerV2Tests extends AbstractTest {
         assertEquals(list.size(), 2);
     }
 
+    public void testListenerV2LoadBalancersAreRead() throws IOException {
+        respondWith(LISTENERV2_JSON);
+        ListenerV2 listener = osv3().networking().lbaasV2().listener().get("c07058a9-8d84-4443-b8f5-508d0facfe10");
+        assertEquals(listener.getLoadBalancers().get(0).getId(), "bca64d34-945f-4282-9587-8f95722b58f1");
+    }
+
     public void testGetListenerV2() throws IOException {
         respondWith(LISTENERV2_JSON);
         String id = "c07058a9-8d84-4443-b8f5-508d0facfe10";

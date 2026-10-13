@@ -54,7 +54,8 @@ public class NeutronListenerV2 implements ListenerV2 {
     @JsonProperty("loadbalancer_id")
     private String loadbalancerId;
 
-    private List<ListItem> loadbalancers;
+    @JsonProperty(value = "loadbalancers", access = JsonProperty.Access.WRITE_ONLY)
+    private List<ListItem> loadBalancers;
 
     @JsonProperty("admin_state_up")
     private boolean adminStateUp = true;
@@ -74,7 +75,7 @@ public class NeutronListenerV2 implements ListenerV2 {
      */
     @Override
     public List<ListItem> getLoadBalancers() {
-        return loadbalancers;
+        return loadBalancers;
     }
 
     /**
@@ -172,7 +173,7 @@ public class NeutronListenerV2 implements ListenerV2 {
                 .add("adminStateUp", adminStateUp)
                 .add("tenantId", tenantId)
                 .add("description", description)
-                .add("loadbalancers", loadbalancers)
+                .add("loadbalancers", loadBalancers)
                 .add("name", name)
                 .add("protocol", protocol)
                 .add("protocolPort", protocolPort)
