@@ -105,4 +105,15 @@ public class ShareInstanceTests extends AbstractTest {
         ActionResponse response = osv3().share().shareInstances().forceDelete("081f7030-c54f-42f5-98ee-93a37393e0f2");
         assertTrue(response.isSuccess());
     }
+
+    @Test
+    public void listWithUnknownValues() throws Exception {
+        respondWith("/manila/share_instances_unknown_values.json");
+
+        List<? extends ShareInstance> shareInstances = osv3().share().shareInstances().list();
+        assertEquals(shareInstances.size(), 3);
+        assertEquals(shareInstances.get(0).getStatus(), ShareInstance.Status.REVERTING_TO_SNAPSHOT);
+        assertEquals(shareInstances.get(1).getStatus(), ShareInstance.Status.UNRECOGNIZED);
+        assertEquals(shareInstances.get(2).getStatus(), ShareInstance.Status.AVAILABLE);
+    }
 }

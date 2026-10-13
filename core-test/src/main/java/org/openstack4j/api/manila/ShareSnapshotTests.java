@@ -227,4 +227,15 @@ public class ShareSnapshotTests extends AbstractTest {
         ActionResponse response = osv3().share().shareSnapshots().forceDelete("6d221c1d-0200-461e-8d20-24b4776b9ddb");
         assertTrue(response.isSuccess());
     }
+
+    @Test
+    public void listWithUnknownValues() throws Exception {
+        respondWith("/manila/share_snapshots_unknown_values.json");
+
+        List<? extends ShareSnapshot> snapshots = osv3().share().shareSnapshots().listDetails();
+        assertEquals(snapshots.size(), 3);
+        assertEquals(snapshots.get(0).getStatus(), ShareSnapshot.Status.RESTORING);
+        assertEquals(snapshots.get(1).getStatus(), ShareSnapshot.Status.MANAGE_ERROR);
+        assertEquals(snapshots.get(2).getStatus(), ShareSnapshot.Status.UNRECOGNIZED);
+    }
 }

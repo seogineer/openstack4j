@@ -1,0 +1,116 @@
+{
+    "shares": [
+        {
+            "status": "ensuring",
+            "links": [
+                {
+                    "href": "http://localhost:8786/v2/p/shares/a0000000-0000-0000-0000-000000000000",
+                    "rel": "self"
+                }
+            ],
+            "export_location": null,
+            "name": "share0",
+            "share_type": "default",
+            "availability_zone": "nova",
+            "created_at": "2016-02-16T11:03:45.000000",
+            "description": "d",
+            "export_locations": [],
+            "share_proto": "GLUSTERFS",
+            "share_network_id": null,
+            "metadata": {},
+            "share_server_id": null,
+            "host": "h",
+            "volume_type": "default",
+            "snapshot_id": null,
+            "is_public": false,
+            "project_id": "p",
+            "id": "a0000000-0000-0000-0000-000000000000",
+            "size": 1,
+            "task_state": "data_copying_in_progress"
+        },
+        {
+            "status": "deferred_deleting",
+            "links": [
+                {
+                    "href": "http://localhost:8786/v2/p/shares/a0000001-0000-0000-0000-000000000000",
+                    "rel": "self"
+                }
+            ],
+            "export_location": null,
+            "name": "share1",
+            "share_type": "default",
+            "availability_zone": "nova",
+            "created_at": "2016-02-16T11:03:45.000000",
+            "description": "d",
+            "export_locations": [],
+            "share_proto": "CEPHFS",
+            "share_network_id": null,
+            "metadata": {},
+            "share_server_id": null,
+            "host": "h",
+            "volume_type": "default",
+            "snapshot_id": null,
+            "is_public": false,
+            "project_id": "p",
+            "id": "a0000001-0000-0000-0000-000000000000",
+            "size": 1,
+            "task_state": null
+        },
+        {
+            "status": "some_future_status",
+            "links": [
+                {
+                    "href": "http://localhost:8786/v2/p/shares/a0000002-0000-0000-0000-000000000000",
+                    "rel": "self"
+                }
+            ],
+            "export_location": null,
+            "name": "share2",
+            "share_type": "default",
+            "availability_zone": "nova",
+            "created_at": "2016-02-16T11:03:45.000000",
+            "description": "d",
+            "export_locations": [],
+            "share_proto": "NEWFS",
+            "share_network_id": null,
+            "metadata": {},
+            "share_server_id": null,
+            "host": "h",
+            "volume_type": "default",
+            "snapshot_id": null,
+            "is_public": false,
+            "project_id": "p",
+            "id": "a0000002-0000-0000-0000-000000000000",
+            "size": 1,
+            "task_state": "future_task"
+        },
+        {
+            "status": "available",
+            "links": [
+                {
+                    "href": "http://localhost:8786/v2/p/shares/a0000003-0000-0000-0000-000000000000",
+                    "rel": "self"
+                }
+            ],
+            "export_location": null,
+            "name": "share3",
+            "share_type": "default",
+            "availability_zone": "nova",
+            "created_at": "2016-02-16T11:03:45.000000",
+            "description": "d",
+            "export_locations": [],
+            "share_proto": "GlusterFS",
+            "share_network_id": null,
+            "metadata": {},
+            "share_server_id": null,
+            "host": "h",
+            "volume_type": "default",
+            "snapshot_id": null,
+            "is_public": false,
+            "project_id": "p",
+            "id": "a0000003-0000-0000-0000-000000000000",
+            "size": 1,
+            "task_state": "migration_success"
+        }
+    ]
+}

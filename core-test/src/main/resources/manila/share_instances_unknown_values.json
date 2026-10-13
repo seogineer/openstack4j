@@ -1,0 +1,40 @@
+{
+    "share_instances": [
+        {
+            "status": "reverting_to_snapshot",
+            "share_id": "406ea93b-32e9-4907-a117-148b3945749f",
+            "availability_zone": "nova",
+            "created_at": "2015-09-07T08:41:20.000000",
+            "export_location": null,
+            "share_network_id": null,
+            "export_locations": [],
+            "share_server_id": null,
+            "host": "manila2@generic1#GENERIC1",
+            "id": "b0000000-0000-0000-0000-000000000000"
+        },
+        {
+            "status": "some_future_status",
+            "share_id": "406ea93b-32e9-4907-a117-148b3945749f",
+            "availability_zone": "nova",
+            "created_at": "2015-09-07T08:41:20.000000",
+            "export_location": null,
+            "share_network_id": null,
+            "export_locations": [],
+            "share_server_id": null,
+            "host": "manila2@generic1#GENERIC1",
+            "id": "b0000001-0000-0000-0000-000000000000"
+        },
+        {
+            "status": "available",
+            "share_id": "406ea93b-32e9-4907-a117-148b3945749f",
+            "availability_zone": "nova",
+            "created_at": "2015-09-07T08:41:20.000000",
+            "export_location": null,
+            "share_network_id": null,
+            "export_locations": [],
+            "share_server_id": null,
+            "host": "manila2@generic1#GENERIC1",
+            "id": "b0000002-0000-0000-0000-000000000000"
+        }
+    ]
+}

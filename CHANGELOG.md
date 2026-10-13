@@ -5,6 +5,7 @@
 - Cinder `Volume.Status` 에 `RESERVED`·`MAINTENANCE`·`AWAITING_TRANSFER`·`ERROR_BACKING_UP`·`ERROR_EXTENDING`·`ERROR_MANAGING`·`MANAGING`·`RETYPING`·`EXTENDING`(이전에는 `UNRECOGNIZED`). 오타 상수 `RESERVERD` 는 `@Deprecated` — 응답의 `reserved` 는 이전에도 `RESERVERD` 가 아니라 `UNRECOGNIZED` 였고 이제 `RESERVED`
 - Nova `Server.Status.SOFT_DELETED`(이전에는 `UNRECOGNIZED`). simple tenant usage `ServerUsage.getVmState()` — 응답 `state`(vm_state) 원문(`soft-delete`·`building`·`rescued` 등). `getState()` 는 이전처럼 `Server.Status` 로 바꾼 값
 - enum 상수가 늘어 `default` 없는 switch 표현식은 컴파일되지 않을 수 있음
+- Manila: `Share.Status`·`ShareInstance.Status`·`ShareSnapshot.Status`·`Share.TaskState`·`Share.Protocol` 이 모르는 값이나 대문자 프로토콜(`GLUSTERFS`)에서 예외를 던져 목록 조회 전체가 실패하던 문제를 고침 — 대소문자를 무시하고 모르는 값은 `UNRECOGNIZED`. api-ref·서버 소스의 상태(`ensuring`, `deferred_deleting`, `backup_creating`, `reverting`, `awaiting_transfer` 등), task state(`migration_in_progress`, `data_copying_*` 등), 프로토콜 `CEPHFS`·`MAPRFS`·`LUSTRE`·`WEKAFS` 추가. 요청에 보내는 값(reset state 의 `status`, 생성·manage 의 `share_proto`)은 이전과 같음
 
 ## 4.9.1
 
