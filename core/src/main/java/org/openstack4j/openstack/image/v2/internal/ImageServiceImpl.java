@@ -25,7 +25,9 @@ import org.openstack4j.api.exceptions.ResponseException;
 import org.openstack4j.api.image.v2.ImageService;
 import org.openstack4j.api.image.v2.TaskService;
 import org.openstack4j.core.transport.ExecutionOptions;
+import org.openstack4j.core.transport.HttpEntityHandler;
 import org.openstack4j.core.transport.HttpResponse;
+import org.openstack4j.core.transport.functions.ResponseToActionResponse;
 import org.openstack4j.core.transport.propagation.PropagateOnStatus;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Payload;
@@ -201,6 +203,59 @@ public class ImageServiceImpl extends BaseImageServices implements ImageService 
             }
         }
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public InputStream download(String imageId) {
+        Objects.requireNonNull(imageId);
+        HttpResponse response = get(Void.class, uri("/images/%s/file", imageId)).header(HEADER_ACCEPT, CONTENT_TYPE_OCTECT_STREAM).executeWithResponse();
+        int status = response.getStatus();
+        if (status >= 400 || status == 204) {
+            try {
+                if (status == 404)
+                    return null;
+                if (status == 204)
+                    return InputStream.nullInputStream();
+                throw ResponseException.mapException(response, faultOf(response));
+            } finally {
+                HttpEntityHandler.closeQuietly(response);
+            }
+        }
+        return streamOf(response);
+    }
+
+    /** @return the response body as a stream whose close also closes the response, which releases the connection */
+    static InputStream streamOf(HttpResponse response) {
+        InputStream in = response.getInputStream();
+        if (in == null) {
+            HttpEntityHandler.closeQuietly(response);
+            return InputStream.nullInputStream();
+        }
+        return new FilterInputStream(in) {
+            @Override
+            public void close() throws IOException {
+                try {
+                    super.close();
+                } finally {
+                    response.close();
+                }
+            }
+        };
+    }
+
+    /** @return the Glance fault of an error response, or its status message when the body has none */
+    private static String faultOf(HttpResponse response) {
+        try {
+            String fault = ResponseToActionResponse.INSTANCE.apply(response).getFault();
+            if (fault != null)
+                return fault;
+        } catch (RuntimeException e) {
+            // an unreadable body falls back to the status message
+        }
+        return response.getStatusMessage();
     }
 
     /**

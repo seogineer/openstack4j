@@ -164,6 +164,20 @@ public interface ImageService extends RestService {
     ActionResponse download(String imageId, File filename);
 
     /**
+     * Opens the image data as a stream ({@code GET /v2/images/{id}/file}). The caller must close the stream, which also
+     * releases the HTTP connection. With the http-connector the whole body is read into memory before this returns,
+     * so it suits only images that fit in memory; the httpclient and okhttp connectors stream it.
+     * <p>
+     * Unlike {@link #download(String, File)}, which returns {@code null} for any error, this method returns
+     * {@code null} only for a missing image and raises the other errors.
+     *
+     * @param imageId the image id
+     * @return the data (empty when the image has no data, 204), or {@code null} when the image does not exist (404)
+     * @throws org.openstack4j.api.exceptions.ResponseException for other errors (403 deactivated image, 416 ...)
+     */
+    java.io.InputStream download(String imageId);
+
+    /**
      * @return the image v2 tasks service
      */
     TaskService tasks();

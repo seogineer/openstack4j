@@ -21,6 +21,8 @@
 - Manila `sharesExt().list(filters)`·`listDetails(filters)`·`get(id)` — legacy `shares()` 와 달리 세션 microversion(꺼져 있으면 2.7)으로 `ShareInfo` 를 돌려줌. `snapshotsExt().grantAccess(snapshotId, accessType, accessTo)`·`revokeAccess(snapshotId, accessId)`·`listAccess(snapshotId)`(2.32, mount 가능한 snapshot). `securityServicesExt()` — 세션 microversion(최소 2.44)의 security service create/update/get/listDetails 와 `SecurityServiceOptions.ou(...)`, `SecurityService.getOu()`(legacy `securityServices()` 는 2.6 그대로라 응답에 `ou` 가 없음)
 - Cinder `schedulerStatsPools().poolsDetail()`: 드라이버가 용량을 `"infinite"`·`"unknown"` 같은 문자열로 보고하면 목록 전체가 예외로 실패하던 문제를 고침(`total_capacity_gb`, `free_capacity_gb`, `provisioned_capacity_gb`, `allocated_capacity_gb`, `total_volumes`, `reserved_percentage`). 숫자가 아닌 문자열과 범위를 넘는 문자열은 `null`, `"1230.75"`·`"1e3"` 같은 소수·지수 문자열은 반올림한 정수(이전에는 모두 예외). JSON 숫자(소수는 절삭), 정수 문자열(`"100"`, 앞뒤 공백 허용), 빈 문자열·`null`(`null`)은 이전과 같음
 - Heat `templates().validate(template, TemplateValidateOptions)` — 서버 응답(`Parameters`·`ParameterGroups` 등)을 `Map` 으로 돌려주고, `show_nested`·`ignore_errors` 지정, 잘못된 템플릿(400)은 예외. `TemplateBuilder.environment`·`environmentFiles`·`files`·`parameters`(기존 `validateTemplate` 에도 전송). `resourceTypes().listWithDescription(filters)` — 이름 → 설명
+- Neutron `floatingIps().associateToPort(fipId, portId, fixedIpAddress)` — 여러 fixed IP 를 가진 port 의 특정 주소에 연결(`fixed_ip_address`)
+- Glance v2 `imagesV2().download(imageId)` → `InputStream`(호출자가 닫음; 404 는 `null`, 204 는 빈 스트림, 그 밖의 오류는 예외). httpclient·okhttp connector 는 스트리밍, http-connector 는 본문 전체를 메모리에 받음
 
 ## 4.9.1
 
