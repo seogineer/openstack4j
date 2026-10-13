@@ -71,4 +71,34 @@ public interface LbPoolV2 extends ModelEntity, Buildable<LbPoolV2Builder> {
      * @return Health monitor associated with the pool.
      */
     String getHealthMonitorId();
+
+    /** @return the Barbican container reference of the CA certificate used to validate members, or null */
+    default String getCaTlsContainerRef() {
+        return null;
+    }
+
+    /** @return the TLS versions enabled for the pool, or null */
+    default List<String> getTlsVersions() {
+        return null;
+    }
+
+    /** @return the OpenSSL cipher string of the pool, or null */
+    default String getTlsCiphers() {
+        return null;
+    }
+
+    /** @return the load balancers the pool belongs to, or null */
+    default List<ListItem> getLoadBalancers() {
+        return null;
+    }
+
+    /** @return the operating status of the pool, or null */
+    default LbOperatingStatus getOperatingStatus() {
+        return null;
+    }
+
+    /** @return the provisioning status of the pool, or null */
+    default LbProvisioningStatus getProvisioningStatus() {
+        return null;
+    }
 }

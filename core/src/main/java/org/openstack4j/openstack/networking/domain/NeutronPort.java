@@ -91,6 +91,12 @@ public class NeutronPort implements Port {
     @JsonProperty("updated_at")
     private Date updatedTime;
 
+    @JsonProperty(value = "qos_policy_id", access = JsonProperty.Access.WRITE_ONLY)
+    private String qosPolicyId;
+
+    @JsonProperty(value = "qos_network_policy_id", access = JsonProperty.Access.WRITE_ONLY)
+    private String qosNetworkPolicyId;
+
     public static PortBuilder builder() {
         return new PortConcreteBuilder();
     }
@@ -326,6 +332,16 @@ public class NeutronPort implements Port {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public String getQosPolicyId() {
+        return qosPolicyId;
+    }
+
+    @Override
+    public String getQosNetworkPolicyId() {
+        return qosNetworkPolicyId;
+    }
+
     @Override
     public String toString() {
         return new ToStringHelper(this)

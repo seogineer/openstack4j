@@ -1,5 +1,7 @@
 package org.openstack4j.model.octavia.builder;
 
+import java.util.List;
+
 import org.openstack4j.common.Buildable;
 import org.openstack4j.model.octavia.LbMethod;
 import org.openstack4j.model.octavia.LbPoolV2;
@@ -83,4 +85,19 @@ public interface LbPoolV2Builder extends Buildable.Builder<LbPoolV2Builder, LbPo
      * @return LbPoolV2Builder
      */
     LbPoolV2Builder loadbalancerId(String loadbalancerId);
+
+    /**
+     * OpenSSL cipher string (Octavia API 2.15+).
+     */
+    LbPoolV2Builder tlsCiphers(String tlsCiphers);
+
+    /**
+     * e.g. ["TLSv1.2","TLSv1.3"] (Octavia API 2.17+).
+     */
+    LbPoolV2Builder tlsVersions(List<String> tlsVersions);
+
+    /**
+     * Barbican container of the CA certificate used to validate members (Octavia API 2.8+).
+     */
+    LbPoolV2Builder caTlsContainerRef(String caTlsContainerRef);
 }

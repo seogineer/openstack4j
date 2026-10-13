@@ -27,4 +27,9 @@ public interface LoadBalancerV2Stats extends ModelEntity {
      * @return The number of active connections of the loadbalancer.
      */
     public Integer getActiveConnections();
+
+    /** @return the number of request errors of the loadbalancer, or null */
+    default Long getRequestErrors() {
+        return null;
+    }
 }

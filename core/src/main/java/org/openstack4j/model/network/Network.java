@@ -85,4 +85,9 @@ public interface Network extends Resource, TimeEntity, Buildable<NetworkBuilder>
      */
     @JsonProperty("is_default")
     boolean isDefault();
+
+    /** @return the QoS policy id of the network, or null */
+    default String getQosPolicyId() {
+        return null;
+    }
 }
