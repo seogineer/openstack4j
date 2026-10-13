@@ -131,7 +131,14 @@ public interface Volume extends ModelEntity, Buildable<VolumeBuilder> {
      * The current Volume Status
      */
     enum Status {
-        AVAILABLE, ATTACHING, BACKING_UP, CREATING, DELETING, DOWNLOADING, UPLOADING, ERROR, ERROR_DELETING, ERROR_RESTORING, IN_USE, RESTORING_BACKUP, DETACHING, UNRECOGNIZED, RESERVERD;
+        AVAILABLE, ATTACHING, BACKING_UP, CREATING, DELETING, DOWNLOADING, UPLOADING, ERROR, ERROR_DELETING,
+        ERROR_RESTORING, IN_USE, RESTORING_BACKUP, DETACHING, UNRECOGNIZED,
+        /** @deprecated misspelling kept for compatibility; never produced by deserialization. Use {@link #RESERVED}. */
+        @Deprecated
+        RESERVERD,
+        // cinder VolumeStatus (cinder/objects/fields.py). value() maps '_' to '-', which differs from cinder for the error_*
+        // states (e.g. error_extending); to reset to such a state use setStatus(volumeId, String, ...) instead of resetState(..., Status)
+        RESERVED, MAINTENANCE, AWAITING_TRANSFER, ERROR_BACKING_UP, ERROR_EXTENDING, ERROR_MANAGING, MANAGING, RETYPING, EXTENDING;
 
         @JsonCreator
         public static Status fromValue(String status) {

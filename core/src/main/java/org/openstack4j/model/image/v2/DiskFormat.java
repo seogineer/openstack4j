@@ -58,6 +58,11 @@ public enum DiskFormat {
     AMI,
 
     /**
+     * Virtuozzo/Parallels loop disk format; glance api-ref disk_format, Ocata+
+     */
+    PLOOP,
+
+    /**
      * Type unknown
      */
     UNRECOGNIZED;

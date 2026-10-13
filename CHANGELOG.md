@@ -1,6 +1,10 @@
 ## 4.10.0
 
 - Ironic: `drivers().listVendorPassthruMethods(driver)`, `drivers().vendorPassthru(driver, method, args)`(POST, `ActionResponse`), 본문을 돌려주는 `drivers().vendorPassthru(driver, HttpMethod, method, args)`·`nodes().vendorPassthru(node, HttpMethod, method, args)` — GET/POST/PUT/PATCH/DELETE, POST·PUT·PATCH 만 JSON 본문, 빈 본문(비동기 202·204)은 `null`, 객체가 아닌 JSON 결과는 `"return"` 키 아래로. `ports().list(filters)` javadoc 에 `portgroup`(1.24) 필터
+- Glance v2 `Image.ImageVisibility` 에 `SHARED`·`COMMUNITY`, `DiskFormat.PLOOP`, `ContainerFormat.COMPRESSED`(이전에는 `UNKNOWN`/`UNRECOGNIZED`)
+- Cinder `Volume.Status` 에 `RESERVED`·`MAINTENANCE`·`AWAITING_TRANSFER`·`ERROR_BACKING_UP`·`ERROR_EXTENDING`·`ERROR_MANAGING`·`MANAGING`·`RETYPING`·`EXTENDING`(이전에는 `UNRECOGNIZED`). 오타 상수 `RESERVERD` 는 `@Deprecated` — 응답의 `reserved` 는 이전에도 `RESERVERD` 가 아니라 `UNRECOGNIZED` 였고 이제 `RESERVED`
+- Nova `Server.Status.SOFT_DELETED`(이전에는 `UNRECOGNIZED`). simple tenant usage `ServerUsage.getVmState()` — 응답 `state`(vm_state) 원문(`soft-delete`·`building`·`rescued` 등). `getState()` 는 이전처럼 `Server.Status` 로 바꾼 값
+- enum 상수가 늘어 `default` 없는 switch 표현식은 컴파일되지 않을 수 있음
 
 ## 4.9.1
 

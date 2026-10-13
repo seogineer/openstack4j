@@ -238,6 +238,10 @@ public interface Image extends BasicResource, Buildable<ImageBuilder> {
     public enum ImageVisibility {
         PUBLIC,
         PRIVATE,
+        /** Visible to the owner and the members of the image; glance api-ref image visibility, v2.5+ */
+        SHARED,
+        /** Visible to all projects in the community image list; glance api-ref image visibility, Ocata+ */
+        COMMUNITY,
         UNKNOWN;
 
         @JsonCreator
