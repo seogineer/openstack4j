@@ -3,11 +3,14 @@ package org.openstack4j.api.storage;
 import java.util.List;
 
 import org.openstack4j.api.AbstractTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openstack4j.openstack.storage.block.domain.CinderBackendStoragePool.CinderCapabilities;
 import org.openstack4j.openstack.storage.block.domain.VolumeBackendPool;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
 
 /**
@@ -19,6 +22,7 @@ import static org.testng.AssertJUnit.assertTrue;
 public class SchedulerStatsGetPoolTests extends AbstractTest {
     private static final String JSON_SCHEDULER_STATS = "/storage/v2/cinder_scheduler-stats.json";
     private static final String JSON_SCHEDULER_STATS_DETAIL = "/storage/v2/cinder_scheduler-stats_detail.json";
+    private static final String JSON_SCHEDULER_STATS_DETAIL_LENIENT = "/storage/v2/cinder_scheduler-stats_detail_lenient.json";
 
     @Override
     protected Service service() {
@@ -72,4 +76,47 @@ public class SchedulerStatsGetPoolTests extends AbstractTest {
         assertEquals(pool5.getCapabilities().getStorageProtocol(), "iSER");
     }
 
+    @Test
+    public void lenientCapacities() throws Exception {
+        respondWith(JSON_SCHEDULER_STATS_DETAIL_LENIENT);
+
+        List<? extends VolumeBackendPool> pools = osv3().blockStorage().schedulerStatsPools().poolsDetail();
+        assertEquals(pools.size(), 3);
+
+        // poolA: keywords give null, a decimal string is rounded half-up, a number stays as it was
+        VolumeBackendPool.Capabilities a = pools.get(0).getCapabilities();
+        assertNull(a.getTotalCapacityGb());
+        assertEquals(a.getFreeCapacityGb(), Long.valueOf(1231));
+        assertEquals(a.getAllocatedcapacitygb(), Integer.valueOf(100));
+        assertNull(a.getProvisionedcapacitygb());
+        assertEquals(a.getReservedPercentage(), Integer.valueOf(0));
+        assertEquals(a.getTotalvolumes(), Integer.valueOf(3));
+
+        VolumeBackendPool.Capabilities b = pools.get(1).getCapabilities();
+        assertNull(b.getTotalCapacityGb());
+        assertNull(b.getFreeCapacityGb());
+        assertNull(b.getAllocatedcapacitygb());
+
+        // poolC: a JSON number with a fraction is still truncated, as before
+        VolumeBackendPool.Capabilities c = pools.get(2).getCapabilities();
+        assertEquals(c.getTotalCapacityGb(), Long.valueOf(1024));
+        assertEquals(c.getFreeCapacityGb(), Long.valueOf(100));
+        assertEquals(c.getAllocatedcapacitygb(), Integer.valueOf(101));
+    }
+
+    @Test
+    public void lenientParsingBounds() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        assertNull(mapper.readValue("{\"total_capacity_gb\":\"99999999999999999999\"}", CinderCapabilities.class).getTotalCapacityGb());
+        assertNull(mapper.readValue("{\"total_capacity_gb\":\"1e999999999\"}", CinderCapabilities.class).getTotalCapacityGb());
+        assertEquals(mapper.readValue("{\"total_capacity_gb\":\"9223372036854775807\"}", CinderCapabilities.class).getTotalCapacityGb(), Long.valueOf(Long.MAX_VALUE));
+        assertEquals(mapper.readValue("{\"total_capacity_gb\":\" 1e3 \"}", CinderCapabilities.class).getTotalCapacityGb(), Long.valueOf(1000));
+        assertNull(mapper.readValue("{\"total_capacity_gb\":\"NaN\"}", CinderCapabilities.class).getTotalCapacityGb());
+        assertNull(mapper.readValue("{\"total_capacity_gb\":\"Infinity\"}", CinderCapabilities.class).getTotalCapacityGb());
+        assertNull(mapper.readValue("{\"total_volumes\":\"2147483648\"}", CinderCapabilities.class).getTotalvolumes());
+        assertEquals(mapper.readValue("{\"total_volumes\":\"2147483647\"}", CinderCapabilities.class).getTotalvolumes(), Integer.valueOf(Integer.MAX_VALUE));
+        assertNull(mapper.readValue("{\"total_volumes\":null}", CinderCapabilities.class).getTotalvolumes());
+        assertEquals(mapper.readValue("{\"total_volumes\":7}", CinderCapabilities.class).getTotalvolumes(), Integer.valueOf(7));
+    }
 }

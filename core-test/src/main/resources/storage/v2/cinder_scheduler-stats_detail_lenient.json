@@ -1,0 +1,31 @@
+{
+    "pools": [
+        {
+            "name": "poolA",
+            "capabilities": {
+                "total_capacity_gb": "infinite",
+                "free_capacity_gb": "1230.75",
+                "allocated_capacity_gb": 100,
+                "provisioned_capacity_gb": "unknown",
+                "reserved_percentage": "0",
+                "total_volumes": "3"
+            }
+        },
+        {
+            "name": "poolB",
+            "capabilities": {
+                "total_capacity_gb": "unknown",
+                "free_capacity_gb": "",
+                "allocated_capacity_gb": "infinite"
+            }
+        },
+        {
+            "name": "poolC",
+            "capabilities": {
+                "total_capacity_gb": 1024.9,
+                "free_capacity_gb": 100,
+                "allocated_capacity_gb": "100.7"
+            }
+        }
+    ]
+}
