@@ -1,6 +1,7 @@
 package org.openstack4j.model.manila;
 
 import java.util.List;
+import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -63,11 +64,60 @@ public interface ShareInstance extends ModelEntity {
     String getId();
 
     enum Status {
-        AVAILABLE, ERROR, CREATING, DELETING, ERROR_DELETING;
+        AVAILABLE,
+        ERROR,
+        CREATING,
+        DELETING,
+        ERROR_DELETING,
+        MANAGE_STARTING,
+        UNMANAGE_STARTING,
+        UNMANAGE_ERROR,
+        UNMANAGED,
+        EXTENDING,
+        EXTENDING_ERROR,
+        SHRINKING,
+        SHRINKING_ERROR,
+        SHRINKING_POSSIBLE_DATA_LOSS_ERROR,
+        CREATING_FROM_SNAPSHOT,
+        DELETED,
+        /** (manila server constants, not in api-ref table) */
+        DEFERRED_DELETING,
+        /** (manila server constants, not in api-ref table) */
+        ERROR_DEFERRED_DELETING,
+        INACTIVE,
+        MANAGE_ERROR,
+        /** (manila server constants, not in api-ref table) */
+        MANAGE_ERROR_UNMANAGE_STARTING,
+        MIGRATING,
+        MIGRATING_TO,
+        /** (manila server constants, not in api-ref table) */
+        SERVER_MIGRATING,
+        /** (manila server constants, not in api-ref table) */
+        SERVER_MIGRATING_TO,
+        REPLICATION_CHANGE,
+        /** (manila server constants, not in api-ref table) */
+        RESTORING,
+        REVERTING,
+        REVERTING_ERROR,
+        /** (manila server constants, not in api-ref table) */
+        REVERTING_TO_SNAPSHOT,
+        AWAITING_TRANSFER,
+        BACKUP_CREATING,
+        BACKUP_RESTORING,
+        BACKUP_RESTORING_ERROR,
+        /** (manila server constants, not in api-ref table) */
+        ENSURING,
+        /** Value not known to this client; check the raw API */
+        UNRECOGNIZED;
 
         @JsonCreator
         public static Status value(String v) {
-            return valueOf(v.toUpperCase());
+            if (v == null || v.isEmpty()) return UNRECOGNIZED;
+            try {
+                return valueOf(v.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException e) {
+                return UNRECOGNIZED;
+            }
         }
 
         @JsonValue

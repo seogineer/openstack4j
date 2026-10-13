@@ -3,7 +3,9 @@ package org.openstack4j.api.manila;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.api.AbstractTest;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.common.ActionResponse;
@@ -38,6 +40,19 @@ public class SharesTests extends AbstractTest {
     private static final String JSON_SHARE_ACTION_GRANTACCESS = "/manila/share_action_grantaccess.json";
     private static final String JSON_SHARE_ACTION_LISTACCESS = "/manila/share_action_listaccess.json";
 
+    /**
+     * The mock server is shared by the tests of this class, so earlier requests may still be queued;
+     * returns the most recent one.
+     */
+    private RecordedRequest lastRequest() throws InterruptedException {
+        RecordedRequest request = takeRequest();
+        RecordedRequest next;
+        while ((next = server.takeRequest(50, TimeUnit.MILLISECONDS)) != null) {
+            request = next;
+        }
+        return request;
+    }
+
     @Override
     protected Service service() {
         return Service.SHARE;
@@ -59,6 +74,7 @@ public class SharesTests extends AbstractTest {
         Share share = osv3().share().shares().create(shareCreate);
 
         assertEquals(share.getStatus(), Share.Status.CREATING);
+        assertTrue(lastRequest().getBody().readUtf8().replaceAll("\\s", "").contains("\"share_proto\":\"NFS\""));
         assertEquals(share.getLinks().size(), 2);
         assertEquals(
                 share.getLinks().get(0).getHref(),
@@ -450,6 +466,9 @@ public class SharesTests extends AbstractTest {
                 "406ea93b-32e9-4907-a117-148b3945749f",
                 Share.Status.ERROR);
         assertTrue(response.isSuccess());
+
+        RecordedRequest request = lastRequest();
+        assertTrue(request.getBody().readUtf8().replaceAll("\\s", "").contains("\"status\":\"error\""));
     }
 
     @Test
@@ -474,5 +493,74 @@ public class SharesTests extends AbstractTest {
 
         ActionResponse response = osv3().share().shares().shrink("406ea93b-32e9-4907-a117-148b3945749f", 1);
         assertTrue(response.isSuccess());
+    }
+
+    @Test
+    public void listDetailsWithUnknownValues() throws Exception {
+        respondWith("/manila/shares_detail_unknown_values.json");
+
+        List<? extends Share> shares = osv3().share().shares().listDetails();
+        assertEquals(shares.size(), 4);
+
+        assertEquals(shares.get(0).getStatus(), Share.Status.ENSURING);
+        assertEquals(shares.get(0).getShareProto(), Share.Protocol.GlusterFS);
+        assertEquals(shares.get(0).getTaskState(), Share.TaskState.DATA_COPYING_IN_PROGRESS);
+
+        assertEquals(shares.get(1).getStatus(), Share.Status.DEFERRED_DELETING);
+        assertEquals(shares.get(1).getShareProto(), Share.Protocol.CEPHFS);
+        assertNull(shares.get(1).getTaskState());
+
+        assertEquals(shares.get(2).getStatus(), Share.Status.UNRECOGNIZED);
+        assertEquals(shares.get(2).getShareProto(), Share.Protocol.UNRECOGNIZED);
+        assertEquals(shares.get(2).getTaskState(), Share.TaskState.UNRECOGNIZED);
+
+        assertEquals(shares.get(3).getStatus(), Share.Status.AVAILABLE);
+        assertEquals(shares.get(3).getShareProto(), Share.Protocol.GlusterFS);
+        assertEquals(shares.get(3).getTaskState(), Share.TaskState.MIGRATION_SUCCESS);
+    }
+
+    @Test
+    public void enumValuesRoundTrip() {
+        String[] statuses = {"creating", "deleting", "error", "error_deleting", "available", "manage_starting",
+                "unmanage_starting", "unmanage_error", "unmanaged", "extending", "extending_error", "shrinking",
+                "shrinking_error", "shrinking_possible_data_loss_error"};
+        for (String v : statuses) {
+            assertEquals(Share.Status.valueOf(v.toUpperCase()).value(), v);
+            assertEquals(Share.Status.value(v), Share.Status.valueOf(v.toUpperCase()));
+        }
+        assertEquals(Share.Status.value("ERROR"), Share.Status.ERROR);
+        assertEquals(Share.Status.value("error"), Share.Status.ERROR);
+        assertEquals(Share.Status.value(null), Share.Status.UNRECOGNIZED);
+        assertEquals(Share.Status.value("whatever"), Share.Status.UNRECOGNIZED);
+
+        String[] tasks = {"null", "migration_starting", "migration_error", "migration_success", "migration_completing",
+                "migrating"};
+        for (String v : tasks) {
+            assertEquals(Share.TaskState.valueOf(v.toUpperCase()).value(), v);
+        }
+        assertEquals(Share.TaskState.value(null), Share.TaskState.NULL);
+        assertEquals(Share.TaskState.value(""), Share.TaskState.NULL);
+        assertEquals(Share.TaskState.value("whatever"), Share.TaskState.UNRECOGNIZED);
+
+        assertEquals(Share.Protocol.NFS.value(), "NFS");
+        assertEquals(Share.Protocol.CIFS.value(), "CIFS");
+        assertEquals(Share.Protocol.GlusterFS.value(), "GlusterFS");
+        assertEquals(Share.Protocol.HDFS.value(), "HDFS");
+        assertEquals(Share.Protocol.value("glusterfs"), Share.Protocol.GlusterFS);
+        assertEquals(Share.Protocol.value("GLUSTERFS"), Share.Protocol.GlusterFS);
+        assertEquals(Share.Protocol.value("cephfs"), Share.Protocol.CEPHFS);
+        assertEquals(Share.Protocol.value(null), Share.Protocol.UNRECOGNIZED);
+    }
+
+    @Test
+    public void createWithGlusterFsProtocol() throws Exception {
+        respondWith(JSON_SHARE_CREATE);
+
+        osv3().share().shares().create(Builders.share()
+                .shareProto(Share.Protocol.GlusterFS)
+                .size(1)
+                .build());
+
+        assertTrue(lastRequest().getBody().readUtf8().replaceAll("\\s", "").contains("\"share_proto\":\"GlusterFS\""));
     }
 }

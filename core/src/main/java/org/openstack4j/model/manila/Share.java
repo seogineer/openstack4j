@@ -1,6 +1,7 @@
 package org.openstack4j.model.manila;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -164,11 +165,47 @@ public interface Share extends ModelEntity {
         EXTENDING_ERROR,
         SHRINKING,
         SHRINKING_ERROR,
-        SHRINKING_POSSIBLE_DATA_LOSS_ERROR;
+        SHRINKING_POSSIBLE_DATA_LOSS_ERROR,
+        CREATING_FROM_SNAPSHOT,
+        DELETED,
+        /** (manila server constants, not in api-ref table) */
+        DEFERRED_DELETING,
+        /** (manila server constants, not in api-ref table) */
+        ERROR_DEFERRED_DELETING,
+        INACTIVE,
+        MANAGE_ERROR,
+        /** (manila server constants, not in api-ref table) */
+        MANAGE_ERROR_UNMANAGE_STARTING,
+        MIGRATING,
+        MIGRATING_TO,
+        /** (manila server constants, not in api-ref table) */
+        SERVER_MIGRATING,
+        /** (manila server constants, not in api-ref table) */
+        SERVER_MIGRATING_TO,
+        REPLICATION_CHANGE,
+        /** (manila server constants, not in api-ref table) */
+        RESTORING,
+        REVERTING,
+        REVERTING_ERROR,
+        /** (manila server constants, not in api-ref table) */
+        REVERTING_TO_SNAPSHOT,
+        AWAITING_TRANSFER,
+        BACKUP_CREATING,
+        BACKUP_RESTORING,
+        BACKUP_RESTORING_ERROR,
+        /** (manila server constants, not in api-ref table) */
+        ENSURING,
+        /** Value not known to this client; check the raw API */
+        UNRECOGNIZED;
 
         @JsonCreator
         public static Status value(String v) {
-            return valueOf(v.toUpperCase());
+            if (v == null || v.isEmpty()) return UNRECOGNIZED;
+            try {
+                return valueOf(v.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException e) {
+                return UNRECOGNIZED;
+            }
         }
 
         @JsonValue
@@ -178,7 +215,32 @@ public interface Share extends ModelEntity {
     }
 
     enum Protocol {
-        NFS, CIFS, GlusterFS, HDFS
+        NFS, CIFS, GlusterFS, HDFS,
+        /** CephFS; API 2.13+ */
+        CEPHFS,
+        /** MapR-FS */
+        MAPRFS,
+        /** Lustre (manila server constants) */
+        LUSTRE,
+        /** WekaFS (manila server constants) */
+        WEKAFS,
+        /** Value not known to this client; check the raw API */
+        UNRECOGNIZED;
+
+        @JsonCreator
+        public static Protocol value(String v) {
+            if (v != null) {
+                for (Protocol p : values()) {
+                    if (p.name().equalsIgnoreCase(v)) return p;
+                }
+            }
+            return UNRECOGNIZED;
+        }
+
+        @JsonValue
+        public String value() {
+            return name();
+        }
     }
 
     enum TaskState {
@@ -187,11 +249,30 @@ public interface Share extends ModelEntity {
         MIGRATION_ERROR,
         MIGRATION_SUCCESS,
         MIGRATION_COMPLETING,
-        MIGRATING;
+        MIGRATING,
+        MIGRATION_IN_PROGRESS,
+        MIGRATION_CANCELLED,
+        MIGRATION_CANCEL_IN_PROGRESS,
+        MIGRATION_DRIVER_STARTING,
+        MIGRATION_DRIVER_IN_PROGRESS,
+        MIGRATION_DRIVER_PHASE1_DONE,
+        DATA_COPYING_STARTING,
+        DATA_COPYING_IN_PROGRESS,
+        DATA_COPYING_COMPLETING,
+        DATA_COPYING_COMPLETED,
+        DATA_COPYING_CANCELLED,
+        DATA_COPYING_ERROR,
+        /** Value not known to this client; check the raw API */
+        UNRECOGNIZED;
 
         @JsonCreator
         public static TaskState value(String v) {
-            return valueOf(v.toUpperCase());
+            if (v == null || v.isEmpty()) return NULL;
+            try {
+                return valueOf(v.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException e) {
+                return UNRECOGNIZED;
+            }
         }
 
         @JsonValue

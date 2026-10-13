@@ -1,6 +1,7 @@
 package org.openstack4j.model.manila;
 
 import java.util.List;
+import java.util.Locale;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -64,11 +65,33 @@ public interface ShareSnapshot extends ModelEntity {
     Integer getSize();
 
     enum Status {
-        AVAILABLE, ERROR, CREATING, DELETING, ERROR_DELETING;
+        AVAILABLE,
+        ERROR,
+        CREATING,
+        DELETING,
+        ERROR_DELETING,
+        MANAGE_STARTING,
+        MANAGE_ERROR,
+        UNMANAGE_STARTING,
+        UNMANAGE_ERROR,
+        MIGRATING,
+        MIGRATING_TO,
+        RESTORING,
+        /** (manila server constants, not in api-ref table) */
+        DEFERRED_DELETING,
+        /** (manila server constants, not in api-ref table) */
+        ERROR_DEFERRED_DELETING,
+        /** Value not known to this client; check the raw API */
+        UNRECOGNIZED;
 
         @JsonCreator
         public static Status value(String v) {
-            return valueOf(v.toUpperCase());
+            if (v == null || v.isEmpty()) return UNRECOGNIZED;
+            try {
+                return valueOf(v.toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException e) {
+                return UNRECOGNIZED;
+            }
         }
 
         @JsonValue

@@ -1,0 +1,40 @@
+{
+    "snapshots": [
+        {
+            "status": "restoring",
+            "share_id": "d94a8548-2079-4be0-b21c-0a887acd31ca",
+            "name": "snap0",
+            "links": [],
+            "created_at": "2015-09-07T11:55:09.000000",
+            "description": "d",
+            "share_proto": "NFS",
+            "share_size": 1,
+            "id": "c0000000-0000-0000-0000-000000000000",
+            "size": 1
+        },
+        {
+            "status": "manage_error",
+            "share_id": "d94a8548-2079-4be0-b21c-0a887acd31ca",
+            "name": "snap1",
+            "links": [],
+            "created_at": "2015-09-07T11:55:09.000000",
+            "description": "d",
+            "share_proto": "NFS",
+            "share_size": 1,
+            "id": "c0000001-0000-0000-0000-000000000000",
+            "size": 1
+        },
+        {
+            "status": "some_future_status",
+            "share_id": "d94a8548-2079-4be0-b21c-0a887acd31ca",
+            "name": "snap2",
+            "links": [],
+            "created_at": "2015-09-07T11:55:09.000000",
+            "description": "d",
+            "share_proto": "NFS",
+            "share_size": 1,
+            "id": "c0000002-0000-0000-0000-000000000000",
+            "size": 1
+        }
+    ]
+}
