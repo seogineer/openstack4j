@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openstack4j.common.RestService;
+import org.openstack4j.core.transport.HttpMethod;
 import org.openstack4j.model.baremetal.BaremetalPatch;
 import org.openstack4j.model.baremetal.Node;
 import org.openstack4j.model.baremetal.NodeStates;
@@ -180,6 +181,18 @@ public interface NodeService extends RestService {
     /** @return the vendor passthru methods of the node's driver; a missing node raises */
     Map<String, Object> listVendorPassthruMethods(String nodeIdent);
 
-    /** Calls a vendor passthru method with {@code POST}. */
+    /** Calls a vendor passthru method with {@code POST}; the response body is dropped (use the {@link HttpMethod} overload for it). */
     ActionResponse vendorPassthru(String nodeIdent, String method, Map<String, ?> args);
+
+    /**
+     * Calls a vendor passthru method and returns its result.
+     *
+     * @param httpMethod GET, POST, PUT, PATCH or DELETE (one of the method's {@code http_methods})
+     * @param args       sent as the JSON body with POST, PUT and PATCH ({@code {}} when null); must be null or empty with GET and DELETE
+     * @return the JSON object the method returned; a JSON value that is not an object (string, list, number, boolean) under the key {@code "return"};
+     *         {@code null} when the response has no body (asynchronous methods answer 202 without one) or the body is JSON {@code null}
+     * @throws IllegalArgumentException another HTTP method, or args with GET/DELETE
+     * @throws org.openstack4j.api.exceptions.ResponseException a missing node (404) or any other failure; a method with {@code attach=true} (raw bytes) raises too
+     */
+    Map<String, Object> vendorPassthru(String nodeIdent, HttpMethod httpMethod, String method, Map<String, ?> args);
 }

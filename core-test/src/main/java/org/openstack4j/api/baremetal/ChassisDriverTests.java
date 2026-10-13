@@ -2,7 +2,11 @@ package org.openstack4j.api.baremetal;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.mockwebserver.RecordedRequest;
+import org.openstack4j.api.exceptions.ResponseException;
+import org.openstack4j.core.transport.HttpMethod;
 import org.openstack4j.model.baremetal.BaremetalPatch;
 import org.openstack4j.model.baremetal.Chassis;
 import org.openstack4j.model.baremetal.Driver;
@@ -72,5 +76,75 @@ public class ChassisDriverTests extends AbstractBaremetalTest {
         respondWith(404, "{\"error_message\": \"not found\"}");
         Assert.assertNull(osv3().baremetal().drivers().get("nope"));
         takeRequest();
+    }
+
+    public void driverVendorPassthru() throws Exception {
+        respondWith(200, "{\"lookup\": {\"http_methods\": [\"POST\"], \"async\": false, \"description\": \"\", \"attach\": false}}");
+        respondWith(202);
+        respondWith(200, "{\"power\": \"on\"}");
+        respondWith(202);
+        respondWith(204);
+        respondWith(200, "\"done\"");
+        respondWith(200, "[1, 2]");
+
+        var drivers = osv3().baremetal().drivers();
+        Map<String, Object> methods = drivers.listVendorPassthruMethods("ipmi");
+        var posted = drivers.vendorPassthru("ipmi", "lookup", Map.of("a", 1));
+        Map<String, Object> status = drivers.vendorPassthru("ipmi", HttpMethod.GET, "status", null);
+        Map<String, Object> reset = drivers.vendorPassthru("ipmi", HttpMethod.POST, "reset", null);
+        Map<String, Object> cache = drivers.vendorPassthru("ipmi", HttpMethod.DELETE, "cache", Map.of());
+        Map<String, Object> name = drivers.vendorPassthru("ipmi", HttpMethod.PUT, "name", Map.of("v", "x"));
+        Map<String, Object> list = drivers.vendorPassthru("ipmi", HttpMethod.PATCH, "list", Map.of("k", 1));
+
+        expect("GET", "/v1/drivers/ipmi/vendor_passthru/methods");
+        Assert.assertEquals(body(expect("POST", "/v1/drivers/ipmi/vendor_passthru?method=lookup")).toString(), "{\"a\":1}");
+        RecordedRequest get = expect("GET", "/v1/drivers/ipmi/vendor_passthru?method=status");
+        Assert.assertEquals(get.getBody().size(), 0);
+        Assert.assertEquals(body(expect("POST", "/v1/drivers/ipmi/vendor_passthru?method=reset")).toString(), "{}");
+        RecordedRequest delete = expect("DELETE", "/v1/drivers/ipmi/vendor_passthru?method=cache");
+        Assert.assertEquals(delete.getBody().size(), 0);
+        Assert.assertEquals(body(expect("PUT", "/v1/drivers/ipmi/vendor_passthru?method=name")).toString(), "{\"v\":\"x\"}");
+        Assert.assertEquals(body(expect("PATCH", "/v1/drivers/ipmi/vendor_passthru?method=list")).toString(), "{\"k\":1}");
+        Assert.assertTrue(methods.containsKey("lookup"));
+        Assert.assertTrue(posted.isSuccess());
+        Assert.assertEquals(status.get("power"), "on");
+        Assert.assertNull(reset);
+        Assert.assertNull(cache);
+        Assert.assertEquals(name, Map.of("return", "done"));
+        Assert.assertEquals(list.get("return"), List.of(1, 2));
+    }
+
+    public void driverPassthruRejectsBadInput() throws Exception {
+        var drivers = osv3().baremetal().drivers();
+        Assert.assertThrows(IllegalArgumentException.class, () -> drivers.vendorPassthru("ipmi", HttpMethod.HEAD, "m", null));
+        Assert.assertThrows(IllegalArgumentException.class, () -> drivers.vendorPassthru("ipmi", HttpMethod.GET, "m", Map.of("a", 1)));
+        Assert.assertThrows(IllegalArgumentException.class, () -> drivers.vendorPassthru("ipmi", HttpMethod.POST, "a/b", null));
+        Assert.assertThrows(NullPointerException.class, () -> drivers.vendorPassthru("ipmi", HttpMethod.POST, null, null));
+        Assert.assertThrows(NullPointerException.class, () -> drivers.vendorPassthru("ipmi", null, "m", null));
+        Assert.assertThrows(IllegalArgumentException.class, () -> drivers.vendorPassthru("..", HttpMethod.GET, "m", null));
+        Assert.assertNull(server.takeRequest(200, TimeUnit.MILLISECONDS), "unexpected extra request");
+    }
+
+    public void missingDriverPassthruRaises() throws Exception {
+        respondWith(404, "{\"error_message\": \"not found\"}");
+        respondWith(404, "{\"error_message\": \"not found\"}");
+        respondWith(404, "{\"error_message\": \"not found\"}");
+
+        var drivers = osv3().baremetal().drivers();
+        Assert.assertThrows(ResponseException.class, () -> drivers.listVendorPassthruMethods("nope"));
+        ResponseException e = Assert.expectThrows(ResponseException.class, () -> drivers.vendorPassthru("nope", HttpMethod.GET, "m", null));
+        Assert.assertEquals(e.getStatus(), 404);
+        var failed = drivers.vendorPassthru("nope", "m", null);
+        Assert.assertFalse(failed.isSuccess());
+        Assert.assertEquals(failed.getCode(), 404);
+        expect("GET", "/v1/drivers/nope/vendor_passthru/methods");
+        expect("GET", "/v1/drivers/nope/vendor_passthru?method=m");
+        Assert.assertEquals(body(expect("POST", "/v1/drivers/nope/vendor_passthru?method=m")).toString(), "{}");
+    }
+
+    public void driverNameIsPathEncoded() throws Exception {
+        respondWith(200, "{}");
+        osv3().baremetal().drivers().listVendorPassthruMethods("my driver");
+        Assert.assertTrue(takeRequest().getPath().endsWith("/v1/drivers/my%20driver/vendor_passthru/methods"));
     }
 }
