@@ -28,6 +28,30 @@ public class MigrationTests extends AbstractTest {
         assertEquals(Status.CONFIRMED, migrations.get(1).getStatus());
     }
 
+    public void listMigrationsWithNewStatuses() throws Exception {
+        respondWith("/compute/migrations_statuses.json");
+        List<? extends Migration> migrations = osv3().compute().migrations().list();
+
+        assertEquals(migrations.size(), 9);
+        assertEquals(migrations.get(0).getStatus(), Status.PRE_MIGRATING);
+        assertEquals(migrations.get(1).getStatus(), Status.POST_MIGRATING);
+        assertEquals(migrations.get(2).getStatus(), Status.RUNNING);
+        assertEquals(migrations.get(3).getStatus(), Status.QUEUED);
+        assertEquals(migrations.get(4).getStatus(), Status.COMPLETED);
+        assertEquals(migrations.get(5).getStatus(), Status.CANCELLED);
+        assertEquals(migrations.get(6).getStatus(), Status.REVERTED);
+        assertEquals(migrations.get(7).getStatus(), Status.MIGRATING); // unknown values keep falling back to MIGRATING
+        assertEquals(migrations.get(8).getStatus(), Status.MIGRATING);
+    }
+
+    public void statusForValue() {
+        assertEquals(Status.forValue(null), Status.MIGRATING);
+        assertEquals(Status.forValue("Done"), Status.DONE);
+        assertEquals(Status.forValue("pre_migrating"), Status.PRE_MIGRATING);
+        assertEquals(Status.forValue("pre-migrating"), Status.PRE_MIGRATING);
+        assertEquals(Status.forValue("bogus"), Status.MIGRATING);
+    }
+
     @Override
     protected Service service() {
         return Service.COMPUTE;
