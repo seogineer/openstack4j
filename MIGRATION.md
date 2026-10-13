@@ -178,3 +178,4 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - Cinder `VolumeBackendPool.Capabilities` 의 용량 필드(`getTotalCapacityGb`, `getFreeCapacityGb`, `getProvisionedcapacitygb`, `getAllocatedcapacitygb`, `getTotalvolumes`, `getReservedPercentage`)는 `"infinite"`·`"unknown"` 같은 숫자가 아닌 문자열과 범위를 넘는 문자열에서 예외 대신 `null` 을, `"1230.75"`·`"1e3"` 같은 소수·지수 문자열에서 반올림한 값을 돌려줍니다(이전에는 모두 예외). JSON 숫자와 정수 문자열, 빈 문자열의 처리는 같습니다.
 - `TemplateService`(`validate`), `TemplateBuilder`(`environment`, `environmentFiles`, `files`, `parameters`), `ResourceTypeService`(`listWithDescription`)(Heat)에 추상 메서드가 추가되었습니다. `Template` 에는 `default` getter 만 추가되어 그대로 컴파일됩니다.
 - `NetFloatingIPService`(`associateToPort(String, String, String)`), image v2 `ImageService`(`download(String)`)에 추상 메서드가 추가되었습니다.
+- Heat `TemplateService.validateTemplate*`: 유효한 템플릿에 이제 `isValid()==true` 를 돌려줍니다(이전에는 응답 파싱 실패로 항상 `false`). 이 결과를 근거로 분기하던 코드는 동작이 바뀝니다.

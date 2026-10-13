@@ -24,6 +24,7 @@
 - Neutron `floatingIps().associateToPort(fipId, portId, fixedIpAddress)` — 여러 fixed IP 를 가진 port 의 특정 주소에 연결(`fixed_ip_address`)
 - Glance v2 `imagesV2().download(imageId)` → `InputStream`(호출자가 닫음; 404 는 `null`, 204 는 빈 스트림, 그 밖의 오류는 예외). httpclient·okhttp connector 는 스트리밍, http-connector 는 본문 전체를 메모리에 받음. httpclient connector 는 끝까지 읽기 전에 닫으면 남은 본문을 끝까지 읽은 뒤 연결을 돌려줌(okhttp 는 즉시 끊음)
 
+- Heat `templates().validateTemplate(...)`·`validateTemplateJSON`·`validateTemplateByURL`: 서버의 정상 응답(JSON 객체)을 문자열로 읽으려다 실패해 유효한 템플릿도 `isValid()==false` 로 돌려주던 문제를 고침
 ## 4.9.1
 
 - httpclient connector: httpclient5 5.4 미만(예: 애플리케이션이 5.3.x 로 고정)에서 SSL 검증을 끄거나 `SSLContext`·`HostnameVerifier` 를 지정하면 `NoClassDefFoundError: TlsSocketStrategy` 로 실패하던 문제를 고침(5.4 미만이면 `SSLConnectionSocketFactory` 사용)

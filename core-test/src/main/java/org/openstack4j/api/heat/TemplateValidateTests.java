@@ -85,7 +85,7 @@ public class TemplateValidateTests extends AbstractHeatExtTest {
         expect("POST", "/validate");
     }
 
-    public void legacyValidateUnchanged() throws Exception {
+    public void legacyValidate() throws Exception {
         respondWith(200, ANSWER);
         respondWith(400, INVALID);
 
@@ -97,8 +97,7 @@ public class TemplateValidateTests extends AbstractHeatExtTest {
             Assert.assertTrue(body.has("template"));
             Assert.assertFalse(body.has("environment") || body.has("files") || body.has("parameters") || body.has("environment_files"), body.toString());
         }
-        // valid is not asserted: the legacy method reads the answer as a String, so a real JSON answer already counted as invalid
-        Assert.assertNotNull(valid);
+        Assert.assertTrue(valid.isValid(), String.valueOf(valid.getMessage()));
         Assert.assertFalse(invalid.isValid());
     }
 }
