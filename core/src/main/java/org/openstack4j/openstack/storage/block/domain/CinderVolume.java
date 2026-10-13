@@ -1,6 +1,7 @@
 package org.openstack4j.openstack.storage.block.domain;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -234,6 +235,20 @@ public class CinderVolume implements Volume {
     @Override
     public MigrationStatus getMigrateStatus() {
         return migrateStatus;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @JsonIgnore
+    public Map<String, String> getImageMetadata() {
+        if (imageMetadata == null)
+            return null;
+        Map<String, String> result = new LinkedHashMap<>();
+        for (Map.Entry<String, Object> e : imageMetadata.entrySet())
+            result.put(e.getKey(), e.getValue() == null ? null : String.valueOf(e.getValue()));
+        return result;
     }
 
     /**

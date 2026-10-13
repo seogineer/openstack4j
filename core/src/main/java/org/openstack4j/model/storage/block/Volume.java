@@ -83,6 +83,14 @@ public interface Volume extends ModelEntity, Buildable<VolumeBuilder> {
     String getImageRef();
 
     /**
+     * @return the Glance image properties of the image the volume was created from ({@code volume_image_metadata}, e.g.
+     * {@code image_id}, {@code image_name}, {@code min_disk}), or null when the volume has none
+     */
+    default Map<String, String> getImageMetadata() {
+        return null;
+    }
+
+    /**
      * @return To enable this volume to attach
      */
     Boolean multiattach();
