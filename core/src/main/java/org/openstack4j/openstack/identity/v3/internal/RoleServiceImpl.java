@@ -12,6 +12,7 @@ import org.openstack4j.api.identity.v3.RoleService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Role;
 import org.openstack4j.model.identity.v3.RoleAssignment;
+import org.openstack4j.model.identity.v3.options.RoleAssignmentListOptions;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneRole;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneRole.Roles;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneRoleAssignment.RoleAssignments;
@@ -153,6 +154,14 @@ public class RoleServiceImpl extends BaseIdentityServices implements RoleService
                 .param("scope.project.id", projectId)
                 .param("effective", "true")
                 .param(includeNames, "include_names", "true")
+                .execute().getList();
+    }
+
+    @Override
+    public List<? extends RoleAssignment> listRoleAssignments(RoleAssignmentListOptions options) {
+        Objects.requireNonNull(options);
+        return get(RoleAssignments.class, "role_assignments")
+                .params(options.toQueryParams())
                 .execute().getList();
     }
 

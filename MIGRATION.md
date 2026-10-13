@@ -190,3 +190,4 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - `SubnetBuilder`(`description`)에 추상 메서드가 추가되었습니다. `Subnet` 에는 `default` getter `getDescription()` 만 추가되었습니다. 응답에서 읽은 description 은 다시 보내지 않습니다. `subnets().update` 가 `gateway_ip` 를 항상 보내는 동작은 그대로입니다.
 - Octavia `LbPoolV2UpdateBuilder`(`tlsCiphers`, `tlsVersions`, `caTlsContainerRef`)에 추상 메서드가, `LbPoolV2Update` 에 `default` getter 가 추가되었습니다.
 - Octavia·neutron-lbaas `ListenerV2.getLoadBalancers()` 는 이제 응답의 `loadbalancers` 를 돌려줍니다(이전에는 항상 `null`). null 로 분기하던 코드는 결과가 달라집니다.
+- `RoleService`(identity v3)에 추상 메서드 `listRoleAssignments(RoleAssignmentListOptions)` 가 추가되었습니다. `listRoleAssignments(null)` 처럼 `null` 리터럴을 넘기던 코드는 모호해져 컴파일되지 않습니다 — `(String) null` 로 캐스트하세요. 바이너리 호환은 유지됩니다.
