@@ -47,4 +47,9 @@ public interface MemberV2Builder extends Buildable.Builder<MemberV2Builder, Memb
      * @return MemberV2Builder
      */
     MemberV2Builder adminStateUp(boolean adminStateUp);
+
+    /**
+     * @param name the name of the member
+     */
+    MemberV2Builder name(String name);
 }

@@ -173,3 +173,4 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - Manila `Share.Status`·`Share.TaskState`·`Share.Protocol`·`ShareInstance.Status`·`ShareSnapshot.Status`: 알 수 없는 값이 오면 이전에는 응답 전체의 역직렬화가 실패했지만 이제 `UNRECOGNIZED` 로 읽힙니다.
 - `RoleService`(identity v3)에 추상 메서드 `listRoleAssignments(String, boolean)` 가 추가되었습니다. compute `Service`, identity v3 `RoleAssignment` 에는 `default` 메서드만 추가되었습니다.
 - `ServerCreateBuilder`(`diskConfig`), `ServerService`(`resize(String, String, DiskConfig)`)에 추상 메서드가 추가되었습니다.
+- `LbPoolV2Builder`(`tlsCiphers`, `tlsVersions`, `caTlsContainerRef`)와 `MemberV2Builder`(`name`)(Octavia)에 추상 메서드가 추가되었습니다. 이 빌더를 직접 구현한 코드는 새 메서드가 필요합니다. `Network`, `Port`, `Router`, `Agent`, Octavia `LbPoolV2`, `ListenerV2`, `MemberV2`, `LoadBalancerV2Stats` 에는 `default` getter 만 추가되어 그대로 컴파일됩니다.

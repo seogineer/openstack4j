@@ -53,6 +53,9 @@ public class NeutronRouter implements Router {
     @JsonProperty(value = "external_gateways", access = JsonProperty.Access.WRITE_ONLY)
     private List<Map<String, Object>> externalGateways;
 
+    @JsonProperty(value = "project_id", access = JsonProperty.Access.WRITE_ONLY)
+    private String projectId;
+
     public static RouterBuilder builder() {
         return new RouterConcreteBuilder();
     }
@@ -151,6 +154,11 @@ public class NeutronRouter implements Router {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public String getProjectId() {
+        return projectId;
+    }
+
     @Override
     public String toString() {
         return new ToStringHelper(this)

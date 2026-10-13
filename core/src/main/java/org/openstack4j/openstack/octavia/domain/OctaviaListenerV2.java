@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.util.ToStringHelper;
+import org.openstack4j.model.octavia.LbOperatingStatus;
+import org.openstack4j.model.octavia.LbProvisioningStatus;
 import org.openstack4j.model.octavia.ListenerProtocol;
 import org.openstack4j.model.octavia.ListenerV2;
 import org.openstack4j.model.octavia.builder.ListenerV2Builder;
@@ -64,6 +66,12 @@ public class OctaviaListenerV2 implements ListenerV2 {
 
     @JsonProperty("sni_container_refs")
     private List<String> sniContainerRefs;
+
+    @JsonProperty(value = "provisioning_status", access = JsonProperty.Access.WRITE_ONLY)
+    private LbProvisioningStatus provisioningStatus;
+
+    @JsonProperty(value = "operating_status", access = JsonProperty.Access.WRITE_ONLY)
+    private LbOperatingStatus operatingStatus;
 
     public static ListenerV2Builder builder() {
         return new ListenerConcreteBuilder();
@@ -163,6 +171,16 @@ public class OctaviaListenerV2 implements ListenerV2 {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public LbProvisioningStatus getProvisioningStatus() {
+        return provisioningStatus;
+    }
+
+    @Override
+    public LbOperatingStatus getOperatingStatus() {
+        return operatingStatus;
     }
 
     @Override

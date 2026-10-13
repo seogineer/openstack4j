@@ -40,6 +40,9 @@ public class NeutronAgent implements Agent {
     private String startedAt;
     private String id;
 
+    @JsonProperty(value = "availability_zone", access = JsonProperty.Access.WRITE_ONLY)
+    private String availabilityZone;
+
     public static AgentBuilder builder() {
         return new AgentConcreteBuilder();
     }
@@ -97,6 +100,11 @@ public class NeutronAgent implements Agent {
     @Override
     public String getTopic() {
         return topic;
+    }
+
+    @Override
+    public String getAvailabilityZone() {
+        return availabilityZone;
     }
 
     @Override

@@ -65,6 +65,9 @@ public class NeutronNetwork implements Network {
     @JsonProperty("mtu")
     private Integer mtu;
 
+    @JsonProperty(value = "qos_policy_id", access = JsonProperty.Access.WRITE_ONLY)
+    private String qosPolicyId;
+
     public static NetworkBuilder builder() {
         return new NetworkConcreteBuilder();
     }
@@ -265,6 +268,11 @@ public class NeutronNetwork implements Network {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public String getQosPolicyId() {
+        return qosPolicyId;
+    }
+
     @Override
     public String toString() {
         return new ToStringHelper(this)

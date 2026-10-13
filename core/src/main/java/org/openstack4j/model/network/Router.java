@@ -51,4 +51,9 @@ public interface Router extends Resource, Buildable<RouterBuilder> {
     default List<Map<String, Object>> getExternalGateways() {
         return null;
     }
+
+    /** @return the project id of the router, or null */
+    default String getProjectId() {
+        return null;
+    }
 }

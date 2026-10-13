@@ -97,4 +97,9 @@ public interface Agent extends ModelEntity, Buildable<AgentBuilder> {
             return mValue;
         }
     }
+
+    /** @return the availability zone of the agent, or null */
+    default String getAvailabilityZone() {
+        return null;
+    }
 }

@@ -46,4 +46,8 @@ public interface MemberV2 extends ModelEntity, Buildable<MemberV2Builder> {
      */
     boolean isAdminStateUp();
 
+    /** @return the name of the member, or null */
+    default String getName() {
+        return null;
+    }
 }

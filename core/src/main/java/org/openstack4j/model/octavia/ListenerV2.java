@@ -78,4 +78,14 @@ public interface ListenerV2 extends ModelEntity, Buildable<ListenerV2Builder> {
      * @return The loadbalancers of the listener.
      */
     List<ListItem> getLoadBalancers();
+
+    /** @return the provisioning status of the listener, or null */
+    default LbProvisioningStatus getProvisioningStatus() {
+        return null;
+    }
+
+    /** @return the operating status of the listener, or null */
+    default LbOperatingStatus getOperatingStatus() {
+        return null;
+    }
 }

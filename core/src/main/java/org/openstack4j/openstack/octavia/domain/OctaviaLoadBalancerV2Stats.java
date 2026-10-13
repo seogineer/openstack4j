@@ -25,6 +25,9 @@ public class OctaviaLoadBalancerV2Stats implements LoadBalancerV2Stats {
     @JsonProperty("active_connections")
     private Integer activeConnections;
 
+    @JsonProperty("request_errors")
+    private Long requestErrors;
+
     /**
      * {@inheritDoc}
      */
@@ -55,6 +58,11 @@ public class OctaviaLoadBalancerV2Stats implements LoadBalancerV2Stats {
     @Override
     public Integer getActiveConnections() {
         return activeConnections;
+    }
+
+    @Override
+    public Long getRequestErrors() {
+        return requestErrors;
     }
 
     @Override

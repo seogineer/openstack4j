@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.util.ToStringHelper;
+import org.openstack4j.model.octavia.LbOperatingStatus;
+import org.openstack4j.model.octavia.LbProvisioningStatus;
 import org.openstack4j.model.octavia.LbMethod;
 import org.openstack4j.model.octavia.LbPoolV2;
 import org.openstack4j.model.octavia.Protocol;
@@ -54,6 +56,24 @@ public class OctaviaLbPoolV2 implements LbPoolV2 {
 
     @JsonProperty("healthmonitor_id")
     private String healthMonitorId;
+
+    @JsonProperty("ca_tls_container_ref")
+    private String caTlsContainerRef;
+
+    @JsonProperty("tls_ciphers")
+    private String tlsCiphers;
+
+    @JsonProperty("tls_versions")
+    private List<String> tlsVersions;
+
+    @JsonProperty(value = "loadbalancers", access = JsonProperty.Access.WRITE_ONLY)
+    private List<ListItem> loadBalancers;
+
+    @JsonProperty(value = "operating_status", access = JsonProperty.Access.WRITE_ONLY)
+    private LbOperatingStatus operatingStatus;
+
+    @JsonProperty(value = "provisioning_status", access = JsonProperty.Access.WRITE_ONLY)
+    private LbProvisioningStatus provisioningStatus;
 
     public static LbPoolV2Builder builder() {
         return new LbPoolV2ConcreteBuilder();
@@ -153,6 +173,36 @@ public class OctaviaLbPoolV2 implements LbPoolV2 {
     @Override
     public String getHealthMonitorId() {
         return healthMonitorId;
+    }
+
+    @Override
+    public String getCaTlsContainerRef() {
+        return caTlsContainerRef;
+    }
+
+    @Override
+    public List<String> getTlsVersions() {
+        return tlsVersions;
+    }
+
+    @Override
+    public String getTlsCiphers() {
+        return tlsCiphers;
+    }
+
+    @Override
+    public List<ListItem> getLoadBalancers() {
+        return loadBalancers;
+    }
+
+    @Override
+    public LbOperatingStatus getOperatingStatus() {
+        return operatingStatus;
+    }
+
+    @Override
+    public LbProvisioningStatus getProvisioningStatus() {
+        return provisioningStatus;
     }
 
     @Override
@@ -275,6 +325,33 @@ public class OctaviaLbPoolV2 implements LbPoolV2 {
         @Override
         public LbPoolV2Builder loadbalancerId(String loadbalancerId) {
             m.loadbalancerId = loadbalancerId;
+            return this;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public LbPoolV2Builder tlsCiphers(String tlsCiphers) {
+            m.tlsCiphers = tlsCiphers;
+            return this;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public LbPoolV2Builder tlsVersions(List<String> tlsVersions) {
+            m.tlsVersions = tlsVersions;
+            return this;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public LbPoolV2Builder caTlsContainerRef(String caTlsContainerRef) {
+            m.caTlsContainerRef = caTlsContainerRef;
             return this;
         }
     }
