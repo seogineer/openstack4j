@@ -51,6 +51,9 @@ public class SimpleTenantUsageTests extends AbstractTest {
         assertTrue(json.matches("(?s).*\"state\"\\s*:\\s*\"active\".*"), json);
         assertFalse(json.contains("vmState"), json);
         assertFalse(json.contains("vm_state"), json);
+
+        String unknown = ObjectMapperSingleton.getContext(Object.class).writeValueAsString(usage.getServerUsages().get(1));
+        assertTrue(unknown.matches("(?s).*\"state\"\\s*:\\s*\"unrecognized\".*"), unknown);
     }
 
     @Override
