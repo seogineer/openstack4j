@@ -42,6 +42,37 @@ public class ComputeServiceExtensionsTests extends AbstractComputeMicroVersionTe
         }
     }
 
+    public void hypervisorSummary() throws Exception {
+        negotiate("2.100");
+        String body = "{\"hypervisors\": [{\"id\": \"c48f6247-abe4-4a24-824e-ea39e108874f\", \"hypervisor_hostname\": \"compute-1\", \"state\": \"up\", \"status\": \"enabled\"}]}";
+        respondWith(200, body);
+        respondWith(200, body);
+
+        var hypervisors = osv3().compute().hypervisors();
+        var all = hypervisors.listSummary();
+        hypervisors.listSummary(HypervisorListOptions.create().hypervisorHostnamePattern("compute").withServers(true));
+
+        String plain = takeRequest().getPath();
+        Assert.assertTrue(plain.endsWith("/os-hypervisors"), plain);
+        Assert.assertFalse(plain.contains("/detail"), plain);
+        Assert.assertEquals(all.get(0).getHypervisorHostname(), "compute-1");
+        Assert.assertEquals(all.get(0).getState(), "up");
+        String filtered = takeRequest().getPath();
+        Assert.assertTrue(filtered.contains("/os-hypervisors?"), filtered);
+        Assert.assertFalse(filtered.contains("/detail"), filtered);
+        Assert.assertTrue(filtered.contains("hypervisor_hostname_pattern=compute"), filtered);
+        Assert.assertTrue(filtered.contains("with_servers=true"), filtered);
+    }
+
+    @Test(expectedExceptions = MicroVersionException.class, expectedExceptionsMessageRegExp = ".*2\\.53.*")
+    public void hypervisorSummaryPatternNeeds253() throws Exception {
+        try {
+            osv3().compute().hypervisors().listSummary(HypervisorListOptions.create().hypervisorHostnamePattern("c"));
+        } finally {
+            assertNoMoreRequests();
+        }
+    }
+
     public void serviceUpdateDeleteAndDisableWithReason() throws Exception {
         negotiate("2.100");
         respondWith(200, "{\"service\": {\"id\": \"" + SERVICE_ID + "\", \"binary\": \"nova-compute\", \"host\": \"compute-1\", \"status\": \"disabled\", \"disabled_reason\": \"maint\", \"forced_down\": false}}");

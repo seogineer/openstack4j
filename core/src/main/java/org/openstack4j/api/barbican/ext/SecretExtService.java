@@ -47,4 +47,13 @@ public interface SecretExtService extends RestService {
     ActionResponse registerConsumer(String secretId, String service, String resourceType, String resourceId);
 
     ActionResponse removeConsumer(String secretId, String service, String resourceType, String resourceId);
+
+    /**
+     * Moves a secret to another secret store ({@code PUT /v1/secrets/{id}/secret-store/{store}}, key-manager 1.3, multiple back
+     * ends enabled). Sends {@code OpenStack-API-Version: key-manager 1.3}; a Barbican without it answers with an error (the client
+     * does not check the server version first).
+     *
+     * @param secretStoreId the store's UUID, e.g. {@link org.openstack4j.model.barbican.ext.SecretStore#getSecretStoreId()}
+     */
+    ActionResponse migrateToSecretStore(String secretId, String secretStoreId);
 }

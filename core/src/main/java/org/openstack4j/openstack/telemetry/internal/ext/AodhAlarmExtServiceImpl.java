@@ -131,7 +131,22 @@ public class AodhAlarmExtServiceImpl extends BaseTelemetryAodhServices implement
 
     @Override
     public ActionResponse deleteQuotas(String projectId) {
-        return deleteWithResponse("/quotas").param("project_id", PathSegment.validate(projectId)).execute();
+        return deleteWithResponse("/quotas/" + id(projectId)).execute();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<String, Object> capabilities() {
+        Map<String, Object> body = get(Map.class, "/capabilities").execute(propagate404());
+        return body == null ? new LinkedHashMap<>() : body;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Map<String, Object>> metrics(Map<String, String> params) {
+        Map<String, Object> body = get(Map.class, "/metrics").params(params == null ? Collections.emptyMap() : params).execute(propagate404());
+        Object list = body == null ? null : body.get("evaluation_results");
+        return list instanceof List ? (List<Map<String, Object>>) list : Collections.emptyList();
     }
 
     private static Map<String, Integer> quotas(Map<?, ?> body) {

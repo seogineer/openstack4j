@@ -53,9 +53,23 @@ public class HypervisorServiceImpl extends BaseComputeServices implements Hyperv
 
     @Override
     public List<? extends Hypervisor> list(HypervisorListOptions options) {
+        return list("/os-hypervisors/detail", options);
+    }
+
+    @Override
+    public List<? extends Hypervisor> listSummary() {
+        return get(Hypervisors.class, "/os-hypervisors").execute().getList();
+    }
+
+    @Override
+    public List<? extends Hypervisor> listSummary(HypervisorListOptions options) {
+        return list("/os-hypervisors", options);
+    }
+
+    private List<? extends Hypervisor> list(String path, HypervisorListOptions options) {
         Objects.requireNonNull(options);
         if (options.getRequiredMicroVersion() != null)
             requireMicroVersion("Hypervisor list filters " + options.toQueryParams().keySet(), MicroVersions.parse(options.getRequiredMicroVersion()));
-        return get(Hypervisors.class, "/os-hypervisors/detail").params(options.toQueryParams()).execute().getList();
+        return get(Hypervisors.class, path).params(options.toQueryParams()).execute().getList();
     }
 }

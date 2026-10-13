@@ -8,6 +8,9 @@ import org.openstack4j.model.common.ActionResponse;
 /** DNS quotas of a project ({@code /v2/quotas/{project_id}}): {@code zones}, {@code zone_recordsets}, {@code zone_records}, {@code recordset_records}, {@code api_export_size}. */
 public interface DesignateQuotaService extends RestService {
 
+    /** @return the quotas of the token's project ({@code GET /v2/quotas}) */
+    Map<String, Integer> get();
+
     /**
      * @return the project's quotas (an unknown project id gets the defaults). Another project's quotas need the
      *         {@code X-Auth-All-Projects: true} header, e.g. {@code os.headers(Map.of("X-Auth-All-Projects", "true"))};

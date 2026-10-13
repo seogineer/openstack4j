@@ -20,6 +20,9 @@ public class SecretExtServiceImpl extends BaseBarbicanExtService implements Secr
     /** Sent on consumer register/remove; Barbican without secret consumers rejects the call, there is no version check before it. */
     private static final String API_VERSION_1_1 = "key-manager 1.1";
 
+    /** Sent on secret store migration; Barbican without it rejects the call, there is no version check before it. */
+    private static final String API_VERSION_1_3 = "key-manager 1.3";
+
     private static String secret(String secretId) {
         return "/secrets/" + id(secretId);
     }
@@ -125,5 +128,10 @@ public class SecretExtServiceImpl extends BaseBarbicanExtService implements Secr
         consumer.put("resource_type", Objects.requireNonNull(resourceType, "resourceType"));
         consumer.put("resource_id", Objects.requireNonNull(resourceId, "resourceId"));
         return JsonBody.of(consumer);
+    }
+
+    @Override
+    public ActionResponse migrateToSecretStore(String secretId, String secretStoreId) {
+        return putWithResponse(secret(secretId) + "/secret-store/" + id(secretStoreId)).header("OpenStack-API-Version", API_VERSION_1_3).execute();
     }
 }
