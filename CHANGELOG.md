@@ -1,5 +1,6 @@
 ## 4.9.0
 
+- README·README.ko·connectors/README: Gradle(Kotlin/Groovy DSL) 설치 예제 추가, 설치 예제 버전을 4.9.0 으로 갱신
 - Masakari: catalog endpoint 에 버전이 없으면(`http://host:15868`) `/v1` 을 붙임(이전에는 version 문서를 받아 `Root name ('choices')` 예외). 버전·project 가 있는 endpoint(`/v1/<project>`)는 그대로
 - Mistral workflow·action·workbook 정의 생성과 code source 생성·수정·검증: `Accept: application/json, text/plain` 로 보냄(httpclient·http-connector 에서 406). 정의 스트림은 미리 읽어 길이를 정해 보내며(chunked 본문 거부 대응) 닫지 않음
 - Mistral workflow execution·action execution·task execution·cron trigger 요청이 `workflowName`/`taskExecutionId` 등 camelCase 키를 snake_case 키와 함께 보내던 문제(서버 400 "Unknown attribute")를 고침. `WorkflowExecution.getTaskExecutionId()`·`TaskExecution.getEnvironment()`·`CronTrigger.getRemainingExecutionsCount()` 가 응답 값을 읽음(이전에는 항상 null)
