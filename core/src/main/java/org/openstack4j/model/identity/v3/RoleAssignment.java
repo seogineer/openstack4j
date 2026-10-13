@@ -47,6 +47,41 @@ public interface RoleAssignment extends ModelEntity {
     String getProjectId();
 
     /**
+     * @return the role name ({@code include_names}), or null
+     */
+    default String getRoleName() {
+        return null;
+    }
+
+    /**
+     * @return the user name ({@code include_names}), or null
+     */
+    default String getUserName() {
+        return null;
+    }
+
+    /**
+     * @return the group name ({@code include_names}), or null
+     */
+    default String getGroupName() {
+        return null;
+    }
+
+    /**
+     * @return the name of the project in the assignment scope ({@code include_names}), or null
+     */
+    default String getProjectName() {
+        return null;
+    }
+
+    /**
+     * @return the name of the domain in the assignment scope (scope.domain, not the user's domain), or null
+     */
+    default String getDomainName() {
+        return null;
+    }
+
+    /**
      * @return the links of the role assignment
      */
     Map<String, String> getLinks();

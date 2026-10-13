@@ -3,6 +3,7 @@ package org.openstack4j.openstack.compute.domain.ext;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -35,7 +36,7 @@ public class ExtService implements Service {
     private String zone;
 
     @JsonProperty("forced_down")
-    private String forcedDown;
+    private Boolean forcedDown;
 
     @Override
     public String getBinary() {
@@ -85,6 +86,12 @@ public class ExtService implements Service {
      */
     @Override
     public String getForcedDown() {
+        return forcedDown == null ? null : forcedDown.toString();
+    }
+
+    @JsonIgnore
+    @Override
+    public Boolean isForcedDown() {
         return forcedDown;
     }
 

@@ -27,6 +27,16 @@ public class KeystoneRoleAssignment implements RoleAssignment {
 
     private String projectId;
 
+    private String roleName;
+
+    private String userName;
+
+    private String groupName;
+
+    private String projectName;
+
+    private String domainName;
+
     private Map<String, String> links;
 
     /**
@@ -69,30 +79,75 @@ public class KeystoneRoleAssignment implements RoleAssignment {
         return projectId;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getRoleName() {
+        return roleName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getGroupName() {
+        return groupName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getProjectName() {
+        return projectName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDomainName() {
+        return domainName;
+    }
+
     @JsonProperty("user")
     public void setUser(Map<String, Object> user) {
         userId = (String) user.get("id");
+        userName = (String) user.get("name");
     }
 
     @JsonProperty("role")
     public void setRole(Map<String, Object> role) {
         roleId = (String) role.get("id");
+        roleName = (String) role.get("name");
     }
 
     @JsonProperty("group")
     public void setGroup(Map<String, Object> group) {
         groupId = (String) group.get("id");
+        groupName = (String) group.get("name");
     }
 
     @JsonProperty("scope")
     public void setScope(Map<String, Object> group) {
-        Map<String, String> projectScope = (Map<String, String>) group.get("project");
+        Map<String, Object> projectScope = (Map<String, Object>) group.get("project");
         if (projectScope != null) {
-            projectId = projectScope.get("id");
+            projectId = (String) projectScope.get("id");
+            projectName = (String) projectScope.get("name");
         }
-        Map<String, String> domainScope = (Map<String, String>) group.get("domain");
+        Map<String, Object> domainScope = (Map<String, Object>) group.get("domain");
         if (domainScope != null) {
-            domainId = domainScope.get("id");
+            domainId = (String) domainScope.get("id");
+            domainName = (String) domainScope.get("name");
         }
     }
 
@@ -108,10 +163,15 @@ public class KeystoneRoleAssignment implements RoleAssignment {
     public String toString() {
         return new ToStringHelper(this)
                 .add("roleId", roleId)
+                .add("roleName", roleName)
                 .add("groupId", groupId)
+                .add("groupName", groupName)
                 .add("userId", userId)
+                .add("userName", userName)
                 .add("projectId", projectId)
+                .add("projectName", projectName)
                 .add("domainId", domainId)
+                .add("domainName", domainName)
                 .add("links", links)
                 .toString();
     }

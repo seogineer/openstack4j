@@ -14,6 +14,8 @@
 - Barbican `secretsExt().migrateToSecretStore(secretId, secretStoreId)`(`OpenStack-API-Version: key-manager 1.3`, 다중 백엔드, Barbican 2026.1 다음 릴리스부터), `SecretStore.getSecretStoreId()`(default; `secret_store_id` 또는 `secret_store_ref` 마지막 segment)
 - Designate `quotas().get()`: 토큰 project 의 quotas(`GET /v2/quotas`)
 - Nova `hypervisors().listSummary()`·`listSummary(HypervisorListOptions)`: `GET /os-hypervisors` 요약 목록(`list()` 는 그대로 `/detail`)
+- Nova `Service.isForcedDown()`(`forced_down`, 2.11+, `Boolean`). `getForcedDown()` 은 이전처럼 `"true"`/`"false"` 문자열
+- Keystone `roles().listRoleAssignments(projectId, includeNames)` — `include_names=true` 로 이름도 받음. `RoleAssignment.getRoleName()`·`getUserName()`·`getGroupName()`·`getProjectName()`·`getDomainName()`(scope 의 domain)
 
 ## 4.9.1
 

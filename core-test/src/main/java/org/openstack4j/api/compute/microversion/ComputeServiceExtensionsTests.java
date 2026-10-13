@@ -99,6 +99,21 @@ public class ComputeServiceExtensionsTests extends AbstractComputeMicroVersionTe
         Assert.assertTrue(deleted);
     }
 
+    public void forcedDownBoolean() throws Exception {
+        negotiate("2.100");
+        respondWith(200, "{\"services\": [{\"id\": \"s1\", \"forced_down\": true}, {\"id\": \"s2\", \"forced_down\": false}, {\"id\": \"s3\"}]}");
+
+        var services = osv3().compute().services().list();
+
+        Assert.assertTrue(takeRequest().getPath().endsWith("/os-services"));
+        Assert.assertEquals(services.get(0).getForcedDown(), "true");
+        Assert.assertEquals(services.get(1).getForcedDown(), "false");
+        Assert.assertNull(services.get(2).getForcedDown());
+        Assert.assertEquals(services.get(0).isForcedDown(), Boolean.TRUE);
+        Assert.assertEquals(services.get(1).isForcedDown(), Boolean.FALSE);
+        Assert.assertNull(services.get(2).isForcedDown());
+    }
+
     public void aggregateCacheImagesAndQuotaDefaults() throws Exception {
         negotiate("2.100");
         respondWith(202);

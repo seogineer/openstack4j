@@ -57,6 +57,14 @@ public interface Service extends ModelEntity {
     String getForcedDown();
 
     /**
+     * @return forced_down (2.11+) as a Boolean, or {@code null} when the response has no such field
+     */
+    default Boolean isForcedDown() {
+        String v = getForcedDown();
+        return v == null ? null : "true".equalsIgnoreCase(v) ? Boolean.TRUE : "false".equalsIgnoreCase(v) ? Boolean.FALSE : null;
+    }
+
+    /**
      * The status of a Nova service entity
      */
     public enum Status {
