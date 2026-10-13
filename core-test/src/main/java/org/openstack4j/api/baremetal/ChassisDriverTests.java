@@ -122,7 +122,7 @@ public class ChassisDriverTests extends AbstractBaremetalTest {
         Assert.assertThrows(NullPointerException.class, () -> drivers.vendorPassthru("ipmi", HttpMethod.POST, null, null));
         Assert.assertThrows(NullPointerException.class, () -> drivers.vendorPassthru("ipmi", null, "m", null));
         Assert.assertThrows(IllegalArgumentException.class, () -> drivers.vendorPassthru("..", HttpMethod.GET, "m", null));
-        Assert.assertNull(server.takeRequest(200, TimeUnit.MILLISECONDS));
+        Assert.assertNull(server.takeRequest(200, TimeUnit.MILLISECONDS), "unexpected extra request");
     }
 
     public void missingDriverPassthruRaises() throws Exception {
@@ -137,6 +137,9 @@ public class ChassisDriverTests extends AbstractBaremetalTest {
         var failed = drivers.vendorPassthru("nope", "m", null);
         Assert.assertFalse(failed.isSuccess());
         Assert.assertEquals(failed.getCode(), 404);
+        expect("GET", "/v1/drivers/nope/vendor_passthru/methods");
+        expect("GET", "/v1/drivers/nope/vendor_passthru?method=m");
+        Assert.assertEquals(body(expect("POST", "/v1/drivers/nope/vendor_passthru?method=m")).toString(), "{}");
     }
 
     public void driverNameIsPathEncoded() throws Exception {
