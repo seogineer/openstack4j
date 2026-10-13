@@ -49,7 +49,11 @@ public interface SnapshotExtService extends RestService {
     /** @param status e.g. {@code available}, {@code error} (2.19, admin) */
     ActionResponse resetInstanceStatus(String snapshotInstanceId, String status);
 
-    /** Grants access to a mountable snapshot (2.32; IPv6 addresses from 2.38). @return the new rule, its state is usually {@code queued_to_apply} */
+    /**
+     * Grants access to a mountable snapshot (2.32; IPv6 addresses from 2.38).
+     *
+     * @return the new rule, its state is usually {@code queued_to_apply}
+     */
     SnapshotAccess grantAccess(String snapshotId, String accessType, String accessTo);
 
     /** Removes a snapshot access rule (2.32). */
