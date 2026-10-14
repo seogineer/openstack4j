@@ -12,6 +12,25 @@ import org.openstack4j.model.manila.ext.SnapshotInstance;
 /** The 2.12+ snapshot APIs: metadata, manage/unmanage, snapshot instances and access rules. */
 public interface SnapshotExtService extends RestService {
 
+    /**
+     * {@code GET /snapshots}: id, name and links at the session microversion (floor 2.7).
+     *
+     * @param filters query parameters (share_id, status, name, name~ 2.36, project_id, all_tenants, limit, offset,
+     *                sort_key, sort_dir, metadata 2.73 ...), may be null
+     */
+    List<? extends ShareSnapshotInfo> list(Map<String, String> filters);
+
+    /**
+     * {@code GET /snapshots/detail}: all fields. {@code project_id} and {@code user_id} need a session microversion of
+     * 2.17 or higher, {@code metadata} 2.73.
+     *
+     * @param filters see {@link #list(Map)}, may be null
+     */
+    List<? extends ShareSnapshotInfo> listDetails(Map<String, String> filters);
+
+    /** @return the snapshot, or {@code null} when it does not exist (floor 2.7; see {@link #listDetails(Map)} for fields) */
+    ShareSnapshotInfo get(String snapshotId);
+
     /** @return the snapshot's metadata (2.73); a missing snapshot raises */
     Map<String, String> getMetadata(String snapshotId);
 

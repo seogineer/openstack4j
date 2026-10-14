@@ -17,6 +17,8 @@ public interface ShareSnapshotInfo extends ModelEntity {
     String getProviderLocation();
     String getProjectId();
     String getCreatedAt();
+    /** @return the user that created the snapshot (2.17+), or null */
+    default String getUserId() { return null; }
     /** @return the response fields that have no getter */
     Map<String, Object> getAttributes();
 }

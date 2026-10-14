@@ -29,6 +29,7 @@ public class ManilaShareSnapshotInfo implements ShareSnapshotInfo {
     @JsonProperty("provider_location") private String providerLocation;
     @JsonProperty("project_id") private String projectId;
     @JsonProperty("created_at") private String createdAt;
+    @JsonProperty("user_id") private String userId;
 
     @JsonIgnore
     private final Map<String, Object> attributes = new LinkedHashMap<>();
@@ -44,6 +45,7 @@ public class ManilaShareSnapshotInfo implements ShareSnapshotInfo {
     @Override public String getProviderLocation() { return providerLocation; }
     @Override public String getProjectId() { return projectId; }
     @Override public String getCreatedAt() { return createdAt; }
+    @Override public String getUserId() { return userId; }
 
     @JsonAnySetter
     public void setAttribute(String key, Object value) {
