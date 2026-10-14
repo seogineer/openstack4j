@@ -23,27 +23,6 @@ import org.openstack4j.openstack.common.ListResult;
 @JsonRootName("listener")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OctaviaListenerV2 implements ListenerV2 {
-
-    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
-    private Date createdAt;
-
-    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
-    private Date updatedAt;
-
-    @JsonProperty(value = "insert_headers", access = JsonProperty.Access.WRITE_ONLY)
-    private Map<String, String> insertHeaders;
-
-    @JsonProperty(value = "timeout_client_data", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer timeoutClientData;
-
-    @JsonProperty(value = "timeout_member_connect", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer timeoutMemberConnect;
-
-    @JsonProperty(value = "timeout_member_data", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer timeoutMemberData;
-
-    @JsonProperty(value = "timeout_tcp_inspect", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer timeoutTcpInspect;
     private static final long serialVersionUID = 1L;
 
     private String id;
@@ -96,6 +75,27 @@ public class OctaviaListenerV2 implements ListenerV2 {
 
     @JsonProperty(value = "operating_status", access = JsonProperty.Access.WRITE_ONLY)
     private LbOperatingStatus operatingStatus;
+
+    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date createdAt;
+
+    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date updatedAt;
+
+    @JsonProperty(value = "insert_headers", access = JsonProperty.Access.WRITE_ONLY)
+    private Map<String, String> insertHeaders;
+
+    @JsonProperty(value = "timeout_client_data", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer timeoutClientData;
+
+    @JsonProperty(value = "timeout_member_connect", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer timeoutMemberConnect;
+
+    @JsonProperty(value = "timeout_member_data", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer timeoutMemberData;
+
+    @JsonProperty(value = "timeout_tcp_inspect", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer timeoutTcpInspect;
 
     public static ListenerV2Builder builder() {
         return new ListenerConcreteBuilder();

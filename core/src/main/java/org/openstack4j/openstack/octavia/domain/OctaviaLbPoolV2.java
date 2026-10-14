@@ -25,15 +25,6 @@ import org.openstack4j.openstack.common.ListResult;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OctaviaLbPoolV2 implements LbPoolV2 {
 
-    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
-    private Date createdAt;
-
-    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
-    private Date updatedAt;
-
-    @JsonProperty(value = "tls_enabled", access = JsonProperty.Access.WRITE_ONLY)
-    private Boolean tlsEnabled;
-
     private String id;
 
     @JsonProperty("project_id")
@@ -84,6 +75,15 @@ public class OctaviaLbPoolV2 implements LbPoolV2 {
 
     @JsonProperty(value = "provisioning_status", access = JsonProperty.Access.WRITE_ONLY)
     private LbProvisioningStatus provisioningStatus;
+
+    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date createdAt;
+
+    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date updatedAt;
+
+    @JsonProperty(value = "tls_enabled", access = JsonProperty.Access.WRITE_ONLY)
+    private Boolean tlsEnabled;
 
     public static LbPoolV2Builder builder() {
         return new LbPoolV2ConcreteBuilder();

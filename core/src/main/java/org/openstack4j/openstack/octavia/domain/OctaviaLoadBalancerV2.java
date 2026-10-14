@@ -22,12 +22,6 @@ import org.openstack4j.openstack.common.ListResult;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OctaviaLoadBalancerV2 implements LoadBalancerV2 {
 
-    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
-    private Date createdAt;
-
-    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
-    private Date updatedAt;
-
     private String id;
 
     @JsonProperty("project_id")
@@ -70,6 +64,12 @@ public class OctaviaLoadBalancerV2 implements LoadBalancerV2 {
     private String vipPortId;
 
     private String provider;
+
+    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date createdAt;
+
+    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date updatedAt;
 
     public static LoadBalancerV2Builder builder() {
         return new LoadBalancerV2ConcreteBuilder();

@@ -22,21 +22,6 @@ import org.openstack4j.openstack.common.ListResult;
 @JsonRootName("healthmonitor")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OctaviaHealthMonitorV2 implements HealthMonitorV2 {
-
-    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
-    private Date createdAt;
-
-    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
-    private Date updatedAt;
-
-    @JsonProperty(value = "name", access = JsonProperty.Access.WRITE_ONLY)
-    private String name;
-
-    @JsonProperty(value = "operating_status", access = JsonProperty.Access.WRITE_ONLY)
-    private LbOperatingStatus operatingStatus;
-
-    @JsonProperty(value = "provisioning_status", access = JsonProperty.Access.WRITE_ONLY)
-    private LbProvisioningStatus provisioningStatus;
     private String id;
 
     @JsonProperty("project_id")
@@ -86,6 +71,21 @@ public class OctaviaHealthMonitorV2 implements HealthMonitorV2 {
 
     @JsonProperty("pool_id")
     private String poolId;
+
+    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date createdAt;
+
+    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date updatedAt;
+
+    @JsonProperty(value = "name", access = JsonProperty.Access.WRITE_ONLY)
+    private String name;
+
+    @JsonProperty(value = "operating_status", access = JsonProperty.Access.WRITE_ONLY)
+    private LbOperatingStatus operatingStatus;
+
+    @JsonProperty(value = "provisioning_status", access = JsonProperty.Access.WRITE_ONLY)
+    private LbProvisioningStatus provisioningStatus;
 
     /**
      * @return HealthMonitorV2Builder

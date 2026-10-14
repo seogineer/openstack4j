@@ -21,27 +21,6 @@ import org.openstack4j.openstack.common.ListResult;
 @JsonRootName("member")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OctaviaMemberV2 implements MemberV2 {
-
-    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
-    private Date createdAt;
-
-    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
-    private Date updatedAt;
-
-    @JsonProperty(value = "operating_status", access = JsonProperty.Access.WRITE_ONLY)
-    private LbOperatingStatus operatingStatus;
-
-    @JsonProperty(value = "provisioning_status", access = JsonProperty.Access.WRITE_ONLY)
-    private LbProvisioningStatus provisioningStatus;
-
-    @JsonProperty(value = "backup", access = JsonProperty.Access.WRITE_ONLY)
-    private Boolean backup;
-
-    @JsonProperty(value = "monitor_address", access = JsonProperty.Access.WRITE_ONLY)
-    private String monitorAddress;
-
-    @JsonProperty(value = "monitor_port", access = JsonProperty.Access.WRITE_ONLY)
-    private Integer monitorPort;
     private String id;
 
     @JsonProperty("project_id")
@@ -64,6 +43,27 @@ public class OctaviaMemberV2 implements MemberV2 {
     private boolean adminStateUp = true;
 
     private String name;
+
+    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date createdAt;
+
+    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date updatedAt;
+
+    @JsonProperty(value = "operating_status", access = JsonProperty.Access.WRITE_ONLY)
+    private LbOperatingStatus operatingStatus;
+
+    @JsonProperty(value = "provisioning_status", access = JsonProperty.Access.WRITE_ONLY)
+    private LbProvisioningStatus provisioningStatus;
+
+    @JsonProperty(value = "backup", access = JsonProperty.Access.WRITE_ONLY)
+    private Boolean backup;
+
+    @JsonProperty(value = "monitor_address", access = JsonProperty.Access.WRITE_ONLY)
+    private String monitorAddress;
+
+    @JsonProperty(value = "monitor_port", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer monitorPort;
 
     public static MemberV2Builder builder() {
         return new MemberV2ConcreteBuilder();
