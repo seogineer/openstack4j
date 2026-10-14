@@ -101,8 +101,8 @@ public class Apis {
      *
      * @return the instance HA (Masakari) services
      */
-    public static org.openstack4j.api.masakari.InstanceHaService getInstanceHaService() {
-        return get(org.openstack4j.api.masakari.InstanceHaService.class);
+    public static org.openstack4j.api.masakari.MasakariService getMasakariService() {
+        return get(org.openstack4j.api.masakari.MasakariService.class);
     }
 
     /**
@@ -110,8 +110,8 @@ public class Apis {
      *
      * @return the reservation (Blazar) services
      */
-    public static org.openstack4j.api.blazar.ReservationService getReservationService() {
-        return get(org.openstack4j.api.blazar.ReservationService.class);
+    public static org.openstack4j.api.blazar.BlazarService getBlazarService() {
+        return get(org.openstack4j.api.blazar.BlazarService.class);
     }
 
     /**
@@ -119,8 +119,8 @@ public class Apis {
      *
      * @return the rating (CloudKitty) services
      */
-    public static org.openstack4j.api.cloudkitty.RatingService getRatingService() {
-        return get(org.openstack4j.api.cloudkitty.RatingService.class);
+    public static org.openstack4j.api.cloudkitty.CloudKittyService getCloudKittyService() {
+        return get(org.openstack4j.api.cloudkitty.CloudKittyService.class);
     }
 
     /**
@@ -128,8 +128,8 @@ public class Apis {
      *
      * @return the accelerator (Cyborg) services
      */
-    public static org.openstack4j.api.cyborg.AcceleratorService getAcceleratorService() {
-        return get(org.openstack4j.api.cyborg.AcceleratorService.class);
+    public static org.openstack4j.api.cyborg.CyborgService getCyborgService() {
+        return get(org.openstack4j.api.cyborg.CyborgService.class);
     }
 
     /**
@@ -137,8 +137,8 @@ public class Apis {
      *
      * @return the messaging (Zaqar) services
      */
-    public static org.openstack4j.api.zaqar.MessagingService getMessagingService() {
-        return get(org.openstack4j.api.zaqar.MessagingService.class);
+    public static org.openstack4j.api.zaqar.ZaqarService getZaqarService() {
+        return get(org.openstack4j.api.zaqar.ZaqarService.class);
     }
 
     /**
@@ -146,8 +146,8 @@ public class Apis {
      *
      * @return the registration (Adjutant) services
      */
-    public static org.openstack4j.api.adjutant.RegistrationService getRegistrationService() {
-        return get(org.openstack4j.api.adjutant.RegistrationService.class);
+    public static org.openstack4j.api.adjutant.AdjutantService getAdjutantService() {
+        return get(org.openstack4j.api.adjutant.AdjutantService.class);
     }
 
     /**
@@ -155,8 +155,8 @@ public class Apis {
      *
      * @return the resource optimization (Watcher) services
      */
-    public static org.openstack4j.api.watcher.OptimizationService getOptimizationService() {
-        return get(org.openstack4j.api.watcher.OptimizationService.class);
+    public static org.openstack4j.api.watcher.WatcherService getWatcherService() {
+        return get(org.openstack4j.api.watcher.WatcherService.class);
     }
 
     /**
@@ -164,8 +164,8 @@ public class Apis {
      *
      * @return the application container (Zun) services
      */
-    public static org.openstack4j.api.zun.ContainerAppService getContainerAppService() {
-        return get(org.openstack4j.api.zun.ContainerAppService.class);
+    public static org.openstack4j.api.zun.ZunService getZunService() {
+        return get(org.openstack4j.api.zun.ZunService.class);
     }
 
     /**
@@ -173,8 +173,8 @@ public class Apis {
      *
      * @return the bare metal services
      */
-    public static org.openstack4j.api.ironic.BaremetalService getBaremetalService() {
-        return get(org.openstack4j.api.ironic.BaremetalService.class);
+    public static org.openstack4j.api.ironic.IronicService getIronicService() {
+        return get(org.openstack4j.api.ironic.IronicService.class);
     }
 
     /**

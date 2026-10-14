@@ -9,15 +9,15 @@ import org.openstack4j.model.ironic.options.NodeProvision;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-@Test(suiteName = "Baremetal/NodeManagement")
-public class NodeManagementTests extends AbstractBaremetalTest {
+@Test(suiteName = "Ironic/NodeManagement")
+public class NodeManagementTests extends AbstractIronicTest {
 
     private static final String STATES = "{\"console_enabled\": false, \"last_error\": null, \"power_state\": \"power off\", \"provision_state\": \"available\","
             + " \"provision_updated_at\": \"2016-08-18T22:28:49.946416+00:00\", \"raid_config\": {}, \"target_power_state\": null, \"target_provision_state\": null,"
             + " \"target_raid_config\": {}, \"boot_mode\": \"uefi\", \"secure_boot\": true}";
 
     private NodeService nodes() {
-        return osv3().baremetal().nodes();
+        return osv3().ironic().nodes();
     }
 
     public void statesAndStateChanges() throws Exception {

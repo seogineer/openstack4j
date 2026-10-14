@@ -140,64 +140,64 @@ public abstract class OSClientSession<R, T extends OSClient<T>> implements Endpo
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.masakari.InstanceHaService instanceHa() {
-        return Apis.getInstanceHaService();
+    public org.openstack4j.api.masakari.MasakariService masakari() {
+        return Apis.getMasakariService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.blazar.ReservationService reservation() {
-        return Apis.getReservationService();
+    public org.openstack4j.api.blazar.BlazarService blazar() {
+        return Apis.getBlazarService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.cloudkitty.RatingService rating() {
-        return Apis.getRatingService();
+    public org.openstack4j.api.cloudkitty.CloudKittyService cloudkitty() {
+        return Apis.getCloudKittyService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.cyborg.AcceleratorService accelerator() {
-        return Apis.getAcceleratorService();
+    public org.openstack4j.api.cyborg.CyborgService cyborg() {
+        return Apis.getCyborgService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.zaqar.MessagingService messaging() {
-        return Apis.getMessagingService();
+    public org.openstack4j.api.zaqar.ZaqarService zaqar() {
+        return Apis.getZaqarService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.adjutant.RegistrationService registration() {
-        return Apis.getRegistrationService();
+    public org.openstack4j.api.adjutant.AdjutantService adjutant() {
+        return Apis.getAdjutantService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.watcher.OptimizationService optimization() {
-        return Apis.getOptimizationService();
+    public org.openstack4j.api.watcher.WatcherService watcher() {
+        return Apis.getWatcherService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.zun.ContainerAppService containerApp() {
-        return Apis.getContainerAppService();
+    public org.openstack4j.api.zun.ZunService zun() {
+        return Apis.getZunService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.ironic.BaremetalService baremetal() {
-        return Apis.getBaremetalService();
+    public org.openstack4j.api.ironic.IronicService ironic() {
+        return Apis.getIronicService();
     }
 
     /**

@@ -10,7 +10,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.ironic.domain.IronicDriver;
 import org.openstack4j.openstack.ironic.domain.IronicDriver.IronicDriverList;
 
-public class DriverServiceImpl extends BaseBaremetalServices implements DriverService {
+public class DriverServiceImpl extends BaseIronicServices implements DriverService {
 
     private static String driver(String driverName) {
         return "/drivers/" + id(driverName);

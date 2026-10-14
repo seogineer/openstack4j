@@ -11,7 +11,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.ironic.domain.IronicAllocation;
 import org.openstack4j.openstack.ironic.domain.IronicAllocation.IronicAllocationList;
 
-public class AllocationServiceImpl extends BaseBaremetalServices implements AllocationService {
+public class AllocationServiceImpl extends BaseIronicServices implements AllocationService {
 
     @Override
     public List<? extends Allocation> list() {

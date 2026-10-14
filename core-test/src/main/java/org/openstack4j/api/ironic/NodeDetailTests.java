@@ -9,11 +9,11 @@ import org.openstack4j.core.transport.HttpMethod;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-@Test(suiteName = "Baremetal/NodeDetails")
-public class NodeDetailTests extends AbstractBaremetalTest {
+@Test(suiteName = "Ironic/NodeDetails")
+public class NodeDetailTests extends AbstractIronicTest {
 
     private NodeService nodes() {
-        return osv3().baremetal().nodes();
+        return osv3().ironic().nodes();
     }
 
     public void biosFirmwareHistoryInventoryChildren() throws Exception {

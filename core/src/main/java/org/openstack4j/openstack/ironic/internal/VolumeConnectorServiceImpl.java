@@ -11,7 +11,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.ironic.domain.IronicVolumeConnector;
 import org.openstack4j.openstack.ironic.domain.IronicVolumeConnector.IronicVolumeConnectorList;
 
-public class VolumeConnectorServiceImpl extends BaseBaremetalServices implements VolumeConnectorService {
+public class VolumeConnectorServiceImpl extends BaseIronicServices implements VolumeConnectorService {
 
     @Override
     public List<? extends VolumeConnector> list() {

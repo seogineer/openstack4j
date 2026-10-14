@@ -7,11 +7,11 @@ import org.openstack4j.api.ironic.NodeService;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-@Test(suiteName = "Baremetal/NodeTraitsVifs")
-public class NodeTraitVifTests extends AbstractBaremetalTest {
+@Test(suiteName = "Ironic/NodeTraitsVifs")
+public class NodeTraitVifTests extends AbstractIronicTest {
 
     private NodeService nodes() {
-        return osv3().baremetal().nodes();
+        return osv3().ironic().nodes();
     }
 
     public void traits() throws Exception {

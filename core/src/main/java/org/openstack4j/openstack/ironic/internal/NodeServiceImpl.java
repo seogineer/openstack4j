@@ -24,7 +24,7 @@ import org.openstack4j.openstack.ironic.domain.IronicNodeStates;
 import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 
-public class NodeServiceImpl extends BaseBaremetalServices implements NodeService {
+public class NodeServiceImpl extends BaseIronicServices implements NodeService {
 
     @Override
     public List<? extends Node> list() {
