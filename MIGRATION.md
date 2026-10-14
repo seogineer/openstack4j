@@ -207,3 +207,5 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - 응답 필드 getter 가 `default` 메서드로 추가되어 그대로 컴파일됩니다: Neutron `Router`·`ExternalGateway`·`NetFloatingIP`. 이 인터페이스를 직접 구현한 클래스는 새 getter 가 `null` 을 돌려줍니다. 응답에서 읽은 객체를 생성·수정 요청에 넘길 때 본문은 이전과 같습니다.
 - 응답 필드 getter 가 `default` 메서드로 추가되어 그대로 컴파일됩니다: Neutron `Network`·`Port`·`Agent`·`NetQosPolicy`·`NetworkIPAvailability`·`SubnetIPAvailability`. 이 인터페이스를 직접 구현한 클래스는 새 getter 가 `null` 을 돌려줍니다. 응답에서 읽은 객체를 생성·수정 요청에 넘길 때 본문은 이전과 같습니다.
 - 응답 필드 getter 가 `default` 메서드로 추가되어 그대로 컴파일됩니다: Octavia `LoadBalancerV2`·`ListenerV2`·`LbPoolV2`·`MemberV2`·`HealthMonitorV2`. 이 인터페이스를 직접 구현한 클래스는 새 getter 가 `null` 을 돌려줍니다. 응답에서 읽은 객체를 생성 요청에 넘길 때 본문은 이전과 같습니다.
+- 응답 필드 getter 가 `default` 메서드로 추가되어 그대로 컴파일됩니다: compute `QuotaSet`, Heat `Resource`·`Stack`, `SwiftContainer`. 이 인터페이스를 직접 구현한 클래스는 새 getter 가 `null` 을 돌려줍니다.
+- Heat `resources().show()`(동작 변경): 이제 값이 채워진 `Resource` 를 돌려줍니다(이전에는 모든 필드가 `null`). null 여부로 분기하던 코드는 결과가 달라지며, `resource` 루트 없이 응답하는 mock 은 역직렬화 예외가 납니다.

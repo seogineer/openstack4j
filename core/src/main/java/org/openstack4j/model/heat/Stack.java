@@ -108,4 +108,9 @@ public interface Stack extends ModelEntity {
      * @return The list of tags, separated by a comma.
      */
     List<String> getTags();
+
+    /** @return whether rollback on failure is disabled; filled by stack show, null in lists */
+    default Boolean getDisableRollback() {
+        return null;
+    }
 }

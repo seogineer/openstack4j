@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.storage.object.domain;
 
+import java.util.Date;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -26,6 +27,9 @@ public class SwiftContainerImpl implements SwiftContainer {
     @JsonProperty("bytes")
     private long totalSize;
 
+    @JsonProperty(value = "last_modified", access = JsonProperty.Access.WRITE_ONLY)
+    private Date lastModified;
+
     @Override
     public String getName() {
         return name;
@@ -39,6 +43,11 @@ public class SwiftContainerImpl implements SwiftContainer {
     @Override
     public long getTotalSize() {
         return totalSize;
+    }
+
+    @Override
+    public Date getLastModified() {
+        return lastModified;
     }
 
     @Override

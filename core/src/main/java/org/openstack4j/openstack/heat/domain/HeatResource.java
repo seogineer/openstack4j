@@ -2,8 +2,10 @@ package org.openstack4j.openstack.heat.domain;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.model.common.Link;
 import org.openstack4j.model.heat.Resource;
 import org.openstack4j.openstack.common.GenericLink;
@@ -15,6 +17,7 @@ import org.openstack4j.openstack.common.ListResult;
  *
  * @author Octopus Zhang
  */
+@JsonRootName("resource")
 public class HeatResource implements Resource {
     private static final long serialVersionUID = 1L;
 
@@ -35,6 +38,10 @@ public class HeatResource implements Resource {
     private String physicalResourceId;
     @JsonProperty("required_by")
     private List<String> requiredBy;
+    @JsonProperty(value = "creation_time", access = JsonProperty.Access.WRITE_ONLY)
+    private Date creationTime;
+    @JsonProperty(value = "attributes", access = JsonProperty.Access.WRITE_ONLY)
+    private Map<String, Object> attributes;
 
     @Override
     public List<? extends Link> getLinks() {
@@ -79,6 +86,16 @@ public class HeatResource implements Resource {
     @Override
     public List<String> getRequiredBy() {
         return requiredBy;
+    }
+
+    @Override
+    public Date getCreationTime() {
+        return creationTime;
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
     }
 
     /**

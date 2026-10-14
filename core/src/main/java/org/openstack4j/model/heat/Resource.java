@@ -2,6 +2,7 @@ package org.openstack4j.model.heat;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.openstack4j.model.ModelEntity;
 import org.openstack4j.model.common.Link;
@@ -79,4 +80,14 @@ public interface Resource extends ModelEntity {
      */
     List<String> getRequiredBy();
 
+
+    /** @return the creation time of the resource, or null */
+    default Date getCreationTime() {
+        return null;
+    }
+
+    /** @return the resource attributes; filled by resource show (or a list with with_attr), otherwise null */
+    default Map<String, Object> getAttributes() {
+        return null;
+    }
 }
