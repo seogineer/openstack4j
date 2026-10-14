@@ -160,4 +160,20 @@ public class ActionResponseStatusTests extends AbstractTest {
         assertFalse(ar.isSuccess());
         assertEquals(ar.getCode(), 400);
     }
+
+    @Test
+    public void internalServerErrorEmptyBody() throws Exception {
+        respondWith(500, "");
+        ActionResponse ar = pause();
+        assertFalse(ar.isSuccess());
+        assertEquals(ar.getCode(), 500);
+    }
+
+    @Test
+    public void conflictEmptyBody() throws Exception {
+        respondWith(409, "");
+        ActionResponse ar = pause();
+        assertFalse(ar.isSuccess());
+        assertEquals(ar.getCode(), 409);
+    }
 }

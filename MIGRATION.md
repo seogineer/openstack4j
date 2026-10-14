@@ -198,4 +198,4 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 
 컴파일에 영향을 주는 변경(추상 메서드 추가)과 요청·응답 동작이 바뀌는 변경은 아래와 같습니다.
 
-- `ActionResponse` 를 돌려주는 메서드 중 내부적으로 `ToActionResponseFunction` 을 쓰는 것(compute 서버 액션·`detachVolume`·`attachVolumeAsync`, Octavia·neutron-lbaas, Manila legacy, Tacker, Heat `update`·`patchUpdate`, Swift container `delete` 등)은 410~499·501~599 응답을 이제 실패(`isSuccess()==false`, `getCode()`=응답 status)로 돌려줍니다(동작 변경). 이전에는 409·500 과 400~408 만 실패였고 나머지는 code 200 성공이었습니다. 오류 본문이 비었거나 JSON 이 아닐 때 커넥터에 따라 던지던 `ClientResponseException` 도 이제 같은 status 의 실패 응답이 됩니다.
+- `ActionResponse` 를 돌려주는 메서드 중 내부적으로 `ToActionResponseFunction` 을 쓰는 것(compute 서버 액션·`detachVolume`·`attachVolumeAsync`, Octavia·neutron-lbaas, Manila legacy, Tacker, Heat `update`·`patchUpdate`, Swift container `delete` 등)은 410~499·501~599 응답을 이제 실패(`isSuccess()==false`, `getCode()`=응답 status)로 돌려줍니다(동작 변경). 이전에는 409·500 과 400~408 만 실패였고 나머지는 code 200 성공이었습니다. 본문이 비었거나 JSON 이 아닌 오류는 이전의 `ClientResponseException` 대신 같은 status 의 실패 응답이 되며, JSON 이 왔지만 매핑되지 않는 409·500 은 기존 fallback(code 409)을 유지합니다.

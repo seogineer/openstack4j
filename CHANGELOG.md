@@ -1,6 +1,6 @@
 ## 4.12.0
 
-- 응답을 `ActionResponse` 로 돌려주는 compute 서버 액션·detach, Octavia·neutron-lbaas·FWaaS v1, Manila(legacy), Tacker, Heat stack update·patchUpdate, Swift container delete 가 410~499·501~599 응답(예: 429, 501, 502, 503)을 성공으로 돌려주던 문제를 고침 — 이제 `isSuccess()==false` 이고 `getCode()` 는 응답 status. 오류 본문이 비었거나 JSON 이 아니면 커넥터에 따라 `ClientResponseException` 이 나던 경우도 실패 응답으로 돌려줌
+- 응답을 `ActionResponse` 로 돌려주는 compute 서버 액션·detach, Octavia·neutron-lbaas·FWaaS v1, Manila(legacy), Tacker, Heat stack update·patchUpdate, Swift container delete 가 410~499·501~599 응답(예: 429, 501, 502, 503)을 성공으로 돌려주던 문제를 고침 — 이제 `isSuccess()==false` 이고 `getCode()` 는 응답 status. 본문이 비었거나 JSON 이 아닌 오류는 이전의 `ClientResponseException` 대신 같은 status 의 실패 응답으로 돌려줌(JSON 이 왔지만 매핑되지 않는 409·500 은 기존 fallback, code 409 유지)
 
 ## 4.11.0
 

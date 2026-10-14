@@ -29,7 +29,13 @@ public class ToActionResponseFunction implements Function<HttpResponse, ActionRe
         try {
             int status = response.getStatus();
             if (status == 409 || status == 500) {
-                ActionResponse ar = parse(response, true);
+                ActionResponse ar;
+                try {
+                    ar = ResponseToActionResponse.INSTANCE.apply(response, true);
+                } catch (RuntimeException e) {
+                    LOG.debug("Unreadable error body for status {}: {}", status, e.getMessage());
+                    return ActionResponse.actionFailed(String.format("Status: %d, Reason: %s", status, response.getStatusMessage()), status);
+                }
                 if (ar != null) {
                     return ar;
                 }
