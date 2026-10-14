@@ -238,6 +238,24 @@ public interface ServerService {
     VolumeAttachment attachVolume(String serverId, String volumeId, String device);
 
     /**
+     * {@code GET /servers/{id}/os-volume_attachments}: the volumes attached to the server (Nova's default page,
+     * osapi_max_limit). From 2.89 {@code getId()} is null; use {@code getVolumeId()}/{@code getAttachmentId()}.
+     *
+     * @param serverId the server identifier
+     * @return the volume attachments
+     */
+    List<? extends VolumeAttachment> listVolumeAttachments(String serverId);
+
+    /**
+     * {@code GET /servers/{id}/os-volume_attachments/{volume_id}}.
+     *
+     * @param serverId the server identifier
+     * @param volumeId the volume identifier
+     * @return the attachment, or null when the volume is not attached
+     */
+    VolumeAttachment getVolumeAttachment(String serverId, String volumeId);
+
+    /**
      * Changes the admin/root password on the server
      *
      * @param serverId the server identifier
@@ -314,13 +332,23 @@ public interface ServerService {
     Map<String, String> getMetadata(String serverId);
 
     /**
-     * Creates or replaces metadata items for the specified server
+     * Replaces all metadata of the specified server ({@code PUT}); keys not given are removed.
+     * Use {@link #setMetadata} to merge.
      *
      * @param serverId the server identifier
-     * @param metadata the metadata to create or update
+     * @param metadata the metadata to set
      * @return Map of metadata as the current state on the server
      */
     Map<String, String> updateMetadata(String serverId, Map<String, String> metadata);
+
+    /**
+     * Adds or updates metadata keys ({@code POST /servers/{id}/metadata}); keys not given are kept.
+     *
+     * @param serverId the server identifier
+     * @param metadata the metadata keys to add or update
+     * @return all metadata of the server
+     */
+    Map<String, String> setMetadata(String serverId, Map<String, String> metadata);
 
     /**
      * Removes the specified metadata item via the specified {@code key} and {@code serverId}

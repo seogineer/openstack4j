@@ -1,11 +1,14 @@
 package org.openstack4j.openstack.compute.internal.ext;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.openstack4j.api.compute.ext.InterfaceService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.InterfaceAttachment;
+import org.openstack4j.openstack.compute.domain.JsonBody;
 import org.openstack4j.openstack.compute.domain.NovaInterfaceAttachment;
 import org.openstack4j.openstack.compute.domain.NovaInterfaceAttachment.NovaInterfaceAttachments;
 import org.openstack4j.openstack.compute.internal.BaseComputeServices;
@@ -23,6 +26,20 @@ public class InterfaceServiceImpl extends BaseComputeServices implements Interfa
         Objects.requireNonNull(portId, "portId");
         return post(NovaInterfaceAttachment.class, uri("/servers/%s/os-interface", serverId))
                 .entity(new NovaInterfaceAttachment(portId))
+                .execute();
+    }
+
+    @Override
+    public InterfaceAttachment attachToNetwork(String serverId, String netId, String ipAddress) {
+        Objects.requireNonNull(serverId, "serverId");
+        Objects.requireNonNull(netId, "netId");
+        Map<String, Object> attachment = new LinkedHashMap<>();
+        attachment.put("net_id", netId);
+        if (ipAddress != null) {
+            attachment.put("fixed_ips", List.of(Map.of("ip_address", ipAddress)));
+        }
+        return post(NovaInterfaceAttachment.class, uri("/servers/%s/os-interface", serverId))
+                .entity(JsonBody.of("interfaceAttachment", attachment))
                 .execute();
     }
 

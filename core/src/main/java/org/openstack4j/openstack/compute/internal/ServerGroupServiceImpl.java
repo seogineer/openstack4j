@@ -10,6 +10,7 @@ import java.util.Objects;
 import org.openstack4j.api.compute.ServerGroupService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.ServerGroup;
+import org.openstack4j.model.compute.ServerGroupListOptions;
 import org.openstack4j.openstack.compute.domain.NovaServerGroup;
 import org.openstack4j.openstack.compute.domain.NovaServerGroup.ServerGroups;
 
@@ -18,6 +19,11 @@ public class ServerGroupServiceImpl extends BaseComputeServices implements Serve
     @Override
     public List<? extends ServerGroup> list() {
         return get(ServerGroups.class, uri("/os-server-groups")).execute().getList();
+    }
+
+    @Override
+    public List<? extends ServerGroup> list(ServerGroupListOptions options) {
+        return get(ServerGroups.class, uri("/os-server-groups")).params(Objects.requireNonNull(options).toQueryParams()).execute().getList();
     }
 
     @Override
