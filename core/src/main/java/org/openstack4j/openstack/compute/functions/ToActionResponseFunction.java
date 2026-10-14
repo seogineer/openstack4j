@@ -27,24 +27,39 @@ public class ToActionResponseFunction implements Function<HttpResponse, ActionRe
 
     public ActionResponse apply(HttpResponse response, String action) {
         try {
-            if (response.getStatus() == 409 || response.getStatus() == 500) {
-                ActionResponse ar = ResponseToActionResponse.INSTANCE.apply(response, true);
+            int status = response.getStatus();
+            if (status == 409 || status == 500) {
+                ActionResponse ar = parse(response, true);
                 if (ar != null) {
                     return ar;
                 }
 
-                LOG.error("{}, {}", response.getStatus(), response.getStatusMessage());
+                LOG.error("{}, {}", status, response.getStatusMessage());
                 if (action == null) {
                     return ActionResponse.actionFailed("Instance currently is in build state", 409);
                 }
                 return ActionResponse.actionFailed(String.format(FAILED_MSG, action, action), 409);
             }
-            if (response.getStatus() >= 400 && response.getStatus() < 409) {
-                return ResponseToActionResponse.INSTANCE.apply(response);
+            if (status >= 400) {
+                ActionResponse ar = parse(response, false);
+                return ar != null ? ar
+                        : ActionResponse.actionFailed(String.format("Status: %d, Reason: %s", status, response.getStatusMessage()), status);
             }
             return ActionResponse.actionSuccess();
         } finally {
             HttpEntityHandler.closeQuietly(response);
+        }
+    }
+
+    /**
+     * The error mapped from the body, or null when the body is empty or not JSON (connectors throw on such bodies).
+     */
+    private static ActionResponse parse(HttpResponse response, boolean returnNullIfNotMapped) {
+        try {
+            return ResponseToActionResponse.INSTANCE.apply(response, returnNullIfNotMapped);
+        } catch (RuntimeException e) {
+            LOG.debug("Unreadable error body for status {}: {}", response.getStatus(), e.getMessage());
+            return null;
         }
     }
 
