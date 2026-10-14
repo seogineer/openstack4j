@@ -1,6 +1,7 @@
 package org.openstack4j.api.networking;
 
 import java.util.List;
+import java.util.Map;
 
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
@@ -19,6 +20,14 @@ public interface SubnetService extends RestService {
      * @return the list of subnets or empty
      */
     List<? extends Subnet> list();
+
+    /**
+     * Lists subnets that match the given query parameters. A key is sent once (multi-value filters are not supported).
+     *
+     * @param filteringParams query parameters such as network_id, cidr, ip_version, name, tags; may be null
+     * @return the list of subnets or empty
+     */
+    List<? extends Subnet> list(Map<String, String> filteringParams);
 
     /**
      * Gets a Subnet by ID

@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.openstack4j.api.identity.v3.CredentialService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Credential;
+import org.openstack4j.model.identity.v3.options.CredentialListOptions;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneCredential;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneCredential.Credentials;
 
@@ -44,6 +45,11 @@ public class CredentialServiceImpl extends BaseIdentityServices implements Crede
     public ActionResponse delete(String credentialId) {
         Objects.requireNonNull(credentialId);
         return deleteWithResponse(PATH_CREDENTIALS, "/", credentialId).execute();
+    }
+
+    @Override
+    public List<? extends Credential> list(CredentialListOptions options) {
+        return get(Credentials.class, uri(PATH_CREDENTIALS)).params(Objects.requireNonNull(options).getOptions()).execute().getList();
     }
 
     @Override

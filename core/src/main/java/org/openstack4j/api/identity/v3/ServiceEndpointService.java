@@ -8,6 +8,8 @@ import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Endpoint;
 import org.openstack4j.model.identity.v3.Service;
+import org.openstack4j.model.identity.v3.options.EndpointListOptions;
+import org.openstack4j.model.identity.v3.options.ServiceListOptions;
 
 /**
  * Identity V3 ServiceManager
@@ -64,6 +66,14 @@ public interface ServiceEndpointService extends RestService {
      */
     List<? extends Service> list();
 
+    /**
+     * Lists the services that match the options.
+     *
+     * @param options the filters ({@code type}, {@code name})
+     * @return the list of services
+     */
+    List<? extends Service> list(ServiceListOptions options);
+
 
     /**
      * Lists available endpoints
@@ -71,6 +81,14 @@ public interface ServiceEndpointService extends RestService {
      * @return the list of endpoints
      */
     List<? extends Endpoint> listEndpoints();
+
+    /**
+     * Lists the endpoints that match the options.
+     *
+     * @param options the filters ({@code interface}, {@code service_id}, {@code region_id})
+     * @return the list of endpoints
+     */
+    List<? extends Endpoint> listEndpoints(EndpointListOptions options);
 
     /**
      * Creates a new endpoint

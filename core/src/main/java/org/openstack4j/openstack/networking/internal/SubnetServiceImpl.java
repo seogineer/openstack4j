@@ -1,6 +1,8 @@
 package org.openstack4j.openstack.networking.internal;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.openstack4j.api.networking.SubnetService;
@@ -23,6 +25,15 @@ public class SubnetServiceImpl extends BaseNetworkingServices implements SubnetS
     @Override
     public List<? extends Subnet> list() {
         return get(Subnets.class, uri("/subnets")).execute().getList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<? extends Subnet> list(Map<String, String> filteringParams) {
+        return get(Subnets.class, uri("/subnets"))
+                .params(filteringParams == null ? Collections.emptyMap() : filteringParams).execute().getList();
     }
 
     /**
