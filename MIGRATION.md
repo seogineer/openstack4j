@@ -193,3 +193,9 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - `RoleService`(identity v3)에 추상 메서드 `listRoleAssignments(RoleAssignmentListOptions)` 가 추가되었습니다. `listRoleAssignments(null)` 처럼 `null` 리터럴을 넘기던 코드는 모호해져 컴파일되지 않습니다 — `(String) null` 로 캐스트하세요. 바이너리 호환은 유지됩니다.
 - Cinder `Volume` 에는 `default` getter `getImageMetadata()` 만 추가되어 그대로 컴파일됩니다.
 - Neutron `Agent.Type` 에 상수가 늘어 `default` 없는 switch 표현식은 컴파일되지 않을 수 있고, 이전에 `UNRECOGNIZED` 로 읽히던 `agent_type` 은 새 상수로 읽힙니다.
+
+# 4.11 → 4.12
+
+컴파일에 영향을 주는 변경(추상 메서드 추가)과 요청·응답 동작이 바뀌는 변경은 아래와 같습니다.
+
+- `ActionResponse` 를 돌려주는 메서드 중 내부적으로 `ToActionResponseFunction` 을 쓰는 것(compute 서버 액션·`detachVolume`·`attachVolumeAsync`, Octavia·neutron-lbaas, Manila legacy, Tacker, Heat `update`·`patchUpdate`, Swift container `delete` 등)은 410~499·501~599 응답을 이제 실패(`isSuccess()==false`, `getCode()`=응답 status)로 돌려줍니다(동작 변경). 이전에는 409·500 과 400~408 만 실패였고 나머지는 code 200 성공이었습니다. 본문이 비었거나 JSON 이 아닌 오류는 이전의 `ClientResponseException` 대신 같은 status 의 실패 응답이 되며, JSON 이 왔지만 매핑되지 않는 409·500 은 기존 fallback(code 409)을 유지합니다.
