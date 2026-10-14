@@ -5,6 +5,7 @@
 - Manila `snapshotsExt().list(filters)`·`listDetails(filters)`·`get(id)`, `sharesExt().listShareInstances(filters)`·`getShareInstance(id)` — legacy `shareSnapshots()`·`shareInstances()`(2.6 고정, 필터 없음)와 달리 세션 microversion(꺼져 있으면 2.7). `ShareSnapshotInfo.getUserId()`(2.17+)
 - Manila `shareNetworksExt()` — `list(filters)`·`listDetails(filters)`·`get(id)` 를 세션 microversion(꺼져 있으면 2.7)으로, `ShareNetworkInfo` 는 `share_network_subnets`(2.51)·`status`·`security_service_update_support`(2.63)·`network_allocation_update_support`(2.70). `shareTypesExt()` — `list(filters)`(`is_public=true|false|all`, admin 만 적용)·`get(id)`, `ShareTypeInfo` 는 `share_type_access:is_public`·`description`(2.41)·`is_default`(2.46)·`extra_specs`·`required_extra_specs`. legacy `shareNetworks()`·`shareTypes()` 는 그대로 2.6
 - Neutron `subnet().list(filters)`, `agent().list(filters)`. Glance `metadefs().getNamespace(namespace, resourceType)`(`resource_type` 로 property 이름 prefix; 전체 정의 생성은 기존 `MetadefNamespaceOptions.attribute(...)` 로 가능 — javadoc 예시). Magnum `showClustertemplate(id)`. Keystone `serviceEndpoints().list(ServiceListOptions)`(`type`·`name`), `serviceEndpoints().listEndpoints(EndpointListOptions)`(`interface`·`service_id`·`region_id`), `credentials().list(CredentialListOptions)`(`user_id`·`type`)
+- Neutron QoS 정책 수정: `NetQosPolicyUpdate` 는 interface 만 있고 구현체·진입점이 없어 객체를 만들 수 없었음 — `Builders.netQosPolicyUpdate()`(`id`·`name`·`description`·`shared`·`isDefault`)와 구현체 `NeutronNetQosPolicyUpdate` 추가, `netQosPolicy().update(...)` 는 값을 설정한 필드만 `PUT /qos/policies/{id}` 로 전송
 
 ## 4.11.0
 
