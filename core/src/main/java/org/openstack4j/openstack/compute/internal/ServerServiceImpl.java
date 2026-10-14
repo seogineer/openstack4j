@@ -398,6 +398,25 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
      * {@inheritDoc}
      */
     @Override
+    public List<? extends VolumeAttachment> listVolumeAttachments(String serverId) {
+        Objects.requireNonNull(serverId);
+        return get(NovaVolumeAttachment.NovaVolumeAttachments.class, uri("/servers/%s/os-volume_attachments", serverId)).execute().getList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public VolumeAttachment getVolumeAttachment(String serverId, String volumeId) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(volumeId);
+        return get(NovaVolumeAttachment.class, uri("/servers/%s/os-volume_attachments/%s", serverId, volumeId)).execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ActionResponse detachVolume(String serverId, String attachmentId) {
         return ToActionResponseFunction.INSTANCE.apply(
                 delete(Void.class, uri("/servers/%s/os-volume_attachments/%s", serverId, attachmentId)).executeWithResponse()
@@ -481,6 +500,16 @@ public class ServerServiceImpl extends BaseComputeServices implements ServerServ
     public Map<String, String> getMetadata(String serverId) {
         Objects.requireNonNull(serverId);
         return get(Metadata.class, uri("/servers/%s/metadata", serverId)).execute();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, String> setMetadata(String serverId, Map<String, String> metadata) {
+        Objects.requireNonNull(serverId);
+        Objects.requireNonNull(metadata);
+        return post(Metadata.class, uri("/servers/%s/metadata", serverId)).entity(Metadata.toMetadata(metadata)).execute();
     }
 
     /**

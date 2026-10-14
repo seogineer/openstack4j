@@ -3,6 +3,9 @@ package org.openstack4j.openstack.compute.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import java.util.List;
+
+import org.openstack4j.openstack.common.ListResult;
 import org.openstack4j.util.ToStringHelper;
 import org.openstack4j.model.compute.VolumeAttachment;
 
@@ -86,6 +89,19 @@ public class NovaVolumeAttachment implements VolumeAttachment {
     @Override
     public String getVolumeId() {
         return volumeId;
+    }
+
+    public static class NovaVolumeAttachments extends ListResult<NovaVolumeAttachment> {
+
+        private static final long serialVersionUID = 1L;
+
+        @JsonProperty("volumeAttachments")
+        private List<NovaVolumeAttachment> attachments;
+
+        @Override
+        protected List<NovaVolumeAttachment> value() {
+            return attachments;
+        }
     }
 
     @Override

@@ -7,6 +7,7 @@ import java.util.List;
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.ServerGroup;
+import org.openstack4j.model.compute.ServerGroupListOptions;
 
 public interface ServerGroupService extends RestService {
 
@@ -16,6 +17,14 @@ public interface ServerGroupService extends RestService {
      * @return the list of serverGroups
      */
     List<? extends ServerGroup> list();
+
+    /**
+     * Lists server groups with the given options ({@code all_projects}, {@code limit}, {@code offset}).
+     *
+     * @param options the list options
+     * @return the list of serverGroups
+     */
+    List<? extends ServerGroup> list(ServerGroupListOptions options);
 
     /**
      * Gets the serverGroup by id

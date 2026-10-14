@@ -23,6 +23,17 @@ public interface InterfaceService extends RestService {
     InterfaceAttachment create(String serverId, String portId);
 
     /**
+     * Creates a port on a network and attaches it ({@code POST /servers/{id}/os-interface} with {@code net_id}).
+     * Nova rejects a requested IP without a network and allows one fixed IP only.
+     *
+     * @param serverId the server id
+     * @param netId the network id
+     * @param ipAddress the fixed IP to request on that network, or null to let Neutron choose ({@code fixed_ips[0].ip_address})
+     * @return the attached interface
+     */
+    InterfaceAttachment attachToNetwork(String serverId, String netId, String ipAddress);
+
+    /**
      * List the port interfaces for the specified {@code serverId}
      *
      * @param serverId the server id

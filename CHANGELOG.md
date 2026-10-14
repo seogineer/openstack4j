@@ -11,6 +11,7 @@
 - Octavia pool 수정 빌더 `tlsCiphers`·`tlsVersions`·`caTlsContainerRef`. listener `getLoadBalancers()` 가 응답의 `loadbalancers` 를 읽음(이전에는 항상 `null`; neutron-lbaas `ListenerV2` 도 같음)
 - Keystone `roles().listRoleAssignments(RoleAssignmentListOptions)` — `scope.domain.id`·`scope.system`·`user.id`·`group.id`·`role.id`·`inherited_to`·`effective`·`include_names`·`include_subtree`
 - Cinder `Volume.getImageMetadata()`(`volume_image_metadata`, 값은 문자열로 변환; 이미지가 없으면 `null`). Neutron `Agent.Type` 에 `LINUX_BRIDGE`·`METERING`·`NIC_SWITCH`·`MACVTAP`·`OFA`·`OVN_CONTROLLER`·`OVN_CONTROLLER_GATEWAY`·`OVN_METADATA`·`OVN_NEUTRON`·`BGP_DYNAMIC_ROUTING`(이전에는 `UNRECOGNIZED`)
+- Nova `servers().setMetadata(serverId, metadata)`(`POST /servers/{id}/metadata`, 기존 키 유지 병합; `updateMetadata` 는 이전처럼 PUT 교체), `servers().listVolumeAttachments(serverId)`·`getVolumeAttachment(serverId, volumeId)`, `interfaces().attachToNetwork(serverId, netId, ipAddress)`(`net_id`·`fixed_ips`), `serverGroups().list(ServerGroupListOptions)`(`all_projects`·`limit`·`offset`)
 
 ## 4.10.0
 
