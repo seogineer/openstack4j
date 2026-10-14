@@ -248,9 +248,6 @@ public class NeutronFloatingIP implements NetFloatingIP {
         return updatedAt;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getDnsName() {
         return dnsName;
@@ -271,6 +268,9 @@ public class NeutronFloatingIP implements NetFloatingIP {
         return portForwardings;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         // Report tenantId iff it differs from projectId
