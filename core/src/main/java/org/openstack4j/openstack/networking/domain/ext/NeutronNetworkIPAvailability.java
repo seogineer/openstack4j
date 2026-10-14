@@ -128,14 +128,14 @@ public class NeutronNetworkIPAvailability implements NetworkIPAvailability {
         return subnetIPAvailabilities;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Map<String, BigInteger> getIpAvailabilityDetails() {
         return ipAvailabilityDetails;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return new ToStringHelper(this)
