@@ -1,6 +1,7 @@
 ## 4.12.0
 
 - 응답을 `ActionResponse` 로 돌려주는 compute 서버 액션·detach, Octavia·neutron-lbaas·FWaaS v1, Manila(legacy), Tacker, Heat stack update·patchUpdate, Swift container delete 가 410~499·501~599 응답(예: 429, 501, 502, 503)을 성공으로 돌려주던 문제를 고침 — 이제 `isSuccess()==false` 이고 `getCode()` 는 응답 status. 본문이 비었거나 JSON 이 아닌 오류는 이전의 `ClientResponseException` 대신 같은 status 의 실패 응답으로 돌려줌(JSON 이 왔지만 매핑되지 않는 409·500 은 기존 fallback, code 409 유지)
+- Nova `servers().setMetadata(serverId, metadata)`(`POST /servers/{id}/metadata`, 기존 키 유지 병합; `updateMetadata` 는 이전처럼 PUT 교체), `servers().listVolumeAttachments(serverId)`·`getVolumeAttachment(serverId, volumeId)`, `interfaces().attachToNetwork(serverId, netId, ipAddress)`(`net_id`·`fixed_ips`), `serverGroups().list(ServerGroupListOptions)`(`all_projects`·`limit`·`offset`)
 
 ## 4.11.0
 
@@ -11,7 +12,6 @@
 - Octavia pool 수정 빌더 `tlsCiphers`·`tlsVersions`·`caTlsContainerRef`. listener `getLoadBalancers()` 가 응답의 `loadbalancers` 를 읽음(이전에는 항상 `null`; neutron-lbaas `ListenerV2` 도 같음)
 - Keystone `roles().listRoleAssignments(RoleAssignmentListOptions)` — `scope.domain.id`·`scope.system`·`user.id`·`group.id`·`role.id`·`inherited_to`·`effective`·`include_names`·`include_subtree`
 - Cinder `Volume.getImageMetadata()`(`volume_image_metadata`, 값은 문자열로 변환; 이미지가 없으면 `null`). Neutron `Agent.Type` 에 `LINUX_BRIDGE`·`METERING`·`NIC_SWITCH`·`MACVTAP`·`OFA`·`OVN_CONTROLLER`·`OVN_CONTROLLER_GATEWAY`·`OVN_METADATA`·`OVN_NEUTRON`·`BGP_DYNAMIC_ROUTING`(이전에는 `UNRECOGNIZED`)
-- Nova `servers().setMetadata(serverId, metadata)`(`POST /servers/{id}/metadata`, 기존 키 유지 병합; `updateMetadata` 는 이전처럼 PUT 교체), `servers().listVolumeAttachments(serverId)`·`getVolumeAttachment(serverId, volumeId)`, `interfaces().attachToNetwork(serverId, netId, ipAddress)`(`net_id`·`fixed_ips`), `serverGroups().list(ServerGroupListOptions)`(`all_projects`·`limit`·`offset`)
 
 ## 4.10.0
 
