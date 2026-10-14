@@ -1,6 +1,8 @@
 package org.openstack4j.openstack.octavia.domain;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -73,6 +75,27 @@ public class OctaviaListenerV2 implements ListenerV2 {
 
     @JsonProperty(value = "operating_status", access = JsonProperty.Access.WRITE_ONLY)
     private LbOperatingStatus operatingStatus;
+
+    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date createdAt;
+
+    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date updatedAt;
+
+    @JsonProperty(value = "insert_headers", access = JsonProperty.Access.WRITE_ONLY)
+    private Map<String, String> insertHeaders;
+
+    @JsonProperty(value = "timeout_client_data", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer timeoutClientData;
+
+    @JsonProperty(value = "timeout_member_connect", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer timeoutMemberConnect;
+
+    @JsonProperty(value = "timeout_member_data", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer timeoutMemberData;
+
+    @JsonProperty(value = "timeout_tcp_inspect", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer timeoutTcpInspect;
 
     public static ListenerV2Builder builder() {
         return new ListenerConcreteBuilder();
@@ -337,5 +360,40 @@ public class OctaviaListenerV2 implements ListenerV2 {
                     .add("listeners", listeners)
                     .toString();
         }
+    }
+
+    @Override
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @Override
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @Override
+    public Map<String, String> getInsertHeaders() {
+        return insertHeaders;
+    }
+
+    @Override
+    public Integer getTimeoutClientData() {
+        return timeoutClientData;
+    }
+
+    @Override
+    public Integer getTimeoutMemberConnect() {
+        return timeoutMemberConnect;
+    }
+
+    @Override
+    public Integer getTimeoutMemberData() {
+        return timeoutMemberData;
+    }
+
+    @Override
+    public Integer getTimeoutTcpInspect() {
+        return timeoutTcpInspect;
     }
 }

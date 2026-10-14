@@ -6,10 +6,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.octavia.ext.AbstractOctaviaExtTest;
+import org.openstack4j.model.octavia.HealthMonitorV2;
 import org.openstack4j.model.octavia.LbOperatingStatus;
 import org.openstack4j.model.octavia.LbPoolV2;
 import org.openstack4j.model.octavia.LbProvisioningStatus;
 import org.openstack4j.model.octavia.ListenerV2;
+import org.openstack4j.model.octavia.LoadBalancerV2;
 import org.openstack4j.model.octavia.LoadBalancerV2Stats;
 import org.openstack4j.model.octavia.MemberV2;
 import org.openstack4j.openstack.octavia.domain.OctaviaLbPoolV2Update;
@@ -141,5 +143,182 @@ public class OctaviaResponseFieldTests extends AbstractOctaviaExtTest {
         String raw = expect("POST", "/lbaas/listeners").getBody().readUtf8();
         Assert.assertFalse(raw.toLowerCase(java.util.Locale.ROOT).contains("loadbalancers\""), raw);
         Assert.assertTrue(raw.contains("\"copy\""), raw);
+    }
+
+    private static final String LB_FULL = "{\"loadbalancer\":{\"id\":\"lb1\",\"name\":\"lb\",\"provisioning_status\":\"ACTIVE\",\"operating_status\":\"ONLINE\","
+            + "\"created_at\":\"2017-05-11T17:21:34\",\"updated_at\":\"2017-05-11T17:21:35\"}}";
+    private static final String LISTENER_FULL = "{\"listener\":{\"id\":\"l1\",\"name\":\"listener\",\"protocol\":\"HTTP\",\"protocol_port\":80,"
+            + "\"created_at\":\"2017-05-11T17:21:34\",\"updated_at\":\"2017-05-11T17:21:35\","
+            + "\"insert_headers\":{\"X-Forwarded-For\":\"true\"},\"timeout_client_data\":50000,\"timeout_member_connect\":5000,"
+            + "\"timeout_member_data\":50000,\"timeout_tcp_inspect\":0,\"provisioning_status\":\"ACTIVE\",\"operating_status\":\"ONLINE\"}}";
+    private static final String POOL_FULL = "{\"pool\":{\"id\":\"pool1\",\"name\":\"pool\",\"protocol\":\"HTTP\",\"lb_algorithm\":\"ROUND_ROBIN\","
+            + "\"created_at\":\"2017-05-11T17:21:34\",\"updated_at\":\"2017-05-11T17:21:35\",\"tls_enabled\":true,"
+            + "\"operating_status\":\"ONLINE\",\"provisioning_status\":\"ACTIVE\"}}";
+    private static final String MEMBER_FULL = "{\"member\":{\"id\":\"m1\",\"name\":\"member\",\"address\":\"10.0.0.8\",\"protocol_port\":80,\"weight\":1,"
+            + "\"created_at\":\"2017-05-11T17:21:34\",\"updated_at\":\"2017-05-11T17:21:35\","
+            + "\"operating_status\":\"ERROR\",\"provisioning_status\":\"ACTIVE\",\"backup\":true,"
+            + "\"monitor_address\":\"10.0.0.9\",\"monitor_port\":8080}}";
+    private static final String HM_FULL = "{\"healthmonitor\":{\"id\":\"hm1\",\"name\":\"monitor\",\"type\":\"HTTP\",\"delay\":5,\"timeout\":3,\"max_retries\":3,"
+            + "\"created_at\":\"2017-05-11T17:21:34\",\"updated_at\":\"2017-05-11T17:21:35\","
+            + "\"operating_status\":\"ONLINE\",\"provisioning_status\":\"PENDING_UPDATE\"}}";
+    private static final long CREATED = 1494523294000L;
+    private static final long UPDATED = 1494523295000L;
+    private static final String[] LB_KEYS = {"created_at", "updated_at"};
+    private static final String[] LISTENER_KEYS = {"created_at", "updated_at", "insert_headers", "timeout_client_data", "timeout_member_connect",
+            "timeout_member_data", "timeout_tcp_inspect"};
+    private static final String[] POOL_KEYS = {"created_at", "updated_at", "tls_enabled"};
+    private static final String[] MEMBER_KEYS = {"created_at", "updated_at", "operating_status", "provisioning_status", "backup", "monitor_address", "monitor_port"};
+    private static final String[] HM_KEYS = {"created_at", "updated_at", "name", "operating_status", "provisioning_status"};
+
+    public void loadBalancerTimestamps() throws Exception {
+        respondWith(200, LB_FULL);
+        LoadBalancerV2 lb = osv3().octavia().loadBalancerV2().get("lb1");
+        expect("GET", "/lbaas/loadbalancers/lb1");
+        Assert.assertEquals(lb.getCreatedAt().getTime(), CREATED);
+        Assert.assertEquals(lb.getUpdatedAt().getTime(), UPDATED);
+    }
+
+    public void listenerNewResponseFields() throws Exception {
+        respondWith(200, LISTENER_FULL);
+        ListenerV2 listener = osv3().octavia().listenerV2().get("l1");
+        expect("GET", "/lbaas/listeners/l1");
+        Assert.assertEquals(listener.getCreatedAt().getTime(), CREATED);
+        Assert.assertEquals(listener.getUpdatedAt().getTime(), UPDATED);
+        Assert.assertEquals(listener.getInsertHeaders().get("X-Forwarded-For"), "true");
+        Assert.assertEquals(listener.getTimeoutClientData(), Integer.valueOf(50000));
+        Assert.assertEquals(listener.getTimeoutMemberConnect(), Integer.valueOf(5000));
+        Assert.assertEquals(listener.getTimeoutMemberData(), Integer.valueOf(50000));
+        Assert.assertEquals(listener.getTimeoutTcpInspect(), Integer.valueOf(0));
+    }
+
+    public void poolNewResponseFields() throws Exception {
+        respondWith(200, POOL_FULL);
+        LbPoolV2 pool = osv3().octavia().lbPoolV2().get("pool1");
+        expect("GET", "/lbaas/pools/pool1");
+        Assert.assertEquals(pool.getCreatedAt().getTime(), CREATED);
+        Assert.assertEquals(pool.getUpdatedAt().getTime(), UPDATED);
+        Assert.assertEquals(pool.getTlsEnabled(), Boolean.TRUE);
+    }
+
+    public void memberNewResponseFields() throws Exception {
+        respondWith(200, MEMBER_FULL);
+        MemberV2 member = osv3().octavia().lbPoolV2().getMember("pool1", "m1");
+        expect("GET", "/lbaas/pools/pool1/members/m1");
+        Assert.assertEquals(member.getCreatedAt().getTime(), CREATED);
+        Assert.assertEquals(member.getUpdatedAt().getTime(), UPDATED);
+        Assert.assertEquals(member.getOperatingStatus(), LbOperatingStatus.ERROR);
+        Assert.assertEquals(member.getProvisioningStatus(), LbProvisioningStatus.ACTIVE);
+        Assert.assertEquals(member.getBackup(), Boolean.TRUE);
+        Assert.assertEquals(member.getMonitorAddress(), "10.0.0.9");
+        Assert.assertEquals(member.getMonitorPort(), Integer.valueOf(8080));
+        Assert.assertEquals(member.getName(), "member");
+    }
+
+    public void healthMonitorNewResponseFields() throws Exception {
+        respondWith(200, HM_FULL);
+        HealthMonitorV2 monitor = osv3().octavia().healthMonitorV2().get("hm1");
+        expect("GET", "/lbaas/healthmonitors/hm1");
+        Assert.assertEquals(monitor.getName(), "monitor");
+        Assert.assertEquals(monitor.getOperatingStatus(), LbOperatingStatus.ONLINE);
+        Assert.assertEquals(monitor.getProvisioningStatus(), LbProvisioningStatus.PENDING_UPDATE);
+        Assert.assertEquals(monitor.getCreatedAt().getTime(), CREATED);
+        Assert.assertEquals(monitor.getUpdatedAt().getTime(), UPDATED);
+    }
+
+    public void newFieldsAreNullWhenAbsent() throws Exception {
+        respondWith(200, "{\"member\":{\"id\":\"m1\",\"address\":\"10.0.0.8\",\"protocol_port\":80}}");
+        respondWith(200, "{\"healthmonitor\":{\"id\":\"hm1\",\"type\":\"HTTP\"}}");
+        respondWith(200, "{\"listener\":{\"id\":\"l1\"}}");
+        MemberV2 member = osv3().octavia().lbPoolV2().getMember("pool1", "m1");
+        HealthMonitorV2 monitor = osv3().octavia().healthMonitorV2().get("hm1");
+        ListenerV2 listener = osv3().octavia().listenerV2().get("l1");
+        expect("GET", "/lbaas/pools/pool1/members/m1");
+        expect("GET", "/lbaas/healthmonitors/hm1");
+        expect("GET", "/lbaas/listeners/l1");
+        Assert.assertNull(member.getBackup());
+        Assert.assertNull(member.getOperatingStatus());
+        Assert.assertNull(member.getMonitorPort());
+        Assert.assertNull(monitor.getName());
+        Assert.assertNull(monitor.getCreatedAt());
+        Assert.assertNull(listener.getInsertHeaders());
+        Assert.assertNull(listener.getTimeoutClientData());
+    }
+
+    public void responseObjectsReusedInCreateDoNotResendNewFields() throws Exception {
+        respondWith(200, LB_FULL);
+        respondWith(200, LISTENER_FULL);
+        respondWith(200, POOL_FULL);
+        respondWith(200, MEMBER_FULL);
+        respondWith(200, HM_FULL);
+        LoadBalancerV2 lb = osv3().octavia().loadBalancerV2().get("lb1");
+        ListenerV2 listener = osv3().octavia().listenerV2().get("l1");
+        LbPoolV2 pool = osv3().octavia().lbPoolV2().get("pool1");
+        MemberV2 member = osv3().octavia().lbPoolV2().getMember("pool1", "m1");
+        HealthMonitorV2 monitor = osv3().octavia().healthMonitorV2().get("hm1");
+        expect("GET", "/lbaas/loadbalancers/lb1");
+        expect("GET", "/lbaas/listeners/l1");
+        expect("GET", "/lbaas/pools/pool1");
+        expect("GET", "/lbaas/pools/pool1/members/m1");
+        expect("GET", "/lbaas/healthmonitors/hm1");
+
+        respondWith(201, LB_FULL);
+        respondWith(201, LISTENER_FULL);
+        respondWith(201, POOL_FULL);
+        respondWith(201, MEMBER_FULL);
+        respondWith(201, HM_FULL);
+        osv3().octavia().loadBalancerV2().create(lb);
+        osv3().octavia().listenerV2().create(listener);
+        osv3().octavia().lbPoolV2().create(pool);
+        osv3().octavia().lbPoolV2().createMember("pool1", member);
+        osv3().octavia().healthMonitorV2().create(monitor);
+
+        assertKeysAbsent(body(expect("POST", "/lbaas/loadbalancers")).get("loadbalancer"), LB_KEYS);
+        assertKeysAbsent(body(expect("POST", "/lbaas/listeners")).get("listener"), LISTENER_KEYS);
+        assertKeysAbsent(body(expect("POST", "/lbaas/pools")).get("pool"), POOL_KEYS);
+        assertKeysAbsent(body(expect("POST", "/lbaas/pools/pool1/members")).get("member"), MEMBER_KEYS);
+        assertKeysAbsent(body(expect("POST", "/lbaas/healthmonitors")).get("healthmonitor"), HM_KEYS);
+    }
+
+    public void builderCreateBodiesUnchanged() throws Exception {
+        respondWith(201, POOL_FULL);
+        respondWith(201, MEMBER_FULL);
+        osv3().octavia().lbPoolV2().create(Builders.octavia().lbPoolV2().name("pool").protocol(org.openstack4j.model.octavia.Protocol.HTTP)
+                .lbMethod(org.openstack4j.model.octavia.LbMethod.ROUND_ROBIN).tlsCiphers("ECDHE").tlsVersions(Arrays.asList("TLSv1.3"))
+                .caTlsContainerRef("ref").build());
+        osv3().octavia().lbPoolV2().createMember("pool1", Builders.octavia().memberV2().address("10.0.0.8").protocolPort(80).name("m").build());
+
+        JsonNode pool = body(expect("POST", "/lbaas/pools")).get("pool");
+        assertKeysAbsent(pool, POOL_KEYS);
+        Assert.assertEquals(pool.get("tls_ciphers").asText(), "ECDHE");
+        Assert.assertEquals(pool.get("name").asText(), "pool");
+        JsonNode member = body(expect("POST", "/lbaas/pools/pool1/members")).get("member");
+        assertKeysAbsent(member, MEMBER_KEYS);
+        Assert.assertEquals(member.get("name").asText(), "m");
+        Assert.assertEquals(member.get("address").asText(), "10.0.0.8");
+    }
+
+    public void newFieldsNotSerialized() throws Exception {
+        assertNotSerialized(org.openstack4j.openstack.octavia.domain.OctaviaLoadBalancerV2.class, LB_FULL, LB_KEYS);
+        assertNotSerialized(org.openstack4j.openstack.octavia.domain.OctaviaListenerV2.class, LISTENER_FULL, LISTENER_KEYS);
+        assertNotSerialized(org.openstack4j.openstack.octavia.domain.OctaviaLbPoolV2.class, POOL_FULL, POOL_KEYS);
+        assertNotSerialized(org.openstack4j.openstack.octavia.domain.OctaviaMemberV2.class, MEMBER_FULL, MEMBER_KEYS);
+        assertNotSerialized(org.openstack4j.openstack.octavia.domain.OctaviaHealthMonitorV2.class, HM_FULL, HM_KEYS);
+    }
+
+    private static void assertKeysAbsent(JsonNode node, String... keys) {
+        for (String key : keys) {
+            String normalized = key.replace("_", "").toLowerCase(java.util.Locale.ROOT);
+            node.fieldNames().forEachRemaining(field -> Assert.assertNotEquals(field.replace("_", "").toLowerCase(java.util.Locale.ROOT), normalized,
+                    key + " was sent: " + node));
+        }
+    }
+
+    private static void assertNotSerialized(Class<?> type, String json, String... keys) throws Exception {
+        Object value = org.openstack4j.core.transport.ObjectMapperSingleton.getContext(type).readValue(json, type);
+        String written = org.openstack4j.core.transport.ObjectMapperSingleton.getContext(type).writeValueAsString(value);
+        for (String key : keys) {
+            String normalized = key.replace("_", "").toLowerCase(java.util.Locale.ROOT);
+            Assert.assertFalse(written.replace("_", "").toLowerCase(java.util.Locale.ROOT).contains("\"" + normalized + "\""), key + " was serialized: " + written);
+        }
     }
 }
