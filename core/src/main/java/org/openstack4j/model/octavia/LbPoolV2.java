@@ -1,5 +1,6 @@
 package org.openstack4j.model.octavia;
 
+import java.util.Date;
 import java.util.List;
 
 import org.openstack4j.common.Buildable;
@@ -99,6 +100,21 @@ public interface LbPoolV2 extends ModelEntity, Buildable<LbPoolV2Builder> {
 
     /** @return the provisioning status of the pool, or null */
     default LbProvisioningStatus getProvisioningStatus() {
+        return null;
+    }
+
+    /** @return the creation time (response only), or null */
+    default Date getCreatedAt() {
+        return null;
+    }
+
+    /** @return the last update time (response only), or null */
+    default Date getUpdatedAt() {
+        return null;
+    }
+
+    /** @return whether TLS is enabled to the members (response only), or null */
+    default Boolean getTlsEnabled() {
         return null;
     }
 }

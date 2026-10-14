@@ -1,6 +1,7 @@
 package org.openstack4j.openstack.octavia.domain;
 
 import java.util.List;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,6 +24,15 @@ import org.openstack4j.openstack.common.ListResult;
 @JsonRootName("pool")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OctaviaLbPoolV2 implements LbPoolV2 {
+
+    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date createdAt;
+
+    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date updatedAt;
+
+    @JsonProperty(value = "tls_enabled", access = JsonProperty.Access.WRITE_ONLY)
+    private Boolean tlsEnabled;
 
     private String id;
 
@@ -374,5 +384,20 @@ public class OctaviaLbPoolV2 implements LbPoolV2 {
                     .add("lbPools", lbPools)
                     .toString();
         }
+    }
+
+    @Override
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @Override
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @Override
+    public Boolean getTlsEnabled() {
+        return tlsEnabled;
     }
 }

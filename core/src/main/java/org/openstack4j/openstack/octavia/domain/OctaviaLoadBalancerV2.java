@@ -1,6 +1,7 @@
 package org.openstack4j.openstack.octavia.domain;
 
 import java.util.List;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,6 +21,12 @@ import org.openstack4j.openstack.common.ListResult;
 @JsonRootName("loadbalancer")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OctaviaLoadBalancerV2 implements LoadBalancerV2 {
+
+    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date createdAt;
+
+    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date updatedAt;
 
     private String id;
 
@@ -325,5 +332,14 @@ public class OctaviaLoadBalancerV2 implements LoadBalancerV2 {
             return this;
         }
     }
-}
 
+    @Override
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @Override
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+}

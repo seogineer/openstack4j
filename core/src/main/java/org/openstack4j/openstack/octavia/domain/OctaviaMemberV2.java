@@ -1,11 +1,14 @@
 package org.openstack4j.openstack.octavia.domain;
 
 import java.util.List;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.util.ToStringHelper;
+import org.openstack4j.model.octavia.LbOperatingStatus;
+import org.openstack4j.model.octavia.LbProvisioningStatus;
 import org.openstack4j.model.octavia.MemberV2;
 import org.openstack4j.model.octavia.builder.MemberV2Builder;
 import org.openstack4j.openstack.common.ListResult;
@@ -18,6 +21,27 @@ import org.openstack4j.openstack.common.ListResult;
 @JsonRootName("member")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OctaviaMemberV2 implements MemberV2 {
+
+    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date createdAt;
+
+    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date updatedAt;
+
+    @JsonProperty(value = "operating_status", access = JsonProperty.Access.WRITE_ONLY)
+    private LbOperatingStatus operatingStatus;
+
+    @JsonProperty(value = "provisioning_status", access = JsonProperty.Access.WRITE_ONLY)
+    private LbProvisioningStatus provisioningStatus;
+
+    @JsonProperty(value = "backup", access = JsonProperty.Access.WRITE_ONLY)
+    private Boolean backup;
+
+    @JsonProperty(value = "monitor_address", access = JsonProperty.Access.WRITE_ONLY)
+    private String monitorAddress;
+
+    @JsonProperty(value = "monitor_port", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer monitorPort;
     private String id;
 
     @JsonProperty("project_id")
@@ -231,5 +255,40 @@ public class OctaviaMemberV2 implements MemberV2 {
             m.name = name;
             return this;
         }
+    }
+
+    @Override
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @Override
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @Override
+    public LbOperatingStatus getOperatingStatus() {
+        return operatingStatus;
+    }
+
+    @Override
+    public LbProvisioningStatus getProvisioningStatus() {
+        return provisioningStatus;
+    }
+
+    @Override
+    public Boolean getBackup() {
+        return backup;
+    }
+
+    @Override
+    public String getMonitorAddress() {
+        return monitorAddress;
+    }
+
+    @Override
+    public Integer getMonitorPort() {
+        return monitorPort;
     }
 }

@@ -1,12 +1,15 @@
 package org.openstack4j.openstack.octavia.domain;
 
 import java.util.List;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.openstack4j.util.ToStringHelper;
 import org.openstack4j.model.octavia.HealthMonitorType;
+import org.openstack4j.model.octavia.LbOperatingStatus;
+import org.openstack4j.model.octavia.LbProvisioningStatus;
 import org.openstack4j.model.octavia.HealthMonitorV2;
 import org.openstack4j.model.octavia.builder.HealthMonitorV2Builder;
 import org.openstack4j.openstack.common.ListResult;
@@ -19,6 +22,21 @@ import org.openstack4j.openstack.common.ListResult;
 @JsonRootName("healthmonitor")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OctaviaHealthMonitorV2 implements HealthMonitorV2 {
+
+    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date createdAt;
+
+    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date updatedAt;
+
+    @JsonProperty(value = "name", access = JsonProperty.Access.WRITE_ONLY)
+    private String name;
+
+    @JsonProperty(value = "operating_status", access = JsonProperty.Access.WRITE_ONLY)
+    private LbOperatingStatus operatingStatus;
+
+    @JsonProperty(value = "provisioning_status", access = JsonProperty.Access.WRITE_ONLY)
+    private LbProvisioningStatus provisioningStatus;
     private String id;
 
     @JsonProperty("project_id")
@@ -302,5 +320,30 @@ public class OctaviaHealthMonitorV2 implements HealthMonitorV2 {
             m.poolId = poolId;
             return this;
         }
+    }
+
+    @Override
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @Override
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public LbOperatingStatus getOperatingStatus() {
+        return operatingStatus;
+    }
+
+    @Override
+    public LbProvisioningStatus getProvisioningStatus() {
+        return provisioningStatus;
     }
 }

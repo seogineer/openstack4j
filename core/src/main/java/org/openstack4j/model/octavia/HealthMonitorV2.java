@@ -1,5 +1,6 @@
 package org.openstack4j.model.octavia;
 
+import java.util.Date;
 import java.util.List;
 
 import org.openstack4j.common.Buildable;
@@ -93,4 +94,29 @@ public interface HealthMonitorV2 extends ModelEntity, Buildable<HealthMonitorV2B
      */
     List<ListItem> getPools();
 
+
+    /** @return the creation time (response only), or null */
+    default Date getCreatedAt() {
+        return null;
+    }
+
+    /** @return the last update time (response only), or null */
+    default Date getUpdatedAt() {
+        return null;
+    }
+
+    /** @return the name (response only), or null */
+    default String getName() {
+        return null;
+    }
+
+    /** @return the operating status (response only), or null */
+    default LbOperatingStatus getOperatingStatus() {
+        return null;
+    }
+
+    /** @return the provisioning status (response only), or null */
+    default LbProvisioningStatus getProvisioningStatus() {
+        return null;
+    }
 }

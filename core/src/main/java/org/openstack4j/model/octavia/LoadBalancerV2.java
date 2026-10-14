@@ -1,5 +1,6 @@
 package org.openstack4j.model.octavia;
 
+import java.util.Date;
 import java.util.List;
 
 import org.openstack4j.common.Buildable;
@@ -83,4 +84,14 @@ public interface LoadBalancerV2 extends ModelEntity, Buildable<LoadBalancerV2Bui
      * @return provider
      */
     String getProvider();
+
+    /** @return the creation time (response only), or null */
+    default Date getCreatedAt() {
+        return null;
+    }
+
+    /** @return the last update time (response only), or null */
+    default Date getUpdatedAt() {
+        return null;
+    }
 }
