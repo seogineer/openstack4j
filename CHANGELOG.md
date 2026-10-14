@@ -1,3 +1,7 @@
+## 4.12.0
+
+- 응답을 `ActionResponse` 로 돌려주는 compute 서버 액션·detach, Octavia·neutron-lbaas·FWaaS v1, Manila(legacy), Tacker, Heat stack update·patchUpdate, Swift container delete 가 410~499·501~599 응답(예: 429, 501, 502, 503)을 성공으로 돌려주던 문제를 고침 — 이제 `isSuccess()==false` 이고 `getCode()` 는 응답 status. 오류 본문이 비었거나 JSON 이 아니면 커넥터에 따라 `ClientResponseException` 이 나던 경우도 실패 응답으로 돌려줌
+
 ## 4.11.0
 
 - Nova: `ServerCreateBuilder.minCount(Integer)`·`maxCount(Integer)`(`min_count`/`max_count`, 다중 생성; `boot()` 은 첫 서버만 돌려줌), `ServerListOptions.reservationId(String)`. 서버 수정 `ServerUpdateOptions.description(String)`(2.19, microversion 필요)
@@ -7,7 +11,6 @@
 - Octavia pool 수정 빌더 `tlsCiphers`·`tlsVersions`·`caTlsContainerRef`. listener `getLoadBalancers()` 가 응답의 `loadbalancers` 를 읽음(이전에는 항상 `null`; neutron-lbaas `ListenerV2` 도 같음)
 - Keystone `roles().listRoleAssignments(RoleAssignmentListOptions)` — `scope.domain.id`·`scope.system`·`user.id`·`group.id`·`role.id`·`inherited_to`·`effective`·`include_names`·`include_subtree`
 - Cinder `Volume.getImageMetadata()`(`volume_image_metadata`, 값은 문자열로 변환; 이미지가 없으면 `null`). Neutron `Agent.Type` 에 `LINUX_BRIDGE`·`METERING`·`NIC_SWITCH`·`MACVTAP`·`OFA`·`OVN_CONTROLLER`·`OVN_CONTROLLER_GATEWAY`·`OVN_METADATA`·`OVN_NEUTRON`·`BGP_DYNAMIC_ROUTING`(이전에는 `UNRECOGNIZED`)
-- 응답을 `ActionResponse` 로 돌려주는 compute 서버 액션·detach, Octavia·neutron-lbaas·FWaaS v1, Manila(legacy), Tacker, Heat stack update·patchUpdate, Swift container delete 가 410~499·501~599 응답(예: 429, 501, 502, 503)을 성공으로 돌려주던 문제를 고침 — 이제 `isSuccess()==false` 이고 `getCode()` 는 응답 status. 오류 본문이 비었거나 JSON 이 아니면 커넥터에 따라 `ClientResponseException` 이 나던 경우도 실패 응답으로 돌려줌
 
 ## 4.10.0
 
