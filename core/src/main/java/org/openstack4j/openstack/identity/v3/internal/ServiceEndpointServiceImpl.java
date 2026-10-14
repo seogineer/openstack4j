@@ -9,6 +9,8 @@ import org.openstack4j.api.types.Facing;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Endpoint;
 import org.openstack4j.model.identity.v3.Service;
+import org.openstack4j.model.identity.v3.options.EndpointListOptions;
+import org.openstack4j.model.identity.v3.options.ServiceListOptions;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneEndpoint;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneEndpoint.Endpoints;
 import org.openstack4j.openstack.identity.v3.domain.KeystoneService;
@@ -58,6 +60,16 @@ public class ServiceEndpointServiceImpl extends BaseIdentityServices implements 
     @Override
     public List<? extends Service> list() {
         return get(Services.class, uri(PATH_SERVICES)).execute().getList();
+    }
+
+    @Override
+    public List<? extends Service> list(ServiceListOptions options) {
+        return get(Services.class, uri(PATH_SERVICES)).params(Objects.requireNonNull(options).getOptions()).execute().getList();
+    }
+
+    @Override
+    public List<? extends Endpoint> listEndpoints(EndpointListOptions options) {
+        return get(Endpoints.class, uri(PATH_ENDPOINTS)).params(Objects.requireNonNull(options).getOptions()).execute().getList();
     }
 
     @Override

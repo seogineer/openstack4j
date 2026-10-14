@@ -244,6 +244,12 @@ public class MagnumServiceImpl extends BaseOpenStackService implements MagnumSer
     }
 
     @Override
+    public Clustertemplate showClustertemplate(String id) {
+        Objects.requireNonNull(id);
+        return get(MagnumClustertemplate.class, MAGNUM_CLUSTERTEMPLATES, "/", id).serviceType(ServiceType.MAGNUM).execute();
+    }
+
+    @Override
     public ActionResponse deleteClustertemplate(String id) {
         Objects.requireNonNull(id);
         return deleteWithResponse(MAGNUM_CLUSTERTEMPLATES, "/", id).serviceType(ServiceType.MAGNUM).execute();

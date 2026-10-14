@@ -8,6 +8,7 @@ import org.openstack4j.model.network.Router;
 import org.openstack4j.model.network.Network;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.openstack4j.api.networking.ext.AgentService;
@@ -29,6 +30,12 @@ public class AgentServiceImpl extends BaseNetworkingServices implements AgentSer
     @Override
     public List<? extends Agent> list() {
         return get(Agents.class, uri("/agents")).execute().getList();
+    }
+
+    @Override
+    public List<? extends Agent> list(Map<String, String> filters) {
+        return get(Agents.class, uri("/agents"))
+                .params(filters == null ? Collections.emptyMap() : filters).execute().getList();
     }
 
     @Override

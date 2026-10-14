@@ -3,6 +3,7 @@ package org.openstack4j.api.networking.ext;
 import org.openstack4j.model.network.Router;
 import org.openstack4j.model.network.Network;
 import java.util.List;
+import java.util.Map;
 
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
@@ -21,6 +22,14 @@ public interface AgentService extends RestService {
      * @return a list of available neutron agents
      */
     List<? extends Agent> list();
+
+    /**
+     * List neutron agents that match the given query parameters. A key is sent once (multi-value filters are not supported).
+     *
+     * @param filters agent_type, host, binary, topic, alive, availability_zone ...; may be null
+     * @return a list of matching neutron agents
+     */
+    List<? extends Agent> list(Map<String, String> filters);
 
     /**
      * Returns the agent with agentId.

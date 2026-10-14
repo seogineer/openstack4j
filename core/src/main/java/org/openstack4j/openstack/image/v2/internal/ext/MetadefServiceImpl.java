@@ -42,6 +42,13 @@ public class MetadefServiceImpl extends BaseImageExtService implements MetadefSe
     @Override public List<? extends MetadefNamespace> listNamespaces() { return listOf(Namespaces.class, NS, null); }
     @Override public List<? extends MetadefNamespace> listNamespaces(Map<String, String> filters) { return listOf(Namespaces.class, NS, filters); }
     @Override public MetadefNamespace getNamespace(String namespace) { return show(GlanceMetadefNamespace.class, ns(namespace)); }
+    @Override
+    public MetadefNamespace getNamespace(String namespace, String resourceType) {
+        Invocation<GlanceMetadefNamespace> invocation = get(GlanceMetadefNamespace.class, ns(namespace));
+        if (resourceType != null) invocation.param("resource_type", resourceType);
+        return invocation.execute();
+    }
+
     @Override public MetadefNamespace createNamespace(MetadefNamespaceOptions options) { return create(GlanceMetadefNamespace.class, NS, options); }
     @Override public MetadefNamespace updateNamespace(String namespace, MetadefNamespaceOptions options) { return replace(GlanceMetadefNamespace.class, ns(namespace), options); }
     @Override public ActionResponse deleteNamespace(String namespace) { return remove(ns(namespace)); }

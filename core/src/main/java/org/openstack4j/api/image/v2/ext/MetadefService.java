@@ -46,7 +46,25 @@ public interface MetadefService extends RestService {
     MetadefNamespace getNamespace(String namespace);
 
     /**
-     * Creates a namespace.
+     * Like {@link #getNamespace(String)}; with {@code resourceType} (for example {@code OS::Glance::Image}) Glance
+     * prefixes the property names with the prefix of that association. A null resourceType sends no query.
+     *
+     * @param namespace the namespace
+     * @param resourceType the resource type, or null
+     * @return the result, or null if missing
+     */
+    MetadefNamespace getNamespace(String namespace, String resourceType);
+
+    /**
+     * Creates a namespace. One request can also create its whole definition, because
+     * {@code MetadefNamespaceOptions.attribute} puts any key in the body:
+     * <pre>{@code
+     * MetadefNamespaceOptions.create("ns")
+     *     .attribute("properties", Map.of(...))
+     *     .attribute("objects", List.of(...))
+     *     .attribute("tags", List.of(Map.of("name", "t")))
+     *     .attribute("resource_type_associations", List.of(Map.of("name", "OS::Glance::Image")))
+     * }</pre>
      *
      * @param options the options
      * @return the result

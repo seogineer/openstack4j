@@ -1,10 +1,12 @@
 package org.openstack4j.api.identity.v3;
 
 import java.util.List;
+import java.util.Map;
 
 import org.openstack4j.common.RestService;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Credential;
+import org.openstack4j.model.identity.v3.options.CredentialListOptions;
 
 /**
  * Identity V3 Credential service
@@ -59,5 +61,13 @@ public interface CredentialService extends RestService {
      * @return list of credentials
      */
     List<? extends Credential> list();
+
+    /**
+     * Lists the credentials that match the options.
+     *
+     * @param options the filters ({@code user_id}, {@code type})
+     * @return list of credentials
+     */
+    List<? extends Credential> list(CredentialListOptions options);
 
 }

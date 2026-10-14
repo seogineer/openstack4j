@@ -247,6 +247,14 @@ public interface MagnumService extends RestService {
     List<? extends Clustertemplate> listClustertemplate();
 
     /**
+     * Shows a cluster template ({@code GET /v1/clustertemplates/{id}}).
+     *
+     * @param id the id or name of the cluster template
+     * @return the cluster template, or null when it does not exist
+     */
+    Clustertemplate showClustertemplate(String id);
+
+    /**
      * Delete a cluster template
      *
      * @param id of the clustertemplate
