@@ -1,8 +1,11 @@
 package org.openstack4j.api.manila.ext;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.model.manila.ext.ShareNetworkInfo;
@@ -57,7 +60,11 @@ public class ShareNetworkTypeExtTests extends AbstractManilaExtTest {
         filters.put("all_tenants", "1");
         List<? extends ShareNetworkInfo> networks = osv3().share().shareNetworksExt().listDetails(filters);
 
-        RecordedRequest request = expect("GET", "/share-networks/detail?all_tenants=1&project_id=p");
+        RecordedRequest request = takeRequest();
+        Assert.assertEquals(request.getMethod(), "GET");
+        String[] pathAndQuery = decodedPath(request).split("\\?", 2);
+        Assert.assertTrue(pathAndQuery[0].endsWith("/share-networks/detail"), pathAndQuery[0]);
+        Assert.assertEquals(new HashSet<>(Arrays.asList(pathAndQuery[1].split("&"))), Set.of("all_tenants=1", "project_id=p"));
         Assert.assertEquals(request.getHeader(VERSION), "2.65");
         Assert.assertEquals(networks.size(), 1);
         ShareNetworkInfo network = networks.get(0);
