@@ -368,6 +368,15 @@ public class Builders {
     }
 
     /**
+     * The builder to update a qos policy; only the fields that are set are sent
+     *
+     * @return the NetQosPolicyUpdateBuilder
+     */
+    public static NetQosPolicyUpdateBuilder netQosPolicyUpdate() {
+        return NeutronNetQosPolicyUpdate.builder();
+    }
+
+    /**
      * The builder to update a network
      *
      * @return the NetworkUpdateBuilder
