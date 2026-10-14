@@ -344,6 +344,8 @@ public class DefaultAPIProvider implements APIProvider {
         bind(org.openstack4j.api.manila.ext.ShareNetworkSubnetService.class, org.openstack4j.openstack.manila.internal.ext.ShareNetworkSubnetServiceImpl.class);
         bind(org.openstack4j.api.manila.ext.ShareServerExtService.class, org.openstack4j.openstack.manila.internal.ext.ShareServerExtServiceImpl.class);
         bind(org.openstack4j.api.manila.ext.SecurityServiceExtService.class, org.openstack4j.openstack.manila.internal.ext.SecurityServiceExtServiceImpl.class);
+        bind(org.openstack4j.api.manila.ext.ShareNetworkExtService.class, org.openstack4j.openstack.manila.internal.ext.ShareNetworkExtServiceImpl.class);
+        bind(org.openstack4j.api.manila.ext.ShareTypeExtService.class, org.openstack4j.openstack.manila.internal.ext.ShareTypeExtServiceImpl.class);
         bind(org.openstack4j.api.manila.ext.ShareBackupService.class, org.openstack4j.openstack.manila.internal.ext.ShareBackupServiceImpl.class);
         bind(org.openstack4j.api.manila.ext.ShareTransferService.class, org.openstack4j.openstack.manila.internal.ext.ShareTransferServiceImpl.class);
         bind(org.openstack4j.api.manila.ext.ResourceLockService.class, org.openstack4j.openstack.manila.internal.ext.ResourceLockServiceImpl.class);
