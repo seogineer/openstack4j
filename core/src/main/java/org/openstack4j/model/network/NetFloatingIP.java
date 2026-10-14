@@ -2,6 +2,7 @@ package org.openstack4j.model.network;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.openstack4j.common.Buildable;
 import org.openstack4j.model.ModelEntity;
@@ -104,4 +105,24 @@ public interface NetFloatingIP extends ModelEntity, Buildable<NetFloatingIPBuild
      * Revision number of a resource.
      */
     Integer getRevisionNumber();
+
+    /** @return the DNS name (dns-integration extension, response only), or null */
+    default String getDnsName() {
+        return null;
+    }
+
+    /** @return the DNS domain (dns-integration extension, response only), or null */
+    default String getDnsDomain() {
+        return null;
+    }
+
+    /** @return details of the associated port (name, network_id, mac_address, admin_state_up, status, device_id, device_owner), or null when not associated (response only) */
+    default Map<String, Object> getPortDetails() {
+        return null;
+    }
+
+    /** @return the port forwardings of the floating IP (response only; see the port forwarding API for details), or null */
+    default List<Map<String, Object>> getPortForwardings() {
+        return null;
+    }
 }

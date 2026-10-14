@@ -204,3 +204,4 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - Manila `ShareService` 에 추상 메서드 `shareNetworksExt()`, `shareTypesExt()` 가 추가되었습니다(새 interface `ShareNetworkExtService`, `ShareTypeExtService`).
 - `SubnetService`(`list(Map)`), `AgentService`(`list(Map)`), `MetadefService`(`getNamespace(String, String)`), `MagnumService`(`showClustertemplate`), `ServiceEndpointService`(`list(ServiceListOptions)`, `listEndpoints(EndpointListOptions)`), `CredentialService`(`list(CredentialListOptions)`)에 추상 메서드가 추가되었습니다. `ServiceListOptions`·`EndpointListOptions`·`CredentialListOptions` 는 새 클래스입니다.
 - Neutron `NetQosPolicyUpdate`: 구현체와 `Builders.netQosPolicyUpdate()` 가 추가되었습니다(공개 시그니처 변경 없음). 이전에는 이 interface 의 구현체가 없어 `netQosPolicy().update(...)` 를 호출할 수 없었습니다.
+- 응답 필드 getter 가 `default` 메서드로 추가되어 그대로 컴파일됩니다: Neutron `Router`·`ExternalGateway`·`NetFloatingIP`. 이 인터페이스를 직접 구현한 클래스는 새 getter 가 `null` 을 돌려줍니다. 응답에서 읽은 객체를 생성·수정 요청에 넘길 때 본문은 이전과 같습니다.

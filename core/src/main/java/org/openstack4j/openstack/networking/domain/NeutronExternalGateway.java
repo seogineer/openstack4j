@@ -1,9 +1,12 @@
 package org.openstack4j.openstack.networking.domain;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openstack4j.util.ToStringHelper;
 import org.openstack4j.model.network.ExternalGateway;
+import org.openstack4j.model.network.IP;
 
 /**
  * Configurable external gateway modes extension model.  By default, when a gateway is attached to a router using the Neutron L3 extension,
@@ -22,6 +25,9 @@ public class NeutronExternalGateway implements ExternalGateway {
 
     @JsonProperty("enable_snat")
     private Boolean enableSnat;
+
+    @JsonProperty(value = "external_fixed_ips", access = JsonProperty.Access.WRITE_ONLY)
+    private List<NeutronIP> externalFixedIps;
 
     public NeutronExternalGateway() {
     }
@@ -50,6 +56,11 @@ public class NeutronExternalGateway implements ExternalGateway {
     @Override
     public boolean isEnableSnat() {
         return enableSnat != null && enableSnat;
+    }
+
+    @Override
+    public List<? extends IP> getExternalFixedIps() {
+        return externalFixedIps;
     }
 
     /**
