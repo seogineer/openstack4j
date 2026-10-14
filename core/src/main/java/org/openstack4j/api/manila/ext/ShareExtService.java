@@ -60,6 +60,16 @@ public interface ShareExtService extends RestService {
     List<? extends ShareInstanceInfo> listInstances(String shareId);
 
     /**
+     * {@code GET /share_instances} (admin by default; floor 2.7).
+     *
+     * @param filters export_location_id, export_location_path (2.35), is_soft_deleted (2.69) ..., may be null
+     */
+    List<? extends ShareInstanceInfo> listShareInstances(Map<String, String> filters);
+
+    /** {@code GET /share_instances/{id}}, or {@code null} when it does not exist (floor 2.7) */
+    ShareInstanceInfo getShareInstance(String shareInstanceId);
+
+    /**
      * Brings an existing back-end share under Manila ({@code POST /shares/manage}, 2.7, admin).
      *
      * @param share the {@code share} fields: {@code protocol}, {@code export_path}, {@code service_host} and optional

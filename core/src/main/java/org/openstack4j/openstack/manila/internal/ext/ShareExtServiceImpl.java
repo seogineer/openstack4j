@@ -25,6 +25,7 @@ import org.openstack4j.openstack.manila.domain.ext.ManilaShareAccessRule;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareAccessRule.ManilaShareAccessRuleList;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareInfo;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareInfo.ManilaShareInfoList;
+import org.openstack4j.openstack.manila.domain.ext.ManilaShareInstanceInfo;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareInstanceInfo.ManilaShareInstanceInfoList;
 
 public class ShareExtServiceImpl extends BaseManilaExtService implements ShareExtService {
@@ -99,6 +100,16 @@ public class ShareExtServiceImpl extends BaseManilaExtService implements ShareEx
     @Override
     public ExportLocation getInstanceExportLocation(String shareInstanceId, String exportLocationId) {
         return show(V(9), ManilaExportLocation.class, "/share_instances/" + id(shareInstanceId) + "/export_locations/" + id(exportLocationId));
+    }
+
+    @Override
+    public List<? extends ShareInstanceInfo> listShareInstances(Map<String, String> filters) {
+        return listOf(SHARES, ManilaShareInstanceInfoList.class, "/share_instances", filters);
+    }
+
+    @Override
+    public ShareInstanceInfo getShareInstance(String shareInstanceId) {
+        return show(SHARES, ManilaShareInstanceInfo.class, "/share_instances/" + id(shareInstanceId));
     }
 
     @Override

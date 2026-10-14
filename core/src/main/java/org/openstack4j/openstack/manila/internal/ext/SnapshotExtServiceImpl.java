@@ -16,6 +16,7 @@ import org.openstack4j.openstack.internal.MicroVersion;
 import org.openstack4j.openstack.internal.PathSegment;
 import org.openstack4j.openstack.internal.microversion.JsonBody;
 import org.openstack4j.openstack.manila.domain.ext.ManilaShareSnapshotInfo;
+import org.openstack4j.openstack.manila.domain.ext.ManilaShareSnapshotInfo.ManilaShareSnapshotInfoList;
 import org.openstack4j.openstack.manila.domain.ext.ManilaSnapshotAccess;
 import org.openstack4j.openstack.manila.domain.ext.ManilaSnapshotAccess.ManilaSnapshotAccessList;
 import org.openstack4j.openstack.manila.domain.ext.ManilaSnapshotInstance;
@@ -23,6 +24,7 @@ import org.openstack4j.openstack.manila.domain.ext.ManilaSnapshotInstance.Manila
 
 public class SnapshotExtServiceImpl extends BaseManilaExtService implements SnapshotExtService {
 
+    private static final MicroVersion SNAPSHOTS = V(7);
     private static final MicroVersion METADATA = V(73);
     private static final MicroVersion MANAGE = V(12);
     private static final MicroVersion INSTANCES = V(19);
@@ -30,6 +32,21 @@ public class SnapshotExtServiceImpl extends BaseManilaExtService implements Snap
 
     private static String metadata(String snapshotId) {
         return "/snapshots/" + id(snapshotId) + "/metadata";
+    }
+
+    @Override
+    public List<? extends ShareSnapshotInfo> list(Map<String, String> filters) {
+        return listOf(SNAPSHOTS, ManilaShareSnapshotInfoList.class, "/snapshots", filters);
+    }
+
+    @Override
+    public List<? extends ShareSnapshotInfo> listDetails(Map<String, String> filters) {
+        return listOf(SNAPSHOTS, ManilaShareSnapshotInfoList.class, "/snapshots/detail", filters);
+    }
+
+    @Override
+    public ShareSnapshotInfo get(String snapshotId) {
+        return show(SNAPSHOTS, ManilaShareSnapshotInfo.class, "/snapshots/" + id(snapshotId));
     }
 
     @Override
