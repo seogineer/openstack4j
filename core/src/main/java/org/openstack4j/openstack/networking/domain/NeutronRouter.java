@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.networking.domain;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,39 @@ public class NeutronRouter implements Router {
 
     @JsonProperty(value = "project_id", access = JsonProperty.Access.WRITE_ONLY)
     private String projectId;
+
+    @JsonProperty(value = "description", access = JsonProperty.Access.WRITE_ONLY)
+    private String description;
+
+    @JsonProperty(value = "availability_zone_hints", access = JsonProperty.Access.WRITE_ONLY)
+    private List<String> availabilityZoneHints;
+
+    @JsonProperty(value = "availability_zones", access = JsonProperty.Access.WRITE_ONLY)
+    private List<String> availabilityZones;
+
+    @JsonProperty(value = "ha", access = JsonProperty.Access.WRITE_ONLY)
+    private Boolean ha;
+
+    @JsonProperty(value = "flavor_id", access = JsonProperty.Access.WRITE_ONLY)
+    private String flavorId;
+
+    @JsonProperty(value = "service_type_id", access = JsonProperty.Access.WRITE_ONLY)
+    private String serviceTypeId;
+
+    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date createdAt;
+
+    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date updatedAt;
+
+    @JsonProperty(value = "tags", access = JsonProperty.Access.WRITE_ONLY)
+    private List<String> tags;
+
+    @JsonProperty(value = "revision_number", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer revisionNumber;
+
+    @JsonProperty(value = "conntrack_helpers", access = JsonProperty.Access.WRITE_ONLY)
+    private List<Map<String, Object>> conntrackHelpers;
 
     public static RouterBuilder builder() {
         return new RouterConcreteBuilder();
@@ -157,6 +191,61 @@ public class NeutronRouter implements Router {
     @Override
     public String getProjectId() {
         return projectId;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public List<String> getAvailabilityZoneHints() {
+        return availabilityZoneHints;
+    }
+
+    @Override
+    public List<String> getAvailabilityZones() {
+        return availabilityZones;
+    }
+
+    @Override
+    public Boolean getHa() {
+        return ha;
+    }
+
+    @Override
+    public String getFlavorId() {
+        return flavorId;
+    }
+
+    @Override
+    public String getServiceTypeId() {
+        return serviceTypeId;
+    }
+
+    @Override
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @Override
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @Override
+    public List<String> getTags() {
+        return tags;
+    }
+
+    @Override
+    public Integer getRevisionNumber() {
+        return revisionNumber;
+    }
+
+    @Override
+    public List<Map<String, Object>> getConntrackHelpers() {
+        return conntrackHelpers;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.openstack4j.model.network;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.List;
 
@@ -54,6 +55,61 @@ public interface Router extends Resource, Buildable<RouterBuilder> {
 
     /** @return the project id of the router, or null */
     default String getProjectId() {
+        return null;
+    }
+
+    /** @return the description (response only), or null */
+    default String getDescription() {
+        return null;
+    }
+
+    /** @return the availability zones the router may be scheduled to (response only), or null */
+    default List<String> getAvailabilityZoneHints() {
+        return null;
+    }
+
+    /** @return the availability zones the router is hosted in (response only), or null */
+    default List<String> getAvailabilityZones() {
+        return null;
+    }
+
+    /** @return whether the router is highly available, l3-ha extension (response only), or null */
+    default Boolean getHa() {
+        return null;
+    }
+
+    /** @return the flavor id (response only), or null */
+    default String getFlavorId() {
+        return null;
+    }
+
+    /** @return the service type id (response only), or null */
+    default String getServiceTypeId() {
+        return null;
+    }
+
+    /** @return the creation time (response only), or null */
+    default Date getCreatedAt() {
+        return null;
+    }
+
+    /** @return the last update time (response only), or null */
+    default Date getUpdatedAt() {
+        return null;
+    }
+
+    /** @return the tags (response only), or null */
+    default List<String> getTags() {
+        return null;
+    }
+
+    /** @return the revision number (response only), or null */
+    default Integer getRevisionNumber() {
+        return null;
+    }
+
+    /** @return the conntrack helpers of the router (response only; see the conntrack helper API for details), or null */
+    default List<Map<String, Object>> getConntrackHelpers() {
         return null;
     }
 }

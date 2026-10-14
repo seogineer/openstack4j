@@ -1,5 +1,7 @@
 package org.openstack4j.model.network;
 
+import java.util.List;
+
 import org.openstack4j.model.ModelEntity;
 
 /**
@@ -26,5 +28,10 @@ public interface ExternalGateway extends ModelEntity {
      * @return true if SNAT is enabled
      */
     boolean isEnableSnat();
+
+    /** @return the fixed IPs of the gateway port (response only, never sent back), or null */
+    default List<? extends IP> getExternalFixedIps() {
+        return null;
+    }
 
 }

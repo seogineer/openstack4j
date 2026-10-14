@@ -2,6 +2,7 @@ package org.openstack4j.openstack.networking.domain;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -62,6 +63,18 @@ public class NeutronFloatingIP implements NetFloatingIP {
 
     @JsonProperty("revision_number")
     private Integer revisionNumber;
+
+    @JsonProperty(value = "dns_name", access = JsonProperty.Access.WRITE_ONLY)
+    private String dnsName;
+
+    @JsonProperty(value = "dns_domain", access = JsonProperty.Access.WRITE_ONLY)
+    private String dnsDomain;
+
+    @JsonProperty(value = "port_details", access = JsonProperty.Access.WRITE_ONLY)
+    private Map<String, Object> portDetails;
+
+    @JsonProperty(value = "port_forwardings", access = JsonProperty.Access.WRITE_ONLY)
+    private List<Map<String, Object>> portForwardings;
 
     /**
      * Builder.
@@ -233,6 +246,26 @@ public class NeutronFloatingIP implements NetFloatingIP {
     @Override
     public Date getUpdatedAt() {
         return updatedAt;
+    }
+
+    @Override
+    public String getDnsName() {
+        return dnsName;
+    }
+
+    @Override
+    public String getDnsDomain() {
+        return dnsDomain;
+    }
+
+    @Override
+    public Map<String, Object> getPortDetails() {
+        return portDetails;
+    }
+
+    @Override
+    public List<Map<String, Object>> getPortForwardings() {
+        return portForwardings;
     }
 
     /**
