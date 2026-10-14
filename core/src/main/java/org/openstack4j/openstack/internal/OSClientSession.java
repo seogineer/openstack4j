@@ -140,63 +140,63 @@ public abstract class OSClientSession<R, T extends OSClient<T>> implements Endpo
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.instanceha.InstanceHaService instanceHa() {
+    public org.openstack4j.api.masakari.InstanceHaService instanceHa() {
         return Apis.getInstanceHaService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.reservation.ReservationService reservation() {
+    public org.openstack4j.api.blazar.ReservationService reservation() {
         return Apis.getReservationService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.rating.RatingService rating() {
+    public org.openstack4j.api.cloudkitty.RatingService rating() {
         return Apis.getRatingService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.accelerator.AcceleratorService accelerator() {
+    public org.openstack4j.api.cyborg.AcceleratorService accelerator() {
         return Apis.getAcceleratorService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.messaging.MessagingService messaging() {
+    public org.openstack4j.api.zaqar.MessagingService messaging() {
         return Apis.getMessagingService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.registration.RegistrationService registration() {
+    public org.openstack4j.api.adjutant.RegistrationService registration() {
         return Apis.getRegistrationService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.optimization.OptimizationService optimization() {
+    public org.openstack4j.api.watcher.OptimizationService optimization() {
         return Apis.getOptimizationService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.containerapp.ContainerAppService containerApp() {
+    public org.openstack4j.api.zun.ContainerAppService containerApp() {
         return Apis.getContainerAppService();
     }
 
     /**
      * {@inheritDoc}
      */
-    public org.openstack4j.api.baremetal.BaremetalService baremetal() {
+    public org.openstack4j.api.ironic.BaremetalService baremetal() {
         return Apis.getBaremetalService();
     }
 

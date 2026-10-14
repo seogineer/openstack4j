@@ -101,8 +101,8 @@ public class Apis {
      *
      * @return the instance HA (Masakari) services
      */
-    public static org.openstack4j.api.instanceha.InstanceHaService getInstanceHaService() {
-        return get(org.openstack4j.api.instanceha.InstanceHaService.class);
+    public static org.openstack4j.api.masakari.InstanceHaService getInstanceHaService() {
+        return get(org.openstack4j.api.masakari.InstanceHaService.class);
     }
 
     /**
@@ -110,8 +110,8 @@ public class Apis {
      *
      * @return the reservation (Blazar) services
      */
-    public static org.openstack4j.api.reservation.ReservationService getReservationService() {
-        return get(org.openstack4j.api.reservation.ReservationService.class);
+    public static org.openstack4j.api.blazar.ReservationService getReservationService() {
+        return get(org.openstack4j.api.blazar.ReservationService.class);
     }
 
     /**
@@ -119,8 +119,8 @@ public class Apis {
      *
      * @return the rating (CloudKitty) services
      */
-    public static org.openstack4j.api.rating.RatingService getRatingService() {
-        return get(org.openstack4j.api.rating.RatingService.class);
+    public static org.openstack4j.api.cloudkitty.RatingService getRatingService() {
+        return get(org.openstack4j.api.cloudkitty.RatingService.class);
     }
 
     /**
@@ -128,8 +128,8 @@ public class Apis {
      *
      * @return the accelerator (Cyborg) services
      */
-    public static org.openstack4j.api.accelerator.AcceleratorService getAcceleratorService() {
-        return get(org.openstack4j.api.accelerator.AcceleratorService.class);
+    public static org.openstack4j.api.cyborg.AcceleratorService getAcceleratorService() {
+        return get(org.openstack4j.api.cyborg.AcceleratorService.class);
     }
 
     /**
@@ -137,8 +137,8 @@ public class Apis {
      *
      * @return the messaging (Zaqar) services
      */
-    public static org.openstack4j.api.messaging.MessagingService getMessagingService() {
-        return get(org.openstack4j.api.messaging.MessagingService.class);
+    public static org.openstack4j.api.zaqar.MessagingService getMessagingService() {
+        return get(org.openstack4j.api.zaqar.MessagingService.class);
     }
 
     /**
@@ -146,8 +146,8 @@ public class Apis {
      *
      * @return the registration (Adjutant) services
      */
-    public static org.openstack4j.api.registration.RegistrationService getRegistrationService() {
-        return get(org.openstack4j.api.registration.RegistrationService.class);
+    public static org.openstack4j.api.adjutant.RegistrationService getRegistrationService() {
+        return get(org.openstack4j.api.adjutant.RegistrationService.class);
     }
 
     /**
@@ -155,8 +155,8 @@ public class Apis {
      *
      * @return the resource optimization (Watcher) services
      */
-    public static org.openstack4j.api.optimization.OptimizationService getOptimizationService() {
-        return get(org.openstack4j.api.optimization.OptimizationService.class);
+    public static org.openstack4j.api.watcher.OptimizationService getOptimizationService() {
+        return get(org.openstack4j.api.watcher.OptimizationService.class);
     }
 
     /**
@@ -164,8 +164,8 @@ public class Apis {
      *
      * @return the application container (Zun) services
      */
-    public static org.openstack4j.api.containerapp.ContainerAppService getContainerAppService() {
-        return get(org.openstack4j.api.containerapp.ContainerAppService.class);
+    public static org.openstack4j.api.zun.ContainerAppService getContainerAppService() {
+        return get(org.openstack4j.api.zun.ContainerAppService.class);
     }
 
     /**
@@ -173,8 +173,8 @@ public class Apis {
      *
      * @return the bare metal services
      */
-    public static org.openstack4j.api.baremetal.BaremetalService getBaremetalService() {
-        return get(org.openstack4j.api.baremetal.BaremetalService.class);
+    public static org.openstack4j.api.ironic.BaremetalService getBaremetalService() {
+        return get(org.openstack4j.api.ironic.BaremetalService.class);
     }
 
     /**
