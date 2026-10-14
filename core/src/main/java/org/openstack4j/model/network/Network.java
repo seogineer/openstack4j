@@ -90,4 +90,9 @@ public interface Network extends Resource, TimeEntity, Buildable<NetworkBuilder>
     default String getQosPolicyId() {
         return null;
     }
+
+    /** @return the description of the network (response only), or null */
+    default String getDescription() {
+        return null;
+    }
 }

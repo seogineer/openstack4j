@@ -1,5 +1,7 @@
 package org.openstack4j.model.network.ext;
 
+import java.util.Date;
+
 import org.openstack4j.common.Buildable;
 import org.openstack4j.model.ModelEntity;
 import org.openstack4j.model.network.ext.builder.NetQosPolicyBuilder;
@@ -55,4 +57,14 @@ public interface NetQosPolicy extends ModelEntity, Buildable<NetQosPolicyBuilder
      */
     String getName();
 
+
+    /** @return the creation time (response only), or null */
+    default Date getCreatedAt() {
+        return null;
+    }
+
+    /** @return the last update time (response only), or null */
+    default Date getUpdatedAt() {
+        return null;
+    }
 }

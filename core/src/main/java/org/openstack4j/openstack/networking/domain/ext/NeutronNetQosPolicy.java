@@ -1,5 +1,6 @@
 package org.openstack4j.openstack.networking.domain.ext;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,10 @@ public class NeutronNetQosPolicy implements NetQosPolicy {
     private String name;
     @JsonProperty
     private List<String> tags;
+    @JsonProperty(value = "created_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date createdAt;
+    @JsonProperty(value = "updated_at", access = JsonProperty.Access.WRITE_ONLY)
+    private Date updatedAt;
 
     public static NetQosPolicyBuilder builder() {
         return new NetQosPolicyConcreteBuilder();
@@ -94,6 +99,16 @@ public class NeutronNetQosPolicy implements NetQosPolicy {
 
     public List<String> getTags() {
         return tags;
+    }
+
+    @Override
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    @Override
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
     @Override

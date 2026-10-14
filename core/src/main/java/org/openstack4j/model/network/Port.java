@@ -97,4 +97,9 @@ public interface Port extends Resource, TimeEntity, Buildable<PortBuilder> {
     default String getQosNetworkPolicyId() {
         return null;
     }
+
+    /** @return the description of the port (response only), or null */
+    default String getDescription() {
+        return null;
+    }
 }

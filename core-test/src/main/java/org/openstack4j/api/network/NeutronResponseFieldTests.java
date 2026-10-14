@@ -249,6 +249,136 @@ public class NeutronResponseFieldTests extends AbstractNetworkingExtTest {
         assertNotSerialized(NeutronFloatingIP.class, fip, FIP_RESPONSE_KEYS);
     }
 
+    private static final String NETWORK_DESC = "{\"network\":{\"id\":\"n1\",\"name\":\"net\",\"description\":\"net desc\",\"qos_policy_id\":\"q1\"}}";
+    private static final String PORT_DESC = "{\"port\":{\"id\":\"p1\",\"network_id\":\"n1\",\"name\":\"port\",\"description\":\"port desc\"}}";
+    private static final String QOS_POLICY = "{\"policy\":{\"id\":\"q1\",\"name\":\"10Mbit\",\"shared\":false,\"is_default\":false,"
+            + "\"created_at\":\"2017-05-11T17:21:34Z\",\"updated_at\":\"2017-05-11T17:21:35Z\",\"rules\":[],\"tags\":[]}}";
+    private static final String AVAILABILITY = "{\"network_ip_availability\":{\"network_id\":\"n1\",\"network_name\":\"private\","
+            + "\"tenant_id\":\"t\",\"project_id\":\"t\",\"total_ips\":18446744073709551616,\"used_ips\":4,"
+            + "\"ip_availability_details\":{\"total_ips_in_subnet\":18446744073709551616,\"total_ips_in_allocation_pool\":253,"
+            + "\"used_ips_in_subnet\":4,\"used_ips_in_allocation_pool\":4},"
+            + "\"subnet_ip_availability\":[{\"subnet_id\":\"s1\",\"subnet_name\":\"sub\",\"ip_version\":4,\"cidr\":\"10.0.0.0/24\","
+            + "\"total_ips\":253,\"used_ips\":2,"
+            + "\"ip_availability_details\":{\"total_ips_in_subnet\":256,\"total_ips_in_allocation_pool\":253,"
+            + "\"used_ips_in_subnet\":3,\"used_ips_in_allocation_pool\":2}}]}}";
+    private static final String AGENT = "{\"agent\":{\"id\":\"a1\",\"agent_type\":\"Open vSwitch agent\",\"host\":\"h1\","
+            + "\"configurations\":{\"bridge_mappings\":{\"physnet1\":\"br-ex\"},\"devices\":3}}}";
+
+    public void networkAndPortDescription() throws Exception {
+        respondWith(200, NETWORK_DESC);
+        respondWith(200, PORT_DESC);
+
+        Network network = osv3().networking().network().get("n1");
+        Port port = osv3().networking().port().get("p1");
+
+        expect("GET", "/networks/n1");
+        expect("GET", "/ports/p1");
+        Assert.assertEquals(network.getDescription(), "net desc");
+        Assert.assertEquals(port.getDescription(), "port desc");
+    }
+
+    public void networkAndPortDescriptionNotResent() throws Exception {
+        respondWith(200, NETWORK_DESC);
+        respondWith(200, PORT_DESC);
+        respondWith(201, NETWORK_DESC);
+        respondWith(201, PORT_DESC);
+        respondWith(200, PORT_DESC);
+        Network network = osv3().networking().network().get("n1");
+        Port port = osv3().networking().port().get("p1");
+        expect("GET", "/networks/n1");
+        expect("GET", "/ports/p1");
+
+        osv3().networking().network().create(network);
+        osv3().networking().port().create(port);
+        osv3().networking().port().update(port);
+
+        JsonNode createdNetwork = body(expect("POST", "/networks")).get("network");
+        assertKeysAbsent(createdNetwork, "description", "qos_policy_id");
+        JsonNode createdPort = body(expect("POST", "/ports")).get("port");
+        assertKeysAbsent(createdPort, "description");
+        JsonNode updatedPort = body(expect("PUT", "/ports/p1")).get("port");
+        assertKeysAbsent(updatedPort, "description");
+    }
+
+    public void networkWithoutDescriptionAndBuilderQosBodyUnchanged() throws Exception {
+        respondWith(201, NETWORK_DESC);
+        osv3().networking().network().create(org.openstack4j.api.Builders.network().name("n").qosPolicyId("q1").build());
+
+        JsonNode sent = body(expect("POST", "/networks")).get("network");
+        Assert.assertEquals(sent.get("qos_policy_id").asText(), "q1");
+        assertKeysAbsent(sent, "description");
+    }
+
+    public void agentConfigurations() throws Exception {
+        respondWith(200, AGENT);
+
+        Agent agent = osv3().networking().agent().getAgent("a1");
+
+        expect("GET", "/agents/a1");
+        Assert.assertEquals(agent.getConfigurations().get("devices"), 3);
+        Assert.assertEquals(((java.util.Map<?, ?>) agent.getConfigurations().get("bridge_mappings")).get("physnet1"), "br-ex");
+        NeutronAgent model = ObjectMapperSingleton.getContext(NeutronAgent.class).readValue(AGENT, NeutronAgent.class);
+        assertNotSerialized(NeutronAgent.class, model, "configurations");
+    }
+
+    public void qosPolicyTimestamps() throws Exception {
+        respondWith(200, QOS_POLICY);
+        respondWith(201, QOS_POLICY);
+
+        org.openstack4j.model.network.ext.NetQosPolicy policy = osv3().networking().netQosPolicy().get("q1");
+        expect("GET", "/qos/policies/q1");
+        Assert.assertEquals(policy.getCreatedAt().getTime(), 1494523294000L);
+        Assert.assertEquals(policy.getUpdatedAt().getTime(), 1494523295000L);
+
+        osv3().networking().netQosPolicy().create(policy);
+        JsonNode sent = body(expect("POST", "/qos/policies")).get("policy");
+        assertKeysAbsent(sent, "created_at", "updated_at", "createdAt", "updatedAt");
+        Assert.assertEquals(sent.get("name").asText(), "10Mbit");
+    }
+
+    public void ipAvailabilityDetailsAreBigIntegers() throws Exception {
+        respondWith(200, AVAILABILITY);
+
+        org.openstack4j.model.network.ext.NetworkIPAvailability availability = osv3().networking().networkIPAvailability().get("n1");
+
+        expect("GET", "/network-ip-availabilities/n1");
+        java.math.BigInteger big = new java.math.BigInteger("18446744073709551616");
+        Assert.assertEquals(availability.getIpAvailabilityDetails().get("total_ips_in_subnet"), big);
+        Assert.assertEquals(availability.getIpAvailabilityDetails().get("used_ips_in_allocation_pool"), java.math.BigInteger.valueOf(4));
+        Assert.assertEquals(availability.getTotalIps(), big);
+        org.openstack4j.model.network.ext.SubnetIPAvailability subnet = availability.getSubnetIPAvailabilities().get(0);
+        Assert.assertEquals(subnet.getIpAvailabilityDetails().get("total_ips_in_subnet"), java.math.BigInteger.valueOf(256));
+        Assert.assertEquals(subnet.getIpAvailabilityDetails().get("total_ips_in_allocation_pool"), java.math.BigInteger.valueOf(253));
+    }
+
+    public void ipAvailabilityWithoutExtensionIsNull() throws Exception {
+        respondWith(200, "{\"network_ip_availability\":{\"network_id\":\"n1\",\"total_ips\":10,\"used_ips\":1,"
+                + "\"subnet_ip_availability\":[{\"subnet_id\":\"s1\",\"total_ips\":10,\"used_ips\":1}]}}");
+
+        org.openstack4j.model.network.ext.NetworkIPAvailability availability = osv3().networking().networkIPAvailability().get("n1");
+
+        expect("GET", "/network-ip-availabilities/n1");
+        Assert.assertNull(availability.getIpAvailabilityDetails());
+        Assert.assertNull(availability.getSubnetIPAvailabilities().get(0).getIpAvailabilityDetails());
+    }
+
+    public void networkPortQosIpAvailabilityNotSerialized() throws Exception {
+        NeutronNetwork network = ObjectMapperSingleton.getContext(NeutronNetwork.class).readValue(NETWORK_DESC, NeutronNetwork.class);
+        assertNotSerialized(NeutronNetwork.class, network, "description");
+        NeutronPort port = ObjectMapperSingleton.getContext(NeutronPort.class).readValue(PORT_DESC, NeutronPort.class);
+        assertNotSerialized(NeutronPort.class, port, "description");
+        org.openstack4j.openstack.networking.domain.ext.NeutronNetQosPolicy policy = ObjectMapperSingleton
+                .getContext(org.openstack4j.openstack.networking.domain.ext.NeutronNetQosPolicy.class)
+                .readValue(QOS_POLICY, org.openstack4j.openstack.networking.domain.ext.NeutronNetQosPolicy.class);
+        assertNotSerialized(org.openstack4j.openstack.networking.domain.ext.NeutronNetQosPolicy.class, policy, "created_at", "updated_at");
+        org.openstack4j.openstack.networking.domain.ext.NeutronNetworkIPAvailability availability = ObjectMapperSingleton
+                .getContext(org.openstack4j.openstack.networking.domain.ext.NeutronNetworkIPAvailability.class)
+                .readValue(AVAILABILITY, org.openstack4j.openstack.networking.domain.ext.NeutronNetworkIPAvailability.class);
+        Assert.assertNotNull(availability.getIpAvailabilityDetails());
+        assertNotSerialized(org.openstack4j.openstack.networking.domain.ext.NeutronNetworkIPAvailability.class, availability,
+                "ip_availability_details", "total_ips_in_subnet");
+    }
+
     private static void assertKeysAbsent(JsonNode node, String... keys) {
         for (String key : keys) {
             Assert.assertFalse(node.has(key), key + " was sent: " + node);

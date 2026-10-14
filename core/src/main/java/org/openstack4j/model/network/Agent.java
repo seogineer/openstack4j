@@ -1,6 +1,7 @@
 package org.openstack4j.model.network;
 
 import java.util.Date;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.openstack4j.common.Buildable;
@@ -105,6 +106,11 @@ public interface Agent extends ModelEntity, Buildable<AgentBuilder> {
 
     /** @return the availability zone of the agent, or null */
     default String getAvailabilityZone() {
+        return null;
+    }
+
+    /** @return the agent configuration (for example bridge_mappings, devices), or null */
+    default Map<String, Object> getConfigurations() {
         return null;
     }
 }
