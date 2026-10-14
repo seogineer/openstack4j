@@ -14,8 +14,8 @@ import org.openstack4j.model.ironic.options.ChassisCreate;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-@Test(suiteName = "Baremetal/ChassisDrivers")
-public class ChassisDriverTests extends AbstractBaremetalTest {
+@Test(suiteName = "Ironic/ChassisDrivers")
+public class ChassisDriverTests extends AbstractIronicTest {
 
     private static final String CHASSIS = "{\"uuid\": \"dff29d23-1ded-43b4-8ae1-5eebb3e30de1\", \"description\": \"Sample chassis\", \"extra\": {}, \"links\": [], \"nodes\": []}";
 
@@ -28,7 +28,7 @@ public class ChassisDriverTests extends AbstractBaremetalTest {
         respondWith(200, CHASSIS);
         respondWith(204);
 
-        var chassis = osv3().baremetal().chassis();
+        var chassis = osv3().ironic().chassis();
         Chassis created = chassis.create(ChassisCreate.create().description("Sample chassis"));
         List<? extends Chassis> detail = chassis.listDetail();
         chassis.list(Map.of("limit", "10"));
@@ -55,7 +55,7 @@ public class ChassisDriverTests extends AbstractBaremetalTest {
         respondWith(200, "{\"ipmi_address\": \"IP address or hostname of the node. Required.\"}");
         respondWith(200, "{\"raid_level\": \"RAID level for the logical disk. Required.\"}");
 
-        var drivers = osv3().baremetal().drivers();
+        var drivers = osv3().ironic().drivers();
         List<? extends Driver> all = drivers.list(Map.of("type", "dynamic"));
         Driver ipmi = drivers.get("ipmi");
         Map<String, String> properties = drivers.getProperties("ipmi");
@@ -74,7 +74,7 @@ public class ChassisDriverTests extends AbstractBaremetalTest {
 
     public void missingDriverIsNull() throws Exception {
         respondWith(404, "{\"error_message\": \"not found\"}");
-        Assert.assertNull(osv3().baremetal().drivers().get("nope"));
+        Assert.assertNull(osv3().ironic().drivers().get("nope"));
         takeRequest();
     }
 
@@ -87,7 +87,7 @@ public class ChassisDriverTests extends AbstractBaremetalTest {
         respondWith(200, "\"done\"");
         respondWith(200, "[1, 2]");
 
-        var drivers = osv3().baremetal().drivers();
+        var drivers = osv3().ironic().drivers();
         Map<String, Object> methods = drivers.listVendorPassthruMethods("ipmi");
         var posted = drivers.vendorPassthru("ipmi", "lookup", Map.of("a", 1));
         Map<String, Object> status = drivers.vendorPassthru("ipmi", HttpMethod.GET, "status", null);
@@ -115,7 +115,7 @@ public class ChassisDriverTests extends AbstractBaremetalTest {
     }
 
     public void driverPassthruRejectsBadInput() throws Exception {
-        var drivers = osv3().baremetal().drivers();
+        var drivers = osv3().ironic().drivers();
         Assert.assertThrows(IllegalArgumentException.class, () -> drivers.vendorPassthru("ipmi", HttpMethod.HEAD, "m", null));
         Assert.assertThrows(IllegalArgumentException.class, () -> drivers.vendorPassthru("ipmi", HttpMethod.GET, "m", Map.of("a", 1)));
         Assert.assertThrows(IllegalArgumentException.class, () -> drivers.vendorPassthru("ipmi", HttpMethod.POST, "a/b", null));
@@ -130,7 +130,7 @@ public class ChassisDriverTests extends AbstractBaremetalTest {
         respondWith(404, "{\"error_message\": \"not found\"}");
         respondWith(404, "{\"error_message\": \"not found\"}");
 
-        var drivers = osv3().baremetal().drivers();
+        var drivers = osv3().ironic().drivers();
         Assert.assertThrows(ResponseException.class, () -> drivers.listVendorPassthruMethods("nope"));
         ResponseException e = Assert.expectThrows(ResponseException.class, () -> drivers.vendorPassthru("nope", HttpMethod.GET, "m", null));
         Assert.assertEquals(e.getStatus(), 404);
@@ -144,7 +144,7 @@ public class ChassisDriverTests extends AbstractBaremetalTest {
 
     public void driverNameIsPathEncoded() throws Exception {
         respondWith(200, "{}");
-        osv3().baremetal().drivers().listVendorPassthruMethods("my driver");
+        osv3().ironic().drivers().listVendorPassthruMethods("my driver");
         Assert.assertTrue(takeRequest().getPath().endsWith("/v1/drivers/my%20driver/vendor_passthru/methods"));
     }
 }

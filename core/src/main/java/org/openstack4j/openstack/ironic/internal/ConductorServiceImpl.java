@@ -13,7 +13,7 @@ import org.openstack4j.model.ironic.Conductor;
 import org.openstack4j.openstack.ironic.domain.IronicConductor;
 import org.openstack4j.openstack.ironic.domain.IronicConductor.IronicConductorList;
 
-public class ConductorServiceImpl extends BaseBaremetalServices implements ConductorService {
+public class ConductorServiceImpl extends BaseIronicServices implements ConductorService {
 
     @Override
     public List<? extends Conductor> list() {

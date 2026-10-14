@@ -11,7 +11,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.ironic.domain.IronicPort;
 import org.openstack4j.openstack.ironic.domain.IronicPort.IronicPorts;
 
-public class PortServiceImpl extends BaseBaremetalServices implements PortService {
+public class PortServiceImpl extends BaseIronicServices implements PortService {
 
     @Override
     public List<? extends Port> list() {

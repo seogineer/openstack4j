@@ -11,7 +11,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.ironic.domain.IronicVolumeTarget;
 import org.openstack4j.openstack.ironic.domain.IronicVolumeTarget.IronicVolumeTargetList;
 
-public class VolumeTargetServiceImpl extends BaseBaremetalServices implements VolumeTargetService {
+public class VolumeTargetServiceImpl extends BaseIronicServices implements VolumeTargetService {
 
     @Override
     public List<? extends VolumeTarget> list() {

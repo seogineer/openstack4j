@@ -209,3 +209,41 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - 응답 필드 getter 가 `default` 메서드로 추가되어 그대로 컴파일됩니다: Octavia `LoadBalancerV2`·`ListenerV2`·`LbPoolV2`·`MemberV2`·`HealthMonitorV2`. 이 인터페이스를 직접 구현한 클래스는 새 getter 가 `null` 을 돌려줍니다. 응답에서 읽은 객체를 생성 요청에 넘길 때 본문은 이전과 같습니다.
 - 응답 필드 getter 가 `default` 메서드로 추가되어 그대로 컴파일됩니다: compute `QuotaSet`, Heat `Resource`·`Stack`, `SwiftContainer`. 이 인터페이스를 직접 구현한 클래스는 새 getter 가 `null` 을 돌려줍니다.
 - Heat `resources().show()`(동작 변경): 이제 값이 채워진 `Resource` 를 돌려줍니다(이전에는 모든 필드가 `null`). null 여부로 분기하던 코드는 결과가 달라지며, `resource` 루트 없이 응답하는 mock 은 역직렬화 예외가 납니다.
+
+# 4.12 → 4.13
+
+포크가 추가한 서비스 9개의 접근자·패키지·진입 인터페이스를 프로젝트 이름으로 바꿨습니다(호환되지 않는 변경, 이전 이름은 별칭 없이 삭제). 원본 openstack4j 에서 온 접근자(`compute()`, `networking()`, `dns()`, `workflow()`, `heat()` 등)는 그대로입니다.
+
+| 이전 접근자 | 새 접근자 | 패키지(api·openstack·model 공통) | 진입 인터페이스 / 구현 | `Apis` 게터 |
+|---|---|---|---|---|
+| `baremetal()` | `ironic()` | `baremetal` → `ironic` | `BaremetalService` → `IronicService` / `BaremetalServiceImpl` → `IronicServiceImpl` | `getBaremetalService` → `getIronicService` |
+| `instanceHa()` | `masakari()` | `instanceha` → `masakari` | `InstanceHaService` → `MasakariService` / `InstanceHaServiceImpl` → `MasakariServiceImpl` | `getInstanceHaService` → `getMasakariService` |
+| `reservation()` | `blazar()` | `reservation` → `blazar` | `ReservationService` → `BlazarService` / `ReservationServiceImpl` → `BlazarServiceImpl` | `getReservationService` → `getBlazarService` |
+| `accelerator()` | `cyborg()` | `accelerator` → `cyborg` | `AcceleratorService` → `CyborgService` / `AcceleratorServiceImpl` → `CyborgServiceImpl` | `getAcceleratorService` → `getCyborgService` |
+| `rating()` | `cloudkitty()` | `rating` → `cloudkitty` | `RatingService` → `CloudKittyService` / `RatingServiceImpl` → `CloudKittyServiceImpl` | `getRatingService` → `getCloudKittyService` |
+| `messaging()` | `zaqar()` | `messaging` → `zaqar` | `MessagingService` → `ZaqarService` / `MessagingServiceImpl` → `ZaqarServiceImpl` | `getMessagingService` → `getZaqarService` |
+| `registration()` | `adjutant()` | `registration` → `adjutant` | `RegistrationService` → `AdjutantService` / `RegistrationServiceImpl` → `AdjutantServiceImpl` | `getRegistrationService` → `getAdjutantService` |
+| `optimization()` | `watcher()` | `optimization` → `watcher` | `OptimizationService` → `WatcherService` / `OptimizationServiceImpl` → `WatcherServiceImpl` | `getOptimizationService` → `getWatcherService` |
+| `containerApp()` | `zun()` | `containerapp` → `zun` | `ContainerAppService` → `ZunService` / `ContainerAppServiceImpl` → `ZunServiceImpl` | `getContainerAppService` → `getZunService` |
+
+- Ironic 내부 클래스 이름도 바뀌었습니다: `BaremetalMicroVersionService` → `IronicMicroVersionService`, `BaremetalMicroVersionServiceImpl` → `IronicMicroVersionServiceImpl`, `BaremetalMicroVersions` → `IronicMicroVersions`, `BaseBaremetalServices` → `BaseIronicServices`, `BaremetalVersionDiscovery` → `IronicVersionDiscovery`. `BaremetalVersion`·`BaremetalPatch`·`BaremetalAttributes` 는 이름은 그대로이고 패키지만 `model.ironic`(`BaremetalAttributes` 는 `model.ironic.options`) 으로 옮겨졌습니다. 하위 서비스(`NodeService`, `SegmentService`, `LeaseService` 등)와 `Ironic*`·`Masakari*`·`Blazar*` 도메인 클래스 이름은 그대로입니다.
+- 마이크로버전을 켜지 않았을 때 Ironic 오류 메시지가 안내하는 호출이 `os.ironic().microVersions().negotiate()` 로 바뀌었습니다.
+- 그대로인 것: `ServiceType` 상수(`BAREMETAL`, `INSTANCE_HA`, `RESERVATION`, `ACCELERATOR`, `RATING`, `MESSAGING`, `REGISTRATION`, `OPTIMIZATION`, `CONTAINER_APP`), 카탈로그 매칭, `OpenStack-API-Version` 헤더 값(`baremetal`, `instance-ha`, `accelerator` 등)과 Ironic 의 `X-OpenStack-Ironic-API-Version` 헤더. 원본도 type 이름을 쓰는 상수가 많고 enum 이름이 카탈로그 매칭에 쓰이므로 바꾸지 않았습니다.
+- 옮기는 방법(필요에 따라 항목을 골라 쓰세요; 일반 단어이므로 패키지·클래스는 전체 이름 기준으로 바꾸세요):
+
+```sh
+sed -i -E \
+  -e 's/\.baremetal\(\)/.ironic()/g'        -e 's/org\.openstack4j\.(api|openstack|model)\.baremetal\b/org.openstack4j.\1.ironic/g' \
+  -e 's/\.instanceHa\(\)/.masakari()/g'     -e 's/org\.openstack4j\.(api|openstack|model)\.instanceha\b/org.openstack4j.\1.masakari/g' \
+  -e 's/\.reservation\(\)/.blazar()/g'      -e 's/org\.openstack4j\.(api|openstack|model)\.reservation\b/org.openstack4j.\1.blazar/g' \
+  -e 's/\.accelerator\(\)/.cyborg()/g'      -e 's/org\.openstack4j\.(api|openstack|model)\.accelerator\b/org.openstack4j.\1.cyborg/g' \
+  -e 's/\.rating\(\)/.cloudkitty()/g'       -e 's/org\.openstack4j\.(api|openstack|model)\.rating\b/org.openstack4j.\1.cloudkitty/g' \
+  -e 's/\.messaging\(\)/.zaqar()/g'         -e 's/org\.openstack4j\.(api|openstack|model)\.messaging\b/org.openstack4j.\1.zaqar/g' \
+  -e 's/\.registration\(\)/.adjutant()/g'   -e 's/org\.openstack4j\.(api|openstack|model)\.registration\b/org.openstack4j.\1.adjutant/g' \
+  -e 's/\.optimization\(\)/.watcher()/g'    -e 's/org\.openstack4j\.(api|openstack|model)\.optimization\b/org.openstack4j.\1.watcher/g' \
+  -e 's/\.containerApp\(\)/.zun()/g'        -e 's/org\.openstack4j\.(api|openstack|model)\.containerapp\b/org.openstack4j.\1.zun/g' \
+  $(git grep -l 'openstack4j')
+```
+
+  진입 인터페이스·`Apis` 게터 이름은 위 표대로 직접 바꾸세요. 다른 객체의 같은 이름 메서드(예: 다른 서비스의 `reservation()`)까지 바꾸지 않도록 변경 후 diff 를 확인하세요.
+

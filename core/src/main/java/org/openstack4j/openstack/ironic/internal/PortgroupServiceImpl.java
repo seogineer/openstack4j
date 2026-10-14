@@ -11,7 +11,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.ironic.domain.IronicPortgroup;
 import org.openstack4j.openstack.ironic.domain.IronicPortgroup.IronicPortgroups;
 
-public class PortgroupServiceImpl extends BaseBaremetalServices implements PortgroupService {
+public class PortgroupServiceImpl extends BaseIronicServices implements PortgroupService {
 
     @Override
     public List<? extends Portgroup> list() {

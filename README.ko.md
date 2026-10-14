@@ -259,12 +259,12 @@ os.heat().softwareDeployments().create(SoftwareDeploymentOptions.create(serverId
 같은 릴리스에서 Ironic(bare metal v1)의 핵심 API 를 지원합니다. 대부분의 필드와 API 는 높은 microversion 이 필요하므로 세션마다 `negotiate()` 를 먼저 부르기를 권합니다(기본값은 꺼짐 — 헤더가 없으면 서버는 1.1 로 처리합니다).
 
 ```java
-os.baremetal().microVersions().negotiate();                       // 서버 최대(1.107 까지)로
-Node node = os.baremetal().nodes().create(NodeCreate.create("ipmi").name("bm-1").driverInfo(Map.of("ipmi_address", "192.0.2.1")));
-os.baremetal().nodes().update("bm-1", List.of(BaremetalPatch.replace("/description", "rack 3")));   // JSON Patch
-os.baremetal().nodes().setProvisionState("bm-1", NodeProvision.target("manage"));
-os.baremetal().nodes().setPowerState("bm-1", "power on");
-os.baremetal().ports().create(PortCreate.create(node.getUuid(), "52:54:00:12:34:56"));
+os.ironic().microVersions().negotiate();                       // 서버 최대(1.107 까지)로
+Node node = os.ironic().nodes().create(NodeCreate.create("ipmi").name("bm-1").driverInfo(Map.of("ipmi_address", "192.0.2.1")));
+os.ironic().nodes().update("bm-1", List.of(BaremetalPatch.replace("/description", "rack 3")));   // JSON Patch
+os.ironic().nodes().setProvisionState("bm-1", NodeProvision.target("manage"));
+os.ironic().nodes().setPowerState("bm-1", "power on");
+os.ironic().ports().create(PortCreate.create(node.getUuid(), "52:54:00:12:34:56"));
 ```
 
 - `nodes()`: 목록(detail, 필터)·get·create·update(JSON Patch)·delete, 상태(states, power, provision, RAID, boot mode, secure boot), console, boot device, NMI, validate, maintenance, traits, VIF
@@ -359,73 +359,73 @@ os.magnum().extensions().upgradeCluster(clusterId, templateId, 1, null);
 
 ## Instance HA(Masakari)
 
-새 서비스 `os.instanceHa()`(Masakari v1): failover segment, segment 의 host, 장애 notification, 복구 때의 instance 이동(vmoves).
+새 서비스 `os.masakari()`(Masakari v1): failover segment, segment 의 host, 장애 notification, 복구 때의 instance 이동(vmoves).
 
 ```java
-Segment segment = os.instanceHa().segments().create(SegmentOptions.create("rack-a", "COMPUTE", "auto"));
-os.instanceHa().hosts().create(segment.getUuid(), HostOptions.create("compute-01", "COMPUTE", "SSH"));
-os.instanceHa().notifications().listVMoves(notificationId, null);    // instance-ha 1.3 헤더 자동
+Segment segment = os.masakari().segments().create(SegmentOptions.create("rack-a", "COMPUTE", "auto"));
+os.masakari().hosts().create(segment.getUuid(), HostOptions.create("compute-01", "COMPUTE", "SSH"));
+os.masakari().notifications().listVMoves(notificationId, null);    // instance-ha 1.3 헤더 자동
 ```
 
 ## Reservation(Blazar)
 
-새 서비스 `os.reservation()`(Blazar v1): lease 와, lease 가 예약하는 host·floating IP pool.
+새 서비스 `os.blazar()`(Blazar v1): lease 와, lease 가 예약하는 host·floating IP pool.
 
 ```java
-Lease lease = os.reservation().leases().create(Map.of("name", "gpu-week", "start_date", "now", "end_date", "2026-10-15 12:00",
+Lease lease = os.blazar().leases().create(Map.of("name", "gpu-week", "start_date", "now", "end_date", "2026-10-15 12:00",
         "reservations", List.of(Map.of("resource_type", "physical:host", "min", 1, "max", 2, "hypervisor_properties", "", "resource_properties", "")),
         "events", List.of()));
-os.reservation().hosts().create(Map.of("name", "compute-07", "gpu", "a100"));   // 관리자
+os.blazar().hosts().create(Map.of("name", "compute-07", "gpu", "a100"));   // 관리자
 ```
 
 ## Rating(CloudKitty), accelerator(Cyborg)
 
-새 서비스 `os.rating()`(CloudKitty v2: rated dataframes, rating modules, scopes, summary, reprocessing)과 `os.accelerator()`(Cyborg v2: accelerator requests, device profiles, devices, deployables, attributes). 응답 모양이 배포의 collector·driver 에 따라 달라서 결과는 `Map` 으로 돌려줍니다.
+새 서비스 `os.cloudkitty()`(CloudKitty v2: rated dataframes, rating modules, scopes, summary, reprocessing)과 `os.cyborg()`(Cyborg v2: accelerator requests, device profiles, devices, deployables, attributes). 응답 모양이 배포의 collector·driver 에 따라 달라서 결과는 `Map` 으로 돌려줍니다.
 
 ```java
-os.rating().summary(Map.of("groupby", "project_id", "begin", "2026-10-01T00:00:00Z"));
-os.accelerator().getDeviceProfile("fpga-profile");                   // 이름으로 조회: accelerator 2.2 헤더 자동
+os.cloudkitty().summary(Map.of("groupby", "project_id", "begin", "2026-10-01T00:00:00Z"));
+os.cyborg().getDeviceProfile("fpga-profile");                   // 이름으로 조회: accelerator 2.2 헤더 자동
 ```
 
 ## Messaging(Zaqar)
 
-새 서비스 `os.messaging()`(Zaqar v2): queues(metadata, JSON Patch, stats, pre-signed share, purge), messages(post, list, id 조회, pop, delete), claims, subscriptions(confirm 포함), pools, flavors, health. 모든 요청에 `Client-ID` 헤더가 붙습니다: 클라이언트의 `headers(...)` 에 준 값, 없으면 `useClientId` 로 지정한 값, 그것도 없으면 클라이언트마다 생성한 UUID. Zaqar 는 `echo=true` 가 아니면 자기 Client-ID 로 보낸 메시지를 목록에서 숨깁니다.
+새 서비스 `os.zaqar()`(Zaqar v2): queues(metadata, JSON Patch, stats, pre-signed share, purge), messages(post, list, id 조회, pop, delete), claims, subscriptions(confirm 포함), pools, flavors, health. 모든 요청에 `Client-ID` 헤더가 붙습니다: 클라이언트의 `headers(...)` 에 준 값, 없으면 `useClientId` 로 지정한 값, 그것도 없으면 클라이언트마다 생성한 UUID. Zaqar 는 `echo=true` 가 아니면 자기 Client-ID 로 보낸 메시지를 목록에서 숨깁니다.
 
 ```java
-os.messaging().useClientId("3381af92-2b9e-11e3-b191-71861300734c");
-os.messaging().postMessages("demo", List.of(Map.of("body", Map.of("event", "BackupStarted"), "ttl", 300)));
-os.messaging().claimMessages("demo", 300, 300, 5);                   // claim_id + messages(가져올 메시지가 없으면 messages 가 비어 있음)
+os.zaqar().useClientId("3381af92-2b9e-11e3-b191-71861300734c");
+os.zaqar().postMessages("demo", List.of(Map.of("body", Map.of("event", "BackupStarted"), "ttl", 300)));
+os.zaqar().claimMessages("demo", 300, 300, 5);                   // claim_id + messages(가져올 메시지가 없으면 messages 가 비어 있음)
 ```
 
 ## Registration(Adjutant)
 
-새 서비스 `os.registration()`(Adjutant v1): admin 용 tasks(필터 조회, 승인, 수정, 취소), tokens(재발급, 제출, 만료 삭제), notifications(확인 처리)와 프로젝트 셀프서비스: users(초대, 초대 취소), 사용자 role, 부여 가능한 role, 비밀번호 재설정, 이메일 변경, sign-up, quota size.
+새 서비스 `os.adjutant()`(Adjutant v1): admin 용 tasks(필터 조회, 승인, 수정, 취소), tokens(재발급, 제출, 만료 삭제), notifications(확인 처리)와 프로젝트 셀프서비스: users(초대, 초대 취소), 사용자 role, 부여 가능한 role, 비밀번호 재설정, 이메일 변경, sign-up, quota size.
 
 sign-up, 이메일 변경, quota 변경은 운영자가 해당 delegate API(`active_delegate_apis`)를 켰을 때만 있습니다. Adjutant 가 토큰 없이 받는 호출(sign-up, 비밀번호 재설정, token 제출)도 여기서는 인증된 `os` client 로 보냅니다.
 
 ```java
-os.registration().inviteUser("alice@example.com", List.of("member"), null, null);
-os.registration().listTasks(Map.of("tasks_per_page", "25"), Map.of("approved", Map.of("exact", false)));
-os.registration().submitToken(token, Map.of("password", newPassword));
+os.adjutant().inviteUser("alice@example.com", List.of("member"), null, null);
+os.adjutant().listTasks(Map.of("tasks_per_page", "25"), Map.of("approved", Map.of("exact", false)));
+os.adjutant().submitToken(token, Map.of("password", newPassword));
 ```
 
 ## Resource optimization(Watcher)
 
-새 서비스 `os.optimization()`(Watcher v1): audit templates, audits, action plans(start), actions(skip), goals, strategies(state), scoring engines, services, compute data model, webhooks. 목록은 페이지를 돌려줍니다(`next` 에 다음 페이지 URL). 새 API 가 필요한 메서드는 `OpenStack-API-Version: infra-optim <version>` 을 직접 붙입니다. `useApiVersion("1.7")`(또는 `latest`)로 모든 요청에 버전을 지정하면 `status_message` 같은 새 필드도 받습니다.
+새 서비스 `os.watcher()`(Watcher v1): audit templates, audits, action plans(start), actions(skip), goals, strategies(state), scoring engines, services, compute data model, webhooks. 목록은 페이지를 돌려줍니다(`next` 에 다음 페이지 URL). 새 API 가 필요한 메서드는 `OpenStack-API-Version: infra-optim <version>` 을 직접 붙입니다. `useApiVersion("1.7")`(또는 `latest`)로 모든 요청에 버전을 지정하면 `status_message` 같은 새 필드도 받습니다.
 
 ```java
-os.optimization().createAudit(Map.of("goal", "server_consolidation", "audit_type", "ONESHOT"));
-os.optimization().startActionPlan(actionPlanUuid);
-os.optimization().getDataModel("compute", null);                     // infra-optim 1.3 자동
+os.watcher().createAudit(Map.of("goal", "server_consolidation", "audit_type", "ONESHOT"));
+os.watcher().startActionPlan(actionPlanUuid);
+os.watcher().getDataModel("compute", null);                     // infra-optim 1.3 자동
 ```
 
 ## Application containers(Zun)
 
-새 서비스 `os.containerApp()`(Zun v1): containers(생성/실행, 수정, 삭제, start/stop/reboot/pause/unpause/kill, rebuild, resize, execute, logs, top, stats, attach, archive, commit, network, security group, actions), images(pull, search), hosts, services, capsules, quotas, quota classes, availability zones, networks, registries. 헤더가 없으면 Zun 은 1.1 로 응답하므로, 더 높은 버전이 필요한 메서드와 생성 필드는 `OpenStack-API-Version: container <version>` 을 직접 붙입니다. `useApiVersion` 으로 모든 요청에 버전을 지정할 수 있습니다.
+새 서비스 `os.zun()`(Zun v1): containers(생성/실행, 수정, 삭제, start/stop/reboot/pause/unpause/kill, rebuild, resize, execute, logs, top, stats, attach, archive, commit, network, security group, actions), images(pull, search), hosts, services, capsules, quotas, quota classes, availability zones, networks, registries. 헤더가 없으면 Zun 은 1.1 로 응답하므로, 더 높은 버전이 필요한 메서드와 생성 필드는 `OpenStack-API-Version: container <version>` 을 직접 붙입니다. `useApiVersion` 으로 모든 요청에 버전을 지정할 수 있습니다.
 
 ```java
-os.containerApp().createContainer(Map.of("image", "nginx", "command", List.of("nginx", "-g", "daemon off;")), true);  // container 1.20
-os.containerApp().executeContainer("web", "uname -a", true, false);
+os.zun().createContainer(Map.of("image", "nginx", "command", List.of("nginx", "-g", "daemon off;")), true);  // container 1.20
+os.zun().executeContainer("web", "uname -a", true, false);
 ```
 
 ## NFV(Tacker ETSI NFV-SOL)

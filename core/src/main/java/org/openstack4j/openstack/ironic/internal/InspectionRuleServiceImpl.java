@@ -11,7 +11,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.ironic.domain.IronicInspectionRule;
 import org.openstack4j.openstack.ironic.domain.IronicInspectionRule.IronicInspectionRuleList;
 
-public class InspectionRuleServiceImpl extends BaseBaremetalServices implements InspectionRuleService {
+public class InspectionRuleServiceImpl extends BaseIronicServices implements InspectionRuleService {
 
     @Override
     public List<? extends InspectionRule> list() {

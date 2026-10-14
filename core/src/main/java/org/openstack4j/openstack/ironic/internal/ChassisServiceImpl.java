@@ -13,7 +13,7 @@ import org.openstack4j.openstack.ironic.domain.IronicChassis;
 import org.openstack4j.openstack.ironic.domain.IronicChassis.IronicChassisList;
 import org.openstack4j.openstack.ironic.domain.IronicNode.Nodes;
 
-public class ChassisServiceImpl extends BaseBaremetalServices implements ChassisService {
+public class ChassisServiceImpl extends BaseIronicServices implements ChassisService {
 
     @Override
     public List<? extends Chassis> list() {

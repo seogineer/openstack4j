@@ -10,8 +10,8 @@ import org.openstack4j.model.ironic.options.NodeCreate;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-@Test(suiteName = "Baremetal/Nodes")
-public class NodeTests extends AbstractBaremetalTest {
+@Test(suiteName = "Ironic/Nodes")
+public class NodeTests extends AbstractIronicTest {
 
     private static final String NODE = "{\"uuid\": \"6d85703a-565d-469a-96ce-30b6de53079d\", \"name\": \"test_node\", \"driver\": \"ipmi\", \"provision_state\": \"enroll\","
             + " \"power_state\": null, \"maintenance\": false, \"resource_class\": \"bm-large\", \"driver_info\": {\"ipmi_address\": \"192.0.2.1\"}, \"properties\": {\"cpus\": 8},"
@@ -25,7 +25,7 @@ public class NodeTests extends AbstractBaremetalTest {
         respondWith(200, NODE);
         respondWith(204);
 
-        var nodes = osv3().baremetal().nodes();
+        var nodes = osv3().ironic().nodes();
         Node created = nodes.create(NodeCreate.create("ipmi").name("test_node").resourceClass("bm-large").driverInfo(Map.of("ipmi_address", "192.0.2.1")));
         List<? extends Node> detail = nodes.listDetail();
         nodes.list(Map.of("provision_state", "available", "maintenance", "false"));
@@ -55,18 +55,18 @@ public class NodeTests extends AbstractBaremetalTest {
 
     public void getMissingIsNullListMissingRaises() throws Exception {
         respondWith(404, "{\"error_message\": \"{\\\"faultstring\\\": \\\"Node missing could not be found.\\\", \\\"faultcode\\\": \\\"Client\\\", \\\"debuginfo\\\": null}\"}");
-        Assert.assertNull(osv3().baremetal().nodes().get("missing"));
+        Assert.assertNull(osv3().ironic().nodes().get("missing"));
         takeRequest();
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void updateNeedsAPatch() {
-        osv3().baremetal().nodes().update("test_node", List.of());
+        osv3().ironic().nodes().update("test_node", List.of());
     }
 
     public void replaceWithNullSendsValue() throws Exception {
         respondWith(200, NODE);
-        osv3().baremetal().nodes().update("test_node", java.util.Arrays.asList(BaremetalPatch.replace("/description", null)));
+        osv3().ironic().nodes().update("test_node", java.util.Arrays.asList(BaremetalPatch.replace("/description", null)));
         Assert.assertEquals(body(expect("PATCH", "/v1/nodes/test_node")).toString(), "[{\"op\":\"replace\",\"path\":\"/description\",\"value\":null}]");
     }
 
@@ -74,7 +74,7 @@ public class NodeTests extends AbstractBaremetalTest {
     public void listDetailRaisesOn404() throws Exception {
         respondWith(404, "{\"error_message\": \"not found\"}");
         try {
-            osv3().baremetal().nodes().listDetail();
+            osv3().ironic().nodes().listDetail();
         } finally {
             takeRequest();
         }

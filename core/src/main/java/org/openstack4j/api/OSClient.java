@@ -200,63 +200,63 @@ public interface OSClient<T extends OSClient<T>> {
      *
      * @return the bare metal service
      */
-    org.openstack4j.api.ironic.BaremetalService baremetal();
+    org.openstack4j.api.ironic.IronicService ironic();
 
     /**
      * Returns the application container (Zun) service API
      *
      * @return the application container (Zun) service
      */
-    org.openstack4j.api.zun.ContainerAppService containerApp();
+    org.openstack4j.api.zun.ZunService zun();
 
     /**
      * Returns the resource optimization (Watcher) service API
      *
      * @return the resource optimization (Watcher) service
      */
-    org.openstack4j.api.watcher.OptimizationService optimization();
+    org.openstack4j.api.watcher.WatcherService watcher();
 
     /**
      * Returns the registration (Adjutant) service API
      *
      * @return the registration (Adjutant) service
      */
-    org.openstack4j.api.adjutant.RegistrationService registration();
+    org.openstack4j.api.adjutant.AdjutantService adjutant();
 
     /**
      * Returns the messaging (Zaqar) service API
      *
      * @return the messaging (Zaqar) service
      */
-    org.openstack4j.api.zaqar.MessagingService messaging();
+    org.openstack4j.api.zaqar.ZaqarService zaqar();
 
     /**
      * Returns the accelerator (Cyborg) service API
      *
      * @return the accelerator (Cyborg) service
      */
-    org.openstack4j.api.cyborg.AcceleratorService accelerator();
+    org.openstack4j.api.cyborg.CyborgService cyborg();
 
     /**
      * Returns the rating (CloudKitty) service API
      *
      * @return the rating (CloudKitty) service
      */
-    org.openstack4j.api.cloudkitty.RatingService rating();
+    org.openstack4j.api.cloudkitty.CloudKittyService cloudkitty();
 
     /**
      * Returns the reservation (Blazar) service API
      *
      * @return the reservation (Blazar) service
      */
-    org.openstack4j.api.blazar.ReservationService reservation();
+    org.openstack4j.api.blazar.BlazarService blazar();
 
     /**
      * Returns the instance HA (Masakari) service API
      *
      * @return the instance HA (Masakari) service
      */
-    org.openstack4j.api.masakari.InstanceHaService instanceHa();
+    org.openstack4j.api.masakari.MasakariService masakari();
 
     /**
      * Returns the Artifact Service API

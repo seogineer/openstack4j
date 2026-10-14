@@ -259,12 +259,12 @@ os.heat().softwareDeployments().create(SoftwareDeploymentOptions.create(serverId
 The same release supports the Ironic (bare metal v1) API. Most fields and APIs need a higher microversion, so call `negotiate()` first in each session (microversions are off by default — without a header the server answers as 1.1).
 
 ```java
-os.baremetal().microVersions().negotiate();                       // server max (up to 1.107)
-Node node = os.baremetal().nodes().create(NodeCreate.create("ipmi").name("bm-1").driverInfo(Map.of("ipmi_address", "192.0.2.1")));
-os.baremetal().nodes().update("bm-1", List.of(BaremetalPatch.replace("/description", "rack 3")));   // JSON Patch
-os.baremetal().nodes().setProvisionState("bm-1", NodeProvision.target("manage"));
-os.baremetal().nodes().setPowerState("bm-1", "power on");
-os.baremetal().ports().create(PortCreate.create(node.getUuid(), "52:54:00:12:34:56"));
+os.ironic().microVersions().negotiate();                       // server max (up to 1.107)
+Node node = os.ironic().nodes().create(NodeCreate.create("ipmi").name("bm-1").driverInfo(Map.of("ipmi_address", "192.0.2.1")));
+os.ironic().nodes().update("bm-1", List.of(BaremetalPatch.replace("/description", "rack 3")));   // JSON Patch
+os.ironic().nodes().setProvisionState("bm-1", NodeProvision.target("manage"));
+os.ironic().nodes().setPowerState("bm-1", "power on");
+os.ironic().ports().create(PortCreate.create(node.getUuid(), "52:54:00:12:34:56"));
 ```
 
 - `nodes()`: list (detail, filters), get, create, update (JSON Patch), delete, states (power, provision, RAID, boot mode, secure boot), console, boot device, NMI, validate, maintenance, traits, VIFs
@@ -359,73 +359,73 @@ os.magnum().extensions().upgradeCluster(clusterId, templateId, 1, null);
 
 ## Instance HA (Masakari)
 
-New service `os.instanceHa()` (Masakari v1): failover segments, their hosts, failure notifications and the instance moves of a recovery.
+New service `os.masakari()` (Masakari v1): failover segments, their hosts, failure notifications and the instance moves of a recovery.
 
 ```java
-Segment segment = os.instanceHa().segments().create(SegmentOptions.create("rack-a", "COMPUTE", "auto"));
-os.instanceHa().hosts().create(segment.getUuid(), HostOptions.create("compute-01", "COMPUTE", "SSH"));
-os.instanceHa().notifications().listVMoves(notificationId, null);    // instance-ha 1.3 header added for you
+Segment segment = os.masakari().segments().create(SegmentOptions.create("rack-a", "COMPUTE", "auto"));
+os.masakari().hosts().create(segment.getUuid(), HostOptions.create("compute-01", "COMPUTE", "SSH"));
+os.masakari().notifications().listVMoves(notificationId, null);    // instance-ha 1.3 header added for you
 ```
 
 ## Reservation (Blazar)
 
-New service `os.reservation()` (Blazar v1): leases and the host and floating IP pools that leases reserve from.
+New service `os.blazar()` (Blazar v1): leases and the host and floating IP pools that leases reserve from.
 
 ```java
-Lease lease = os.reservation().leases().create(Map.of("name", "gpu-week", "start_date", "now", "end_date", "2026-10-15 12:00",
+Lease lease = os.blazar().leases().create(Map.of("name", "gpu-week", "start_date", "now", "end_date", "2026-10-15 12:00",
         "reservations", List.of(Map.of("resource_type", "physical:host", "min", 1, "max", 2, "hypervisor_properties", "", "resource_properties", "")),
         "events", List.of()));
-os.reservation().hosts().create(Map.of("name", "compute-07", "gpu", "a100"));   // admin
+os.blazar().hosts().create(Map.of("name", "compute-07", "gpu", "a100"));   // admin
 ```
 
 ## Rating (CloudKitty) and accelerators (Cyborg)
 
-New services `os.rating()` (CloudKitty v2: rated dataframes, rating modules, scopes, summaries, reprocessing) and `os.accelerator()` (Cyborg v2: accelerator requests, device profiles, devices, deployables, attributes). Results are `Map`s, as their shapes depend on the deployment's collectors and drivers.
+New services `os.cloudkitty()` (CloudKitty v2: rated dataframes, rating modules, scopes, summaries, reprocessing) and `os.cyborg()` (Cyborg v2: accelerator requests, device profiles, devices, deployables, attributes). Results are `Map`s, as their shapes depend on the deployment's collectors and drivers.
 
 ```java
-os.rating().summary(Map.of("groupby", "project_id", "begin", "2026-10-01T00:00:00Z"));
-os.accelerator().getDeviceProfile("fpga-profile");                   // by name: accelerator 2.2 header added for you
+os.cloudkitty().summary(Map.of("groupby", "project_id", "begin", "2026-10-01T00:00:00Z"));
+os.cyborg().getDeviceProfile("fpga-profile");                   // by name: accelerator 2.2 header added for you
 ```
 
 ## Messaging (Zaqar)
 
-New service `os.messaging()` (Zaqar v2): queues (metadata, JSON Patch, stats, pre-signed share, purge), messages (post, list, by ids, pop, delete), claims, subscriptions (incl. confirm), pools, flavors and health. Every request carries a `Client-ID` header: the one in the client's `headers(...)`, else the one set with `useClientId`, else a UUID generated per client. Zaqar hides a client's own messages from listings unless `echo=true`.
+New service `os.zaqar()` (Zaqar v2): queues (metadata, JSON Patch, stats, pre-signed share, purge), messages (post, list, by ids, pop, delete), claims, subscriptions (incl. confirm), pools, flavors and health. Every request carries a `Client-ID` header: the one in the client's `headers(...)`, else the one set with `useClientId`, else a UUID generated per client. Zaqar hides a client's own messages from listings unless `echo=true`.
 
 ```java
-os.messaging().useClientId("3381af92-2b9e-11e3-b191-71861300734c");
-os.messaging().postMessages("demo", List.of(Map.of("body", Map.of("event", "BackupStarted"), "ttl", 300)));
-os.messaging().claimMessages("demo", 300, 300, 5);                   // claim_id + messages (no messages when none are free)
+os.zaqar().useClientId("3381af92-2b9e-11e3-b191-71861300734c");
+os.zaqar().postMessages("demo", List.of(Map.of("body", Map.of("event", "BackupStarted"), "ttl", 300)));
+os.zaqar().claimMessages("demo", 300, 300, 5);                   // claim_id + messages (no messages when none are free)
 ```
 
 ## Registration (Adjutant)
 
-New service `os.registration()` (Adjutant v1): admin tasks (list with filters, approve, update, cancel), tokens (reissue, submit, purge expired) and notifications (acknowledge), plus project self-service: users (invite, cancel invite), user roles, grantable roles, password reset, email update, sign-up and quota sizes.
+New service `os.adjutant()` (Adjutant v1): admin tasks (list with filters, approve, update, cancel), tokens (reissue, submit, purge expired) and notifications (acknowledge), plus project self-service: users (invite, cancel invite), user roles, grantable roles, password reset, email update, sign-up and quota sizes.
 
 Sign-up, email update and quota updates exist only when the operator turns on their delegate APIs (`active_delegate_apis`). The calls Adjutant accepts without a token (sign-up, password reset, token submit) still go through an authenticated `os` client here.
 
 ```java
-os.registration().inviteUser("alice@example.com", List.of("member"), null, null);
-os.registration().listTasks(Map.of("tasks_per_page", "25"), Map.of("approved", Map.of("exact", false)));
-os.registration().submitToken(token, Map.of("password", newPassword));
+os.adjutant().inviteUser("alice@example.com", List.of("member"), null, null);
+os.adjutant().listTasks(Map.of("tasks_per_page", "25"), Map.of("approved", Map.of("exact", false)));
+os.adjutant().submitToken(token, Map.of("password", newPassword));
 ```
 
 ## Resource optimization (Watcher)
 
-New service `os.optimization()` (Watcher v1): audit templates, audits, action plans (start), actions (skip), goals, strategies (state), scoring engines, services, the compute data model and webhooks. Lists return their page (`next` holds the following page's URL). Methods that need a newer API send `OpenStack-API-Version: infra-optim <version>` themselves; `useApiVersion("1.7")` (or `latest`) opts every request into a version so newer fields such as `status_message` come back.
+New service `os.watcher()` (Watcher v1): audit templates, audits, action plans (start), actions (skip), goals, strategies (state), scoring engines, services, the compute data model and webhooks. Lists return their page (`next` holds the following page's URL). Methods that need a newer API send `OpenStack-API-Version: infra-optim <version>` themselves; `useApiVersion("1.7")` (or `latest`) opts every request into a version so newer fields such as `status_message` come back.
 
 ```java
-os.optimization().createAudit(Map.of("goal", "server_consolidation", "audit_type", "ONESHOT"));
-os.optimization().startActionPlan(actionPlanUuid);
-os.optimization().getDataModel("compute", null);                     // infra-optim 1.3 added for you
+os.watcher().createAudit(Map.of("goal", "server_consolidation", "audit_type", "ONESHOT"));
+os.watcher().startActionPlan(actionPlanUuid);
+os.watcher().getDataModel("compute", null);                     // infra-optim 1.3 added for you
 ```
 
 ## Application containers (Zun)
 
-New service `os.containerApp()` (Zun v1): containers (create/run, update, delete, start/stop/reboot/pause/unpause/kill, rebuild, resize, execute, logs, top, stats, attach, archives, commit, networks, security groups, actions), images (pull, search), hosts, services, capsules, quotas, quota classes, availability zones, networks and registries. Without a header Zun answers at 1.1, so methods and create fields that need more send `OpenStack-API-Version: container <version>` themselves; `useApiVersion` opts every request in.
+New service `os.zun()` (Zun v1): containers (create/run, update, delete, start/stop/reboot/pause/unpause/kill, rebuild, resize, execute, logs, top, stats, attach, archives, commit, networks, security groups, actions), images (pull, search), hosts, services, capsules, quotas, quota classes, availability zones, networks and registries. Without a header Zun answers at 1.1, so methods and create fields that need more send `OpenStack-API-Version: container <version>` themselves; `useApiVersion` opts every request in.
 
 ```java
-os.containerApp().createContainer(Map.of("image", "nginx", "command", List.of("nginx", "-g", "daemon off;")), true);  // container 1.20
-os.containerApp().executeContainer("web", "uname -a", true, false);
+os.zun().createContainer(Map.of("image", "nginx", "command", List.of("nginx", "-g", "daemon off;")), true);  // container 1.20
+os.zun().executeContainer("web", "uname -a", true, false);
 ```
 
 ## NFV (Tacker ETSI NFV-SOL)

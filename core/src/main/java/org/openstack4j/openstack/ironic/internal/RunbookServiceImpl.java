@@ -11,7 +11,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.ironic.domain.IronicRunbook;
 import org.openstack4j.openstack.ironic.domain.IronicRunbook.IronicRunbookList;
 
-public class RunbookServiceImpl extends BaseBaremetalServices implements RunbookService {
+public class RunbookServiceImpl extends BaseIronicServices implements RunbookService {
 
     @Override
     public List<? extends Runbook> list() {

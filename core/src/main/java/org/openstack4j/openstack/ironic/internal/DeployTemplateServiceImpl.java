@@ -11,7 +11,7 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.openstack.ironic.domain.IronicDeployTemplate;
 import org.openstack4j.openstack.ironic.domain.IronicDeployTemplate.IronicDeployTemplateList;
 
-public class DeployTemplateServiceImpl extends BaseBaremetalServices implements DeployTemplateService {
+public class DeployTemplateServiceImpl extends BaseIronicServices implements DeployTemplateService {
 
     @Override
     public List<? extends DeployTemplate> list() {
