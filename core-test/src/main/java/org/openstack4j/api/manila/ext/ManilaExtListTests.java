@@ -1,8 +1,11 @@
 package org.openstack4j.api.manila.ext;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.api.exceptions.MicroVersionException;
@@ -54,7 +57,11 @@ public class ManilaExtListTests extends AbstractManilaExtTest {
         filters.put("status", "available");
         List<? extends ShareSnapshotInfo> snapshots = osv3().share().snapshotsExt().listDetails(filters);
 
-        RecordedRequest request = expect("GET", "/snapshots/detail?share_id=x&status=available");
+        RecordedRequest request = takeRequest();
+        Assert.assertEquals(request.getMethod(), "GET");
+        String[] pathAndQuery = decodedPath(request).split("\\?", 2);
+        Assert.assertTrue(pathAndQuery[0].endsWith("/snapshots/detail"), pathAndQuery[0]);
+        Assert.assertEquals(new HashSet<>(Arrays.asList(pathAndQuery[1].split("&"))), Set.of("share_id=x", "status=available"));
         Assert.assertEquals(request.getHeader(VERSION), "2.80");
         Assert.assertEquals(snapshots.size(), 1);
         ShareSnapshotInfo snapshot = snapshots.get(0);
