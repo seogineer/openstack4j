@@ -10,6 +10,7 @@
 - Neutron 응답 필드: `Network.getDescription()`, `Port.getDescription()`, `Agent.getConfigurations()`, QoS policy `getCreatedAt()`·`getUpdatedAt()`, network·subnet IP availability `getIpAvailabilityDetails()`(`total_ips_in_subnet`·`total_ips_in_allocation_pool`·`used_ips_in_subnet`·`used_ips_in_allocation_pool`, `BigInteger`; `network-ip-availability-detail` 확장이 없으면 `null`). 요청 본문은 이전과 같음
 - Octavia 응답 필드: load balancer·listener·pool·member·health monitor `getCreatedAt()`·`getUpdatedAt()`, listener `getInsertHeaders()`·`getTimeoutClientData()`·`getTimeoutMemberConnect()`·`getTimeoutMemberData()`·`getTimeoutTcpInspect()`, pool `getTlsEnabled()`, member `getOperatingStatus()`·`getProvisioningStatus()`·`getBackup()`·`getMonitorAddress()`·`getMonitorPort()`, health monitor `getName()`·`getOperatingStatus()`·`getProvisioningStatus()`. 응답에서 읽은 객체를 `create` 에 넘겨도 이 값들은 보내지 않음
 - Nova quota set·quota class set `getServerGroups()`·`getServerGroupMembers()`(키가 없으면 `null`). Heat resource `getCreationTime()`·`getAttributes()`(resource show 또는 `with_attr` 목록에서만), stack `getDisableRollback()`(stack show). Swift `SwiftContainer.getLastModified()`(컨테이너 목록 응답)
+- Heat `resources().show()` 가 응답의 `resource` 루트를 벗겨 읽음(이전에는 `getResourceName()` 등 모든 getter 가 `null`). `list()` 는 이전과 같음
 
 ## 4.11.0
 
