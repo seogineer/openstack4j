@@ -47,6 +47,8 @@ public class HeatStack implements Stack {
     private String updatedTime;
     @JsonProperty("tags")
     private List<String> tags;
+    @JsonProperty(value = "disable_rollback", access = JsonProperty.Access.WRITE_ONLY)
+    private Boolean disableRollback;
 
     @Override
     public String getId() {
@@ -112,6 +114,11 @@ public class HeatStack implements Stack {
     @Override
     public String getStackStatusReason() {
         return stackStatusReason;
+    }
+
+    @Override
+    public Boolean getDisableRollback() {
+        return disableRollback;
     }
 
     @Override

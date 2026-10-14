@@ -1,5 +1,6 @@
 package org.openstack4j.model.storage.object;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.openstack4j.model.ModelEntity;
@@ -39,4 +40,9 @@ public interface SwiftContainer extends ModelEntity {
      * @return The metadata for this container
      */
     Map<String, String> getMetadata();
+
+    /** @return the last modified time; only filled by the container list (format=json), otherwise null */
+    default Date getLastModified() {
+        return null;
+    }
 }

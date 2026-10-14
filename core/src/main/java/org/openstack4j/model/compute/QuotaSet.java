@@ -79,4 +79,14 @@ public interface QuotaSet extends ModelEntity {
      */
     int getKeyPairs();
 
+
+    /** @return the number of server groups, or null when the server did not send it */
+    default Integer getServerGroups() {
+        return null;
+    }
+
+    /** @return the number of members per server group, or null when the server did not send it */
+    default Integer getServerGroupMembers() {
+        return null;
+    }
 }

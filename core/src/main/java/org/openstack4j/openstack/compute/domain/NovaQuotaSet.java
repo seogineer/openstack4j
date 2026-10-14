@@ -50,6 +50,12 @@ public class NovaQuotaSet implements QuotaSet {
     @JsonProperty("key_pairs")
     private int keyPairs;
 
+    @JsonProperty(value = "server_groups", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer serverGroups;
+
+    @JsonProperty(value = "server_group_members", access = JsonProperty.Access.WRITE_ONLY)
+    private Integer serverGroupMembers;
+
     /**
      * {@inheritDoc}
      */
@@ -160,6 +166,16 @@ public class NovaQuotaSet implements QuotaSet {
     @Override
     public int getKeyPairs() {
         return keyPairs;
+    }
+
+    @Override
+    public Integer getServerGroups() {
+        return serverGroups;
+    }
+
+    @Override
+    public Integer getServerGroupMembers() {
+        return serverGroupMembers;
     }
 
     @Override
