@@ -1,5 +1,6 @@
 ## 4.12.0
 
+<<<<<<< HEAD
 - 응답을 `ActionResponse` 로 돌려주는 compute 서버 액션·detach, Octavia·neutron-lbaas·FWaaS v1, Manila(legacy), Tacker, Heat stack update·patchUpdate, Swift container delete 가 410~499·501~599 응답(예: 429, 501, 502, 503)을 성공으로 돌려주던 문제를 고침 — 이제 `isSuccess()==false` 이고 `getCode()` 는 응답 status. 본문이 비었거나 JSON 이 아닌 오류는 이전의 `ClientResponseException` 대신 같은 status 의 실패 응답으로 돌려줌(JSON 이 왔지만 매핑되지 않는 409·500 은 기존 fallback, code 409 유지)
 - Nova `servers().setMetadata(serverId, metadata)`(`POST /servers/{id}/metadata`, 기존 키 유지 병합; `updateMetadata` 는 이전처럼 PUT 교체), `servers().listVolumeAttachments(serverId)`·`getVolumeAttachment(serverId, volumeId)`, `interfaces().attachToNetwork(serverId, netId, ipAddress)`(`net_id`·`fixed_ips`), `serverGroups().list(ServerGroupListOptions)`(`all_projects`·`limit`·`offset`)
 - Manila `snapshotsExt().list(filters)`·`listDetails(filters)`·`get(id)`, `sharesExt().listShareInstances(filters)`·`getShareInstance(id)` — legacy `shareSnapshots()`·`shareInstances()`(2.6 고정, 필터 없음)와 달리 세션 microversion(꺼져 있으면 2.7). `ShareSnapshotInfo.getUserId()`(2.17+)
@@ -7,6 +8,9 @@
 - Neutron `subnet().list(filters)`, `agent().list(filters)`. Glance `metadefs().getNamespace(namespace, resourceType)`(`resource_type` 로 property 이름 prefix; 전체 정의 생성은 기존 `MetadefNamespaceOptions.attribute(...)` 로 가능 — javadoc 예시). Magnum `showClustertemplate(id)`. Keystone `serviceEndpoints().list(ServiceListOptions)`(`type`·`name`), `serviceEndpoints().listEndpoints(EndpointListOptions)`(`interface`·`service_id`·`region_id`), `credentials().list(CredentialListOptions)`(`user_id`·`type`)
 - Neutron QoS 정책 수정: `NetQosPolicyUpdate` 는 interface 만 있고 구현체·진입점이 없어 객체를 만들 수 없었음 — `Builders.netQosPolicyUpdate()`(`id`·`name`·`description`·`shared`·`isDefault`)와 구현체 `NeutronNetQosPolicyUpdate` 추가, `netQosPolicy().update(...)` 는 값을 설정한 필드만 `PUT /qos/policies/{id}` 로 전송
 - Neutron router 응답 필드: `Router.getDescription()`·`getAvailabilityZoneHints()`·`getAvailabilityZones()`·`getHa()`·`getFlavorId()`·`getServiceTypeId()`·`getCreatedAt()`·`getUpdatedAt()`·`getTags()`·`getRevisionNumber()`·`getConntrackHelpers()`, `ExternalGateway.getExternalFixedIps()`. floating IP `getDnsName()`·`getDnsDomain()`·`getPortDetails()`·`getPortForwardings()`. 응답 전용으로 읽기만 하며, 응답에서 읽은 객체를 `create`·`update` 에 넘겨도 이 값들은 보내지 않음(router update 의 `external_gateway_info` 는 이전처럼 `network_id`·`enable_snat` 만)
+=======
+- Neutron 응답 필드: `Network.getDescription()`, `Port.getDescription()`, `Agent.getConfigurations()`, QoS policy `getCreatedAt()`·`getUpdatedAt()`, network·subnet IP availability `getIpAvailabilityDetails()`(`total_ips_in_subnet`·`total_ips_in_allocation_pool`·`used_ips_in_subnet`·`used_ips_in_allocation_pool`, `BigInteger`; `network-ip-availability-detail` 확장이 없으면 `null`). 요청 본문은 이전과 같음
+>>>>>>> 8e238c09 (feat: Neutron network/port description, agent configurations, qos timestamps and IP availability details (read-only))
 
 ## 4.11.0
 

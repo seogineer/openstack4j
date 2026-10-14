@@ -1,6 +1,7 @@
 package org.openstack4j.openstack.networking.domain.ext;
 
 import java.math.BigInteger;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,9 @@ public class NeutronNetworkIPAvailability implements NetworkIPAvailability {
 
     @JsonProperty("total_ips")
     private BigInteger totalIps;
+
+    @JsonProperty(value = "ip_availability_details", access = JsonProperty.Access.WRITE_ONLY)
+    private Map<String, BigInteger> ipAvailabilityDetails;
 
     @JsonProperty("subnet_ip_availability")
     private List<NeutronSubnetIPAvailability> subnetIPAvailabilities;
@@ -127,6 +131,11 @@ public class NeutronNetworkIPAvailability implements NetworkIPAvailability {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public Map<String, BigInteger> getIpAvailabilityDetails() {
+        return ipAvailabilityDetails;
+    }
+
     @Override
     public String toString() {
         return new ToStringHelper(this)

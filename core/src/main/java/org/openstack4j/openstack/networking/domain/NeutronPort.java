@@ -102,6 +102,9 @@ public class NeutronPort implements Port {
     @JsonProperty(value = "qos_network_policy_id", access = JsonProperty.Access.WRITE_ONLY)
     private String qosNetworkPolicyId;
 
+    @JsonProperty(value = "description", access = JsonProperty.Access.WRITE_ONLY)
+    private String description;
+
     public static PortBuilder builder() {
         return new PortConcreteBuilder();
     }
@@ -357,6 +360,11 @@ public class NeutronPort implements Port {
     @Override
     public String getQosNetworkPolicyId() {
         return qosNetworkPolicyId;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     @Override

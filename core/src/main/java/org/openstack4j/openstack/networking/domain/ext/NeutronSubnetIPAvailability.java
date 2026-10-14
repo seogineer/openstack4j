@@ -1,6 +1,7 @@
 package org.openstack4j.openstack.networking.domain.ext;
 
 import java.math.BigInteger;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,6 +34,9 @@ public class NeutronSubnetIPAvailability implements SubnetIPAvailability {
 
     @JsonProperty("ip_version")
     private IPVersionType ipVersion;
+
+    @JsonProperty(value = "ip_availability_details", access = JsonProperty.Access.WRITE_ONLY)
+    private Map<String, BigInteger> ipAvailabilityDetails;
 
     @JsonProperty("cidr")
     private String cidr;
@@ -87,6 +91,11 @@ public class NeutronSubnetIPAvailability implements SubnetIPAvailability {
     @Override
     public String getCidr() {
         return cidr;
+    }
+
+    @Override
+    public Map<String, BigInteger> getIpAvailabilityDetails() {
+        return ipAvailabilityDetails;
     }
 
     @Override

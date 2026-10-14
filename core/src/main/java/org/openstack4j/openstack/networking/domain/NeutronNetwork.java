@@ -69,6 +69,9 @@ public class NeutronNetwork implements Network {
     @JsonProperty("mtu")
     private Integer mtu;
 
+    @JsonProperty(value = "description", access = JsonProperty.Access.WRITE_ONLY)
+    private String description;
+
     @JsonProperty(value = "qos_policy_id", access = JsonProperty.Access.WRITE_ONLY)
     private String qosPolicyId;
     @JsonIgnore
@@ -277,6 +280,11 @@ public class NeutronNetwork implements Network {
     @Override
     public String getQosPolicyId() {
         return qosPolicyId;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     /** Request-only keys set through the builder; an explicit null is sent as JSON null. */

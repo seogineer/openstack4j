@@ -1,6 +1,7 @@
 package org.openstack4j.model.network.ext;
 
 import java.math.BigInteger;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.openstack4j.common.Buildable;
@@ -50,4 +51,12 @@ public interface SubnetIPAvailability extends ModelEntity, Buildable<SubnetIPAva
      * @return the subnet CIDR
      */
     String getCidr();
+
+    /**
+     * @return {@code ip_availability_details} (network-ip-availability-detail extension, response only): total_ips_in_subnet,
+     *         total_ips_in_allocation_pool, used_ips_in_subnet and used_ips_in_allocation_pool; null without the extension
+     */
+    default Map<String, BigInteger> getIpAvailabilityDetails() {
+        return null;
+    }
 }

@@ -1,6 +1,7 @@
 package org.openstack4j.model.network.ext;
 
 import java.math.BigInteger;
+import java.util.Map;
 import java.util.List;
 
 import org.openstack4j.common.Buildable;
@@ -54,4 +55,12 @@ public interface NetworkIPAvailability extends ModelEntity, Buildable<NetworkIPA
      * @return the list of SubnetIPAvailability
      */
     public List<? extends SubnetIPAvailability> getSubnetIPAvailabilities();
+
+    /**
+     * @return {@code ip_availability_details} (network-ip-availability-detail extension, response only): total_ips_in_subnet,
+     *         total_ips_in_allocation_pool, used_ips_in_subnet and used_ips_in_allocation_pool; null without the extension
+     */
+    default Map<String, BigInteger> getIpAvailabilityDetails() {
+        return null;
+    }
 }

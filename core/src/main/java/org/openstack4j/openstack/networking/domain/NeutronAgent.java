@@ -2,6 +2,7 @@ package org.openstack4j.openstack.networking.domain;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -42,6 +43,9 @@ public class NeutronAgent implements Agent {
 
     @JsonProperty(value = "availability_zone", access = JsonProperty.Access.WRITE_ONLY)
     private String availabilityZone;
+
+    @JsonProperty(value = "configurations", access = JsonProperty.Access.WRITE_ONLY)
+    private Map<String, Object> configurations;
 
     public static AgentBuilder builder() {
         return new AgentConcreteBuilder();
@@ -105,6 +109,11 @@ public class NeutronAgent implements Agent {
     @Override
     public String getAvailabilityZone() {
         return availabilityZone;
+    }
+
+    @Override
+    public Map<String, Object> getConfigurations() {
+        return configurations;
     }
 
     @Override

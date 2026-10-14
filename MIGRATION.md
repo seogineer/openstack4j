@@ -198,6 +198,7 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 
 컴파일에 영향을 주는 변경(추상 메서드 추가)과 요청·응답 동작이 바뀌는 변경은 아래와 같습니다.
 
+<<<<<<< HEAD
 - `ActionResponse` 를 돌려주는 메서드 중 내부적으로 `ToActionResponseFunction` 을 쓰는 것(compute 서버 액션·`detachVolume`·`attachVolumeAsync`, Octavia·neutron-lbaas, Manila legacy, Tacker, Heat `update`·`patchUpdate`, Swift container `delete` 등)은 410~499·501~599 응답을 이제 실패(`isSuccess()==false`, `getCode()`=응답 status)로 돌려줍니다(동작 변경). 이전에는 409·500 과 400~408 만 실패였고 나머지는 code 200 성공이었습니다. 본문이 비었거나 JSON 이 아닌 오류는 이전의 `ClientResponseException` 대신 같은 status 의 실패 응답이 되며, JSON 이 왔지만 매핑되지 않는 409·500 은 기존 fallback(code 409)을 유지합니다.
 - `ServerService`(`setMetadata`, `listVolumeAttachments`, `getVolumeAttachment`), `InterfaceService`(`attachToNetwork`), `ServerGroupService`(`list(ServerGroupListOptions)`)에 추상 메서드가 추가되었습니다. `ServerGroupListOptions` 는 새 클래스입니다. `updateMetadata` 의 동작(PUT, 주지 않은 키 삭제)은 그대로이고 javadoc 만 바로잡았습니다.
 - Manila `SnapshotExtService`(`list`, `listDetails`, `get`), `ShareExtService`(`listShareInstances`, `getShareInstance`)에 추상 메서드가 추가되었습니다. `ShareSnapshotInfo` 에는 `default` getter `getUserId()` 만 추가되었고, 응답의 `user_id` 는 이제 `getAttributes()` 대신 `getUserId()` 로 읽힙니다.
@@ -205,3 +206,6 @@ Spring Boot 3.5 처럼 Jackson 을 더 낮은 2.x 버전으로 고정하는 환�
 - `SubnetService`(`list(Map)`), `AgentService`(`list(Map)`), `MetadefService`(`getNamespace(String, String)`), `MagnumService`(`showClustertemplate`), `ServiceEndpointService`(`list(ServiceListOptions)`, `listEndpoints(EndpointListOptions)`), `CredentialService`(`list(CredentialListOptions)`)에 추상 메서드가 추가되었습니다. `ServiceListOptions`·`EndpointListOptions`·`CredentialListOptions` 는 새 클래스입니다.
 - Neutron `NetQosPolicyUpdate`: 구현체와 `Builders.netQosPolicyUpdate()` 가 추가되었습니다(공개 시그니처 변경 없음). 이전에는 이 interface 의 구현체가 없어 `netQosPolicy().update(...)` 를 호출할 수 없었습니다.
 - 응답 필드 getter 가 `default` 메서드로 추가되어 그대로 컴파일됩니다: Neutron `Router`·`ExternalGateway`·`NetFloatingIP`. 이 인터페이스를 직접 구현한 클래스는 새 getter 가 `null` 을 돌려줍니다. 응답에서 읽은 객체를 생성·수정 요청에 넘길 때 본문은 이전과 같습니다.
+=======
+- 응답 필드 getter 가 `default` 메서드로 추가되어 그대로 컴파일됩니다: Neutron `Network`·`Port`·`Agent`·`NetQosPolicy`·`NetworkIPAvailability`·`SubnetIPAvailability`. 이 인터페이스를 직접 구현한 클래스는 새 getter 가 `null` 을 돌려줍니다. 응답에서 읽은 객체를 생성·수정 요청에 넘길 때 본문은 이전과 같습니다.
+>>>>>>> 8e238c09 (feat: Neutron network/port description, agent configurations, qos timestamps and IP availability details (read-only))
