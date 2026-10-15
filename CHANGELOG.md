@@ -1,3 +1,7 @@
+## 4.14.0
+
+- httpclient connector: 429·503 응답에서 POST·PATCH 같은 비멱등 요청을 HttpClient 5 기본 재시도 전략이 한 번 더 보내던 문제를 고침(생성 요청이 두 번 들어갈 수 있었고 `Retry-After` 만큼 기다리기도 했음). 이제 GET·HEAD·PUT·DELETE·OPTIONS 만 이전처럼 1회 재시도하고 비멱등 요청은 첫 응답을 그대로 돌려줌. I/O 오류 재시도는 이전과 같음(멱등 요청만)
+
 ## 4.13.0
 
 - 호환되지 않는 변경: 포크가 추가한 서비스 9개를 원본 openstack4j 관례대로 프로젝트 이름으로 바꿈(별칭 없음). `baremetal()`→`ironic()`, `instanceHa()`→`masakari()`, `reservation()`→`blazar()`, `accelerator()`→`cyborg()`, `rating()`→`cloudkitty()`, `messaging()`→`zaqar()`, `registration()`→`adjutant()`, `optimization()`→`watcher()`, `containerApp()`→`zun()`. 패키지(`org.openstack4j.api|openstack|model.<이름>`), 진입 인터페이스·구현(`IronicService`·`MasakariService`·`BlazarService`·`CyborgService`·`CloudKittyService`·`ZaqarService`·`AdjutantService`·`WatcherService`·`ZunService`), `Apis.get<이름>Service()` 도 함께 바뀜. `ServiceType` 상수·카탈로그 매칭·요청 헤더는 그대로. 대응표와 옮기는 방법은 [MIGRATION.md](MIGRATION.md) 의 `4.12 → 4.13`
