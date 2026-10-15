@@ -185,6 +185,12 @@ public interface ServerCreateBuilder extends Buildable.Builder<ServerCreateBuild
     /** Description (2.19+). */
     ServerCreateBuilder description(String description);
 
+    /** {@code accessIPv4}: IPv4 address to use to access the server (informational for Nova; not configured on the guest). */
+    ServerCreateBuilder accessIPv4(String accessIPv4);
+
+    /** {@code accessIPv6}: IPv6 address to use to access the server (informational for Nova; not configured on the guest). */
+    ServerCreateBuilder accessIPv6(String accessIPv6);
+
     /** {@code "networks": "auto"} (2.37+); replaces any networks added before. */
     ServerCreateBuilder autoAllocateNetwork();
 

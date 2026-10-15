@@ -3,6 +3,7 @@
 - httpclient connector: 429·503 응답에서 POST·PATCH 같은 비멱등 요청을 HttpClient 5 기본 재시도 전략이 한 번 더 보내던 문제를 고침(생성 요청이 두 번 들어갈 수 있었고 `Retry-After` 만큼 기다리기도 했음). 이제 GET·HEAD·PUT·DELETE·OPTIONS 만 이전처럼 1회 재시도하고 비멱등 요청은 첫 응답을 그대로 돌려줌. I/O 오류 재시도는 이전과 같음(멱등 요청만)
 - Neutron `netQosPolicy().update(...)`·`netQosPolicyBandwidthLimitRule().update(...)` 가 넘긴 객체의 `id` 를 `null` 로 지우던 문제를 고침 — 같은 객체로 두 번 호출하면 `NullPointerException` 이었음. bandwidth limit rule 의 `id` 는 이제 응답에서 읽기만 하고 생성·수정 본문에는 보내지 않음
 - Cinder `volumes().resetState(volumeId, Status)` 가 `error_*` 상태를 Cinder 값으로 보냄: `ERROR_EXTENDING`→`error_extending`, `ERROR_BACKING_UP`→`error_backing-up`, `ERROR_DELETING`·`ERROR_RESTORING`·`ERROR_MANAGING` 도 같음(이전에는 `error-extending` 처럼 보내 400). 그 밖의 상태와 `Volume.Status.value()`·`toString()` 은 이전과 같음
+- Nova `ServerCreateBuilder.accessIPv4(String)`·`accessIPv6(String)`(서버 생성 본문 `accessIPv4`·`accessIPv6`; 설정하지 않으면 키 없음). 수정은 기존 `ServerUpdateOptions.accessIPv4/accessIPv6`
 
 ## 4.13.0
 

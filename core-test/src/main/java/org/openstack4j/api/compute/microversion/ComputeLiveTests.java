@@ -37,12 +37,14 @@ public class ComputeLiveTests {
         String url = System.getenv("OS_AUTH_URL");
         if (url == null || url.isEmpty())
             throw new SkipException("OS_AUTH_URL not set; skipping live compute tests");
-        String domain = env("OS_USER_DOMAIN_NAME", "Default");
-        os = OSFactory.builderV3()
-                .endpoint(url.replaceAll("/+$", "").endsWith("/v3") ? url : url.replaceAll("/+$", "") + "/v3")
-                .credentials(env("OS_USERNAME", null), env("OS_PASSWORD", null), Identifier.byName(domain))
-                .scopeToProject(Identifier.byName(env("OS_PROJECT_NAME", null)), Identifier.byName(env("OS_PROJECT_DOMAIN_NAME", "Default")))
-                .authenticate();
+        String authUrl = url.replaceAll("/+$", "").endsWith("/v3") ? url.replaceAll("/+$", "") : url.replaceAll("/+$", "") + "/v3";
+        String token = System.getenv("OS_TOKEN");
+        Identifier project = Identifier.byName(env("OS_PROJECT_NAME", null));
+        Identifier projectDomain = Identifier.byName(env("OS_PROJECT_DOMAIN_NAME", "Default"));
+        os = token != null && !token.isEmpty()
+                ? OSFactory.builderV3().endpoint(authUrl).token(token).scopeToProject(project, projectDomain).authenticate()
+                : OSFactory.builderV3().endpoint(authUrl).credentials(env("OS_USERNAME", null), env("OS_PASSWORD", null),
+                Identifier.byName(env("OS_USER_DOMAIN_NAME", "Default"))).scopeToProject(project, projectDomain).authenticate();
         ComputeVersion version = os.compute().microVersions().negotiate();
         Assert.assertTrue(version.isEnabled());
         System.out.println("compute microversion " + version.getMicroVersion() + " (server max " + version.getServerMaxVersion() + ")");
@@ -123,6 +125,35 @@ public class ComputeLiveTests {
         } finally {
             if (server != null)
                 os.compute().servers().delete(server.getId());
+        }
+    }
+
+    /** accessIPv4/accessIPv6 are accepted in the create body and read back; they are not configured on the guest. */
+    public void bootWithAccessIpv4() throws Exception {
+        Flavor flavor = os.compute().flavors().list().stream()
+                .min(Comparator.comparingInt(Flavor::getRam)).orElseThrow(() -> new SkipException("no flavor"));
+        Image image = os.imagesV2().list().stream().filter(i -> "active".equalsIgnoreCase(String.valueOf(i.getStatus())))
+                .findFirst().orElseThrow(() -> new SkipException("no active image"));
+        String name = "os4j-live-" + UUID.randomUUID().toString().substring(0, 8);
+        Server server = null;
+        try {
+            try {
+                server = os.compute().servers().boot(os.compute().servers().serverBuilder()
+                        .name(name).flavor(flavor.getId()).image(image.getId()).networks(Collections.singletonList(pickNetworkId()))
+                        .accessIPv4("192.0.2.44").accessIPv6("2001:db8::44").build());
+            } catch (RuntimeException e) {
+                throw new SkipException("cannot create a server here: " + e.getMessage());
+            }
+            Server shown = os.compute().servers().get(server.getId());
+            Assert.assertEquals(shown.getAccessIPv4(), "192.0.2.44");
+            Assert.assertEquals(shown.getAccessIPv6(), "2001:db8::44");
+        } finally {
+            if (server != null) {
+                final String serverId = server.getId();
+                os.compute().servers().delete(serverId);
+                for (int i = 0; i < 60 && os.compute().servers().get(serverId) != null; i++)
+                    Thread.sleep(2000);
+            }
         }
     }
 
