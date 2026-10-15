@@ -247,3 +247,9 @@ sed -i -E \
 
   진입 인터페이스·`Apis` 게터 이름은 위 표대로 직접 바꾸세요. 다른 객체의 같은 이름 메서드(예: 다른 서비스의 `reservation()`)까지 바꾸지 않도록 변경 후 diff 를 확인하세요.
 
+# 4.13 → 4.14
+
+컴파일에 영향을 주는 변경(추상 메서드 추가)과 요청·응답 동작이 바뀌는 변경은 아래와 같습니다.
+
+- httpclient connector 의 재시도 규칙이 바뀌었습니다. 429·503 응답을 다시 보내는 대상이 GET·HEAD·PUT·DELETE·OPTIONS 로 한정되고, POST·PATCH 는 첫 응답(429·503)을 그대로 돌려줍니다. 이 재시도 전략은 `HttpClientConfigInterceptor.onClientCreate` 가 불리기 전에 설정되므로, 이전 동작이나 다른 규칙이 필요하면 인터셉터에서 `cb.setRetryStrategy(...)` 또는 `cb.disableAutomaticRetries()` 로 바꾸면 됩니다.
+- httpclient connector 는 응답 본문을 끝까지 읽기 전에 닫으면 남은 본문을 끝까지 읽고 연결을 풀에 돌려줍니다(이전과 같음; 큰 다운로드도 나머지를 다 받습니다). 바로 끊고 싶으면 `HttpResponse` 를 직접 쥔 경우 `getInputStream()` 또는 `((HttpResponseImpl) response).unwrap().getEntity().getContent()` 가 돌려주는 `org.apache.hc.core5.http.io.EofSensorInputStream` 의 `abort()`(4.x `abortConnection()` 의 5.x 이름)를 호출하세요. `imagesV2().download(...)` 가 돌려주는 스트림은 한 번 감싼 것이라 이 방법을 쓸 수 없으므로, 중간에 끊어야 하면 okhttp connector 를 쓰세요.

@@ -8,6 +8,7 @@ import java.net.URL;
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
@@ -16,6 +17,11 @@ import org.apache.hc.client5.http.ssl.HttpsSupport;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.Method;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.TimeValue;
 import org.apache.hc.core5.util.Timeout;
@@ -119,11 +125,39 @@ public class HttpClientFactory {
 
         cb.setConnectionManager(cmb.build());
 
+        // HttpClient 5 retries 429/503 once for any method; only idempotent requests may be repeated.
+        // Set before the interceptor so applications can still replace it (setRetryStrategy / disableAutomaticRetries).
+        cb.setRetryStrategy(new IdempotentResponseRetryStrategy());
+
         if (INTERCEPTOR != null) {
             INTERCEPTOR.onClientCreate(cb, rcb, config);
         }
 
         return cb.setDefaultRequestConfig(rcb.build()).build();
+    }
+
+    /**
+     * The default strategy retries a 429/503 response once whatever the method, which sends a POST or PATCH twice.
+     * Only idempotent requests may be repeated; I/O error retries are unchanged (already idempotent-only).
+     */
+    static final class IdempotentResponseRetryStrategy extends DefaultHttpRequestRetryStrategy {
+        @Override
+        public boolean retryRequest(HttpResponse response, int execCount, HttpContext context) {
+            HttpRequest request = currentRequest(context);
+            return request != null && Method.isIdempotent(request.getMethod())
+                    && super.retryRequest(response, execCount, context);
+        }
+
+        /** httpclient5 5.3.x keeps the request in the "http.request" attribute, 5.5+ in a field of the context. */
+        static HttpRequest currentRequest(HttpContext context) {
+            if (context == null) return null;
+            if (context instanceof HttpCoreContext) {
+                HttpRequest request = ((HttpCoreContext) context).getRequest();
+                if (request != null) return request;
+            }
+            Object attribute = context.getAttribute(HttpCoreContext.HTTP_REQUEST);
+            return attribute instanceof HttpRequest ? (HttpRequest) attribute : null;
+        }
     }
 
     /**
