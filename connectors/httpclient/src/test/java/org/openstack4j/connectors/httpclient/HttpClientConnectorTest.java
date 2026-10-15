@@ -173,7 +173,7 @@ public class HttpClientConnectorTest {
         BasicHttpResponse unavailable = new BasicHttpResponse(503);
         unavailable.setVersion(HttpVersion.HTTP_1_1);
 
-        // attribute (httpclient5 5.3.x) and field (5.5+) are both honoured, whichever this version fills
+        // exercises the attribute path (httpclient5 5.3.x); the field path (5.5+) is covered by the request-level tests above
         HttpClientContext get = HttpClientContext.create();
         get.setAttribute(HttpCoreContext.HTTP_REQUEST, new BasicHttpRequest("GET", "/x"));
         Assert.assertTrue(strategy.retryRequest(unavailable, 1, get));
