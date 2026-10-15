@@ -1,9 +1,14 @@
 package org.openstack4j.api.storage;
 
 import java.util.HashMap;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.api.AbstractTest;
 import org.openstack4j.api.Builders;
@@ -207,6 +212,50 @@ public class VolumeTests extends AbstractTest {
         for (String[] e : expected) {
             assertEquals(Volume.Status.valueOf(e[0]).value(), e[1]);
         }
+    }
+
+    /** The status of the next os-reset_status request, which must be the only key of its body. */
+    private String sentResetStatus() throws Exception {
+        RecordedRequest request = server.takeRequest();
+        assertTrue(request.getPath().endsWith("/volumes/v1/action"), request.getPath());
+        JsonNode body = new ObjectMapper().readTree(request.getBody().readUtf8()).get("os-reset_status");
+        assertEquals(body.size(), 1);
+        return body.get("status").asText();
+    }
+
+    @Test
+    public void resetStateSendsCinderLiterals() throws Exception {
+        Object[][] expected = {
+                {Volume.Status.ERROR_EXTENDING, "error_extending"}, {Volume.Status.ERROR_BACKING_UP, "error_backing-up"},
+                {Volume.Status.ERROR_DELETING, "error_deleting"}, {Volume.Status.ERROR_RESTORING, "error_restoring"},
+                {Volume.Status.ERROR_MANAGING, "error_managing"}, {Volume.Status.IN_USE, "in-use"},
+                {Volume.Status.ERROR, "error"}, {Volume.Status.AVAILABLE, "available"},
+                {Volume.Status.RESTORING_BACKUP, "restoring-backup"}
+        };
+        for (Object[] e : expected) {
+            respondWith(202);
+            osv3().blockStorage().volumes().resetState("v1", (Volume.Status) e[0]);
+            assertEquals(sentResetStatus(), e[1]);
+        }
+    }
+
+    /** cinder/objects/fields.py VolumeStatus.ALL: every usable enum constant is sent as one of these. */
+    @Test
+    @SuppressWarnings("deprecation")
+    public void resetStateSendsOnlyCinderStatuses() throws Exception {
+        Set<String> cinder = new HashSet<>(List.of("creating", "available", "deleting", "error", "error_deleting",
+                "error_restoring", "error_extending", "attaching", "in-use", "detaching", "backing-up", "restoring-backup",
+                "error_backing-up", "error_managing", "managing", "maintenance", "downloading", "uploading", "retyping",
+                "extending", "awaiting-transfer", "reserved"));
+        assertEquals(cinder.size(), 22);
+        EnumSet<Volume.Status> usable = EnumSet.complementOf(EnumSet.of(Volume.Status.RESERVERD, Volume.Status.UNRECOGNIZED));
+        Set<String> sent = new HashSet<>();
+        for (Volume.Status status : usable) {
+            respondWith(202);
+            osv3().blockStorage().volumes().resetState("v1", status);
+            sent.add(sentResetStatus());
+        }
+        assertEquals(sent, cinder);
     }
 
     @Test

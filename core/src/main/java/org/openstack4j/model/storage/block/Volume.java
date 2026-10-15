@@ -145,7 +145,7 @@ public interface Volume extends ModelEntity, Buildable<VolumeBuilder> {
         @Deprecated
         RESERVERD,
         // cinder VolumeStatus (cinder/objects/fields.py). value() maps '_' to '-', which differs from cinder for the error_*
-        // states (e.g. error_extending); to reset to such a state use setStatus(volumeId, String, ...) instead of resetState(..., Status)
+        // states (e.g. error_extending); resetState(..., Status) sends the cinder literal (ResetStatusAction) instead of value()
         RESERVED, MAINTENANCE, AWAITING_TRANSFER, ERROR_BACKING_UP, ERROR_EXTENDING, ERROR_MANAGING, MANAGING, RETYPING, EXTENDING;
 
         @JsonCreator

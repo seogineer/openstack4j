@@ -34,12 +34,14 @@ public class BlockStorageLiveTests {
         String url = System.getenv("OS_AUTH_URL");
         if (url == null || url.isEmpty())
             throw new SkipException("OS_AUTH_URL not set; skipping live block storage tests");
-        String domain = env("OS_USER_DOMAIN_NAME", "Default");
-        os = OSFactory.builderV3()
-                .endpoint(url.replaceAll("/+$", "").endsWith("/v3") ? url : url.replaceAll("/+$", "") + "/v3")
-                .credentials(env("OS_USERNAME", null), env("OS_PASSWORD", null), Identifier.byName(domain))
-                .scopeToProject(Identifier.byName(env("OS_PROJECT_NAME", null)), Identifier.byName(env("OS_PROJECT_DOMAIN_NAME", "Default")))
-                .authenticate();
+        String authUrl = url.replaceAll("/+$", "").endsWith("/v3") ? url.replaceAll("/+$", "") : url.replaceAll("/+$", "") + "/v3";
+        String token = System.getenv("OS_TOKEN");
+        Identifier project = Identifier.byName(env("OS_PROJECT_NAME", null));
+        Identifier projectDomain = Identifier.byName(env("OS_PROJECT_DOMAIN_NAME", "Default"));
+        os = token != null && !token.isEmpty()
+                ? OSFactory.builderV3().endpoint(authUrl).token(token).scopeToProject(project, projectDomain).authenticate()
+                : OSFactory.builderV3().endpoint(authUrl).credentials(env("OS_USERNAME", null), env("OS_PASSWORD", null),
+                Identifier.byName(env("OS_USER_DOMAIN_NAME", "Default"))).scopeToProject(project, projectDomain).authenticate();
         BlockStorageVersion version = os.blockStorage().microVersions().negotiate();
         Assert.assertTrue(version.isEnabled());
         System.out.println("block storage microversion " + version.getMicroVersion() + " (server max " + version.getServerMaxVersion() + ")");
@@ -112,6 +114,27 @@ public class BlockStorageLiveTests {
                 waitForGone(() -> os.blockStorage().snapshots().get(snapshotId));
             }
         } finally {
+            os.blockStorage().volumes().delete(volumeId);
+            waitForGone(() -> os.blockStorage().volumes().get(volumeId));
+        }
+    }
+
+    /** error_* statuses are sent as Cinder literals (error_extending), not error-extending which Cinder rejects with 400. */
+    public void resetStateToCinderErrorLiteral() throws Exception {
+        String name = "os4j-live-" + UUID.randomUUID().toString().substring(0, 8);
+        final String volumeId = os.blockStorage().volumes().create(Builders.volume().name(name).size(1).build()).getId();
+        try {
+            waitFor(() -> os.blockStorage().volumes().get(volumeId).getStatus() == Volume.Status.AVAILABLE, "volume available");
+            Assert.assertTrue(os.blockStorage().volumes().resetState(volumeId, Volume.Status.ERROR_EXTENDING).isSuccess());
+            Assert.assertEquals(os.blockStorage().volumes().get(volumeId).getStatus(), Volume.Status.ERROR_EXTENDING);
+            Assert.assertTrue(os.blockStorage().volumes().resetState(volumeId, Volume.Status.AVAILABLE).isSuccess());
+            Assert.assertEquals(os.blockStorage().volumes().get(volumeId).getStatus(), Volume.Status.AVAILABLE);
+        } finally {
+            try {
+                os.blockStorage().volumes().resetState(volumeId, Volume.Status.AVAILABLE);
+            } catch (RuntimeException ignored) {
+                // best effort so that the delete below is accepted
+            }
             os.blockStorage().volumes().delete(volumeId);
             waitForGone(() -> os.blockStorage().volumes().get(volumeId));
         }
