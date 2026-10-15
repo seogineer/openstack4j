@@ -118,9 +118,11 @@ public interface BlockVolumeService extends RestService {
     /**
      * Resets the specified volume status.
      * <p>
-     * The status is sent as {@code Status.value()} ({@code _} becomes {@code -}). To reset to the Cinder statuses that use
-     * {@code _} ({@code error_deleting}, {@code error_restoring}, {@code error_extending}, {@code error_managing},
-     * {@code error_backing-up}) use {@code setStatus(volumeId, "error_extending", null, null)}.
+     * The status is sent as the Cinder literal: {@code error_*} keeps the underscore after {@code error}
+     * ({@code ERROR_EXTENDING} becomes {@code error_extending}, {@code ERROR_BACKING_UP} becomes
+     * {@code error_backing-up}), every other status is {@code Status.value()} ({@code IN_USE} becomes {@code in-use}).
+     * {@code UNRECOGNIZED} and the deprecated {@code RESERVERD} are rejected by Cinder. To change the attach or
+     * migration status as well use {@code setStatus(volumeId, String, String, String)}.
      *
      * @param volumeId the volume id
      * @param status new volume status
