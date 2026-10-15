@@ -1,6 +1,7 @@
 ## 4.14.0
 
 - httpclient connector: 429·503 응답에서 POST·PATCH 같은 비멱등 요청을 HttpClient 5 기본 재시도 전략이 한 번 더 보내던 문제를 고침(생성 요청이 두 번 들어갈 수 있었고 `Retry-After` 만큼 기다리기도 했음). 이제 GET·HEAD·PUT·DELETE·OPTIONS 만 이전처럼 1회 재시도하고 비멱등 요청은 첫 응답을 그대로 돌려줌. I/O 오류 재시도는 이전과 같음(멱등 요청만)
+- Neutron `netQosPolicy().update(...)`·`netQosPolicyBandwidthLimitRule().update(...)` 가 넘긴 객체의 `id` 를 `null` 로 지우던 문제를 고침 — 같은 객체로 두 번 호출하면 `NullPointerException` 이었음. bandwidth limit rule 의 `id` 는 이제 응답에서 읽기만 하고 생성·수정 본문에는 보내지 않음
 
 ## 4.13.0
 

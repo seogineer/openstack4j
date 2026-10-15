@@ -85,6 +85,21 @@ public class NetQosPolicyUpdateTests extends AbstractNetworkingExtTest {
         Assert.assertEquals(keys(policy), Set.of("name", "description"));
     }
 
+    public void sameUpdateObjectCanBeSentTwice() throws Exception {
+        NetQosPolicyUpdate update = Builders.netQosPolicyUpdate().id("q1").description("again").build();
+        respondWith(200, POLICY);
+        respondWith(200, POLICY);
+
+        osv3().networking().netQosPolicy().update(update);
+        osv3().networking().netQosPolicy().update(update);
+
+        for (int i = 0; i < 2; i++) {
+            String raw = expect("PUT", "/qos/policies/q1").getBody().readUtf8();
+            Assert.assertFalse(raw.contains("\"id\""), raw);
+        }
+        Assert.assertEquals(update.getId(), "q1");
+    }
+
     @Test(expectedExceptions = NullPointerException.class)
     public void idIsRequired() {
         osv3().networking().netQosPolicy().update(Builders.netQosPolicyUpdate().name("x").build());

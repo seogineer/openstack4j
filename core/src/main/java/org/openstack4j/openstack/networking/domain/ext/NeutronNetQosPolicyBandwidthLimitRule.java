@@ -22,7 +22,8 @@ public class NeutronNetQosPolicyBandwidthLimitRule implements NetQosPolicyBandwi
 
     private static final long serialVersionUID = 1L;
 
-    @JsonProperty
+    /** Read from responses only (deserialization); never sent — the id goes into the URL. */
+    @JsonProperty(value = "id", access = JsonProperty.Access.WRITE_ONLY)
     private String id;
     @JsonProperty("max_kbps")
     private Integer maxKbps;

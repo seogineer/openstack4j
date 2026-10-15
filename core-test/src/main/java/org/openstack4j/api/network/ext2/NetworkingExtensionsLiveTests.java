@@ -16,6 +16,8 @@ import org.openstack4j.model.network.ext.ServiceFlavor;
 import org.openstack4j.model.network.ext.ServiceProfile;
 import org.openstack4j.model.network.ext.SubnetPool;
 import org.openstack4j.model.network.ext.NetQosPolicy;
+import org.openstack4j.model.network.ext.NetQosPolicyBandwidthLimitRule;
+import org.openstack4j.model.network.ext.NetQosPolicyUpdate;
 import org.openstack4j.model.network.options.AddressGroupOptions;
 import org.openstack4j.model.network.options.AddressScopeOptions;
 import org.openstack4j.model.network.options.QosRuleOptions;
@@ -26,6 +28,7 @@ import org.openstack4j.model.network.options.SubnetPoolOptions;
 import org.openstack4j.openstack.OSFactory;
 import org.openstack4j.openstack.networking.domain.NeutronHostRoute;
 import org.openstack4j.openstack.networking.domain.ext.NeutronNetQosPolicy;
+import org.openstack4j.openstack.networking.domain.ext.NeutronNetQosPolicyBandwidthLimitRule;
 import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
@@ -85,6 +88,32 @@ public class NetworkingExtensionsLiveTests {
             Assert.assertEquals(os.networking().qosRules().getDscpMarkingRule(policy.getId(), dscp.getId()).getDscpMark(), Integer.valueOf(26));
             os.networking().qosRules().createMinimumBandwidthRule(policy.getId(), QosRuleOptions.minimumBandwidth(1000).direction("egress"));
             Assert.assertEquals(os.networking().qosRules().listMinimumBandwidthRules(policy.getId()).size(), 1);
+        } finally {
+            Assert.assertTrue(os.networking().netQosPolicy().delete(policy.getId()).isSuccess());
+        }
+    }
+
+    /** update(...) must not clear the caller's id: the same objects are sent twice. */
+    public void qosPolicyUpdateTwiceKeepsId() {
+        NetQosPolicy policy = os.networking().netQosPolicy().create(NeutronNetQosPolicy.builder().name("os4j-live-qos-update").build());
+        try {
+            NetQosPolicyUpdate update = Builders.netQosPolicyUpdate().id(policy.getId()).description("os4j-live-desc").build();
+            Assert.assertEquals(os.networking().netQosPolicy().update(update).getDescription(), "os4j-live-desc");
+            Assert.assertEquals(update.getId(), policy.getId());
+            Assert.assertEquals(os.networking().netQosPolicy().update(update).getDescription(), "os4j-live-desc");
+            Assert.assertEquals(update.getId(), policy.getId());
+
+            NetQosPolicyBandwidthLimitRule rule = os.networking().netQosPolicyBandwidthLimitRule().create(policy.getId(),
+                    NeutronNetQosPolicyBandwidthLimitRule.builder().maxKbps(1000).maxBurstKbps(800)
+                            .direction(NetQosPolicyBandwidthLimitRule.Direction.egress).build());
+            String ruleId = rule.getId();
+            Assert.assertNotNull(ruleId);
+            NetQosPolicyBandwidthLimitRule changed = rule.toBuilder().maxKbps(2000).build();
+            os.networking().netQosPolicyBandwidthLimitRule().update(policy.getId(), changed);
+            Assert.assertEquals(changed.getId(), ruleId);
+            os.networking().netQosPolicyBandwidthLimitRule().update(policy.getId(), changed);
+            Assert.assertEquals(changed.getId(), ruleId);
+            Assert.assertEquals(os.networking().netQosPolicyBandwidthLimitRule().get(policy.getId(), ruleId).getMaxKbps(), Integer.valueOf(2000));
         } finally {
             Assert.assertTrue(os.networking().netQosPolicy().delete(policy.getId()).isSuccess());
         }

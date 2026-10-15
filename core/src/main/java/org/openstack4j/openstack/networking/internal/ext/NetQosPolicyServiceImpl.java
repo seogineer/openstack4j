@@ -42,7 +42,7 @@ public class NetQosPolicyServiceImpl extends BaseNetworkingServices implements N
     public NetQosPolicy update(NetQosPolicyUpdate update) {
         Objects.requireNonNull(update, "netQosPolicy must not be null");
         Objects.requireNonNull(update.getId(), "netQosPolicy id must not be null");
-        return put(NeutronNetQosPolicy.class, uri("/qos/policies/%s", getAndClearIdentifier(update))).entity(update).execute();
+        return put(NeutronNetQosPolicy.class, uri("/qos/policies/%s", update.getId())).entity(update).execute();
     }
 
     /**
@@ -61,11 +61,5 @@ public class NetQosPolicyServiceImpl extends BaseNetworkingServices implements N
     public ActionResponse delete(String policyId) {
         Objects.requireNonNull(policyId);
         return deleteWithResponse(uri("/qos/policies/%s", policyId)).execute();
-    }
-
-    private String getAndClearIdentifier(NetQosPolicyUpdate update) {
-        String id = update.getId();
-        update.setId(null);
-        return id;
     }
 }
