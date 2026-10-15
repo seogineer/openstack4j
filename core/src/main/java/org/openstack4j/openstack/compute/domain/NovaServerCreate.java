@@ -20,7 +20,9 @@ public class NovaServerCreate implements ServerCreate {
     private String adminPass;
     private String imageRef;
     private String flavorRef;
+    @JsonProperty("accessIPv4")
     private String accessIPv4;
+    @JsonProperty("accessIPv6")
     private String accessIPv6;
     @JsonProperty("min_count")
     private Integer min;
@@ -324,6 +326,18 @@ public class NovaServerCreate implements ServerCreate {
         @Override
         public ServerCreateBuilder description(String description) {
             m.description = description;
+            return this;
+        }
+
+        @Override
+        public ServerCreateBuilder accessIPv4(String accessIPv4) {
+            m.accessIPv4 = accessIPv4;
+            return this;
+        }
+
+        @Override
+        public ServerCreateBuilder accessIPv6(String accessIPv6) {
+            m.accessIPv6 = accessIPv6;
             return this;
         }
 

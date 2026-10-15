@@ -207,4 +207,29 @@ public class ServerCreateOptionsTests extends AbstractComputeMicroVersionTest {
         Assert.assertTrue(request.getPath().contains("reservation_id=r-1"), request.getPath());
         Assert.assertNull(ServerListOptions.create().reservationId("r-1").getRequiredMicroVersion());
     }
+
+    public void accessIpsAreSentWhenSet() throws Exception {
+        respondWith(202, CREATED);
+
+        osv3().compute().servers().boot(Builders.server().name("a").flavor("f").image("i").networks(Collections.singletonList("n1"))
+                .accessIPv4("192.0.2.10").accessIPv6("2001:db8::10").build());
+
+        JsonNode server = body(takeRequest()).get("server");
+        Assert.assertEquals(server.get("accessIPv4").asText(), "192.0.2.10");
+        Assert.assertEquals(server.get("accessIPv6").asText(), "2001:db8::10");
+        for (String other : new String[]{"accessIpv4", "accessIpv6", "access_ip_v4", "access_ip_v6", "accessIPV4", "accessIPV6", "accessipv4", "accessipv6"}) {
+            Assert.assertFalse(server.has(other), server.toString());
+        }
+    }
+
+    public void accessIpsAreOmittedWhenNotSet() throws Exception {
+        respondWith(202, CREATED);
+
+        osv3().compute().servers().boot(Builders.server().name("a").flavor("f").image("i").networks(Collections.singletonList("n1")).build());
+
+        JsonNode server = body(takeRequest()).get("server");
+        for (String key : server.properties().stream().map(java.util.Map.Entry::getKey).toArray(String[]::new)) {
+            Assert.assertFalse(key.toLowerCase().startsWith("accessip"), server.toString());
+        }
+    }
 }
