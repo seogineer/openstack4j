@@ -6,6 +6,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import okhttp3.mockwebserver.RecordedRequest;
 import org.openstack4j.api.Builders;
+import org.openstack4j.model.storage.block.BlockQuotaSet;
 import org.openstack4j.model.storage.block.options.VolumeListOptions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -27,6 +28,37 @@ public class BlockStorageReviewFixTests extends AbstractBlockStorageMicroVersion
             Assert.assertFalse(body.has("snapshots"), root + " must not reset snapshots to 0");
             Assert.assertFalse(body.has("gigabytes"), root + " must not reset gigabytes to 0");
         }
+    }
+
+    public void quotaToBuilderKeepsIdAndOmitsIt() throws Exception {
+        String quota = "{\"quota_set\": {\"id\": \"p1\", \"volumes\": 5, \"snapshots\": 10, \"gigabytes\": 1000}}";
+        respondWith(200, quota);
+        respondWith(200, quota);
+        respondWith(200, quota);
+
+        BlockQuotaSet q = osv3().blockStorage().quotaSets().get("p1");
+        takeRequest();
+        osv3().blockStorage().quotaSets().updateForTenant("p1", q.toBuilder().volumes(7).build());
+        JsonNode first = body(takeRequest()).get("quota_set");
+        Assert.assertEquals(first.get("volumes").asInt(), 7);
+        Assert.assertFalse(first.has("id"), first.toString());
+        Assert.assertEquals(q.getId(), "p1");
+
+        osv3().blockStorage().quotaSets().updateForTenant("p1", q);
+        Assert.assertFalse(body(takeRequest()).get("quota_set").has("id"));
+        Assert.assertEquals(q.getId(), "p1");
+    }
+
+    public void quotaClassBodyHasNoId() throws Exception {
+        String quota = "{\"quota_class_set\": {\"id\": \"default\", \"volumes\": 5}}";
+        respondWith(200, quota);
+        respondWith(200, quota);
+
+        BlockQuotaSet c = osv3().blockStorage().quotaSets().quotaClass("default");
+        takeRequest();
+        osv3().blockStorage().quotaSets().updateQuotaClass("default", c);
+        Assert.assertFalse(body(takeRequest()).get("quota_class_set").has("id"));
+        Assert.assertEquals(c.getId(), "default");
     }
 
     public void unsetQuotaFieldsStillReadAsZero() throws Exception {
