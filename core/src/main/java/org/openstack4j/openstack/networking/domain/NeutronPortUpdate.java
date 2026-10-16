@@ -106,9 +106,15 @@ public class NeutronPortUpdate implements ModelEntity {
         u.portSecurityEnabled = port.isPortSecurityEnabled();
         u.hostId = port.getHostId();
         u.vNicType = port.getvNicType();
-        u.profile = port.getProfile();
+        if (!(port instanceof NeutronPort)) {
+            u.profile = port.getProfile();
+        }
         if (port instanceof NeutronPort) {
             NeutronPort np = (NeutronPort) port;
+            // binding:profile read from a response is not sent back: recent Neutron policy limits updating it to the service role
+            if (np.profileRequested()) {
+                u.profile = port.getProfile();
+            }
             u.extraDhcpOpts = np.extraDhcpOpts();
             if (np.qosPolicyIdRequested()) {
                 u.qosPolicyId = port.getQosPolicyId();

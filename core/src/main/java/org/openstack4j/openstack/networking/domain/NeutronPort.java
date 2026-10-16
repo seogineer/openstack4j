@@ -87,6 +87,8 @@ public class NeutronPort implements Port {
 
     @JsonProperty("binding:profile")
     private Map<String, Object> profile;
+    @JsonIgnore
+    private boolean profileSet;
 
     @JsonProperty("created_at")
     private Date createdTime;
@@ -362,6 +364,11 @@ public class NeutronPort implements Port {
         return qosPolicyIdSet;
     }
 
+    /** True when {@code binding:profile} was set through the builder (not a response value). */
+    boolean profileRequested() {
+        return profileSet;
+    }
+
     @Override
     public String getQosNetworkPolicyId() {
         return qosNetworkPolicyId;
@@ -628,6 +635,7 @@ public class NeutronPort implements Port {
         @Override
         public PortBuilder profile(Map<String, Object> profile) {
             m.profile = profile;
+            m.profileSet = true;
             return this;
         }
 

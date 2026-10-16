@@ -64,15 +64,26 @@ public class NeutronPortUpdateTests extends AbstractNetworkingExtTest {
         for (Iterator<String> it = sent.fieldNames(); it.hasNext(); ) keys.add(it.next());
         Set<String> expected = new TreeSet<>(Arrays.asList("name", "admin_state_up", "device_id", "device_owner", "fixed_ips",
                 "allowed_address_pairs", "security_groups", "extra_dhcp_opts", "port_security_enabled", "binding:host_id",
-                "binding:vnic_type", "binding:profile"));
+                "binding:vnic_type"));
         Assert.assertEquals(keys, expected, sent.toString());
         for (String absent : new String[] {"id", "network_id", "status", "tenant_id", "mac_address", "binding:vif_type",
-                "binding:vif_details", "description", "qos_policy_id", "qos_network_policy_id", "created_at", "updated_at"}) {
+                "binding:vif_details", "description", "qos_policy_id", "qos_network_policy_id", "created_at", "updated_at", "binding:profile"}) {
             Assert.assertFalse(sent.has(absent), absent + " must not be sent: " + sent);
         }
         Assert.assertEquals(sent.get("name").asText(), "port");
         Assert.assertEquals(sent.get("fixed_ips").get(0).get("ip_address").asText(), "10.0.0.5");
         Assert.assertEquals(new HashSet<>(Arrays.asList(sent.get("security_groups").get(0).asText())), new HashSet<>(Arrays.asList("sg1")));
+    }
+
+    public void builderProfileIsSent() throws Exception {
+        respondWith(200, FULL_PORT);
+        Port port = Builders.port().name("x").profile(java.util.Collections.<String, Object>singletonMap("a", "b")).build();
+        port.setId("p3");
+
+        osv3().networking().port().update(port);
+        JsonNode sent = body(expect("PUT", "/ports/p3")).get("port");
+
+        Assert.assertEquals(sent.get("binding:profile").get("a").asText(), "b");
     }
 
     public void builderPortUpdateUnchanged() throws Exception {
