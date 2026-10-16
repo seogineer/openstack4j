@@ -68,7 +68,7 @@ public class NeutronPort implements Port {
     private List<String> securityGroups;
 
     @JsonProperty("extra_dhcp_opts")
-    private List<NeutronExtraDhcpOptCreate> extraDhcpOptCreates;
+    private List<NeutronExtraDhcpOptCreate> extraDhcpOpts;
 
     @JsonProperty("port_security_enabled")
     private Boolean portSecurityEnabled;
@@ -354,9 +354,12 @@ public class NeutronPort implements Port {
         return qosPolicyIdSet ? Collections.singletonMap("qos_policy_id", qosPolicyId) : Collections.emptyMap();
     }
 
-    /** extra_dhcp_opts set through the builder or read from a response; package access for {@link NeutronPortUpdate}. */
-    List<NeutronExtraDhcpOptCreate> extraDhcpOpts() {
-        return extraDhcpOptCreates;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<? extends ExtraDhcpOptCreate> getExtraDhcpOpts() {
+        return extraDhcpOpts;
     }
 
     /** True when {@code qosPolicyId} was set through the builder (not a response value). */
@@ -587,9 +590,9 @@ public class NeutronPort implements Port {
 
         @Override
         public PortBuilder extraDhcpOpt(ExtraDhcpOptCreate extraDhcpOptCreate) {
-            if (m.extraDhcpOptCreates == null)
-                m.extraDhcpOptCreates = new ArrayList<>();
-            m.extraDhcpOptCreates.add((NeutronExtraDhcpOptCreate) extraDhcpOptCreate);
+            if (m.extraDhcpOpts == null)
+                m.extraDhcpOpts = new ArrayList<>();
+            m.extraDhcpOpts.add((NeutronExtraDhcpOptCreate) extraDhcpOptCreate);
             return this;
         }
 

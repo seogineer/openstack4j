@@ -103,6 +103,7 @@ public class NeutronPortUpdate implements ModelEntity {
         u.trunkPortParentId = port.getTrunkPortParentId();
         u.trunkPortVlanId = port.getTrunkPortVlanId();
         u.securityGroups = port.getSecurityGroups();
+        u.extraDhcpOpts = (List<NeutronExtraDhcpOptCreate>) port.getExtraDhcpOpts();
         u.portSecurityEnabled = port.isPortSecurityEnabled();
         u.hostId = port.getHostId();
         u.vNicType = port.getvNicType();
@@ -115,7 +116,6 @@ public class NeutronPortUpdate implements ModelEntity {
             if (np.profileRequested()) {
                 u.profile = port.getProfile();
             }
-            u.extraDhcpOpts = np.extraDhcpOpts();
             if (np.qosPolicyIdRequested()) {
                 u.qosPolicyId = port.getQosPolicyId();
                 u.qosPolicyIdSet = true;

@@ -49,6 +49,11 @@ public interface Port extends Resource, TimeEntity, Buildable<PortBuilder> {
     Set<? extends AllowedAddressPair> getAllowedAddressPairs();
 
     /**
+     * @return the extra DHCP options of this port ({@code extra_dhcp_opts}), or null when the response or builder has none
+     */
+    List<? extends ExtraDhcpOptCreate> getExtraDhcpOpts();
+
+    /**
      * @return the MacAddress of this port
      */
     String getMacAddress();

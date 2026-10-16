@@ -1,3 +1,8 @@
+## 4.16.0
+
+- Neutron port 의 `extra_dhcp_opts` 를 고침: `port().create(port)`·`create(List)` 가 `PortBuilder.extraDhcpOpt(...)` 로 지정한 옵션을 보내지 않던 문제, 옵션마다 `opt_name`·`opt_value` 와 함께 `optName`·`optValue` 를 중복으로 보내 Neutron 이 `No valid key specs matched` 400 으로 거절하던 문제(builder 로 옵션을 넣은 update 와, 4.15.0 에서도 옵션이 있는 포트를 `get()` 으로 받아 그대로 `update()` 한 경우 — MIGRATION `# 4.14 → 4.15` 의 "`get()` 으로 받은 포트를 그대로 넘겨도 이제 성공합니다" 는 이 경우에는 맞지 않았음)
+- Neutron `Port.getExtraDhcpOpts()`(응답·builder 의 `extra_dhcp_opts`), `ExtraDhcpOptCreate.getIpVersion()`, `ExtraDhcpOptBuilder.ipVersion(Integer)`(`ip_version`, 4 또는 6; 지정하지 않으면 보내지 않아 Neutron 기본 4). 응답의 `ip_version` 은 이제 `getIpVersion()` 으로 읽고 update 때 그대로 보냄(이전에는 응답에서 버렸음)
+
 ## 4.15.0
 
 - Neutron `port().update(port)` 가 넘긴 포트 객체의 `id`·`networkId`·`state`·`tenantId`·`macAddress`·`vifType`·`vifDetails` 를 `null` 로 지우던 문제를 고침 — 같은 객체로 두 번 호출하면 `NullPointerException` 이었음. 수정 본문은 이제 복사본으로 만들며, 응답에서 읽은 `created_at`·`updated_at` 을 더 이상 보내지 않음 — 이전에는 `get()` 으로 받은 포트를 그대로 넘기면 Neutron 이 `Cannot update read-only attribute created_at` 400 으로 거절했음. 응답에서 읽은 `binding:profile` 도 더 이상 다시 보내지 않고 builder `profile(...)` 로 지정했을 때만 보냄 — 최신 Neutron 기본 정책은 이 키 수정을 service 역할로 제한해 admin 토큰도 403 이었음

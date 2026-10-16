@@ -7,11 +7,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.network.ext2.AbstractNetworkingExtTest;
 import org.openstack4j.core.transport.ObjectMapperSingleton;
+import org.openstack4j.model.network.ExtraDhcpOptCreate;
 import org.openstack4j.model.network.NetworkUpdate;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.openstack.networking.domain.NeutronNetwork;
 import org.openstack4j.openstack.networking.domain.NeutronNetworkUpdate;
 import org.openstack4j.openstack.networking.domain.NeutronPort;
+import org.openstack4j.openstack.networking.domain.NeutronPortCreate;
 import org.openstack4j.openstack.networking.domain.NeutronPortUpdate;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -123,6 +125,12 @@ public class NeutronQosPolicyRequestTests extends AbstractNetworkingExtTest {
 
         assertClean(NeutronPortUpdate.class, NeutronPortUpdate.fromPort(Builders.port().qosPolicyId("q1").build()), true);
 
+        ExtraDhcpOptCreate opt = Builders.extraDhcpOpt().optName("bootfile-name").optValue("pxelinux.0").ipVersion(4).build();
+        Port withOpts = Builders.port().networkId("n1").qosPolicyId("q1").extraDhcpOpt(opt).build();
+        assertClean(NeutronPort.class, withOpts, true);
+        assertClean(NeutronPortCreate.class, NeutronPortCreate.fromPort(withOpts), true);
+        assertClean(NeutronPortUpdate.class, NeutronPortUpdate.fromPort(withOpts), true);
+
         NeutronNetwork networkFromResponse = ObjectMapperSingleton.getContext(NeutronNetwork.class).readValue(
                 "{\"network\":{\"id\":\"n1\",\"qos_policy_id\":\"q1\"}}", NeutronNetwork.class);
         assertClean(NeutronNetwork.class, networkFromResponse, false);
@@ -139,7 +147,7 @@ public class NeutronQosPolicyRequestTests extends AbstractNetworkingExtTest {
     private static void assertClean(Class<?> type, Object value, boolean sent) throws Exception {
         String json = ObjectMapperSingleton.getContext(type).writeValueAsString(value);
         String flat = json.toLowerCase(Locale.ROOT);
-        for (String leaked : new String[]{"qospolicyidset", "qospolicyidrequested", "requestonlyfields", "extradhcpopts", "qosPolicyId".toLowerCase(Locale.ROOT)}) {
+        for (String leaked : new String[]{"qospolicyidset", "qospolicyidrequested", "requestonlyfields", "extradhcpopts", "optvalue", "optname", "ipversion", "qosPolicyId".toLowerCase(Locale.ROOT)}) {
             Assert.assertFalse(flat.contains("\"" + leaked + "\""), leaked + " leaked: " + json);
         }
         if (sent) {

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.model.common.Identifier;
+import org.openstack4j.model.network.ExtraDhcpOptCreate;
 import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Router;
@@ -176,6 +177,33 @@ public class NetworkingExtensionsLiveTests {
                 Assert.assertNotNull(p.getState());
                 Assert.assertNotNull(os.networking().port().update(p));
                 Assert.assertEquals(os.networking().port().get(created.getId()).getName(), "os4j-live-port-a");
+            } finally {
+                Assert.assertTrue(os.networking().port().delete(created.getId()).isSuccess());
+            }
+        } finally {
+            Assert.assertTrue(os.networking().network().delete(network.getId()).isSuccess());
+        }
+    }
+
+    /** extra_dhcp_opts on create, read back with ip_version, and a port read from Neutron updated as is. */
+    public void portExtraDhcpOpts() {
+        requireExtension("extra_dhcp_opt");
+        Network network = os.networking().network().create(Builders.network().name("os4j-live-dhcpopt-net").adminStateUp(true).build());
+        try {
+            Port created = os.networking().port().create(Builders.port().networkId(network.getId()).name("os4j-live-dhcpopt")
+                    .extraDhcpOpt(Builders.extraDhcpOpt().optName("bootfile-name").optValue("pxelinux.0").build()).build());
+            try {
+                Port p = os.networking().port().get(created.getId());
+                Assert.assertEquals(p.getExtraDhcpOpts().size(), 1);
+                ExtraDhcpOptCreate o = p.getExtraDhcpOpts().get(0);
+                Assert.assertEquals(o.getOptName(), "bootfile-name");
+                Assert.assertEquals(o.getOptValue(), "pxelinux.0");
+                Assert.assertEquals(o.getIpVersion(), Integer.valueOf(4));
+                Assert.assertNotNull(os.networking().port().update(p));   // the response object as is
+                Port again = os.networking().port().get(created.getId());
+                Assert.assertEquals(again.getExtraDhcpOpts().size(), 1);
+                Assert.assertEquals(again.getExtraDhcpOpts().get(0).getOptValue(), "pxelinux.0");
+                Assert.assertEquals(again.getExtraDhcpOpts().get(0).getIpVersion(), Integer.valueOf(4));
             } finally {
                 Assert.assertTrue(os.networking().port().delete(created.getId()).isSuccess());
             }
