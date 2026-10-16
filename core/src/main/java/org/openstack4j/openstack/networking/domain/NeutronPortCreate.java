@@ -56,6 +56,9 @@ public class NeutronPortCreate implements ModelEntity {
     @JsonProperty("security_groups")
     private List<String> securityGroups;
 
+    @JsonProperty("extra_dhcp_opts")
+    private List<NeutronExtraDhcpOptCreate> extraDhcpOpts;
+
     @JsonProperty("port_security_enabled")
     private Boolean portSecurityEnabled;
 
@@ -108,6 +111,7 @@ public class NeutronPortCreate implements ModelEntity {
         c.deviceId = port.getDeviceId();
         c.deviceOwner = port.getDeviceOwner();
         c.securityGroups = port.getSecurityGroups();
+        c.extraDhcpOpts = (List<NeutronExtraDhcpOptCreate>) port.getExtraDhcpOpts();
         c.fixedIps = (Set<NeutronIP>) port.getFixedIps();
         c.allowedAddressPairs = (Set<NeutronAllowedAddressPair>) port.getAllowedAddressPairs();
         c.portSecurityEnabled = port.isPortSecurityEnabled();

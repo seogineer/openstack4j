@@ -11,4 +11,7 @@ public interface ExtraDhcpOptCreate extends Buildable<ExtraDhcpOptBuilder> {
     String getOptValue();
 
     String getOptName();
+
+    /** @return the IP version (4 or 6) the option applies to, or null when not set (Neutron then uses 4) */
+    Integer getIpVersion();
 }

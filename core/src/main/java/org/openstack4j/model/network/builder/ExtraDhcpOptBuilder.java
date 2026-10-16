@@ -12,4 +12,7 @@ public interface ExtraDhcpOptBuilder extends Builder<ExtraDhcpOptBuilder, ExtraD
 
     ExtraDhcpOptBuilder optName(String optName);
 
+    /** @param ipVersion 4 or 6; null (default) leaves {@code ip_version} out of the request and Neutron uses 4 */
+    ExtraDhcpOptBuilder ipVersion(Integer ipVersion);
+
 }

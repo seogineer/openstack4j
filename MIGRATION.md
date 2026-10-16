@@ -264,3 +264,10 @@ sed -i -E \
 - Neutron `port().update(port)` 를 호출한 뒤에도 넘긴 객체의 `getId()`·`getNetworkId()`·`getState()`·`getTenantId()`·`getMacAddress()`·`getVifType()`·`getVifDetails()` 가 그대로입니다(이전에는 `null`). 수정 본문에서 `created_at`·`updated_at` 이 빠졌고, `binding:profile` 은 `PortBuilder.profile(...)`(`toBuilder().profile(...)` 포함)로 지정했을 때만 보냅니다. 그 밖의 키는 이전과 같습니다(`mac_address` 는 이전처럼 보내지 않음). 그래서 `get()` 으로 받은 포트를 그대로 넘겨도 이제 성공합니다(이전에는 Neutron 이 `Cannot update read-only attribute created_at` 400 으로, 그 키를 빼도 응답의 `binding:profile` 때문에 403 으로 거절 — 최신 Neutron 기본 정책은 이 키 수정을 service 역할로 제한해 admin 토큰도 403). `NeutronPort.setProfile(...)` 로 넣은 값은 이제 update 본문에 들어가지 않으니 `toBuilder().profile(...)` 을 쓰세요. `port.toBuilder()` 는 이전처럼 같은 객체를 돌려주므로 builder 로 바꾼 값은 원본 객체에도 반영됩니다.
 - Cinder quota set 을 `toBuilder()` 한 뒤에도 원본의 `getId()` 가 그대로입니다(이전에는 `null`). `quotaSets().get(...)`·`quotaClass(...)` 로 받은 객체를 그대로 `updateForTenant`·`updateQuotaClass` 에 넘기면 이전에는 `id` 가 본문에 들어갔지만 이제 보내지 않습니다. quota set 은 Cinder 가 이 키를 무시해 결과가 같고, quota class 는 이전에 `Bad key(s) in quota class set: id` 400 이던 호출이 이제 성공합니다.
 - httpclient connector 는 429·503 응답의 `Retry-After`(초 또는 HTTP 날짜)가 30초를 넘으면 재시도하지 않고 그 응답을 그대로 돌려줍니다(이전에는 그 시간만큼 기다린 뒤 다시 보냄). 상한을 바꾸려면 `HttpClientConfigInterceptor.onClientCreate` 에서 `cb.setRetryStrategy(new HttpClientFactory.IdempotentResponseRetryStrategy(Duration.ofMinutes(2)))` 처럼 설정하세요(재시도를 끄려면 이전처럼 `cb.disableAutomaticRetries()`).
+
+# 4.15 → 4.16
+
+컴파일에 영향을 주는 변경(추상 메서드 추가)과 요청·응답 동작이 바뀌는 변경은 아래와 같습니다.
+
+- `Port` 에 추상 메서드 `getExtraDhcpOpts()`, `ExtraDhcpOptCreate` 에 `getIpVersion()`, `ExtraDhcpOptBuilder` 에 `ipVersion(Integer)` 가 추가되었습니다. 이 인터페이스를 직접 구현한 코드는 새 메서드를 구현해야 합니다.
+- Neutron port 생성(`create(port)`·`create(List)`) 본문에 builder `extraDhcpOpt(...)` 로 넣은 `extra_dhcp_opts` 가 이제 들어갑니다(이전에는 빠져 옵션 없이 생성됨). create·update 본문의 각 옵션은 `opt_name`·`opt_value`(설정했거나 응답에서 읽은 경우 `ip_version`)만 보내며 `optName`·`optValue` 는 더 이상 보내지 않습니다. 그래서 옵션이 있는 포트를 `get()` 으로 받아 그대로 `update()` 해도 이제 성공합니다(이전에는 400). `NeutronExtraDhcpOptCreate` 의 public 필드 `opt_value`·`opt_name` 은 그대로입니다.
