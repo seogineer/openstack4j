@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.model.common.Identifier;
+import org.openstack4j.model.storage.block.BlockQuotaSet;
 import org.openstack4j.model.storage.block.BlockStorageVersion;
 import org.openstack4j.model.storage.block.Volume;
 import org.openstack4j.model.storage.block.VolumeAttachmentRecord;
@@ -69,6 +70,20 @@ public class BlockStorageLiveTests {
         os.blockStorage().extensions().list();
         VolumeSummary summary = os.blockStorage().volumes().summary();
         Assert.assertNotNull(summary.getTotalCount());
+    }
+
+    /** Resends the current volumes quota unchanged, so nothing is modified and nothing needs cleaning up. */
+    public void quotaToBuilderKeepsId() {
+        String projectId = os.getToken().getProject().getId();
+        BlockQuotaSet q = os.blockStorage().quotaSets().get(projectId);
+        int orig = q.getVolumes();
+        BlockQuotaSet updated = os.blockStorage().quotaSets().updateForTenant(projectId, q.toBuilder().volumes(orig).build());
+        Assert.assertEquals(q.getId(), projectId);
+        Assert.assertEquals(updated.getVolumes(), orig);
+        // the same object a second time
+        updated = os.blockStorage().quotaSets().updateForTenant(projectId, q.toBuilder().volumes(orig).build());
+        Assert.assertEquals(q.getId(), projectId);
+        Assert.assertEquals(updated.getVolumes(), orig);
     }
 
     public void legacyCallsStillWorkAfterNegotiation() {

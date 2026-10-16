@@ -25,7 +25,8 @@ public class CinderBlockQuotaSet implements BlockQuotaSet {
 
     private static final String VOLUME_TYPE_QUOTA_PREFIXES_REGEX = "(gigabytes|snapshots|volumes)_.*";
 
-    @JsonProperty
+    /** Read from responses only (the project or class name); never sent — it is in the URL. */
+    @JsonProperty(value = "id", access = JsonProperty.Access.WRITE_ONLY)
     private String id;
     @JsonProperty
     private Integer snapshots;
@@ -122,7 +123,6 @@ public class CinderBlockQuotaSet implements BlockQuotaSet {
 
         BlockQuotaSetConcreteBuilder(CinderBlockQuotaSet model) {
             this.model = model;
-            this.model.id = null;
         }
 
         @Override
