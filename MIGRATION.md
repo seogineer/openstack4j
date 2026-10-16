@@ -256,3 +256,9 @@ sed -i -E \
 - Neutron QoS `netQosPolicy().update(...)`·`netQosPolicyBandwidthLimitRule().update(...)` 를 호출한 뒤에도 넘긴 객체의 `getId()` 가 그대로입니다(이전에는 `null`). bandwidth limit rule `create` 에 id 를 설정한 객체를 넘기면 이제 id 를 보내지 않습니다.
 - Cinder `resetState(volumeId, Status)` 에 `ERROR_*` 상태를 넘기면 이제 성공합니다(이전에는 `error-extending` 처럼 보내 항상 400). `setStatus(volumeId, "error_extending", …)` 로 우회하던 코드는 그대로 동작합니다. `Volume.Status.value()` 는 이전과 같습니다.
 - `ServerCreateBuilder` 에 추상 메서드 `accessIPv4(String)`·`accessIPv6(String)` 가 추가되었습니다. 이 인터페이스를 직접 구현한 코드는 새 메서드를 구현해야 합니다.
+
+# 4.14 → 4.15
+
+요청·응답 동작이 바뀌는 변경은 아래와 같습니다.
+
+- Neutron `port().update(port)` 를 호출한 뒤에도 넘긴 객체의 `getId()`·`getNetworkId()`·`getState()`·`getTenantId()`·`getMacAddress()`·`getVifType()`·`getVifDetails()` 가 그대로입니다(이전에는 `null`). 수정 본문에서 `created_at`·`updated_at` 이 빠졌고 그 밖의 키는 이전과 같습니다(`mac_address` 는 이전처럼 보내지 않음) [live 확인 대기: created_at/updated_at 이 400 원인이었는지에 따라 문구 확정]. `port.toBuilder()` 는 이전처럼 같은 객체를 돌려주므로 builder 로 바꾼 값은 원본 객체에도 반영됩니다.

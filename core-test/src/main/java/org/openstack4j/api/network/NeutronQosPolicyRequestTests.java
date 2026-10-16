@@ -12,6 +12,7 @@ import org.openstack4j.model.network.Port;
 import org.openstack4j.openstack.networking.domain.NeutronNetwork;
 import org.openstack4j.openstack.networking.domain.NeutronNetworkUpdate;
 import org.openstack4j.openstack.networking.domain.NeutronPort;
+import org.openstack4j.openstack.networking.domain.NeutronPortUpdate;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -120,6 +121,8 @@ public class NeutronQosPolicyRequestTests extends AbstractNetworkingExtTest {
         assertClean(NeutronPort.class, Builders.port().networkId("n1").qosPolicyId("q1").build(), true);
         assertClean(NeutronPort.class, Builders.port().networkId("n1").qosPolicyId(null).build(), true);
 
+        assertClean(NeutronPortUpdate.class, NeutronPortUpdate.fromPort(Builders.port().qosPolicyId("q1").build()), true);
+
         NeutronNetwork networkFromResponse = ObjectMapperSingleton.getContext(NeutronNetwork.class).readValue(
                 "{\"network\":{\"id\":\"n1\",\"qos_policy_id\":\"q1\"}}", NeutronNetwork.class);
         assertClean(NeutronNetwork.class, networkFromResponse, false);
@@ -136,7 +139,7 @@ public class NeutronQosPolicyRequestTests extends AbstractNetworkingExtTest {
     private static void assertClean(Class<?> type, Object value, boolean sent) throws Exception {
         String json = ObjectMapperSingleton.getContext(type).writeValueAsString(value);
         String flat = json.toLowerCase(Locale.ROOT);
-        for (String leaked : new String[]{"qospolicyidset", "qospolicyidrequested", "requestonlyfields", "qosPolicyId".toLowerCase(Locale.ROOT)}) {
+        for (String leaked : new String[]{"qospolicyidset", "qospolicyidrequested", "requestonlyfields", "extradhcpopts", "qosPolicyId".toLowerCase(Locale.ROOT)}) {
             Assert.assertFalse(flat.contains("\"" + leaked + "\""), leaked + " leaked: " + json);
         }
         if (sent) {
