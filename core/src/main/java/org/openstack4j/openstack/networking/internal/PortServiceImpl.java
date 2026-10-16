@@ -17,6 +17,7 @@ import org.openstack4j.model.network.options.PortListOptions;
 import org.openstack4j.openstack.networking.domain.NeutronPort;
 import org.openstack4j.openstack.networking.domain.NeutronPort.Ports;
 import org.openstack4j.openstack.networking.domain.NeutronPortCreate;
+import org.openstack4j.openstack.networking.domain.NeutronPortUpdate;
 
 /**
  * OpenStack (Neutron) Port based Operations Implementation
@@ -97,16 +98,8 @@ public class PortServiceImpl extends BaseNetworkingServices implements PortServi
     public Port update(Port port) {
         Objects.requireNonNull(port);
         Objects.requireNonNull(port.getId());
-        Port p = port.toBuilder().networkId(null).state(null).tenantId(null).macAddress(null)
-                .vifType(null).vifDetails(null)
-                .build();
-        return put(NeutronPort.class, uri("/ports/%s", getAndClearIdentifier(p))).entity(p).execute();
-    }
-
-    private String getAndClearIdentifier(Port port) {
-        String portId = port.getId();
-        port.setId(null);
-        return portId;
+        // A copy: toBuilder() returns the same instance, so nulling fields on it cleared the caller's port
+        return put(NeutronPort.class, uri("/ports/%s", port.getId())).entity(NeutronPortUpdate.fromPort(port)).execute();
     }
 
     @Override public List<? extends PortBinding> listBindings(String portId) { return get(PortBindings.class, uri("/ports/%s/bindings", Objects.requireNonNull(portId))).execute(NeutronExecution.propagate404()).getList(); }

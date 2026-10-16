@@ -7,6 +7,7 @@ import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.model.common.Identifier;
 import org.openstack4j.model.network.Network;
+import org.openstack4j.model.network.Port;
 import org.openstack4j.model.network.Router;
 import org.openstack4j.model.network.ext.AddressGroup;
 import org.openstack4j.model.network.ext.AddressScope;
@@ -154,6 +155,29 @@ public class NetworkingExtensionsLiveTests {
                 Assert.assertEquals(os.networking().rbacPolicies().get(policy.getId()).getObjectId(), network.getId());
             } finally {
                 Assert.assertTrue(os.networking().rbacPolicies().delete(policy.getId()).isSuccess());
+            }
+        } finally {
+            Assert.assertTrue(os.networking().network().delete(network.getId()).isSuccess());
+        }
+    }
+
+    public void portUpdateTwiceKeepsCallerPort() {
+        Network network = os.networking().network().create(Builders.network().name("os4j-live-port-net").adminStateUp(true).build());
+        try {
+            Port created = os.networking().port().create(Builders.port().networkId(network.getId()).name("os4j-live-port").build());
+            try {
+                // the response object (created_at, status, binding:vif_* filled), as callers usually hold it
+                Port p = os.networking().port().get(created.getId());
+                Port updated = os.networking().port().update(p.toBuilder().name("os4j-live-port-a").build());
+                Assert.assertEquals(updated.getName(), "os4j-live-port-a");
+                Assert.assertEquals(p.getId(), created.getId());
+                Assert.assertEquals(p.getNetworkId(), network.getId());
+                Assert.assertNotNull(p.getMacAddress());
+                Assert.assertNotNull(p.getState());
+                Assert.assertNotNull(os.networking().port().update(p));
+                Assert.assertEquals(os.networking().port().get(created.getId()).getName(), "os4j-live-port-a");
+            } finally {
+                Assert.assertTrue(os.networking().port().delete(created.getId()).isSuccess());
             }
         } finally {
             Assert.assertTrue(os.networking().network().delete(network.getId()).isSuccess());

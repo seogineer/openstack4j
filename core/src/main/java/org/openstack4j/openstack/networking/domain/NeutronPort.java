@@ -352,6 +352,11 @@ public class NeutronPort implements Port {
         return qosPolicyIdSet ? Collections.singletonMap("qos_policy_id", qosPolicyId) : Collections.emptyMap();
     }
 
+    /** extra_dhcp_opts set through the builder or read from a response; package access for {@link NeutronPortUpdate}. */
+    List<NeutronExtraDhcpOptCreate> extraDhcpOpts() {
+        return extraDhcpOptCreates;
+    }
+
     /** True when {@code qosPolicyId} was set through the builder (not a response value). */
     boolean qosPolicyIdRequested() {
         return qosPolicyIdSet;

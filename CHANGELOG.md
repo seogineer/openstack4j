@@ -1,3 +1,7 @@
+## 4.15.0
+
+- Neutron `port().update(port)` 가 넘긴 포트 객체의 `id`·`networkId`·`state`·`tenantId`·`macAddress`·`vifType`·`vifDetails` 를 `null` 로 지우던 문제를 고침 — 같은 객체로 두 번 호출하면 `NullPointerException` 이었음. 수정 본문은 이제 복사본으로 만들며, 응답에서 읽은 `created_at`·`updated_at` 을 더 이상 보내지 않음 [live 확인 대기: 수정 전 live 결과가 400이면 "이전에는 GET 으로 받은 포트를 그대로 넘기면 400" 을 덧붙이고 이 대괄호는 지울 것]
+
 ## 4.14.0
 
 - httpclient connector: 429·503 응답에서 POST·PATCH 같은 비멱등 요청을 HttpClient 5 기본 재시도 전략이 한 번 더 보내던 문제를 고침(생성 요청이 두 번 들어갈 수 있었고 `Retry-After` 만큼 기다리기도 했음). 이제 GET·HEAD·PUT·DELETE·OPTIONS 만 이전처럼 1회 재시도하고 비멱등 요청은 첫 응답을 그대로 돌려줌. I/O 오류 재시도는 이전과 같음(멱등 요청만)
