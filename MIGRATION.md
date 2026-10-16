@@ -261,5 +261,5 @@ sed -i -E \
 
 요청·응답 동작이 바뀌는 변경은 아래와 같습니다.
 
-- Neutron `port().update(port)` 를 호출한 뒤에도 넘긴 객체의 `getId()`·`getNetworkId()`·`getState()`·`getTenantId()`·`getMacAddress()`·`getVifType()`·`getVifDetails()` 가 그대로입니다(이전에는 `null`). 수정 본문에서 `created_at`·`updated_at` 이 빠졌고 그 밖의 키는 이전과 같습니다(`mac_address` 는 이전처럼 보내지 않음) [live 확인 대기: created_at/updated_at 이 400 원인이었는지에 따라 문구 확정]. `port.toBuilder()` 는 이전처럼 같은 객체를 돌려주므로 builder 로 바꾼 값은 원본 객체에도 반영됩니다.
-- Cinder quota set 을 `toBuilder()` 한 뒤에도 원본의 `getId()` 가 그대로입니다(이전에는 `null`). `quotaSets().get(...)`·`quotaClass(...)` 로 받은 객체를 그대로 `updateForTenant`·`updateQuotaClass` 에 넘기면 이전에는 `id` 가 본문에 들어갔지만 이제 보내지 않습니다(Cinder 는 이 키를 무시하므로 결과는 같음).
+- Neutron `port().update(port)` 를 호출한 뒤에도 넘긴 객체의 `getId()`·`getNetworkId()`·`getState()`·`getTenantId()`·`getMacAddress()`·`getVifType()`·`getVifDetails()` 가 그대로입니다(이전에는 `null`). 수정 본문에서 `created_at`·`updated_at` 이 빠졌고 그 밖의 키는 이전과 같습니다(`mac_address` 는 이전처럼 보내지 않음). 그래서 `get()` 으로 받은 포트를 그대로 넘겨도 이제 성공합니다(이전에는 Neutron 이 `Cannot update read-only attribute created_at` 400 으로 거절). `port.toBuilder()` 는 이전처럼 같은 객체를 돌려주므로 builder 로 바꾼 값은 원본 객체에도 반영됩니다.
+- Cinder quota set 을 `toBuilder()` 한 뒤에도 원본의 `getId()` 가 그대로입니다(이전에는 `null`). `quotaSets().get(...)`·`quotaClass(...)` 로 받은 객체를 그대로 `updateForTenant`·`updateQuotaClass` 에 넘기면 이전에는 `id` 가 본문에 들어갔지만 이제 보내지 않습니다. quota set 은 Cinder 가 이 키를 무시해 결과가 같고, quota class 는 이전에 `Bad key(s) in quota class set: id` 400 이던 호출이 이제 성공합니다.

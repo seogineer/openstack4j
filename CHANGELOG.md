@@ -1,7 +1,7 @@
 ## 4.15.0
 
-- Neutron `port().update(port)` 가 넘긴 포트 객체의 `id`·`networkId`·`state`·`tenantId`·`macAddress`·`vifType`·`vifDetails` 를 `null` 로 지우던 문제를 고침 — 같은 객체로 두 번 호출하면 `NullPointerException` 이었음. 수정 본문은 이제 복사본으로 만들며, 응답에서 읽은 `created_at`·`updated_at` 을 더 이상 보내지 않음 [live 확인 대기: 수정 전 live 결과가 400이면 "이전에는 GET 으로 받은 포트를 그대로 넘기면 400" 을 덧붙이고 이 대괄호는 지울 것]
-- Cinder `BlockQuotaSet.toBuilder()` 가 원본 객체의 `id` 를 `null` 로 지우던 문제를 고침. quota set·quota class 의 `id` 는 이제 응답에서 읽기만 하고 `updateForTenant`·`updateQuotaClass` 본문에는 보내지 않음
+- Neutron `port().update(port)` 가 넘긴 포트 객체의 `id`·`networkId`·`state`·`tenantId`·`macAddress`·`vifType`·`vifDetails` 를 `null` 로 지우던 문제를 고침 — 같은 객체로 두 번 호출하면 `NullPointerException` 이었음. 수정 본문은 이제 복사본으로 만들며, 응답에서 읽은 `created_at`·`updated_at` 을 더 이상 보내지 않음 — 이전에는 `get()` 으로 받은 포트를 그대로 넘기면 Neutron 이 `Cannot update read-only attribute created_at` 400 으로 거절했음
+- Cinder `BlockQuotaSet.toBuilder()` 가 원본 객체의 `id` 를 `null` 로 지우던 문제를 고침. quota set·quota class 의 `id` 는 이제 응답에서 읽기만 하고 `updateForTenant`·`updateQuotaClass` 본문에는 보내지 않음 — 이전에는 `quotaClass(...)` 로 받은 객체를 그대로 `updateQuotaClass` 에 넘기면 `Bad key(s) in quota class set: id` 400 이었음
 
 ## 4.14.0
 
