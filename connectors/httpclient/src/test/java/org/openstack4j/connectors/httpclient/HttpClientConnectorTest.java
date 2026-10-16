@@ -1,5 +1,8 @@
 package org.openstack4j.connectors.httpclient;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
@@ -8,6 +11,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 import okhttp3.mockwebserver.SocketPolicy;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.client5.http.utils.DateUtils;
 import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.message.BasicHttpRequest;
 import org.apache.hc.core5.http.message.BasicHttpResponse;
@@ -186,5 +190,85 @@ public class HttpClientConnectorTest {
         Assert.assertFalse(strategy.retryRequest(unavailable, 1, new BasicHttpContext()));
         Assert.assertFalse(strategy.retryRequest(unavailable, 1, null));
         Assert.assertFalse(strategy.retryRequest(unavailable, 2, get));
+    }
+
+    @Test(timeOut = 10_000)
+    public void getIsNotRetriedWhenRetryAfterExceedsCap() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(503).setHeader("Retry-After", "3600"));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody("{}"));
+
+        long start = System.nanoTime();
+        HttpResponse response = execute(request(HttpMethod.GET).build());
+        long elapsedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+
+        Assert.assertEquals(response.getStatus(), 503);
+        Assert.assertEquals(server.getRequestCount(), 1);
+        Assert.assertTrue(elapsedMs < 3000, "waited " + elapsedMs + "ms");
+        response.close();
+    }
+
+    @Test
+    public void getIsRetriedWhenRetryAfterWithinCap() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(503).setHeader("Retry-After", "1"));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody("{}"));
+
+        HttpResponse response = execute(request(HttpMethod.GET).build());
+
+        Assert.assertEquals(response.getStatus(), 200);
+        Assert.assertEquals(server.getRequestCount(), 2);
+        response.close();
+    }
+
+    @Test(timeOut = 10_000)
+    public void getIsNotRetriedWhenRetryAfterDateIsFarAway() throws Exception {
+        String date = DateUtils.formatStandardDate(Instant.now().plus(2, ChronoUnit.HOURS));
+        server.enqueue(new MockResponse().setResponseCode(429).setHeader("Retry-After", date));
+        server.enqueue(new MockResponse().setResponseCode(200).setBody("{}"));
+
+        HttpResponse response = execute(request(HttpMethod.GET).build());
+
+        Assert.assertEquals(response.getStatus(), 429);
+        Assert.assertEquals(server.getRequestCount(), 1);
+        response.close();
+    }
+
+    private static HttpClientContext contextFor(String method) {
+        HttpClientContext context = HttpClientContext.create();
+        context.setAttribute(HttpCoreContext.HTTP_REQUEST, new BasicHttpRequest(method, "/x"));
+        return context;
+    }
+
+    private static BasicHttpResponse unavailable(String retryAfter) {
+        BasicHttpResponse response = new BasicHttpResponse(503);
+        response.setVersion(HttpVersion.HTTP_1_1);
+        if (retryAfter != null) response.setHeader("Retry-After", retryAfter);
+        return response;
+    }
+
+    @Test
+    public void strategyCapsRetryAfter() {
+        HttpClientContext get = contextFor("GET");
+        HttpClientFactory.IdempotentResponseRetryStrategy twoSeconds =
+                new HttpClientFactory.IdempotentResponseRetryStrategy(Duration.ofSeconds(2));
+        Assert.assertFalse(twoSeconds.retryRequest(unavailable("3"), 1, get));
+        Assert.assertTrue(twoSeconds.retryRequest(unavailable("2"), 1, get));
+        Assert.assertTrue(twoSeconds.retryRequest(unavailable(null), 1, get), "default interval is 1 second");
+        Assert.assertTrue(twoSeconds.retryRequest(unavailable("0"), 1, get));
+        Assert.assertTrue(twoSeconds.retryRequest(unavailable("abc"), 1, get));
+        Assert.assertFalse(twoSeconds.retryRequest(unavailable(DateUtils.formatStandardDate(Instant.now().plus(2, ChronoUnit.HOURS))), 1, get));
+        Assert.assertFalse(twoSeconds.retryRequest(unavailable("9223372036854775807"), 1, get));
+        Assert.assertTrue(twoSeconds.retryRequest(unavailable("99999999999999999999"), 1, get));
+
+        HttpClientFactory.IdempotentResponseRetryStrategy byDefault = new HttpClientFactory.IdempotentResponseRetryStrategy();
+        Assert.assertTrue(byDefault.retryRequest(unavailable("30"), 1, get));
+        Assert.assertFalse(byDefault.retryRequest(unavailable("31"), 1, get));
+
+        Assert.assertFalse(new HttpClientFactory.IdempotentResponseRetryStrategy(Duration.ZERO).retryRequest(unavailable(null), 1, get));
+
+        Assert.assertThrows(NullPointerException.class, () -> new HttpClientFactory.IdempotentResponseRetryStrategy(null));
+        Assert.assertThrows(IllegalArgumentException.class,
+                () -> new HttpClientFactory.IdempotentResponseRetryStrategy(Duration.ofSeconds(-1)));
+
+        Assert.assertFalse(byDefault.retryRequest(unavailable("1"), 1, contextFor("POST")));
     }
 }

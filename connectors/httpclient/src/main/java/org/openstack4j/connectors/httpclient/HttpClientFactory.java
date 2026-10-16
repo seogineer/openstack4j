@@ -4,6 +4,8 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
+import java.util.Objects;
 
 import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
@@ -125,7 +127,7 @@ public class HttpClientFactory {
 
         cb.setConnectionManager(cmb.build());
 
-        // HttpClient 5 retries 429/503 once for any method; only idempotent requests may be repeated.
+        // HttpClient 5 retries 429/503 once for any method; only idempotent requests may be repeated, and not after a Retry-After longer than 30 seconds.
         // Set before the interceptor so applications can still replace it (setRetryStrategy / disableAutomaticRetries).
         cb.setRetryStrategy(new IdempotentResponseRetryStrategy());
 
@@ -137,15 +139,43 @@ public class HttpClientFactory {
     }
 
     /**
-     * The default strategy retries a 429/503 response once whatever the method, which sends a POST or PATCH twice.
-     * Only idempotent requests may be repeated; I/O error retries are unchanged (already idempotent-only).
+     * The default strategy retries a 429/503 response once whatever the method, which sends a POST or PATCH twice,
+     * and waits for whatever Retry-After says. Only idempotent requests are repeated, and only when the wait is at most
+     * {@code maxRetryAfter} (default 30 seconds); otherwise the 429/503 is returned at once. I/O error retries are
+     * unchanged (already idempotent-only). Replace it with {@code HttpClientConfigInterceptor}:
+     * {@code cb.setRetryStrategy(new HttpClientFactory.IdempotentResponseRetryStrategy(Duration.ofMinutes(2)))}.
      */
-    static final class IdempotentResponseRetryStrategy extends DefaultHttpRequestRetryStrategy {
+    public static final class IdempotentResponseRetryStrategy extends DefaultHttpRequestRetryStrategy {
+        /** Default upper bound on a Retry-After wait. */
+        public static final Duration DEFAULT_MAX_RETRY_AFTER = Duration.ofSeconds(30);
+
+        private final long maxRetryAfterMillis;
+
+        public IdempotentResponseRetryStrategy() {
+            this(DEFAULT_MAX_RETRY_AFTER);
+        }
+
+        /** @param maxRetryAfter longest Retry-After to wait for; a longer one is not retried. Not null, not negative. */
+        public IdempotentResponseRetryStrategy(Duration maxRetryAfter) {
+            Objects.requireNonNull(maxRetryAfter, "maxRetryAfter");
+            if (maxRetryAfter.isNegative())
+                throw new IllegalArgumentException("maxRetryAfter must not be negative: " + maxRetryAfter);
+            long millis;
+            try {
+                millis = maxRetryAfter.toMillis();
+            } catch (ArithmeticException e) {
+                millis = Long.MAX_VALUE;
+            }
+            this.maxRetryAfterMillis = millis;
+        }
+
         @Override
         public boolean retryRequest(HttpResponse response, int execCount, HttpContext context) {
             HttpRequest request = currentRequest(context);
             return request != null && Method.isIdempotent(request.getMethod())
-                    && super.retryRequest(response, execCount, context);
+                    && super.retryRequest(response, execCount, context)
+                    // httpclient5 5.5+ sleeps for any Retry-After (5.3 only capped it by the response timeout)
+                    && getRetryInterval(response, execCount, context).toMilliseconds() <= maxRetryAfterMillis;
         }
 
         /** httpclient5 5.3.x keeps the request in the "http.request" attribute, 5.5+ in a field of the context. */
