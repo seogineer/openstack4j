@@ -21,18 +21,18 @@ Maven:
 <dependency>
     <groupId>io.github.seogineer</groupId>
     <artifactId>openstack4j</artifactId>
-    <version>4.14.0</version>
+    <version>4.15.0</version>
 </dependency>
 ```
 
 Gradle (Kotlin DSL / Groovy DSL):
 
 ```kotlin
-implementation("io.github.seogineer:openstack4j:4.14.0")
+implementation("io.github.seogineer:openstack4j:4.15.0")
 ```
 
 ```groovy
-implementation 'io.github.seogineer:openstack4j:4.14.0'
+implementation 'io.github.seogineer:openstack4j:4.15.0'
 ```
 
 `openstack4j` 는 core 와 Apache HttpClient 5 connector 를 함께 끌어오는 아티팩트입니다. 다른 connector 를 쓰려면 [connectors/README.md](connectors/README.md) 를 보세요.
