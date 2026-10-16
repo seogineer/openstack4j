@@ -1,6 +1,6 @@
 ## 4.15.0
 
-- Neutron `port().update(port)` 가 넘긴 포트 객체의 `id`·`networkId`·`state`·`tenantId`·`macAddress`·`vifType`·`vifDetails` 를 `null` 로 지우던 문제를 고침 — 같은 객체로 두 번 호출하면 `NullPointerException` 이었음. 수정 본문은 이제 복사본으로 만들며, 응답에서 읽은 `created_at`·`updated_at` 을 더 이상 보내지 않음 — 이전에는 `get()` 으로 받은 포트를 그대로 넘기면 Neutron 이 `Cannot update read-only attribute created_at` 400 으로 거절했음
+- Neutron `port().update(port)` 가 넘긴 포트 객체의 `id`·`networkId`·`state`·`tenantId`·`macAddress`·`vifType`·`vifDetails` 를 `null` 로 지우던 문제를 고침 — 같은 객체로 두 번 호출하면 `NullPointerException` 이었음. 수정 본문은 이제 복사본으로 만들며, 응답에서 읽은 `created_at`·`updated_at` 을 더 이상 보내지 않음 — 이전에는 `get()` 으로 받은 포트를 그대로 넘기면 Neutron 이 `Cannot update read-only attribute created_at` 400 으로 거절했음. 응답에서 읽은 `binding:profile` 도 더 이상 다시 보내지 않고 builder `profile(...)` 로 지정했을 때만 보냄 — 최신 Neutron 기본 정책은 이 키 수정을 service 역할로 제한해 admin 토큰도 403 이었음
 - Cinder `BlockQuotaSet.toBuilder()` 가 원본 객체의 `id` 를 `null` 로 지우던 문제를 고침. quota set·quota class 의 `id` 는 이제 응답에서 읽기만 하고 `updateForTenant`·`updateQuotaClass` 본문에는 보내지 않음 — 이전에는 `quotaClass(...)` 로 받은 객체를 그대로 `updateQuotaClass` 에 넘기면 `Bad key(s) in quota class set: id` 400 이었음
 - httpclient connector: 멱등 요청(GET·HEAD·PUT·DELETE·OPTIONS)의 429·503 재시도가 `Retry-After` 를 상한 없이 기다리던 문제를 고침(`Retry-After: 3600` 이면 한 시간 동안 멈췄음). 이제 기다릴 시간이 30초를 넘으면 재시도하지 않고 429·503 응답을 바로 돌려줌. 30초 이하는 이전처럼 기다린 뒤 1회 재시도
 
