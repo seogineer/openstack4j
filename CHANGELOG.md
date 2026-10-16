@@ -1,6 +1,6 @@
 ## 4.16.0
 
-- Neutron port 의 `extra_dhcp_opts` 를 고침: `port().create(port)`·`create(List)` 가 `PortBuilder.extraDhcpOpt(...)` 로 지정한 옵션을 보내지 않던 문제, 옵션마다 `opt_name`·`opt_value` 와 함께 `optName`·`optValue` 를 중복으로 보내 Neutron 이 `No valid key specs matched` 400 으로 거절하던 문제(builder 로 옵션을 넣은 update 와, 4.15.0 에서도 옵션이 있는 포트를 `get()` 으로 받아 그대로 `update()` 한 경우 — 4.15.0 의 "get 으로 받은 포트를 그대로 넘겨도 성공" 은 이 경우에는 맞지 않았음)
+- Neutron port 의 `extra_dhcp_opts` 를 고침: `port().create(port)`·`create(List)` 가 `PortBuilder.extraDhcpOpt(...)` 로 지정한 옵션을 보내지 않던 문제, 옵션마다 `opt_name`·`opt_value` 와 함께 `optName`·`optValue` 를 중복으로 보내 Neutron 이 `No valid key specs matched` 400 으로 거절하던 문제(builder 로 옵션을 넣은 update 와, 4.15.0 에서도 옵션이 있는 포트를 `get()` 으로 받아 그대로 `update()` 한 경우 — MIGRATION `# 4.14 → 4.15` 의 "`get()` 으로 받은 포트를 그대로 넘겨도 이제 성공합니다" 는 이 경우에는 맞지 않았음)
 - Neutron `Port.getExtraDhcpOpts()`(응답·builder 의 `extra_dhcp_opts`), `ExtraDhcpOptCreate.getIpVersion()`, `ExtraDhcpOptBuilder.ipVersion(Integer)`(`ip_version`, 4 또는 6; 지정하지 않으면 보내지 않아 Neutron 기본 4). 응답의 `ip_version` 은 이제 `getIpVersion()` 으로 읽고 update 때 그대로 보냄(이전에는 응답에서 버렸음)
 
 ## 4.15.0
