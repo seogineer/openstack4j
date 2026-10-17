@@ -8,9 +8,13 @@ import org.openstack4j.api.AbstractTest;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.gbp.PolicyRule;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.mockwebserver.RecordedRequest;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -81,5 +85,69 @@ public class PolicyRuleServiceTest extends AbstractTest {
         assertTrue(result.isSuccess());
     }
 
+
+    private static String ruleJson(String flags) {
+        return "{\"policy_rule\": {\"id\": \"r1\", \"name\": \"n\"" + flags + "}}";
+    }
+
+    @Test
+    public void testIsEnabledIndependentOfShared() throws Exception {
+        respondWith(200, ruleJson(", \"enabled\": true, \"shared\": false"));
+        PolicyRule enabledNotShared = osv2().gbp().policyRule().get("r1");
+        assertTrue(enabledNotShared.isEnabled());
+        assertFalse(enabledNotShared.isShared());
+
+        respondWith(200, ruleJson(", \"enabled\": false, \"shared\": true"));
+        PolicyRule sharedNotEnabled = osv2().gbp().policyRule().get("r1");
+        assertFalse(sharedNotEnabled.isEnabled());
+        assertTrue(sharedNotEnabled.isShared());
+    }
+
+    @Test
+    public void testIsEnabledFalseWhenAbsent() throws Exception {
+        respondWith(200, ruleJson(", \"shared\": true"));
+        assertFalse(osv2().gbp().policyRule().get("r1").isEnabled());
+    }
+
+    @Test
+    public void testIsEnabledWhenSharedAbsent() throws Exception {
+        respondWith(200, ruleJson(", \"enabled\": true"));
+        PolicyRule rule = osv2().gbp().policyRule().get("r1");
+        assertTrue(rule.isEnabled());
+        assertFalse(rule.isShared());
+    }
+
+    @Test
+    public void testUpdateSendsEnabledOfModel() throws Exception {
+        JsonNode body = updateBodyOfFetchedRule(true, false);
+        assertNotNull(body.get("enabled"));
+        assertTrue(body.get("enabled").asBoolean());
+        assertNotNull(body.get("shared"));
+        assertFalse(body.get("shared").asBoolean());
+    }
+
+    @Test
+    public void testUpdateSendsDisabledSharedRule() throws Exception {
+        JsonNode body = updateBodyOfFetchedRule(false, true);
+        assertNotNull(body.get("enabled"));
+        assertFalse(body.get("enabled").asBoolean());
+        assertNotNull(body.get("shared"));
+        assertTrue(body.get("shared").asBoolean());
+    }
+
+    private JsonNode updateBodyOfFetchedRule(boolean enabled, boolean shared) throws Exception {
+        String flags = ", \"enabled\": " + enabled + ", \"shared\": " + shared;
+        respondWith(200, ruleJson(flags));
+        PolicyRule rule = osv2().gbp().policyRule().get("r1");
+        respondWith(200, ruleJson(flags));
+        osv2().gbp().policyRule().update("r1", rule);
+
+        // requests of other tests in this class may still be queued
+        RecordedRequest put = takeRequest();
+        while (!"PUT".equals(put.getMethod()) || !put.getPath().endsWith("/policy_rules/r1")) {
+            put = takeRequest();
+        }
+        return new ObjectMapper().readTree(put.getBody().readUtf8()).get("policy_rule");
+    }
 
 }

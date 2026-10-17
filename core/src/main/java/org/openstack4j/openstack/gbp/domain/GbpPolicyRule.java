@@ -92,7 +92,7 @@ public class GbpPolicyRule implements PolicyRule {
 
     @Override
     public boolean isEnabled() {
-        return this.enabled == null ? false: shared;
+        return this.enabled == null ? false : enabled;
     }
 
     @Override
