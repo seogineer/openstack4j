@@ -157,7 +157,7 @@ public class GbpL2Policy implements L2Policy {
 
         @Override
         public L2PolicyBuilder networkId(String id) {
-            l2Policy.id = id;
+            l2Policy.networkId = id;
             return this;
         }
 
