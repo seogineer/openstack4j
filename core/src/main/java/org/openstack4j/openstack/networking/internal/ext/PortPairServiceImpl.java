@@ -9,6 +9,7 @@ import org.openstack4j.model.network.ext.PortPair;
 import org.openstack4j.openstack.networking.domain.ext.NeutronPortPair;
 import org.openstack4j.openstack.networking.domain.ext.NeutronPortPair.PortPairs;
 import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
+import org.openstack4j.openstack.internal.UpdateBody;
 
 /**
  * {@inheritDoc}
@@ -56,6 +57,7 @@ public class PortPairServiceImpl extends BaseNetworkingServices implements PortP
     @Override
     public PortPair update(String portPairId, PortPair portPair) {
         Objects.requireNonNull(portPairId);
-        return put(NeutronPortPair.class, uri("/sfc/port_pairs/%s", portPairId)).entity(portPair).execute();
+        Objects.requireNonNull(portPair);
+        return put(NeutronPortPair.class, uri("/sfc/port_pairs/%s", portPairId)).entity(UpdateBody.of("port_pair", portPair, "id", "project_id")).execute();
     }
 }

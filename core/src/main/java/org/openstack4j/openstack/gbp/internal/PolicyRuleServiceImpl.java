@@ -10,6 +10,7 @@ import org.openstack4j.model.gbp.PolicyRule;
 import org.openstack4j.openstack.gbp.domain.GbpPolicyRule;
 import org.openstack4j.openstack.gbp.domain.GbpPolicyRule.PolicyRules;
 import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
+import org.openstack4j.openstack.internal.UpdateBody;
 
 /**
  * Policy Rule API Implementation
@@ -82,7 +83,7 @@ public class PolicyRuleServiceImpl extends BaseNetworkingServices implements Pol
     public PolicyRule update(String policyRuleId, PolicyRule policyRule) {
         Objects.requireNonNull(policyRuleId);
         Objects.requireNonNull(policyRule);
-        return put(GbpPolicyRule.class, uri("/grouppolicy/policy_rules/%s", policyRuleId)).entity(policyRule).execute();
+        return put(GbpPolicyRule.class, uri("/grouppolicy/policy_rules/%s", policyRuleId)).entity(UpdateBody.of("policy_rule", policyRule, "id", "tenant_id")).execute();
     }
 
 }

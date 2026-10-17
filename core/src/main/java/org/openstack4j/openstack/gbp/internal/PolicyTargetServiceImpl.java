@@ -10,6 +10,7 @@ import org.openstack4j.model.gbp.PolicyTarget;
 import org.openstack4j.openstack.gbp.domain.GbpPolicyTarget;
 import org.openstack4j.openstack.gbp.domain.GbpPolicyTarget.PolicyTargets;
 import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
+import org.openstack4j.openstack.internal.UpdateBody;
 
 /**
  * Policy target API Implementation
@@ -81,7 +82,7 @@ public class PolicyTargetServiceImpl extends BaseNetworkingServices implements P
     public PolicyTarget update(String policyTargetId, PolicyTarget policyTarget) {
         Objects.requireNonNull(policyTargetId);
         Objects.requireNonNull(policyTarget);
-        return put(GbpPolicyTarget.class, uri("/grouppolicy/policy_targets/%s", policyTargetId)).entity(policyTarget).execute();
+        return put(GbpPolicyTarget.class, uri("/grouppolicy/policy_targets/%s", policyTargetId)).entity(UpdateBody.of("policy_target", policyTarget, "id", "tenant_id")).execute();
     }
 
 }

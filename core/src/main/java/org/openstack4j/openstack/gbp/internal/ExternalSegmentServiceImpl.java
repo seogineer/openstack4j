@@ -10,6 +10,7 @@ import org.openstack4j.model.gbp.ExternalSegment;
 import org.openstack4j.openstack.gbp.domain.GbpExternalSegment;
 import org.openstack4j.openstack.gbp.domain.GbpExternalSegment.ExternalSegments;
 import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
+import org.openstack4j.openstack.internal.UpdateBody;
 
 /**
  * External Segment API Implementation
@@ -81,7 +82,7 @@ public class ExternalSegmentServiceImpl extends BaseNetworkingServices implement
     public ExternalSegment update(String externalSegmentId, ExternalSegment externalSegment) {
         Objects.requireNonNull(externalSegmentId);
         Objects.requireNonNull(externalSegment);
-        return put(GbpExternalSegment.class, uri("/grouppolicy/external_segments/%s", externalSegmentId)).entity(externalSegment).execute();
+        return put(GbpExternalSegment.class, uri("/grouppolicy/external_segments/%s", externalSegmentId)).entity(UpdateBody.of("external_segment", externalSegment, "id", "tenant_id")).execute();
     }
 
 }

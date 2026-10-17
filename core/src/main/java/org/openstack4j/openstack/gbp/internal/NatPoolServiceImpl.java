@@ -10,6 +10,7 @@ import org.openstack4j.model.gbp.NatPool;
 import org.openstack4j.openstack.gbp.domain.GbpNatPool;
 import org.openstack4j.openstack.gbp.domain.GbpNatPool.NatPools;
 import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
+import org.openstack4j.openstack.internal.UpdateBody;
 
 /**
  * Nat Pool API Implementation
@@ -81,7 +82,7 @@ public class NatPoolServiceImpl extends BaseNetworkingServices implements NatPoo
     public NatPool update(String natpoolId, NatPool natpool) {
         Objects.requireNonNull(natpoolId);
         Objects.requireNonNull(natpool);
-        return put(GbpNatPool.class, uri("/grouppolicy/nat_pools/%s", natpoolId)).entity(natpool).execute();
+        return put(GbpNatPool.class, uri("/grouppolicy/nat_pools/%s", natpoolId)).entity(UpdateBody.of("nat_pool", natpool, "id", "tenant_id")).execute();
     }
 
 
