@@ -10,6 +10,7 @@ import org.openstack4j.model.gbp.L2Policy;
 import org.openstack4j.openstack.gbp.domain.GbpL2Policy;
 import org.openstack4j.openstack.gbp.domain.GbpL2Policy.L2Policies;
 import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
+import org.openstack4j.openstack.internal.UpdateBody;
 
 /**
  * L2 Policy API Implementation
@@ -81,7 +82,7 @@ public class L2policyServiceImpl extends BaseNetworkingServices implements L2pol
     public L2Policy update(String l2PolicyId, L2Policy l2Policy) {
         Objects.requireNonNull(l2PolicyId);
         Objects.requireNonNull(l2Policy);
-        return put(GbpL2Policy.class, uri("/grouppolicy/l2_policies/%s", l2PolicyId)).entity(l2Policy).execute();
+        return put(GbpL2Policy.class, uri("/grouppolicy/l2_policies/%s", l2PolicyId)).entity(UpdateBody.of("l2_policy", l2Policy, "id", "tenant_id")).execute();
     }
 
 

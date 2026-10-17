@@ -10,6 +10,7 @@ import org.openstack4j.model.gbp.L3Policy;
 import org.openstack4j.openstack.gbp.domain.GbpL3Policy;
 import org.openstack4j.openstack.gbp.domain.GbpL3Policy.L3Policies;
 import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
+import org.openstack4j.openstack.internal.UpdateBody;
 
 /**
  * L3 Policy API Implementation
@@ -81,7 +82,7 @@ public class L3policyServiceImpl extends BaseNetworkingServices implements L3pol
     public L3Policy update(String l3PolicyId, L3Policy l3Policy) {
         Objects.requireNonNull(l3PolicyId);
         Objects.requireNonNull(l3Policy);
-        return put(GbpL3Policy.class, uri("/grouppolicy/l3_policies/%s", l3PolicyId)).entity(l3Policy).execute();
+        return put(GbpL3Policy.class, uri("/grouppolicy/l3_policies/%s", l3PolicyId)).entity(UpdateBody.of("l3_policy", l3Policy, "id", "tenant_id")).execute();
     }
 
 
