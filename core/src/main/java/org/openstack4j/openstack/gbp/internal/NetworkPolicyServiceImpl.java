@@ -10,6 +10,7 @@ import org.openstack4j.model.gbp.NetworkServicePolicy;
 import org.openstack4j.openstack.gbp.domain.GbpNetworkServicePolicy;
 import org.openstack4j.openstack.gbp.domain.GbpNetworkServicePolicy.NetworkServicePolicies;
 import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
+import org.openstack4j.openstack.internal.UpdateBody;
 
 /**
  * Network service policy API Implementation
@@ -83,7 +84,7 @@ public class NetworkPolicyServiceImpl extends BaseNetworkingServices implements 
         Objects.requireNonNull(gbpServicePolicy);
         Objects.requireNonNull(gbpServicePolicyId);
         return put(GbpNetworkServicePolicy.class, uri("/grouppolicy/network_service_policies/%s", gbpServicePolicyId)).
-                entity(gbpServicePolicy).execute();
+                entity(UpdateBody.of("network_service_policy", gbpServicePolicy, "id", "tenant_id")).execute();
     }
 
 }

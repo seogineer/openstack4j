@@ -9,6 +9,7 @@ import org.openstack4j.model.network.ext.FlowClassifier;
 import org.openstack4j.openstack.networking.domain.ext.NeutronFlowClassifier;
 import org.openstack4j.openstack.networking.domain.ext.NeutronFlowClassifier.FlowClassifiers;
 import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
+import org.openstack4j.openstack.internal.UpdateBody;
 
 /**
  * {@inheritDoc}
@@ -56,7 +57,8 @@ public class FlowClassifierServiceImpl extends BaseNetworkingServices implements
     @Override
     public FlowClassifier update(String flowClassifierId, FlowClassifier flowClassifier) {
         Objects.requireNonNull(flowClassifierId);
-        return put(NeutronFlowClassifier.class, uri("/sfc/flow_classifiers/%s", flowClassifierId)).entity(flowClassifier).execute();
+        Objects.requireNonNull(flowClassifier);
+        return put(NeutronFlowClassifier.class, uri("/sfc/flow_classifiers/%s", flowClassifierId)).entity(UpdateBody.of("flow_classifier", flowClassifier, "id", "project_id")).execute();
     }
 
 }

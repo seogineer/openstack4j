@@ -9,6 +9,7 @@ import org.openstack4j.model.network.ext.PortChain;
 import org.openstack4j.openstack.networking.domain.ext.NeutronPortChain;
 import org.openstack4j.openstack.networking.domain.ext.NeutronPortChain.PortChains;
 import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
+import org.openstack4j.openstack.internal.UpdateBody;
 
 /**
  * {@inheritDoc}
@@ -56,6 +57,7 @@ public class PortChainServiceImpl extends BaseNetworkingServices implements Port
     @Override
     public PortChain update(String portChainId, PortChain portChain) {
         Objects.requireNonNull(portChainId);
-        return put(NeutronPortChain.class, uri("/sfc/port_chains/%s", portChainId)).entity(portChain).execute();
+        Objects.requireNonNull(portChain);
+        return put(NeutronPortChain.class, uri("/sfc/port_chains/%s", portChainId)).entity(UpdateBody.of("port_chain", portChain, "id", "project_id")).execute();
     }
 }

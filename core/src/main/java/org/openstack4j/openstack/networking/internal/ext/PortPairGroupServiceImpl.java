@@ -9,6 +9,7 @@ import org.openstack4j.model.network.ext.PortPairGroup;
 import org.openstack4j.openstack.networking.domain.ext.NeutronPortPairGroup;
 import org.openstack4j.openstack.networking.domain.ext.NeutronPortPairGroup.PortPairGroups;
 import org.openstack4j.openstack.networking.internal.BaseNetworkingServices;
+import org.openstack4j.openstack.internal.UpdateBody;
 
 /**
  * {@inheritDoc}
@@ -56,6 +57,7 @@ public class PortPairGroupServiceImpl extends BaseNetworkingServices implements 
     @Override
     public PortPairGroup update(String portPairGroupId, PortPairGroup portPairGroup) {
         Objects.requireNonNull(portPairGroupId);
-        return put(NeutronPortPairGroup.class, uri("/sfc/port_pair_groups/%s", portPairGroupId)).entity(portPairGroup).execute();
+        Objects.requireNonNull(portPairGroup);
+        return put(NeutronPortPairGroup.class, uri("/sfc/port_pair_groups/%s", portPairGroupId)).entity(UpdateBody.of("port_pair_group", portPairGroup, "id", "project_id")).execute();
     }
 }
