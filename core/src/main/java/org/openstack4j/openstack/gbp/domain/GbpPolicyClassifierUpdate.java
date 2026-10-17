@@ -79,7 +79,7 @@ public class GbpPolicyClassifierUpdate implements PolicyClassifierUpdate {
 
     @Override
     public PolicyClassifierUpdateBuilder toBuilder() {
-        return null;
+        return new PolicyClassifierUpdateConcreteBuilder(this);
     }
 
     public String getName() {
@@ -92,6 +92,10 @@ public class GbpPolicyClassifierUpdate implements PolicyClassifierUpdate {
 
     public static class PolicyClassifierUpdateConcreteBuilder implements PolicyClassifierUpdateBuilder {
         private GbpPolicyClassifierUpdate policyClassfierUpdate;
+
+        // port range sides set through this builder; null until set
+        private String portRangeMin;
+        private String portRangeMax;
 
         public PolicyClassifierUpdateConcreteBuilder(GbpPolicyClassifierUpdate gbpPolicyClassifierUpdate) {
             this.policyClassfierUpdate = gbpPolicyClassifierUpdate;
@@ -109,6 +113,8 @@ public class GbpPolicyClassifierUpdate implements PolicyClassifierUpdate {
         @Override
         public PolicyClassifierUpdateBuilder from(PolicyClassifierUpdate in) {
             this.policyClassfierUpdate = (GbpPolicyClassifierUpdate) in;
+            this.portRangeMin = null;
+            this.portRangeMax = null;
             return this;
         }
 
@@ -132,26 +138,46 @@ public class GbpPolicyClassifierUpdate implements PolicyClassifierUpdate {
 
         @Override
         public PolicyClassifierUpdateBuilder portRangeMin(int min) {
-            String range = "";
-            if (this.policyClassfierUpdate.portRange != null && !this.policyClassfierUpdate.portRange.isEmpty())
-                range = min + ":" + this.policyClassfierUpdate.portRange;
-            else
-                range = "" + min;
-
-            this.policyClassfierUpdate.portRange = range;
+            if (portRangeMin == null && portRangeMax == null) {
+                String current = this.policyClassfierUpdate.portRange;
+                if (current != null && !current.isEmpty()) {
+                    int sep = current.indexOf(':');
+                    if (sep < 0) {
+                        // single number: cannot tell which side it is, keep legacy behavior
+                        portRangeMax = current;
+                    } else {
+                        portRangeMax = current.substring(sep + 1);
+                    }
+                }
+            }
+            portRangeMin = String.valueOf(min);
+            applyPortRange();
             return this;
         }
 
         @Override
         public PolicyClassifierUpdateBuilder portRangeMax(int max) {
-            String range = "";
-            if (this.policyClassfierUpdate.portRange != null && !this.policyClassfierUpdate.portRange.isEmpty())
-                range = this.policyClassfierUpdate.portRange + ":" + max;
-            else
-                range = "" + max;
-
-            this.policyClassfierUpdate.portRange = range;
+            if (portRangeMin == null && portRangeMax == null) {
+                String current = this.policyClassfierUpdate.portRange;
+                if (current != null && !current.isEmpty()) {
+                    int sep = current.indexOf(':');
+                    if (sep < 0) {
+                        portRangeMin = current;
+                    } else {
+                        portRangeMin = current.substring(0, sep);
+                    }
+                }
+            }
+            portRangeMax = String.valueOf(max);
+            applyPortRange();
             return this;
+        }
+
+        private void applyPortRange() {
+            if (portRangeMin != null && portRangeMax != null)
+                this.policyClassfierUpdate.portRange = portRangeMin + ":" + portRangeMax;
+            else
+                this.policyClassfierUpdate.portRange = portRangeMin != null ? portRangeMin : portRangeMax;
         }
 
         @Override

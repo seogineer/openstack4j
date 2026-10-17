@@ -87,7 +87,7 @@ public class GbpNetworkServicePolicy implements NetworkServicePolicy {
 
     @Override
     public NetworkServicePolicyBuilder toBuilder() {
-        return new NetworkServicePolicyConcreteBuilder();
+        return new NetworkServicePolicyConcreteBuilder(this);
     }
 
     public static class NetworkServicePolicies extends ListResult<GbpNetworkServicePolicy> {

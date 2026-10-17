@@ -77,4 +77,13 @@ public class NetworkPolicyServiceTest extends AbstractTest {
         assertEquals("TestUpdate", gbpNetworkServicePolicy.getName());
     }
 
+    @Test
+    public void testToBuilderKeepsState() {
+        NetworkServicePolicy original = Builders.networkServicePolicy().name("n1").description("d1").isShared(true).build();
+        NetworkServicePolicy copy = original.toBuilder().description("d2").build();
+        assertEquals(copy.getName(), "n1");
+        assertEquals(copy.getDescription(), "d2");
+        assertTrue(copy.isShared());
+    }
+
 }

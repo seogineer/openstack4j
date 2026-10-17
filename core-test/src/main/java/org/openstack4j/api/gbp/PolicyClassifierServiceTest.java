@@ -83,5 +83,54 @@ public class PolicyClassifierServiceTest extends AbstractTest {
         assertTrue(result.isSuccess());
     }
 
+    @Test
+    public void testClassifierPortRange() {
+        assertEquals(Builders.policyClassifier().portRangeMin(1).build().getPortRange(), "1");
+        assertEquals(Builders.policyClassifier().portRangeMax(9).build().getPortRange(), "9");
+        assertEquals(Builders.policyClassifier().portRangeMin(1).portRangeMax(9).build().getPortRange(), "1:9");
+        assertEquals(Builders.policyClassifier().portRangeMax(9).portRangeMin(1).build().getPortRange(), "1:9");
+        assertEquals(Builders.policyClassifier().portRangeMin(1).portRangeMin(2).build().getPortRange(), "2");
+        assertEquals(Builders.policyClassifier().portRangeMin(1).portRangeMax(9).portRangeMin(2).build().getPortRange(), "2:9");
+        assertEquals(Builders.policyClassifier().portRangeMax(9).portRangeMax(8).build().getPortRange(), "8");
+        assertEquals(Builders.policyClassifier().portRangeMin(1).portRangeMax(9).portRangeMax(8).build().getPortRange(), "1:8");
+    }
+
+    @Test
+    public void testClassifierPortRangeFromExisting() {
+        PolicyClassifier range = Builders.policyClassifier().portRangeMin(1).portRangeMax(9).build();
+        assertEquals(range.toBuilder().portRangeMin(3).build().getPortRange(), "3:9");
+        assertEquals(Builders.policyClassifier().from(Builders.policyClassifier().portRangeMin(1).portRangeMax(9).build())
+                .portRangeMax(8).build().getPortRange(), "1:8");
+        // from() resets the remembered sides of a builder that already had values
+        assertEquals(Builders.policyClassifier().portRangeMin(1).portRangeMax(9)
+                .from(Builders.policyClassifier().portRangeMin(20).portRangeMax(30).build()).portRangeMin(25).build().getPortRange(), "25:30");
+        // single number: side unknown, legacy behavior kept
+        assertEquals(Builders.policyClassifier().portRangeMin(5).build().toBuilder().portRangeMin(3).build().getPortRange(), "3:5");
+        assertEquals(Builders.policyClassifier().portRangeMin(5).build().toBuilder().portRangeMax(7).build().getPortRange(), "5:7");
+    }
+
+    @Test
+    public void testClassifierUpdatePortRange() {
+        assertEquals(Builders.policyClassifierUpdate().portRangeMin(1).build().getPortRange(), "1");
+        assertEquals(Builders.policyClassifierUpdate().portRangeMax(9).build().getPortRange(), "9");
+        assertEquals(Builders.policyClassifierUpdate().portRangeMin(1).portRangeMax(9).build().getPortRange(), "1:9");
+        assertEquals(Builders.policyClassifierUpdate().portRangeMax(9).portRangeMin(1).build().getPortRange(), "1:9");
+        assertEquals(Builders.policyClassifierUpdate().portRangeMin(1).portRangeMin(2).build().getPortRange(), "2");
+        assertEquals(Builders.policyClassifierUpdate().portRangeMin(1).portRangeMax(9).portRangeMin(2).build().getPortRange(), "2:9");
+        assertEquals(Builders.policyClassifierUpdate().portRangeMax(9).portRangeMax(8).build().getPortRange(), "8");
+        assertEquals(Builders.policyClassifierUpdate().portRangeMin(1).portRangeMax(9).portRangeMax(8).build().getPortRange(), "1:8");
+    }
+
+    @Test
+    public void testClassifierUpdateToBuilderAndExisting() {
+        PolicyClassifierUpdate update = Builders.policyClassifierUpdate().name("n").portRangeMin(1).portRangeMax(9).build();
+        assertNotNull(update.toBuilder());
+        PolicyClassifierUpdate copy = update.toBuilder().portRangeMin(3).build();
+        assertEquals(copy.getPortRange(), "3:9");
+        assertEquals(Builders.policyClassifierUpdate().from(Builders.policyClassifierUpdate().portRangeMin(1).portRangeMax(9).build())
+                .portRangeMax(8).build().getPortRange(), "1:8");
+        assertEquals(Builders.policyClassifierUpdate().portRangeMax(5).build().toBuilder().portRangeMin(3).build().getPortRange(), "3:5");
+        assertEquals(Builders.policyClassifierUpdate().portRangeMax(5).build().toBuilder().portRangeMax(7).build().getPortRange(), "5:7");
+    }
 
 }
